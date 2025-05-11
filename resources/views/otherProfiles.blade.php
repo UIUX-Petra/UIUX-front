@@ -39,10 +39,23 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
                 <!-- Stats Section -->
                 <div class="col-span-1 lg:col-span-3">
-                    <div class="border border-[#7494ec] shadow-lg p-4 rounded-lg bg-white">
-                        <h2 class="text-[#7494ec] text-lg font-bold">Stats</h2>
-                        <div class="grid grid-cols-2 gap-4 mt-4">
-                            <div class="text-[#7494ec]">Reputations</div>
+                    <div class="space-y-4">
+                        <div class="border border-[#7494ec] shadow-lg p-4 rounded-lg bg-white">
+                            <h2 class="text-[#7494ec] text-lg font-bold">Stats</h2>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div class="text-[#7494ec]">Reputations</div>
+                            </div>
+                        </div>
+                         <!-- Question Section -->
+                         <div class="border border-[#7494ec] shadow-lg p-4 rounded-lg bg-white">
+                            <h2 class="text-[#7494ec] text-lg font-bold hover:underline">
+                                <a href="{{ route('user.questions.list', ['id' => $user['id']]) }}">Questions</a>
+                            </h2>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div class="text-[#7494ec]">
+                                    {{ $user['questions_count'] ?? (isset($user['question']) && is_array($user['question']) ? count($user['question']) : 0) }} Questions
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

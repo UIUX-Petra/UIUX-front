@@ -9,37 +9,94 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class QuestionController extends Controller
 {
+    // public function getAllQuestions(Request $request)
+    // {
+    //     $api_url = env('API_URL') . '/questions';
+    //     $response = Http::withToken(session('token'))->get($api_url);
+    //     $response = json_decode($response, true);
+
+    //     // Get the data (questions)
+    //     $data = $response['data'];
+
+    //     // Loop through each question and count comments
+    //     foreach ($data as &$question) {
+    //         $question['comments_count'] = (is_array($question['comment']) && $question['comment'] !== null)
+    //             ? count($question['comment'])
+    //             : 0;
+    //     }
+
+    //     $page = $request->input('page', 1);
+    //     $per_page = 10;
+    //     $offset = ($page - 1) * $per_page;
+    //     $paginated_data = array_slice($data, $offset, $per_page);
+    //     $paginator = new LengthAwarePaginator(
+    //         $paginated_data,
+    //         count($data),
+    //         $per_page,
+    //         $page,
+    //         ['path' => $request->url(), 'query' => $request->query()]
+    //     );
+
+    //     // dd($data);
+    //     // Return the updated data
+    //     return $paginator;
+    // }
+
     public function getAllQuestions(Request $request)
     {
-        $api_url = env('API_URL') . '/questions';
-        $response = Http::withToken(session('token'))->get($api_url);
-        $response = json_decode($response, true);
-
-        // Get the data (questions)
-        $data = $response['data'];
-
-        // Loop through each question and count comments
-        foreach ($data as &$question) {
-            $question['comments_count'] = (is_array($question['comment']) && $question['comment'] !== null)
-                ? count($question['comment'])
-                : 0;
-        }
-
         $page = $request->input('page', 1);
         $per_page = 10;
-        $offset = ($page - 1) * $per_page;
-        $paginated_data = array_slice($data, $offset, $per_page);
-        $paginator = new LengthAwarePaginator(
-            $paginated_data,
-            count($data),
-            $per_page,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        // dd($data);
-        // Return the updated data
-        return $paginator;
+        $api_url = env('API_URL') . '/questions-paginated'; 
+    
+        $response = Http::withToken(session('token'))->get($api_url, [
+            'page' => $page,
+            'per_page' => $per_page,
+        ]);
+    
+      
+        if ($response->failed()) {
+            logger()->error('API request failed for questions: ' . $response->body() . ' URL: ' . $api_url);
+            return new LengthAwarePaginator([], 0, $per_page, $page, [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]);
+        }
+    
+        $apiResponseData = $response->json();
+    
+        if (isset($apiResponseData['success']) && $apiResponseData['success'] && isset($apiResponseData['data'])) {
+            $paginatedResultFromApi = $apiResponseData['data'];
+    
+            $questions_for_current_page = $paginatedResultFromApi['data'];
+            $total_questions = $paginatedResultFromApi['total'];
+            $api_per_page = $paginatedResultFromApi['per_page'];
+            $api_current_page = $paginatedResultFromApi['current_page'];
+    
+            if (!empty($questions_for_current_page) && (!isset($questions_for_current_page[0]['comments_count']) && !isset($questions_for_current_page[0]['comment_count']))) {
+                foreach ($questions_for_current_page as &$question_item) {
+                    $question_item['comments_count'] = (isset($question_item['comment']) && is_array($question_item['comment']))
+                                                  ? count($question_item['comment'])
+                                                  : 0;
+                }
+                unset($question_item);
+            }
+    
+            $paginator = new LengthAwarePaginator(
+                $questions_for_current_page,
+                $total_questions,
+                $api_per_page,
+                $api_current_page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+    
+            return $paginator;
+        } else {
+            logger()->error('Invalid API response structure for questions. URL: ' . $api_url . ' Response: ' . json_encode($apiResponseData));
+            return new LengthAwarePaginator([], 0, $per_page, $page, [
+                'path' => $request->url(),
+                'query' => $request->query()
+            ]);
+        }
     }
 
     public function getAllQuestionsByPopularity(Request $request)

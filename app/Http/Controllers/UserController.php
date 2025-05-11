@@ -88,12 +88,53 @@ class UserController extends Controller
 
     public function getUserByEmail($email)
     {
-        // $email = session('email');
         $api_url = env('API_URL') . '/users/get/' . $email;
         $response = Http::withToken(session('token'))->get($api_url);
-        $response = json_decode($response, true);
-        // dd($response['data']);
-        return $response['data'];
+
+        if ($response->failed()) {
+            Log::error("API call failed for user email {$email}: " . $response->body());
+            return null;
+        }
+
+        $responseData = json_decode($response->body(), true);
+
+        if (isset($responseData['data']) && is_array($responseData['data'])) {
+            $userData = $responseData['data'];
+            $questionCount = 0;
+            if (isset($userData['question']) && is_array($userData['question'])) {
+                $questionCount = count($userData['question']);
+            }
+
+            $userData['questions_count'] = $questionCount;
+            // dd($userData);
+            return $userData;
+        } else {
+            Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", $responseData);
+            return null; 
+        }
+    }
+
+
+    public function showUserQuestionsPage($userId)
+    {
+        $api_url_user = env('API_URL') . '/users/' . $userId; 
+        $responseUser = Http::withToken(session('token'))->get($api_url_user);
+
+        if ($responseUser->failed()) {
+            Log::error("API call failed to get user data for ID {$userId} for questions page: " . $responseUser->body());
+            return null;
+        }
+
+        $userDataResponse = json_decode($responseUser->body(), true);
+
+        if (isset($userDataResponse['success']) && $userDataResponse['success'] && isset($userDataResponse['data'])) {
+            $userData = $userDataResponse['data'];
+            // dd($userData); 
+            return $userData;
+        } else {
+            Log::warning("Unexpected API response or user data not found for ID {$userId} for questions page: ", $userDataResponse);
+            return null;
+        }
     }
 
     public function getUserFollowers(string $email)
@@ -248,5 +289,4 @@ class UserController extends Controller
         $data['title'] = 'Popular';
         return view('question', $data);
     }
-
 }

@@ -69,6 +69,14 @@ class MainController extends Controller
     $data['image'] = $currUser['image'];
     return view('editProfile', $data);
   }
+  public function userQuestions($userId){
+    $data['user'] = $this->userController->showUserQuestionsPage($userId);
+    $image = $data['user']['image'];
+    $data['image'] = $image;
+    $data['title'] = 'User Questions';
+    // dd($data['user']);
+    return view('userQuestions', $data);
+  }
   public function popular(Request $request)
   {
     $email = session('email');
