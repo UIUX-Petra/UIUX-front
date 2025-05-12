@@ -26,8 +26,7 @@
             });
         </script>
     @endif
-{{-- 
-    @include('utils.background2') --}}
+    {{-- @include('utils.background2') --}}
 
     <!-- Header Section -->
     <div class="w-full bg-transparent rounded-lg p-6 px-6 max-w-7xl mx-auto mt-6 mb-2 flex items-center space-x-4 popular-container">
