@@ -2,7 +2,7 @@
 
 @section('content')
 @include('partials.nav')
-@include('utils.background-overlay')
+{{-- @include('utils.background-overlay') --}}
     <style>
         /* Title Styling */
         .titleTopUser {
