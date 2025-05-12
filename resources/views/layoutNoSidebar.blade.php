@@ -390,9 +390,8 @@
         }
     </style>
 </head>
-{{-- @include('partials.nav') --}}
+    {{-- @include('partials.nav') --}}
 <body>
-    <div class="lg:ml-[22rem] md:ml-64 mt-16 p-4"> 
         @yield('content')
         {{-- Insert <script> CDN below --}}
 

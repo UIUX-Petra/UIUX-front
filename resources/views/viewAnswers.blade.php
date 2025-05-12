@@ -3,7 +3,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 @section('content')
-    @include('partials.nav')
+
     @include('utils.background4')
     <style>
         body {
