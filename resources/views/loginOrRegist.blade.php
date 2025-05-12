@@ -1,4 +1,9 @@
-@extends('layout')
+@extends('layoutNoSidebar')
+
+@php
+    $hasSidebar = false;
+@endphp
+
 @section('content')
     @include('utils.background')
     @if (session()->has('Error'))
