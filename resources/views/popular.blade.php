@@ -171,7 +171,6 @@
         </div>
     </div>
 
-    <!-- Add this below the header section -->
     <div class="max-w-7xl mx-auto px-8 mb-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-[var(--bg-card)] rounded-lg p-5 text-center border border-[var(--border-color)] hover:border-[#f59e0b] transition-all duration-200">

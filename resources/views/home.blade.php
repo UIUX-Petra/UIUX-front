@@ -321,7 +321,7 @@
 
 @section('script')
 <script>
-    // Enhanced theme and interactions
+ // Enhanced theme and interactions
 document.addEventListener('DOMContentLoaded', function() {
     // Update interaction icon colors based on theme
     function updateIconColors() {
@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (themeLogoToggle) {
                 themeLogoToggle.src = isLightMode 
                     ? "{{ asset('assets/p2p logo.svg') }}" 
-                    : "{{ asset('assets/p2p logo - white.svg') }}"; // Adjust file name/path as needed
+                    : "{{ asset('assets/p2p logo - white.svg') }}";
             }
 
         }
@@ -402,7 +402,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     
-    // Lazy load images
     function lazyLoadImages() {
         const lazyImages = document.querySelectorAll('.lazy-image');
         
@@ -430,7 +429,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Add smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -447,7 +445,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Run functions on page load
     updateIconColors();
     lazyLoadImages();
     
@@ -462,14 +459,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     themeObserver.observe(document.documentElement, { attributes: true });
     
-    // Add skeleton loading animation before content is loaded
     function showSkeletonLoaders() {
         const questionContainer = document.querySelector('.question-container');
         if (!questionContainer) return;
         
         const questionCards = questionContainer.querySelectorAll('.question-card');
         
-        // If there are no questions yet (or still loading)
         if (questionCards.length === 0) {
             for (let i = 0; i < 3; i++) {
                 const skeletonCard = document.createElement('div');
@@ -491,7 +486,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Remove skeleton loaders when content is loaded
     function removeSkeletonLoaders() {
         const skeletons = document.querySelectorAll('.skeleton');
         skeletons.forEach(skeleton => {
@@ -499,15 +493,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Simulate content loading
     showSkeletonLoaders();
         window.addEventListener('load', removeSkeletonLoaders);
     });
 
-    // Select all save question buttons
     const saveButtons = document.querySelectorAll('.save-question-btn');
     
-    // Add click event listeners to each button
     saveButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
@@ -517,36 +508,30 @@ document.addEventListener('DOMContentLoaded', function() {
             const icon = this.querySelector('i');
             const isSaved = icon.classList.contains('fa-solid');
             
-            // Toggle the bookmark icon style
             if (isSaved) {
                 icon.classList.remove('fa-solid');
                 icon.classList.add('fa-regular');
-                icon.style.color = ''; // Reset to default
+                icon.style.color = '';
             } else {
                 icon.classList.remove('fa-regular');
                 icon.classList.add('fa-solid');
                 
-                // Set color based on theme
                 const isLightMode = document.documentElement.classList.contains('light-mode');
                 icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
                 
-                // Add a brief animation
                 button.classList.add('saved-animation');
                 setTimeout(() => {
                     button.classList.remove('saved-animation');
                 }, 300);
             }
             
-            // Your friend will implement the actual save functionality
             console.log('Save question:', questionId, !isSaved);
             
-            // Prevent the click from propagating to the card link
             return false;
         });
 
     });
 
-    // Add this to your updateThemeIcons function to ensure saved bookmarks keep their color
     function updateSavedIcons() {
         const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
         const isLightMode = document.documentElement.classList.contains('light-mode');
@@ -556,7 +541,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Call this when theme changes
     updateSavedIcons();
 </script>
 @endsection

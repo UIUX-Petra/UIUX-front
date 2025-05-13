@@ -23,16 +23,13 @@ class MainController extends Controller
   }
   public function home(Request $request)
   {
-    $email = session('email');
-    $user = $this->userController->getUserByEmail($email);
-    $data['username'] = $user['username'];
+    $user = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $user['image'];
+    $data['username'] = $user['username'];
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestions($request);
     $data['questions'] = $questions;
-    // dd($data);
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
+    // dd($data);]
     return view('home', $data);
   }
   public function askPage()
