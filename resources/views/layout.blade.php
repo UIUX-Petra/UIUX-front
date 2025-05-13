@@ -170,6 +170,7 @@
 </head>
 {{-- @include('partials.nav') --}}
 <body>
+    @include('partials.loader')
     @yield('content')
     {{-- Insert <script> CDN below --}}
 
