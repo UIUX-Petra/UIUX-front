@@ -51,8 +51,8 @@
     }
 
 </style>
-<nav class="fixed top-0 left-0 bg-[var(--bg-primary)] border-gray-200 w-full h-auto shadow-md text-white">
-    <div class="max-w-screen-xl relative flex flex-wrap items-center justify-between mx-auto p-4 z-[100]">
+<nav class="fixed top-0 left-0 bg-[var(--bg-primary)] border-gray-200 w-full h-auto shadow-md text-white z-50">
+    <div class="max-w-screen-xl relative flex flex-wrap items-center justify-between mx-auto p-4">
         <!-- Hamburger Button -->
         <svg id="hamburger-svg" class="ham hamRotate ham4 md:hidden" viewBox="0 0 100 100" width="50">
             <path class="line top"
@@ -64,8 +64,8 @@
 
         <!-- Logo Section -->
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6">
-            <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo" class="h-8 lg:h-10 w-auto theme-logo">
-            <div class="text-lg cal-sans-regulark">
+            <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo" class="h-6 lg:h-8 w-auto theme-logo">
+            <div class="text-mg cal-sans-regular">
                 <span class="font-bold text-white">peer</span>
                 <span class="font-bold text-[var(--accent-tertiary)]">- to -</span>
                 <span class="font-bold text-white">peer</span>
@@ -83,6 +83,10 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
+
+            <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle bottom-0" aria-label="Toggle theme">
+                <i id="theme-toggle-icon" class="fa-solid fa-sun"></i>
+            </button>
 
             @if (!session()->has('email'))
                 <!-- Sign Up Button -->
@@ -160,11 +164,11 @@
     <a href="{{ route('popular') }}" class="hover:text-[#ffe98f]">
         <i class="fa-solid fa-fire mr-2"></i> Popular
     </a>
-    <a href="{{ route('viewAllUsers') }}" class="hover:text-[#ffe98f]">
-        <i class="fa-solid fa-users mr-2"></i> Informates
-    </a>
     <a href="{{ route('viewAllTags') }}" class="hover:text-[#ffe98f]">
         <i class="fa-solid fa-tags mr-2"></i> Tags
+    </a>
+    <a href="{{ route('viewAllUsers') }}" class="hover:text-[#ffe98f]">
+        <i class="fa-solid fa-users mr-2"></i> Informates
     </a>
     <a href="{{ route('askPage') }}" class="hover:text-[#ffe98f]">
         <i class="fa-solid fa-question-circle mr-2"></i> Ask a Question
@@ -189,36 +193,35 @@
         </a>
     @endif
 </div>
+</nav>
 
 
     <!-- Navbar Links -->
-    <div class="hidden md:flex flex-col lg:w-[22rem] w-64 h-screen lg:pl-28 px-6 py-8 shadow-md fixed top-[4.5rem] left-0 z-[10] bg-[var(--bg-primary)]" id="sidebar">
-        <nav class="flex flex-col space-y-4">
-                <!-- Ask a Question - Highlighted Button -->
-            <a href="{{ route('askPage') }}" class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} mt-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-3 px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
-                <i class="fa-solid fa-question-circle mr-2"></i> Ask a Question
-            </a>
-            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 px-3 rounded-lg transition-all duration-200">
+    <div class="hidden md:flex flex-col lg:w-[20rem] w-64 h-screen lg:pl-28 pl-6 pr-2 py-6 shadow-md fixed top-[4.5rem] left-0 z-[10] bg-[var(--bg-primary)]" id="sidebar">
+        <!-- Ask a Question - Highlighted Button -->
+        <nav class="flex flex-col space-y-0">
+            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 text-sm pl-3 transition-all duration-200">
                 <i class="fa-solid fa-house mr-3"></i> Home
             </a>
-            <a href="{{ route('popular') }}" class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 px-3 rounded-lg transition-all duration-200">
+            <a href="{{ route('popular') }}" class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 text-sm pl-3 transition-all duration-200">
                 <i class="fa-solid fa-fire mr-3"></i> Popular
             </a>
-            <a href="{{ route('viewAllUsers') }}" class="nav-link {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 px-3 rounded-lg transition-all duration-200">
-                <i class="fa-solid fa-users mr-3"></i> Informates
-            </a>
-            <a href="{{ route('viewAllTags') }}" class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 px-3 rounded-lg transition-all duration-200">
+            <a href="{{ route('viewAllTags') }}" class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 text-sm pl-3 transition-all duration-200">
                 <i class="fa-solid fa-tags mr-3"></i> Tags
             </a>
-            <a href="{{ route('user.leaderboard') }}" class="nav-link {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }} mt-2 text-white hover:text-[#ffe98f] py-2 px-3 rounded-lg transition-all duration-200">
-                <i class="fa-solid fa-trophy mr-3"></i> Leaderboard
-            </a>
-
-            <!-- Theme Toggle Button -->
-            <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle" aria-label="Toggle theme">
-                <i id="theme-toggle-icon" class="fa-solid fa-sun"></i>
-            </button>
         </nav>
+        <div class="mt-10">
+            {{-- <span class="text-[var(--text-muted)]">SOCIAL</span>
+            <hr class="h-px pl-8 mx-1 my-2 bg-[var(--text-muted)]"> --}}
+            <nav class="flex flex-col space-y-0">
+                <a href="{{ route('viewAllUsers') }}" class="nav-link {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }} text-white hover:text-[#ffe98f] py-2 text-sm pl-3 transition-all duration-200">
+                    <i class="fa-solid fa-users mr-3"></i> Informates
+                </a>
+                <a href="{{ route('user.leaderboard') }}" class="nav-link {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }} mt-2 text-white hover:text-[#ffe98f] py-2 text-sm pl-3 transition-all duration-200">
+                    <i class="fa-solid fa-trophy mr-3"></i> Leaderboard
+                </a>
+            </nav>
+        </div>
     </div>
 </nav>
 
