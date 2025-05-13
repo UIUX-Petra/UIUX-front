@@ -24,26 +24,25 @@ class AuthController extends Controller
     {
         try {
             $user = Socialite::driver('google')->user();
-
             if (!$user) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Please try to log in again!');
             }
-
+            
             $email = strtolower($user->getEmail());
             $name = $user->getName();
-
+            
             if (!str_ends_with($email, '@john.petra.ac.id')) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Please use your Petra Christian University email to log in!');
             }
-
+            
             $apiUrl = env('API_URL') . '/login';
-
+            
             $response = Http::post($apiUrl, [
                 'name' => $name,
                 'email' => $email,
                 'password' => env('API_SECRET')
             ]);
-
+            
             if ($response->failed()) {
                 return redirect()->route('loginOrRegist')->with('Error', 'There was an issue with the login request.');
             }
@@ -64,7 +63,7 @@ class AuthController extends Controller
                 session()->forget('url');
                 return redirect()->to($url);
             }
-            return redirect()->route('loginOrRegist');
+            return redirect()->route('home');
         } catch (\Exception $e) {
             Log::error('Login error: ' . $e->getMessage());
             return redirect()->route('loginOrRegist')->with('Error', 'An unexpected error occurred. Please try again.');
