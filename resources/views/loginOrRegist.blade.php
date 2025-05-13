@@ -16,14 +16,14 @@
         /* Base styling */
         body {
             overflow-x: hidden;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            background: linear-gradient(135deg, #1C2245 0%, #30366A 100%);
         }
 
         /* Container and animations */
         .form-box {
             z-index: 1;
             transition: .6s ease-in-out 1.2s, visibility 0s 1s;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
         }
 
         .container.active .form-box {
@@ -58,7 +58,9 @@
             width: 300%;
             height: 100%;
             left: -250%;
-            background: linear-gradient(135deg, #7494ec 0%, #5e7dd9 100%);
+            /* background: linear-gradient(135deg, #F4AB24 0%, #FFD249 100%);  */
+            /* background: linear-gradient(135deg, #10b981 0%, #1ceaa5 100%);  */
+            background: linear-gradient(135deg, #1C2245 0%, #30366A 100%);
             border-radius: 150px;
             z-index: 2;
             transition: 1.2s ease-in-out;
@@ -100,7 +102,7 @@
             border-radius: 30px;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            /* border: 1px solid rgba(255, 255, 255, 0.2); */
         }
 
         .input-box input {
@@ -179,7 +181,6 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.2);
             transition: all 0.4s ease;
             z-index: -1;
         }
@@ -219,7 +220,7 @@
             transform: translateX(-50%);
             width: 50px;
             height: 3px;
-            background: linear-gradient(to right, #7494ec, #5e7dd9);
+            background: linear-gradient(to right, #10b981, #1ceaa5);
             border-radius: 3px;
         }
 
@@ -286,7 +287,7 @@
                     <div class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST" novalidate>
                             @csrf
-                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Welcome Back</h1>
+                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Sign in</h1>
 
                             <div class="input-box relative w-full mb-5">
                                 <input id="usernameOrEmail" type="text" aria-label="Username or Email"
@@ -305,7 +306,7 @@
                             </div>
 
                             <button type="submit"
-                                class="form-btn w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
+                                class="form-btn w-full bg-gradient-to-r from-[#10b981] to-[#1ceaa5] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
                                 Sign In
                             </button>
                             
@@ -315,7 +316,7 @@
                             </div>
                             
                             <button type="button" onclick="window.location.href='{{ route('auth') }}'"
-                                class="form-btn w-full bg-gradient-to-r from-[#6889e0] to-[#7494ec] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
+                                class="form-btn w-full bg-gradient-to-r from-[#F4AB24] to-[#FFD249] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
                                 <i class="fa-brands fa-google mr-2"></i> Petra Email Login
                             </button>
                         </form>
@@ -358,7 +359,7 @@
                             </div>
 
                             <button type="submit"
-                                class="form-btn w-full bg-gradient-to-r from-[#6889e0] to-[#7494ec] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                                class="form-btn w-full bg-gradient-to-r  from-[#10b981] to-[#1ceaa5] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
                                 Create Account
                             </button>
                         </form>
@@ -367,14 +368,20 @@
                     <!-- Toggle Box -->
                     <div class="toggle-box absolute w-full h-full">
                         <div class="toggle-panel toggle-left left-0 absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
-                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Hello, Informates</h1>
-                            <p class="mb-8 mt-2 text-base lg:text-lg opacity-90">Don't have an account?<br>Register and start your journey!</p>
-                            <button class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent border-2 border-white rounded-xl hover:bg-white hover:text-[#6889e0] transition duration-300 font-bold text-lg">Get Started</button>
+                            <div class="mb-6 float-animation">
+                                <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo" class="h-20 hidden md:flex">
+                            </div>
+                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Hello, Informate!</h1>
+                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">New to <span class="font-bold cal-sans-regular text-[#fff]">peer <span class="text-[#FFD249]">- to - </span> peer?</span><br>Join and explore our community today!</p>
+                            <button class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Get Started</button>
                         </div>
                         <div class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
-                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Welcome Back</h1>
-                            <p class="mb-8 mt-2 text-base lg:text-lg opacity-90">Already have an account?<br>Login to access your dashboard.</p>
-                            <button class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent border-2 border-white rounded-xl hover:bg-white hover:text-[#6889e0] transition duration-300 font-bold text-lg">Sign In</button>
+                            <div class="mb-6 float-animation">
+                                <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo" class="h-20 hidden md:flex">
+                            </div>
+                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Welcome Back!</h1>
+                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Already part of our community? Sign in to continue your learning journey.</p>
+                            <button class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Sign In</button>
                         </div>
                     </div>
                 </div>
@@ -739,4 +746,4 @@
     });
 </script>
     </body>
-@endsection
+@endsection     

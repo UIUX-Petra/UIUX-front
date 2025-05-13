@@ -76,7 +76,6 @@
             @apply text-amber-500;
         }
 
-        /* Improved accessibility focus styles */
         button:focus-visible, 
         a:focus-visible, 
         input:focus-visible, 
@@ -100,7 +99,7 @@
             background-size: 1000px 100%;
             animation: shimmer 2s infinite linear;
         }
-        /* Mobile-specific improvements */
+
         @media (max-width: 768px) {
             .popular-container {
                 flex-direction: column;
@@ -143,7 +142,7 @@
     @endif
     {{-- @include('utils.background2') --}}
 
-   <!-- Header Section with improved visual appeal -->
+   <!-- Header Section -->
     <div class="w-full bg-transparent rounded-lg p-6 px-8 max-w-7xl mx-auto mt-6 mb-6 flex items-center space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
         <!-- Decorative fire elements -->
         <div class="absolute -right-20 -bottom-28 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(245,158,11,0.15)] to-[rgba(250,204,21,0.15)] blur-2xl"></div>
@@ -246,12 +245,12 @@
                         </div>
 
                         <div class="flex-1 z-10">
-                            <!-- Question Title with improved typography -->
+                            <!-- Question Titl -->
                             <h2 class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[#f59e0b] decoration-2 underline-offset-2">
                                 <a href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
                             </h2>
 
-                            <!-- Question Snippet with better readability -->
+                            <!-- Question Snippet -->
                             <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">{{ \Str::limit($question['question'], 150) }}</p>
                             
                             <!-- Tags and engagement indicator -->
@@ -269,7 +268,7 @@
                     </div>
                 @endforeach
 
-                <!-- Pagination with enhanced styling -->
+                <!-- Pagination-->
                 <div class="pagination-container mt-8">
                     {{ $questions->links() }}
                 </div>
@@ -318,7 +317,6 @@
 
 @section('script')
 <script>
-    // Enhanced theme and interaction handling
     document.addEventListener('DOMContentLoaded', function() {
         // Update interaction icon colors based on theme
         function updateIconColors() {

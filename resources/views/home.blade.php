@@ -55,7 +55,6 @@
             transform: translateY(-5px);
         }
 
-        /* Add these to your existing CSS */
         .stats-item {
             transition: transform 0.2s;
         }
@@ -90,7 +89,6 @@
             --bg-accent-subtle: rgba(128, 237, 153, 0.15);
         }
 
-        /* Create a subtle pattern background */
         .bg-pattern {
             background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
             background-size: 20px 20px;
@@ -100,7 +98,6 @@
             background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E"); 
         }
 
-        /* Improve section headings */
         .section-heading {
             position: relative;
             padding-left: 1rem;
@@ -169,7 +166,6 @@
             animation: savedPulse 0.3s ease-in-out;
         }
 
-        /* Make sure the button doesn't interfere with card click */
         .save-question-btn:focus {
             outline: none;
         }
@@ -188,7 +184,7 @@
     @endif
     {{-- @include('utils.background2') --}}
 
-       <!-- Main content with proper margin for sidebar -->
+       <!-- Main content -->
        <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.2)] to-[rgba(128,237,153,0.2)] blur-2xl"></div>
         <div class="w-full bg-transparent rounded-lg p-6 px-8 max-w-8xl mx-auto my-6 flex flex-col md:flex-row md:items-center md:space-x-6 welcome-container backdrop-blur-sm relative overflow-hidden">
             <!-- Decorative element -->
@@ -232,10 +228,9 @@
             <!-- Loop through questions -->
             @foreach ($questions as $question)
                 <div class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
-                    <!-- Add subtle pattern background -->
                     <div class="absolute inset-0 bg-pattern opacity-5"></div>
                         
-                    <!-- Save button - added to top right -->
+                    <!-- Save button -->
                     <button class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]" data-question-id="{{ $question['id'] }}">
                         <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
                     </button>
@@ -257,12 +252,12 @@
                     </div>
 
                     <div class="flex-1 z-10">
-                        <!-- Question Title with improved typography -->
+                        <!-- Question Title -->
                         <h2 class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-tertiary)] decoration-2 underline-offset-2">
                             <a href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
                         </h2>
 
-                        <!-- Question Snippet with better readability -->
+                        <!-- Question Snippet -->
                         <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">{{ \Str::limit($question['question'], 150) }}</p>
                         
                         <!-- Tags -->
