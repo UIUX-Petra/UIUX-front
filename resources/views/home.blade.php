@@ -134,6 +134,45 @@
             background-size: 1000px 100%;
             animation: shimmer 2s infinite linear;
         }
+
+        /* Add this to your CSS styles */
+
+        /* Save button styles */
+        .save-question-btn {
+            opacity: 0.7;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid var(--border-color);
+        }
+
+        .save-question-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .save-question-btn i {
+            transition: all 0.2s ease;
+        }
+
+        .question-card:hover .save-question-btn {
+            opacity: 1;
+        }
+
+        /* Animation for saved state */
+        @keyframes savedPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .saved-animation i {
+            animation: savedPulse 0.3s ease-in-out;
+        }
+
+        /* Make sure the button doesn't interfere with card click */
+        .save-question-btn:focus {
+            outline: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -195,6 +234,11 @@
                 <div class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
                     <!-- Add subtle pattern background -->
                     <div class="absolute inset-0 bg-pattern opacity-5"></div>
+                        
+                    <!-- Save button - added to top right -->
+                    <button class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]" data-question-id="{{ $question['id'] }}">
+                        <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+                    </button>
                     
                     <!-- Stats Column -->
                     <div class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
@@ -305,13 +349,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-            // Theme toggling with icon change
+        // Theme toggling with icon change
         const themeToggle = document.getElementById('theme-toggle');
         const themeToggleIcon = document.getElementById('theme-toggle-icon');
         const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
         const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
         const themeLogoToggle = document.getElementById('theme-logo');
-        
         
         function updateThemeIcons() {
             const isLightMode = document.documentElement.classList.contains('light-mode');
@@ -458,9 +501,62 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Simulate content loading
     showSkeletonLoaders();
-    window.addEventListener('load', removeSkeletonLoaders);
-});
+        window.addEventListener('load', removeSkeletonLoaders);
+    });
 
+    // Select all save question buttons
+    const saveButtons = document.querySelectorAll('.save-question-btn');
     
+    // Add click event listeners to each button
+    saveButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const questionId = this.getAttribute('data-question-id');
+            const icon = this.querySelector('i');
+            const isSaved = icon.classList.contains('fa-solid');
+            
+            // Toggle the bookmark icon style
+            if (isSaved) {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                icon.style.color = ''; // Reset to default
+            } else {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                
+                // Set color based on theme
+                const isLightMode = document.documentElement.classList.contains('light-mode');
+                icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
+                
+                // Add a brief animation
+                button.classList.add('saved-animation');
+                setTimeout(() => {
+                    button.classList.remove('saved-animation');
+                }, 300);
+            }
+            
+            // Your friend will implement the actual save functionality
+            console.log('Save question:', questionId, !isSaved);
+            
+            // Prevent the click from propagating to the card link
+            return false;
+        });
+
+    });
+
+    // Add this to your updateThemeIcons function to ensure saved bookmarks keep their color
+    function updateSavedIcons() {
+        const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
+        const isLightMode = document.documentElement.classList.contains('light-mode');
+        
+        savedIcons.forEach(icon => {
+            icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
+        });
+    }
+
+    // Call this when theme changes
+    updateSavedIcons();
 </script>
 @endsection

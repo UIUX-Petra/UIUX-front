@@ -436,6 +436,9 @@
                 <a href="{{ route('viewAllTags') }}" class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-tags mr-3 w-5 text-center"></i> Tags
                 </a>
+                <a href="#" class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                    <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
+                </a>
             </nav>
         </div>
         
@@ -517,40 +520,6 @@
                 hamburger.classList.toggle('active');
             });
         }
-        
-        // Theme toggling with icon change
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeToggleIcon = document.getElementById('theme-toggle-icon');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
-        const themeLogoToggle = document.getElementById('theme-logo');
-        
-        
-        function updateThemeIcons() {
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            
-            if (themeToggleIcon) {
-                themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-            
-            if (mobileThemeToggleIcon) {
-                mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-
-            if (themeToggleIcon) {
-                themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-
-            if (themeLogoToggle) {
-                themeLogoToggle.src = isLightMode 
-                    ? "{{ asset('assets/p2p logo.svg') }}" 
-                    : "{{ asset('assets/p2p logo - white.svg') }}"; // Adjust file name/path as needed
-            }
-
-        }
-        
-        // Run on page load and when theme changes
-        updateThemeIcons();
         
         // Watch for theme changes
         const themeObserver = new MutationObserver(function(mutations) {
