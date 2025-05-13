@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layoutNoSidebar')
 
 @section('content')
     @if (session()->has('Error'))

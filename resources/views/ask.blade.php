@@ -9,37 +9,67 @@
             });
         </script>
     @endif
+    
     <style>
         body {
-            top: 0;
-            left: 0;
-            margin: 0;
-            padding: 0;
-            min-width: 100vw;
-            min-height: 100vh;
             font-family: 'Montserrat', sans-serif;
-            background-color: #F4DEB5;
-            background-image:
-                radial-gradient(at 93% 100%, #7494ec 0px, transparent 50%),
-                radial-gradient(at 0% 0%, #633F92 0px, transparent 50%),
-                radial-gradient(at 38% 60%, #fffd44 0px, transparent 50%),
-                radial-gradient(at 100% 0%, #7494ec 0px, transparent 50%),
-                radial-gradient(at 80% 50%, #633F92 0px, transparent 50%),
-                radial-gradient(at 0% 100%, #fffd44 0px, transparent 50%);
-            background-size: 200% 200%;
-            background-repeat: no-repeat;
+            background-color: var(--bg-primary);
             overflow-x: hidden;
-            animation: gradient 30s ease infinite;
+        }
+        .section-container {
+            background-color: transparent;
+            border-radius: 1rem;
+        }
+
+        .section-icon {
+            color: var(--accent-tertiary);
+            font-size: 1.5rem;
+        }
+
+        .form-section {
+            background-color: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 0 0 2px rgba(99, 63, 146, 0.2);
+            outline: none;
         }
 
         #editor {
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: #6366F1 #e5e7eb;
         }
 
         #editor::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         #editor::-webkit-scrollbar-thumb {
@@ -51,125 +81,325 @@
             background-color: #e5e7eb;
         }
 
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
+        .toolbar {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+        }
+
+        .image-upload-button {
+            background: linear-gradient(to right, #38A3A5, #80ED99);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .image-upload-button:hover {
+            background: linear-gradient(to right, #80ED99, #38A3A5);
+            transform: translateY(-2px);
         }
 
         .image-preview-item {
             position: relative;
-            max-width: 200px;
+            width: 150px;
+            height: 150px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
         .image-preview img {
             width: 100%;
-            border-radius: 8px;
+            height: 100%;
+            object-fit: cover;
         }
 
         .delete-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 24px;
+            height: 24px;
             background-color: rgba(255, 0, 0, 0.7);
             color: white;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            padding: 5px;
+            padding: 0;
+            font-size: 12px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
-        .image-upload-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        .delete-btn:hover {
+            background-color: rgba(255, 0, 0, 0.9);
+            transform: scale(1.1);
         }
 
-        .image-upload-button:hover {
-            background-color: #45a049;
+        .tag-section {
+            border-radius: 0.5rem;
         }
 
-        .tab-active {
-            background-color: #633F92;
-            color: white;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
+        .category-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            padding-bottom: 0.25rem;
+            border-bottom: 2px solid var(--accent-tertiary);
         }
 
         .tab-inactive {
-            background-color: white;
-            color: #633F92;
-            border-radius: 5px;
-            border: 1px solid #633F92;
-            padding: 10px 20px;
-            font-size: 14px;
+            background-color: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-active {
+            background: linear-gradient(to right, #38A3A5, #80ED99);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-inactive:hover {
+            background-color: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .submit-button {
+            background: linear-gradient(to right, #38A3A5, #80ED99);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(to right, #80ED99, #38A3A5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #38A3A5, #80ED99);
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .tips-section {
+            background-color: var(--accent-tertiary);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .tips-title {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .tips-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tips-list li {
+            color: var(--text-dark);
+        }
+
+        .tips-list i {
+            color: var(--text-dark);
         }
     </style>
 
     @include('partials.nav')
 
-    <div class="text-gray-900 min-h-screen p-6">
-        <!-- Main Content -->
-        <div class="w-full bg-white rounded-lg p-6 shadow-lg">
-            <h1 class="text-xl text-center font-semibold">Having a difficult time? Ask for help! <i
-                    class="fa-solid fa-graduation-cap"></i></h1>
-            <h1 class="font-bold text-xl">Create a post</h1>
-            <form id="post-form" enctype="multipart/form-data">
-                <div class="mt-5">
-                    <label for="title-input" class="block mb-2 text-sm font-medium text-gray-900">Title</label>
-                    <input type="text" id="title"
-                        class="block w-[50%] p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Insert title here...." required>
+    <div class="max-w-5xl justify-start items-start px-4 py-8">
+        <!-- Page Header Section -->
+        <div class="flex items-center gap-4">
+                <div class="page-title-icon flex items-center justify-center">
+                    <i class="fa-solid fa-question"></i>
                 </div>
-                <div class="mt-5">
-                    <label for="question-input" class="block mb-2 text-sm font-medium text-gray-900">What is the
-                        problem?</label>
-                    <!-- Editor -->
-                    <div
-                        class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
-                        <div class="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
-                            <div
-                                class="flex flex-wrap items-center divide-gray-200 sm:divide-x sm:rtl:divide-x-reverse dark:divide-gray-600">
-                                <!-- Upload Image Button -->
-                                <button type="button" id="upload-image-btn" class="image-upload-button">
-                                    <i class="fa-solid fa-image text-gray-500"></i> Upload Image
-                                </button>
-                            </div>
-                        </div>
-                        <div class="px-4 py-2 bg-white rounded-b-lg dark:bg-gray-800">
-                            <textarea id="question" rows="8"
-                                class="block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
-                                placeholder="Write the details here..." required></textarea>
+                <div>
+                    <h1 class="text-2xl font-bold text-[var(--text-primary)]">Ask a Question</h1>
+                    <p class="text-[var(--text-secondary)]">Share your problem and get help from the community</p>
+                </div>
+            </div>
 
-                            <!-- Image Preview Section -->
-                            <div id="image-preview" class="image-preview">
-                                <!-- Images will be dynamically added here -->
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full">
-                    <h1 class="block mb-2 text-sm font-medium text-gray-900">Tags</h1>
-                    <div class="w-full flex gap-2 flex-wrap">
-                        @foreach ($data as $dat)
-                            <a id="{{ $dat['name'] }}" class="tab-inactive">{{ $dat['name'] }}</a>
-                        @endforeach
-                    </div>
-                </div>
-                <button type="submit" id="submit-btn"
-                    class="mt-10 inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
-                    Publish
-                </button>
-            </form>
+         <!-- Tips Section -->
+        <div class="tips-section p-6 my-8">
+            <div class="tips-title flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>Tips for a Great Question</span>
+            </div>
+            <ul class="tips-list">
+                <li class="flex items-start gap-2 mb-2">
+                    <i class="fa-solid fa-check-circle mt-1"></i>
+                    <span>Be specific and clear about your problem</span>
+                </li>
+                <li class="flex items-start gap-2 mb-2">
+                    <i class="fa-solid fa-check-circle mt-1"></i>
+                    <span>Include relevant code snippets or error messages</span>
+                </li>
+                <li class="flex items-start gap-2 mb-2">
+                    <i class="fa-solid fa-check-circle mt-1"></i>
+                    <span>Explain what you've already tried to solve the problem</span>
+                </li>
+                <li class="flex items-start gap-2 mb-2">
+                    <i class="fa-solid fa-check-circle mt-1"></i>
+                    <span>Select appropriate tags to reach the right audience</span>
+                </li>
+            </ul>
         </div>
+
+        <!-- Main Form Container -->
+        <form id="post-form" enctype="multipart/form-data">
+            <!-- Title Section -->
+            <div class="p-6 mb-6">
+                <div class="flex items-center mb-4">
+                    <i class="fa-solid fa-heading section-icon mr-3"></i>
+                    <h2 class="text-lg font-semibold">Question Title</h2>
+                </div>
+                <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your question quickly</p>
+                <input type="text" id="title" class="input-field p-3" placeholder="What's your question about?" required>
+            </div>
+
+            <!-- Details Section -->
+            <div class="p-6 mb-6">
+                <div class="flex items-center mb-4">
+                    <i class="fa-solid fa-align-left section-icon mr-3"></i>
+                    <h2 class="text-lg font-semibold">Question Details</h2>
+                </div>
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details to help others understand your problem</p>
+                
+                <!-- Editor -->
+                <div id="editor" class="w-full">
+                    <div class="toolbar flex items-center gap-4 p-3">
+                        <button type="button" id="upload-image-btn" class="image-upload-button flex items-center gap-2 py-2 px-4">
+                            <i class="fa-solid fa-image"></i> Add Image
+                        </button>
+                    </div>
+                    <div class="p-4 bg-[var(--bg-secondary)]">
+                        <textarea id="question" rows="8" class="block w-full px-0 text-[var(--text-primary)] bg-transparent border-0 focus:ring-0" placeholder="Describe your question in detail..." required></textarea>
+
+                        <!-- Image Preview Section -->
+                        <div id="image-preview" class="flex flex-wrap gap-4 mt-4 p-2">
+                            <!-- Images will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags Section -->
+            <div class="p-6 mb-6">
+                <div class="flex items-center mb-4">
+                    <i class="fa-solid fa-tags section-icon mr-3"></i>
+                    <h2 class="text-lg font-semibold">Tags</h2>
+                </div>
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to categorize your question and reach the right audience</p>
+                
+                <div class="flex flex-wrap gap-6 mb-6">
+                    <!-- Programming Languages Category -->
+                    <div class="flex-1 min-w-[200px]">
+                        <h3 class="category-title mb-3">Software Development</h3>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($data as $dat)
+                                @if (in_array($dat['name'], [
+                                    'Introduction to Programming', 'Software Engineering', 'Web Development', 'Mobile App Development',
+                                    'Game Development', 'Embedded Systems', 'Smart Devices and Sensors', 'Cloud Application Development',
+                                    'Cloud Computing', 'Cloud Storage and Virtualization', 'Distributed Systems', 'Operating Systems',
+                                    'Computer Networks', 'Advanced Networking', 'Digital Logic Design', 'Computer Graphics', 'Cloud Infrastructure'
+                                ]))
+                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    
+                    <!-- Frameworks Category -->
+                    <div class="flex-1 min-w-[200px]">
+                        <h3 class="category-title mb-3">Data, AI & Analytics</h3>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($data as $dat)
+                                @if (in_array($dat['name'], [
+                                    'Data Structures and Algorithms', 'Database Systems', 'Advanced Database Systems', 'Data Analytics', 'Advanced Data Analytics',
+                                    'Data Science', 'Data Mining', 'Big Data', 'Machine Learning', 'Advanced Machine Learning',
+                                    'Artificial Intelligence', 'Advanced Artificial Intelligence', 'Artificial Neural Networks',
+                                    'Computer Vision', 'Natural Language Processing', 'Business Intelligence', 'Data Warehousing'
+                                ]))
+                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    
+                    <!-- Course Subjects Category -->
+                    <div class="flex-1 min-w-[200px]">
+                        <h3 class="category-title mb-3">Security</h3>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($data as $dat)
+                                @if (in_array($dat['name'], [
+                                    'Cybersecurity', 'Ethical Hacking', 'Cryptography', 'Digital Forensics', 'Web Security', 'AI Ethics',
+                                    'Blockchain Technology', 'Quantum Computing', 'Virtual Reality', 'Smart Cities', 'Internet of Things (IoT)',
+                                    'Computational Biology', 'Robotics'
+                                ]))
+                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                    
+                    <!-- Others Category -->
+                    <div class="flex-1 min-w-[200px]">
+                        <h3 class="category-title mb-3">Others</h3>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($data as $dat)
+                                @if (!in_array($dat['name'], [
+                                    'Introduction to Programming', 'Software Engineering', 'Web Development', 'Mobile App Development',
+                                    'Game Development', 'Embedded Systems', 'Smart Devices and Sensors', 'Cloud Application Development',
+                                    'Cloud Computing', 'Cloud Storage and Virtualization', 'Distributed Systems', 'Operating Systems',
+                                    'Computer Networks', 'Advanced Networking', 'Digital Logic Design', 'Computer Graphics', 'Cloud Infrastructure',
+
+                                    'Data Structures and Algorithms', 'Database Systems', 'Advanced Database Systems', 'Data Analytics', 'Advanced Data Analytics',
+                                    'Data Science', 'Data Mining', 'Big Data', 'Machine Learning', 'Advanced Machine Learning',
+                                    'Artificial Intelligence', 'Advanced Artificial Intelligence', 'Artificial Neural Networks',
+                                    'Computer Vision', 'Natural Language Processing', 'Business Intelligence', 'Data Warehousing',
+
+                                    'Cybersecurity', 'Ethical Hacking', 'Cryptography', 'Digital Forensics', 'Web Security', 'AI Ethics',
+                                    'Blockchain Technology', 'Quantum Computing', 'Virtual Reality', 'Smart Cities', 'Internet of Things (IoT)',
+                                    'Computational Biology', 'Robotics'
+                                ]))
+
+                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button Section -->
+            <div class="text-center">
+                <button type="submit" id="submit-btn" class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
+                    <i class="fa-solid fa-paper-plane"></i> Publish Question
+                </button>
+            </div>
+        </form>
     </div>
 @endsection
 
@@ -183,11 +413,11 @@
 
                 if (selectedTags.includes(tagName)) { // ga jadi pick tag
                     selectedTags = selectedTags.filter(tag => tag !== tagName);
-                    this.className = 'tab-inactive px-4 py-2';
+                    this.className = 'tab-inactive py-2 px-4';
 
                 } else { // pick tag
                     selectedTags.push(tagName);
-                    this.className = 'tab-active px-4 py-2';
+                    this.className = 'tab-active py-2 px-4';
                 }
             });
         });

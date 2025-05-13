@@ -1,227 +1,231 @@
 @extends('layout')
 @section('head')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-@endsection
-@section('content')
-    @include('partials.nav')
-    @include('utils.background4')
     <style>
-        body {
-            /* top: 0;
-                                                                                        left: 0;
-                                                                                        margin: 0;
-                                                                                        padding: 0;
-                                                                                        min-width: 100vw;
-                                                                                        min-height: 100vh;
-                                                                                        font-family: 'Montserrat', sans-serif;
-                                                                                        background-color: #F4DEB5; */
-            background-image:
-                radial-gradient(at 93% 100%, #7494ec 0px, transparent 50%),
-                radial-gradient(at 0% 0%, #633F92 0px, transparent 50%),
-                radial-gradient(at 38% 60%, #7494ec 0px, transparent 50%),
-                radial-gradient(at 100% 0%, #633F92 0px, transparent 50%),
-                radial-gradient(at 80% 50%, #7494ec 0px, transparent 50%),
-                radial-gradient(at 0% 100%, #633F92 0px, transparent 50%);
-            background-size: 200% 200%;
-            /* background-repeat: no-repeat;
-                                                                                        overflow-x: hidden;
-                                                                                        animation: gradient 30s ease infinite;
-                                                                                        z-index:1 ; */
-        }
-
         .hover\:shadow-glow:hover {
             box-shadow: 0 0 10px rgba(255, 223, 0, 0.6), 0 0 20px rgba(255, 223, 0, 0.4);
             transition: box-shadow 0.3s ease-in-out;
         }
+
+        .question-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            transition: box-shadow 0.2s, background-color 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            background-color: var(--bg-card-hover);
+        }
+
+        .interaction-icons i {
+            color: var(--text-muted);
+        }
+
+        .interaction-icons span {
+            color: var(--text-secondary);
+        }
     </style>
-    <div class="max-w-6xl mx-auto px-4 py-8">
-        <!-- Display the question -->
-        <div class="bg-opacity-50 bg-[#633F92] shadow-md p-6 text-white">
-            <div class="flex flex-col">
+@endsection
+@section('content')
+    @include('partials.nav')
+
+    <!-- Main content container -->
+    <div class="max-w-4xl items-start justify-start px-4 py-8">
+        <div class="question-card rounded-lg p-6 mb-6 flex items-start">
+            <div class="interaction-section flex flex-col items-center mr-6">
+                <button id="upVoteQuestion" 
+                    class="mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up">
+                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                </button>
+                
+                <span class="text-lg font-semibold text-[var(--text-secondary)] my-1">
+                    {{ $question['vote'] }}
+                </span>
+                
+                <button id="downVoteQuestion" 
+                    class="mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down">
+                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                </button>
+                
+                <div class="flex flex-col items-center mt-4">
+                    <i class="text-md text-[var(--accent-tertiary)] fa-solid fa-eye"></i>
+                    <small class="text-[var(--text-secondary)] text-xs mt-1">
+                        {{ $question['view'] }}
+                    </small>
+                </div>
+                
+                <div class="flex flex-col items-center mt-4" id="comment-count">
+                    <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
+                        <i class="fa-solid fa-reply text-md"></i>
+                    </button>
+                    <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
+                        {{ $question['comment_count'] }}
+                    </small>
+                </div>
+            </div>
+
+            <!-- Question Content -->
+            <div class="flex flex-col flex-grow">
                 @if ($question['image'])
                     <img src="{{ asset('storage/' . $question['image']) }}" alt="Question Image"
-                        class="w-full max-w-md rounded-lg shadow-md w-[50%] h-[50%] md:w-[30%] md:h-[30%]">
+                        class="w-full max-w-md rounded-lg shadow-md w-[50%] h-[50%] md:w-[30%] md:h-[30%] mb-4">
                 @endif
-                <h1 class="mt-4 text-xl md:text-2xl font-semibold text-white uppercase">{{ $question['title'] }}</h2>
-                    <p class="text-md md:text-lg text-white">
-                        {{ $question['question'] }}
-                    </p>
-                    <div class="text-sm flex items-center space-x-4">
-                        <small class="text-gray-200">{{ $question['view'] }} views</small>
-                        <div class="flex items-center">
-                            <button id="upVoteQuestion"
-                                class="text-white hover:text-[#633F92] focus:outline-none thumbs-up">
-                                <i class="fas fa-thumbs-up"></i>
-                            </button>
-                            <button id="downVoteQuestion"
-                                class="ml-2 text-white hover:text-gray-700 focus:outline-none thumbs-down">
-                                <i class="fas fa-thumbs-down"></i>
-                            </button>
-                            <small class="text-gray-200 ml-2">{{ $question['vote'] }} votes</small>
+                
+                <h1 class="text-xl md:text-2xl font-semibold text-[var(--text-primary)] uppercase">
+                    {{ $question['title'] }}
+                </h1>
+                
+                <p class="text-md md:text-lg text-[var(--text-muted)] mt-2">
+                    {{ $question['question'] }}
+                </p>
 
-
-                        </div>
-                        <div class="flex items-center" id="comment-count">
-                            <button class="text-white hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
-                                <i class="fa-solid fa-reply text-lg"></i>
-                            </button>
-                            <small class="text-gray-200 ml-2 cursor-pointer">
-                                {{ $question['comment_count'] }} comments
-                            </small>
-                        </div>
-
-                    </div>
-
-                    <div class="comment-box hidden mt-2">
-                        <textarea class="w-full bg-gray-100 rounded-lg p-3 text-gray-800 placeholder-gray-400 focus:outline-none" rows="2"
-                            placeholder="Write your comment here!"></textarea>
-                        <button id="answer-comment"
-                            class="mt-4 px-4 py-2 bg-white text-[--purple] rounded-lg border-2 border-[--bblue] transition-all duration-300 font-semibold hover:shadow-glow">
-                            Submit Comment
-                        </button>
-                    </div>
-
-                    <!-- Input for answering -->
-                    <div class="mt-4">
-                        <!-- btn upload img file -->
-                        <button id="upImg-btn" class="flex flex-col space-y-2 mb-4">
-                            <label
-                                class="px-2 py-1 bg-white bg-opacity-50 text-white rounded-lg transition-all hover:bg-white hover:text-[#633F92] cursor-pointer">
-                                <i class="fa-solid fa-file-upload"></i> Upload Images
-                                <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
-                            </label>
-                        </button>
-
-                        <!-- Image previews -->
-                        <div class="image-previews hidden mb-4">
-                            <!-- Dynamically added previews will go here -->
-                        </div>
-
-                        <textarea id="answer-textArea"
-                            class="w-full bg-white bg-opacity-10 rounded-lg p-3 text-white placeholder-white focus:outline-2 focus:outline-yellow-400"
-                            rows="2" placeholder="Write your answer here!"></textarea>
-                        <button id="submitAnswer-btn"
-                            class="mt-2 px-4 py-2 bg-white hover:shadow-glow transition-all hover:font-bold text-[#633F92] font-semibold rounded-lg">
-                            Submit Answer
-                        </button>
-                    </div>
+                <div class="comment-box hidden mt-4">
+                    <textarea class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none" rows="2"
+                        placeholder="Write your comment here!"></textarea>
+                    <button id="answer-comment"
+                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                        Submit Comment
+                    </button>
+                </div>
             </div>
         </div>
-        <!-- Comment section (hidden by default) -->
-        @if ($question['comment_count'] > 0)
-            <div id="comments-section" class="hidden mt-0 p-4 bg-gray-800">
-                <div>
-                    <button
-                        class="comment-btn text-white hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
-                        <i class="fa-solid fa-reply text-lg"></i>
-                        <span>Comment</span>
-                    </button>
-                    <!-- comment input box -->
-                    <div class="comment-box hidden mt-2">
-                        <textarea id="question-comment"
-                            class="w-full bg-gray-100 rounded-lg p-3 text-gray-800 placeholder-gray-400 focus:outline-none" rows="2"
-                            placeholder="Write your comment here!"></textarea>
-                        <button id="qComment-btn"
-                            class="mt-4 px-4 py-2 bg-white text-[--purple] rounded-lg border-2 border-[--bblue] transition-all duration-300 font-semibold hover:shadow-glow">
-                            Submit Comment
-                        </button>
-                    </div>
-                </div>
-                <h3 class="text-white font-semibold">Comments:</h3>
 
-                @foreach ($question['comment'] as $comm)
-                    <div class="comment bg-gray-700 p-4 mb-2 rounded-lg">
-                        {{-- <a href="{{ route('viewUser', ['email' => $comm['user']['email']]) }}"><h2 class="text-white font-semibold hover:underline">{{ $comm['username'] }}</h2></a> --}}
-                        <p class="text-white"> {{ $comm['comment'] }}</p>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <div id="comments-section" class="hidden mt-0 p-4 bg-gray-800">
-                <div>
-                    <button
-                        class="comment-btn text-white hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
-                        <i class="fa-solid fa-reply text-lg"></i>
-                        <span>Comment</span>
+        <!-- Comments Section -->
+        @if ($question['comment_count'] > 0 || true)
+            <div id="comments-section" class="mt-6 p-6 bg-[var(--bg-secondary)] rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)]">
+                        Comments 
+                        <span class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+                    </h3>
+                    
+                    <button class="comment-btn text-[var(--text-primary)] hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
+                        <i class="fa-solid fa-reply text-lg mr-2"></i>
+                        Add Comment
                     </button>
-                    <!-- comment input box -->
-                    <div class="comment-box hidden mt-2">
-                        <textarea id="question-comment"
-                            class="w-full bg-gray-100 rounded-lg p-3 text-gray-800 placeholder-gray-400 focus:outline-none" rows="2"
-                            placeholder="Write your comment here!"></textarea>
-                        <button id="qComment-btn"
-                            class="mt-4 mb-4 px-4 py-2 bg-white text-[--purple] rounded-lg border-2 border-[--bblue] transition-all duration-300 font-semibold hover:shadow-glow">
-                            Submit Comment
-                        </button>
-                    </div>
                 </div>
-                <p class="text-white">There are no comments yet. Be the first to comment!</p>
+
+                <!-- Comment Input Box -->
+                <div class="comment-box hidden mb-4">
+                    <textarea id="question-comment"
+                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none" 
+                        rows="2"
+                        placeholder="Write your comment here!"></textarea>
+                    <button id="qComment-btn"
+                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                        Submit Comment
+                    </button>
+                </div>
+
+                <!-- Comments List -->
+                @if ($question['comment_count'] > 0)
+                    @foreach ($question['comment'] as $comm)
+                        <div class="comment bg-[var(--bg-card)] p-4 mb-2 rounded-lg flex items-start">
+                            <div class="flex flex-col items-center mr-4">
+                                <button class="text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
+                                    <i class="text-sm text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                </button>
+                                <span class="text-xs text-[var(--text-secondary)]">0</span>
+                                <button class="text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
+                                    <i class="text-sm text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                </button>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-[var(--text-primary)] text-center">There are no comments yet. Be the first to comment!</p>
+                @endif
             </div>
         @endif
 
-        {{-- Display the answers --}}
+        <!-- Answer Input Section -->
+        <div class="mt-10">
+            <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-3">Your Answer</h2>
+            <div class="question-card rounded-lg p-6 mb-6 bg-[var(--bg-primary)]">
+                <!-- Image previews -->
+                <div class="image-previews hidden mb-4">
+                    <!-- Dynamically added previews will go here -->
+                </div>
+
+                <textarea id="answer-textArea"
+                    class="w-full bg-[var(--bg-input)] rounded-lg p-4 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-2 focus:outline-yellow-400 min-h-[150px]"
+                    placeholder="Write your detailed answer here..."></textarea>
+
+                <div class="flex justify-between items-center mt-4">
+                    <label 
+                        class="flex items-center px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all hover:bg-opacity-90 cursor-pointer">
+                        <i class="fa-solid fa-file-upload mr-2"></i> 
+                        Upload Images
+                        <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
+                    </label>
+
+                    <button id="submitAnswer-btn"
+                        class="px-6 py-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium rounded-lg 
+                               hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] 
+                               transform hover:scale-105 transition-all duration-200 
+                               flex items-center justify-center">
+                        Submit Answer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Answers Section -->
+
+<div class="mt-10">
+        <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-3">Answers</h2>
         @if ($question['answer'])
             @foreach ($question['answer'] as $ans)
-                <div class="mt-4 answers bg-[--purple] bg-opacity-10 rounded-lg p-6 shadow-lg space-y-6">
+                <div class="mt-4 answers bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg space-y-6 flex items-start">
+                    <div class="interaction-section flex flex-col items-center mr-6">
+                        <button class="upVoteAnswer mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up" data-answer-id="{{ $ans['id'] }}">
+                            <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                        </button>
+                        <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
+                        <button class="downVoteAnswer mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down" data-answer-id="{{ $ans['id'] }}">
+                            <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
 
-                    <div class="answer flex flex-col p-4">
-                        <p class="text-white ">
+                    <div class="flex flex-col flex-grow">
+                        <p class="text-[var(--text-primary)]">
                             {{ $ans['answer'] }}
                         </p>
                         @if ($ans['image'])
-                            <img src="{{ asset('storage/' . $ans['image']) }}" alt="Question Image"
+                            <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
                                 class="w-full max-w-md max-h-64 object-contain mb-4 rounded-lg border">
                         @endif
 
-                        <!-- vote buttons -->
-                        <div class="mt-2 flex items-center space-x-4">
-                            <!-- Comment button -->
-                            <div>
-                                <button
-                                    class="comment-btn text-white hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
-                                    <i class="fa-solid fa-reply text-lg"></i>
-                                    <span>Comment</span>
+                        <div class="mt-4 flex items-center">
+                            <button class="comment-btn text-[var(--text-primary)] hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
+                                <i class="fa-solid fa-reply text-lg mr-2"></i>
+                                Comment
+                            </button>
+                            
+                            <!-- comment input box -->
+                            <div class="comment-box hidden mt-2 w-full ml-4">
+                                <textarea id="answer-comment-{{ $ans['id'] }}"
+                                    class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none" rows="2"
+                                    placeholder="Write your comment here!"></textarea>
+                                <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
+                                    class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                                    Submit Comment
                                 </button>
-                                <!-- comment input box -->
-                                <div class="comment-box hidden mt-2">
-                                    <textarea id="answer-comment-{{ $ans['id'] }}"
-                                        class="w-full bg-gray-100 rounded-lg p-3 text-gray-800 placeholder-gray-400 focus:outline-none" rows="2"
-                                        placeholder="Write your comment here!"></textarea>
-                                    <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
-                                        class="mt-4 px-4 py-2 bg-white text-[--purple] rounded-lg border-2 border-[--bblue] transition-all duration-300 font-semibold hover:shadow-glow">
-                                        Submit Comment
-                                    </button>
-                                </div>
-                            </div>
-                            <!-- Thumbs up -->
-                            <div class="flex items-center space-x-2">
-                                <button class="upVoteAnswer text-white hover:text-[#633F92] focus:outline-none thumbs-up" data-answer-id="{{ $ans['id'] }}"
-                                    class="text-white hover:text-[#633F92] focus:outline-none thumbs-up">
-                                    <i class="fas fa-thumbs-up text-lg"></i>
-                                </button>
-                                <span class="thumbs-up-count text-white font-medium">0</span>
-                            </div>
-                            <!-- Thumbs down -->
-                            <div class="flex items-center space-x-2">
-                                <button class="downVoteAnswer text-white  hover:text-gray-700 focus:outline-none thumbs-down" data-answer-id="{{ $ans['id'] }}"
-                                    class="text-white hover:text-gray-700 focus:outline-none thumbs-down">
-                                    <i class="fas fa-thumbs-down text-lg"></i>
-                                </button>
-                                <span class="thumbs-down-count text-white font-medium">0</span>
                             </div>
                         </div>
-
                     </div>
-                    <hr class="border-t border-gray-300">
-                    {{-- @endforeach --}}
                 </div>
             @endforeach
         @else
-            <div class="mt-4 answers bg-[--purple] bg-opacity-10 rounded-lg p-6 shadow-lg space-y-6 text-white">
+            <div class="mt-4 answers bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg space-y-6 text-[var(--text-primary)] text-center">
                 There are no answers for this question yet. Be the first one to answer!
             </div>
         @endif
-
+    </div>
     </div>
 
     <script>
@@ -234,10 +238,9 @@
                     commentBox.classList.toggle('hidden');
                 });
             });
-
-        
         });
     </script>
+    
     <!-- file upload and preview -->
     <script>
         // Handle image file upload and preview
@@ -257,7 +260,7 @@
                         imgPreview.classList.add('image-preview', 'mb-2');
                         imgPreview.innerHTML = `
                     <img src="${e.target.result}" alt="Image Preview" class="w-full max-w-md rounded-lg shadow-md">
-                    <span class="file-name text-white">${file.name}</span>
+                    <span class="file-name text-[var(--text-primary)]">${file.name}</span>
                 `;
                         imagePreviewsContainer.appendChild(imgPreview);
                     };
@@ -281,6 +284,7 @@
             });
         });
     </script>
+    
     {{-- uploading answer to question in database: --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -343,7 +347,6 @@
             });
         });
     </script>
-
 
     {{-- logic for submitting comment for question --}}
     <script>
