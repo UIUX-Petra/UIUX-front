@@ -39,12 +39,6 @@
 
     {{-- google icon --}}
     <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
-    <link rel="icon" href="{{ asset('assets/p2p logo.svg') }}" type="image/svg+xml">
-
-    {{-- google font --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
 
     {{-- Alphine JS --}}
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
@@ -71,8 +65,6 @@
             --yt-grad: linear-gradient(45deg, #f76161, #dc2626);
             --spotify-grad: linear-gradient(45deg, #1DB954, #191414);
             --tiktok-grad: linear-gradient(45deg, #ff0050, #191414 40%, #191414 60%, #00f2ea);
-
-            --
         }
         @keyframes gradient {
             0% {
@@ -96,6 +88,14 @@
             min-width: 100vw;
             min-height: 100vh;
             font-family: 'Montserrat', sans-serif;
+            /* background-color: #F4DEB5; */
+            background-image:
+                radial-gradient(at 93% 100%, #7494ec 0px, transparent 50%),
+                radial-gradient(at 0% 0%, #633F92 0px, transparent 50%),
+                radial-gradient(at 38% 60%, white 0px, transparent 50%),
+                radial-gradient(at 100% 0%, #7494ec 0px, transparent 50%),
+                radial-gradient(at 80% 50%, #633F92 0px, transparent 50%),
+                radial-gradient(at 0% 100%, white 0px, transparent 50%);
             background-size: 200% 200%;
             background-repeat: no-repeat;
             overflow-x: hidden;
@@ -112,28 +112,28 @@
             font-weight: normal;
             font-style: normal;
         }
-        
          /* Chrome, Edge and Safari */
-        *::-webkit-scrollbar {
+         *::-webkit-scrollbar {
             height: 10px;
             width: 10px;
         }
 
         *::-webkit-scrollbar-track {
-            border-radius: 6px;
-            background-color: #22577A;
+            /* border-radius: 6px; */
+            background-color: #633F92;
         }
 
         *::-webkit-scrollbar-track:hover {
-            background-color: #38A3A5;
+            background-color: #a87ddf;
         }
 
         *::-webkit-scrollbar-track:active {
-            background-color: #57CC99;
+            background-color: #a87ddf;
         }
 
         *::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, transparent, #80ED99);
+            border-radius: 5px;
+            background: linear-gradient(to bottom, transparent, #7494ec);
         }
 
 
@@ -165,252 +165,29 @@
                 background-position: 500%;
             }
         }
-
-        .cal-sans-regular {
-            font-family: "Cal Sans", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-        }
-
-        
-        .main-content {
-            background-color: var(--bg-secondary);
-        }
-        .question-card {
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-
-        }
-
-        .question-card:hover {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-            background-color: var(--bg-card-hover);
-        }
-
-        .question-title {
-            color: var(--accent-primary);
-        }
-
-        /* .question-title:hover {
-            color: var(--text-primary);
-        } */
-
-        .interaction-icons i {
-            color: var(--text-muted);
-        }
-
-        .interaction-icons span {
-            color: var(--text-secondary);
-        }
-
-        /* Additional theme-responsive styles */
-        .bg-wave {
-            position: absolute;
-            width: 100%;
-            min-height: 100vh;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            opacity: 0.5;
-            transition: opacity var(--transition-speed);
-        }
-        
-        .light-mode .bg-wave {
-            opacity: 0.2;
-        }
     </style>
     @yield('style')
-
-    <script>
-        // Check for saved theme preference or use system preference
-        function initTheme() {
-            if (localStorage.getItem('color-theme') === 'light' || 
-                (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: light)').matches)) {
-                document.documentElement.classList.add('light-mode');
-            } else {
-                document.documentElement.classList.add('dark-mode');
-            }
-
-            applyTheme();
-        }
-        
-        // Toggle theme
-        function toggleTheme() {
-            // Toggle theme in localStorage
-            if (localStorage.getItem('color-theme') === 'light') {
-                localStorage.setItem('color-theme', 'dark');
-                document.documentElement.classList.remove('light-mode');
-                document.documentElement.classList.add('dark-mode');
-            } else {
-                localStorage.setItem('color-theme', 'light');
-                document.documentElement.classList.remove('dark-mode');
-                document.documentElement.classList.add('light-mode');
-            }
-            
-            // Apply updated theme
-            applyTheme();
-        }
-        
-        // Apply theme to the page
-        function applyTheme() {
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            
-            // Update the theme toggle button icon
-            const themeToggleIcon = document.getElementById('theme-toggle-icon');
-            if (themeToggleIcon) {
-                themeToggleIcon.classList.remove(isLightMode ? 'fa-sun' : 'fa-moon');
-                themeToggleIcon.classList.add(isLightMode ? 'fa-moon' : 'fa-sun');
-            }
-        }
-        
-        // Run theme initialization when the DOM loads
-        document.addEventListener('DOMContentLoaded', initTheme);
-    </script>
-
-    <!-- Add these CSS variables to your <style> in the head section -->
-    <style>
-        :root {
-            /* Base theme variables (used by both modes) */
-            --transition-speed: 0.3s;
-        }
-        
-        /* Dark mode variables (your current theme) */
-        .dark-mode {
-            /* Background colors */
-            --bg-primary: #1C2245;
-            --bg-secondary: #232753;
-            --bg-tertiary: #32386E;
-            --bg-card: #1c2246;
-            --bg-card-hover: #232753;
-            
-            /* Text colors */
-            --text-primary: #ffffff;
-            --text-secondary: #d0d9ff;
-            --text-muted: #6173bc;
-            
-            
-            /* Accent colors */
-            --accent-primary: #7494ec;
-            --accent-secondary: #23BF7F;
-            --accent-tertiary: #ffd249;
-            
-            /* Border colors */
-            --border-color: rgba(255, 255, 255, 0.1);
-            
-            /* Button colors */
-            --button-primary: linear-gradient(to right, #38A3A5, #80ED99);
-            --button-text: #111111;
-        }
-        
-        /* Light mode variables */
-        .light-mode {
-            /* Background colors */
-            --bg-primary: #f3f6fb;
-            --bg-secondary: #fff;
-            --bg-tertiary: #ffffff;
-            --bg-card: #f6f7ff;
-            --bg-card-hover: #EDF2FB;
-            
-            /* Text colors */
-            --text-primary: #12192c;
-            --text-secondary: #2e406b;
-            --text-muted: #1a2e5c;
-            
-            /* Accent colors */
-            --accent-primary: #5477c8;
-            --accent-secondary: #10b981;
-            --accent-tertiary: #F48024;
-            
-            /* Border colors */
-            --border-color: rgba(0, 0, 0, 0.1);
-            
-            /* Button colors */
-            --button-primary: linear-gradient(to right, #38A3A5, #80ED99);
-            --button-text: #000000;
-        }
-        
-        /* Apply theme variables to elements */
-        body {
-            background: var(--bg-primary);
-            background: linear-gradient(0deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
-            color: var(--text-primary);
-            transition: background var(--transition-speed), color var(--transition-speed);
-        }
-        
-        a, button, div, span, p, h1, h2, h3, h4, h5, h6 {
-            transition: background-color var(--transition-speed), 
-                        color var(--transition-speed), 
-                        border-color var(--transition-speed),
-                        box-shadow var(--transition-speed);
-        }
-        
-        .question-card, .bg-\[\#1c2246\] {
-            background-color: var(--bg-card) !important;
-        }
-        
-        .question-card:hover, .hover\:bg-\[\#232753\]:hover {
-            background-color: var(--bg-card-hover) !important;
-        }
-        
-        .text-white {
-            color: var(--text-primary) !important;
-        }
-        
-        .text-\[\#d0d9ff\] {
-            color: var(--text-secondary) !important;
-        }
-        
-        .text-\[\#909ed5\] {
-            color: var(--text-muted) !important;
-        }
-        
-        .theme-toggle {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            color: var(--text-primary);
-            font-size: 1.25rem;
-            transition: all 0.3s ease;
-        }
-        
-        .theme-toggle:hover {
-            background-color: var(--border-color);
-        }
-        
-        .theme-toggle:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px var(--accent-primary);
-        }
-    </style>
 </head>
-    {{-- @include('partials.nav') --}}
+{{-- @include('partials.nav') --}}
 <body>
-        @yield('content')
-        {{-- Insert <script> CDN below --}}
+    @yield('content')
+    {{-- Insert <script> CDN below --}}
 
-        {{-- TW Elements --}}
-        <script src="https://cdn.jsdelivr.net/npm/tw-elements/js/tw-elements.umd.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/tw-elements.umd.min.js"></script>
+    {{-- TW Elements --}}
+    <script src="https://cdn.jsdelivr.net/npm/tw-elements/js/tw-elements.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/tw-elements.umd.min.js"></script>
 
-        {{-- GSAP, ScrollTrigger --}}
-        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    {{-- GSAP, ScrollTrigger --}}
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 
-        {{-- SwiperJS --}}
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    {{-- SwiperJS --}}
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-        {{-- Datatables --}}
-        <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+    {{-- Datatables --}}
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
 
-        @yield('script')
-    </div>
+    @yield('script')
 </body>
 
 </html>
