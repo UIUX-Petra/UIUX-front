@@ -401,6 +401,7 @@
 </head>
 {{-- @include('partials.nav') --}}
 <body>
+    @include('partials.loader')
     <div class="lg:ml-[20rem] md:ml-64 pt-16 p-4"> 
         @yield('content')
         {{-- Insert <script> CDN below --}}
