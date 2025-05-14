@@ -34,27 +34,27 @@
     <div class="max-w-4xl items-start justify-start px-4 py-8">
         <div class="question-card rounded-lg p-6 mb-6 flex items-start">
             <div class="interaction-section flex flex-col items-center mr-6">
-                <button id="upVoteQuestion" 
+                <button id="upVoteQuestion"
                     class="mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up">
                     <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
                 </button>
-                
-                <span class="text-lg font-semibold text-[var(--text-secondary)] my-1">
+
+                <span id="voteTotal" class="text-lg font-semibold text-[var(--text-secondary)] my-1">
                     {{ $question['vote'] }}
                 </span>
-                
-                <button id="downVoteQuestion" 
+
+                <button id="downVoteQuestion"
                     class="mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down">
                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                 </button>
-                
+
                 <div class="flex flex-col items-center mt-4">
                     <i class="text-md text-[var(--accent-tertiary)] fa-solid fa-eye"></i>
                     <small class="text-[var(--text-secondary)] text-xs mt-1">
                         {{ $question['view'] }}
                     </small>
                 </div>
-                
+
                 <div class="flex flex-col items-center mt-4" id="comment-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
                         <i class="fa-solid fa-reply text-md"></i>
@@ -71,18 +71,19 @@
                     <img src="{{ asset('storage/' . $question['image']) }}" alt="Question Image"
                         class="w-full max-w-md rounded-lg shadow-md w-[50%] h-[50%] md:w-[30%] md:h-[30%] mb-4">
                 @endif
-                
+
                 <h1 class="text-xl md:text-2xl font-semibold text-[var(--text-primary)] uppercase">
                     {{ $question['title'] }}
                 </h1>
-                
+
                 <p class="text-md md:text-lg text-[var(--text-muted)] mt-2">
                     {{ $question['question'] }}
                 </p>
 
                 <div class="comment-box hidden mt-4">
-                    <textarea class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none" rows="2"
-                        placeholder="Write your comment here!"></textarea>
+                    <textarea
+                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
+                        rows="2" placeholder="Write your comment here!"></textarea>
                     <button id="answer-comment"
                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Submit Comment
@@ -96,11 +97,12 @@
             <div id="comments-section" class="mt-6 p-6 bg-[var(--bg-secondary)] rounded-lg">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-[var(--text-primary)]">
-                        Comments 
+                        Comments
                         <span class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
                     </h3>
-                    
-                    <button class="comment-btn text-[var(--text-primary)] hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
+
+                    <button
+                        class="comment-btn text-[var(--text-primary)] hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
                         <i class="fa-solid fa-reply text-lg mr-2"></i>
                         Add Comment
                     </button>
@@ -109,9 +111,8 @@
                 <!-- Comment Input Box -->
                 <div class="comment-box hidden mb-4">
                     <textarea id="question-comment"
-                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none" 
-                        rows="2"
-                        placeholder="Write your comment here!"></textarea>
+                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
+                        rows="2" placeholder="Write your comment here!"></textarea>
                     <button id="qComment-btn"
                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Submit Comment
@@ -123,11 +124,13 @@
                     @foreach ($question['comment'] as $comm)
                         <div class="comment bg-[var(--bg-card)] p-4 mb-2 rounded-lg flex items-start">
                             <div class="flex flex-col items-center mr-4">
-                                <button class="text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
+                                <button
+                                    class="text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
                                     <i class="text-sm text-[#23BF7F] fa-solid fa-chevron-up"></i>
                                 </button>
                                 <span class="text-xs text-[var(--text-secondary)]">0</span>
-                                <button class="text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
+                                <button
+                                    class="text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
                                     <i class="text-sm text-[#FE0081] fa-solid fa-chevron-down"></i>
                                 </button>
                             </div>
@@ -137,7 +140,8 @@
                         </div>
                     @endforeach
                 @else
-                    <p class="text-[var(--text-primary)] text-center">There are no comments yet. Be the first to comment!</p>
+                    <p class="text-[var(--text-primary)] text-center">There are no comments yet. Be the first to comment!
+                    </p>
                 @endif
             </div>
         @endif
@@ -156,9 +160,9 @@
                     placeholder="Write your detailed answer here..."></textarea>
 
                 <div class="flex justify-between items-center mt-4">
-                    <label 
+                    <label
                         class="flex items-center px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all hover:bg-opacity-90 cursor-pointer">
-                        <i class="fa-solid fa-file-upload mr-2"></i> 
+                        <i class="fa-solid fa-file-upload mr-2"></i>
                         Upload Images
                         <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
                     </label>
@@ -176,56 +180,62 @@
 
         <!-- Answers Section -->
 
-<div class="mt-10">
-        <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-3">Answers</h2>
-        @if ($question['answer'])
-            @foreach ($question['answer'] as $ans)
-                <div class="mt-4 answers bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg space-y-6 flex items-start">
-                    <div class="interaction-section flex flex-col items-center mr-6">
-                        <button class="upVoteAnswer mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up" data-answer-id="{{ $ans['id'] }}">
-                            <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
-                        </button>
-                        <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
-                        <button class="downVoteAnswer mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down" data-answer-id="{{ $ans['id'] }}">
-                            <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
-                        </button>
-                    </div>
-
-                    <div class="flex flex-col flex-grow">
-                        <p class="text-[var(--text-primary)]">
-                            {{ $ans['answer'] }}
-                        </p>
-                        @if ($ans['image'])
-                            <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
-                                class="w-full max-w-md max-h-64 object-contain mb-4 rounded-lg border">
-                        @endif
-
-                        <div class="mt-4 flex items-center">
-                            <button class="comment-btn text-[var(--text-primary)] hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
-                                <i class="fa-solid fa-reply text-lg mr-2"></i>
-                                Comment
+        <div class="mt-10">
+            <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-3">Answers</h2>
+            @if ($question['answer'])
+                @foreach ($question['answer'] as $ans)
+                    <div class="mt-4 answers bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg space-y-6 flex items-start">
+                        <div class="interaction-section flex flex-col items-center mr-6">
+                            <button
+                                class="upVoteAnswer mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
+                                data-answer-id="{{ $ans['id'] }}">
+                                <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
                             </button>
-                            
-                            <!-- comment input box -->
-                            <div class="comment-box hidden mt-2 w-full ml-4">
-                                <textarea id="answer-comment-{{ $ans['id'] }}"
-                                    class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none" rows="2"
-                                    placeholder="Write your comment here!"></textarea>
-                                <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
-                                    class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                                    Submit Comment
+                            <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
+                            <button
+                                class="downVoteAnswer mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
+                                data-answer-id="{{ $ans['id'] }}">
+                                <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-col flex-grow">
+                            <p class="text-[var(--text-primary)]">
+                                {{ $ans['answer'] }}
+                            </p>
+                            @if ($ans['image'])
+                                <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
+                                    class="w-full max-w-md max-h-64 object-contain mb-4 rounded-lg border">
+                            @endif
+
+                            <div class="mt-4 flex items-center">
+                                <button
+                                    class="comment-btn text-[var(--text-primary)] hover:text-yellow-100 flex items-center space-x-2 focus:outline-none">
+                                    <i class="fa-solid fa-reply text-lg mr-2"></i>
+                                    Comment
                                 </button>
+
+                                <!-- comment input box -->
+                                <div class="comment-box hidden mt-2 w-full ml-4">
+                                    <textarea id="answer-comment-{{ $ans['id'] }}"
+                                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
+                                        rows="2" placeholder="Write your comment here!"></textarea>
+                                    <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
+                                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                                        Submit Comment
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                @endforeach
+            @else
+                <div
+                    class="mt-4 answers bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg space-y-6 text-[var(--text-primary)] text-center">
+                    There are no answers for this question yet. Be the first one to answer!
                 </div>
-            @endforeach
-        @else
-            <div class="mt-4 answers bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg space-y-6 text-[var(--text-primary)] text-center">
-                There are no answers for this question yet. Be the first one to answer!
-            </div>
-        @endif
-    </div>
+            @endif
+        </div>
     </div>
 
     <script>
@@ -240,7 +250,7 @@
             });
         });
     </script>
-    
+
     <!-- file upload and preview -->
     <script>
         // Handle image file upload and preview
@@ -284,7 +294,7 @@
             });
         });
     </script>
-    
+
     {{-- uploading answer to question in database: --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -497,9 +507,8 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-
-                            const voteCountElement = document.querySelector('.text-gray-200.ml-2');
-                            voteCountElement.textContent = `${data.newVoteCount} votes`;
+                            const voteTotal = document.getElementById('voteTotal');
+                            voteTotal.textContent = `${data.voteUpdated}`;
 
                             Swal.fire({
                                 icon: 'success',
@@ -514,13 +523,13 @@
                             });
                         }
                     })
-                    .catch(error => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Unexpected Error',
-                            text: 'An unexpected error occurred.',
-                        });
-                    });
+                // .catch(error => {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Unexpected Error',
+                //         text: 'An unexpected error occurred.',
+                //     });
+                // });
             };
 
             upVoteButton.addEventListener('click', () => handleVote(true));
@@ -533,7 +542,7 @@
             const downVoteButtons = document.querySelectorAll('.downVoteAnswer');
 
             const handleVote = (voteType, id) => {
-                
+
                 const formData = new FormData();
                 formData.append('vote', voteType);
                 formData.append('answer_id', id);
@@ -552,7 +561,7 @@
                             const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
                                 .nextElementSibling;
                             if (voteCountElement) {
-                                voteCountElement.textContent = `${data.newVoteCount} votes`;
+                                voteCountElement.textContent = `${data.voteAnswerUpdated}`;
                             }
 
                             // Display success message

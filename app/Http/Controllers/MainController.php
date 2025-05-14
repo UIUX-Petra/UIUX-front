@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\UserController;
+use Illuminate\Container\Attributes\Tag;
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\QuestionController;
-use Illuminate\Container\Attributes\Tag;
 
 class MainController extends Controller
 {
@@ -100,6 +101,7 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     // dd($data);
+    Log::info($data['question']);
     return view('viewAnswers', $data);
   }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -237,15 +238,20 @@ class QuestionController extends Controller
     public function vote(Request $request)
     {
         $data['email'] = session('email');
-        if ($request->vote === true) {
+        $vote = filter_var($request->vote, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        if ($vote === true) {
             $api_url = env('API_URL') . '/questions/' . $request->question_id . '/upvote';
         } else {
             $api_url = env('API_URL') . '/questions/' . $request->question_id . '/downvote';
         }
         $response = Http::withToken(session('token'))->post($api_url, $data);
-
         if ($response->successful()) {
-            return response()->json(['success' => true, 'message' => 'Your Vote has been recorded']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Your Vote has been recorded',
+                'voteUpdated' => $response->json()['data']
+            ]);
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
             return response()->json(['success' => false, 'message' => $errorMessage]);
