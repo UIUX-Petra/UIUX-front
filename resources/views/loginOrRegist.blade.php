@@ -102,7 +102,7 @@
             border-radius: 30px;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            /* border: 1px solid rgba(255, 255, 255, 0.2); */
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .input-box input {
