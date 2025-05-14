@@ -59,6 +59,9 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             top: 0;
@@ -86,26 +89,21 @@
         }
         
          /* Chrome, Edge and Safari */
-        *::-webkit-scrollbar {
-            height: 10px;
-            width: 10px;
+        ::-webkit-scrollbar {
+            width: 6px;
         }
 
-        *::-webkit-scrollbar-track {
-            border-radius: 6px;
-            background-color: #22577A;
+        ::-webkit-scrollbar-thumb {
+            background: #f0eff4;
+            border-radius: 8px;
         }
 
-        *::-webkit-scrollbar-track:hover {
-            background-color: #38A3A5;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dbdadf;
         }
 
-        *::-webkit-scrollbar-track:active {
-            background-color: #57CC99;
-        }
-
-        *::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, transparent, #80ED99);
+        ::-webkit-scrollbar-track {
+            background-color: #000000;
         }
 
 
