@@ -52,6 +52,7 @@ class QuestionController extends Controller
         $response = Http::withToken(session('token'))->get($api_url, [
             'page' => $page,
             'per_page' => $per_page_from_request,
+            'email' => session('email'),
         ]);
 
         if ($response->failed()) {
@@ -93,41 +94,66 @@ class QuestionController extends Controller
         return $paginator;
     }
 
-    public function getAllQuestionsByPopularity(Request $request)
+   public function getAllQuestionsByPopularity(Request $request)
     {
-        $api_url = env('API_URL') . '/questions';
-        $response = Http::get($api_url);
-        $response = json_decode($response, true);
-
-        // Get the data (questions)
-        $data = $response['data'];
-
-        // Loop through each question and count comments
-        foreach ($data as &$question) {
-            // If comments is null or not an array, set it to an empty array, otherwise count the array length
-            $question['comments_count'] = (is_array($question['comment']) && $question['comment'] !== null)
-                ? count($question['comment'])
-                : 0;
-        }
-        usort($data, function ($a, $b) {
-            return $b['vote'] <=> $a['vote'];
-        });
+        $api_base_url = env('API_URL');
+        $api_url = $api_base_url . '/questions-paginated';
 
         $page = $request->input('page', 1);
-        $per_page = 10;
-        $offset = ($page - 1) * $per_page;
-        $paginated_data = array_slice($data, $offset, $per_page);
+        $per_page_from_request = $request->input('per_page', 10);
+
+        $queryParams = [
+            'page' => $page,
+            'per_page' => $per_page_from_request,
+            'email' => session('email'),
+        ];
+
+        $response = Http::withToken(session('token'))->get($api_url, $queryParams);
+
+        if ($response->failed()) {
+            Log::error("API request to {$api_url} failed: " . $response->body());
+
+            return new LengthAwarePaginator([], 0, $per_page_from_request, $page, [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]);
+        }
+
+        $apiResponseData = $response->json();
+
+        if (
+            !isset($apiResponseData['success']) || $apiResponseData['success'] !== true ||
+            !isset($apiResponseData['data']) || !is_array($apiResponseData['data']) ||
+            !isset($apiResponseData['data']['data']) ||
+            !isset($apiResponseData['data']['total']) ||
+            !isset($apiResponseData['data']['per_page']) ||
+            !isset($apiResponseData['data']['current_page'])
+        ) {
+            Log::error("API request to {$api_url} did not return a successful and valid paginated structure: " . $response->body());
+            return new LengthAwarePaginator([], 0, $per_page_from_request, $page, [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]);
+        }
+
+        $paginatedApiResponse = $apiResponseData['data'];
+
+        $items = $paginatedApiResponse['data'];
+        $total = $paginatedApiResponse['total'];
+        $perPage = $paginatedApiResponse['per_page'];
+        $currentPage = $paginatedApiResponse['current_page'];
+
         $paginator = new LengthAwarePaginator(
-            $paginated_data,
-            count($data),
-            $per_page,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
+            $items,
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
         );
 
-
-        // dd($data);
-        // Return the updated data
         return $paginator;
     }
 
@@ -140,7 +166,7 @@ class QuestionController extends Controller
         $response = json_decode($response, true);
         $questionData = $response['data'];
 
-        $comments = collect($questionData['comment']); // Apakah currUser masuk/exist di user->comments
+        $comments = collect($questionData['comment']);
         $countcomments = count($comments);
         $questionData['comment_count'] = $countcomments;
         return $questionData;
@@ -249,6 +275,32 @@ class QuestionController extends Controller
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
             return response()->json(['success' => false, 'message' => $errorMessage]);
+        }
+    }
+
+    public function saveQuestion(Request $request)
+    {
+        $api_url = env('API_URL') . '/saveQuestion/' . session('email') . '/' . $request->question_id;
+        $response = Http::withToken(session('token'))->post($api_url);
+
+        if ($response->successful()) {
+            return redirect()->back()->with('success', 'Question saved successfully!');
+        } else {
+            $errorMessage = $response->json()['message'] ?? 'Failed to save question.';
+            return redirect()->back()->with('error', $errorMessage);
+        }
+    }
+
+    public function unsaveQuestion(Request $request)
+    {
+        $api_url = env('API_URL') . '/unsaveQuestion/' . session('email') . '/' . $request->question_id;
+        $response = Http::withToken(session('token'))->post($api_url);
+
+        if ($response->successful()) {
+            return redirect()->back()->with('success', 'Question unsaved successfully!');
+        } else {
+            $errorMessage = $response->json()['message'] ?? 'Failed to save question.';
+            return redirect()->back()->with('error', $errorMessage);
         }
     }
 }

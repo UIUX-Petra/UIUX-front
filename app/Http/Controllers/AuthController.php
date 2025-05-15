@@ -46,7 +46,6 @@ class AuthController extends Controller
             if ($response->failed()) {
                 return redirect()->route('loginOrRegist')->with('Error', 'There was an issue with the login request.');
             }
-
             $responseData = $response->json();
             $storedUser = $responseData['data'];
             if (!isset($storedUser['email'], $storedUser['name'], $storedUser['token'])) {
@@ -143,7 +142,7 @@ class AuthController extends Controller
         ]);
         Log::info($response);
         if ($response->failed()) {
-            return redirect()->route('loginOrRegist')->with('Error', 'There was an issue with the login request.');
+            return redirect()->route('loginOrRegist')->with('Error', $response['message']);
         }
 
         $responseData = $response->json();

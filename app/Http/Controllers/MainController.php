@@ -29,7 +29,6 @@ class MainController extends Controller
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestions($request);
     $data['questions'] = $questions;
-    // dd($data);]
     return view('home', $data);
   }
   public function askPage()
@@ -51,7 +50,6 @@ class MainController extends Controller
     $followers = collect($currUser['followers']);
     $countFollowers = count($followers);
     $data['countFollowers'] = $countFollowers;
-    $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     return view('profile', $data);
   }
@@ -62,7 +60,6 @@ class MainController extends Controller
     $email = session('email');
     $currUser = $this->userController->getUserByEmail($email);
     $data['user'] = $currUser;
-    $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     return view('editProfile', $data);
   }
@@ -75,8 +72,7 @@ class MainController extends Controller
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestionsByPopularity($request);
     $data['questions'] = $questions;
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
+    $data['image'] = $user['image'];
     // dd($data);
     return view('popular', $data);
   }

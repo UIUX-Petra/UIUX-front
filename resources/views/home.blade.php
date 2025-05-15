@@ -7,9 +7,11 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .main-content {
             background-color: var(--bg-secondary);
         }
+
         .question-card {
             border: 1px solid var(--border-color);
             background-color: var(--bg-card);
@@ -37,7 +39,7 @@
             color: var(--text-secondary);
         }
 
-        
+
         .welcome-container {
             background-color: var(--bg-card);
             border-radius: 1rem;
@@ -95,7 +97,7 @@
         }
 
         .light-mode .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E"); 
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
         }
 
         .section-heading {
@@ -121,6 +123,7 @@
             0% {
                 background-position: -1000px 0;
             }
+
             100% {
                 background-position: 1000px 0;
             }
@@ -157,9 +160,17 @@
 
         /* Animation for saved state */
         @keyframes savedPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .saved-animation i {
@@ -172,7 +183,7 @@
     </style>
 @endsection
 @section('content')
-@include('partials.nav')
+    @include('partials.nav')
     @if (session()->has('Error'))
         <script>
             Swal.fire({
@@ -184,101 +195,142 @@
     @endif
     {{-- @include('utils.background2') --}}
 
-       <!-- Main content -->
-       <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.2)] to-[rgba(128,237,153,0.2)] blur-2xl"></div>
-        <div class="w-full bg-transparent rounded-lg p-6 px-8 max-w-8xl mx-auto my-6 flex flex-col md:flex-row md:items-center md:space-x-6 welcome-container backdrop-blur-sm relative overflow-hidden">
-            <!-- Decorative element -->
-            <div class="text-5xl hidden md:flex z-10">
-                <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo" class="h-12 lg:h-14 w-auto theme-logo">
-            </div>
-            
-            <div class="flex flex-col z-10">
-                @if (session()->has('email'))
-                    <h1 class="cal-sans-regular welcome lg:text-4xl text-2xl mb-2 font-bold">
-                        Welcome, {{ $username }}!
-                    </h1>
-                    <p class="text-[var(--text-muted)] text-lg pl-0.5 leading-relaxed max-w-xl">
-                        Ask questions, share answers, and learn together with fellow Petranesian Informates.
-                    </p>
-                    <!-- Stats summary -->
-                    <div class="flex space-x-6 mt-4 text-sm">
-                        <div class="flex items-center">
-                            <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
-                            <span>23 Questions</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fa-solid fa-comment mr-2 text-[var(--accent-secondary)]"></i>
-                            <span>42 Answers</span>
-                        </div>
-                    </div>
-                @endif
-                <a href="{{ route('askPage') }}" class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} md:hidden flex mt-5 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium text-[0.85rem] p-2.5 rounded-lg items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
-                    <i class="fa-solid fa-question-circle mr-2"></i> Ask a Question
-                </a>
-            </div>
+    <!-- Main content -->
+    <div
+        class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.2)] to-[rgba(128,237,153,0.2)] blur-2xl">
+    </div>
+    <div
+        class="w-full bg-transparent rounded-lg p-6 px-8 max-w-8xl mx-auto my-6 flex flex-col md:flex-row md:items-center md:space-x-6 welcome-container backdrop-blur-sm relative overflow-hidden">
+        <!-- Decorative element -->
+        <div class="text-5xl hidden md:flex z-10">
+            <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo"
+                class="h-12 lg:h-14 w-auto theme-logo">
         </div>
-    
+
+        <div class="flex flex-col z-10">
+            @if (session()->has('email'))
+                <h1 class="cal-sans-regular welcome lg:text-4xl text-2xl mb-2 font-bold">
+                    Welcome, {{ $username }}!
+                </h1>
+                <p class="text-[var(--text-muted)] text-lg pl-0.5 leading-relaxed max-w-xl">
+                    Ask questions, share answers, and learn together with fellow Petranesian Informates.
+                </p>
+                <!-- Stats summary -->
+                <div class="flex space-x-6 mt-4 text-sm">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
+                        <span>23 Questions</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-comment mr-2 text-[var(--accent-secondary)]"></i>
+                        <span>42 Answers</span>
+                    </div>
+                </div>
+            @endif
+            <a href="{{ route('askPage') }}"
+                class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} md:hidden flex mt-5 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium text-[0.85rem] p-2.5 rounded-lg items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+                <i class="fa-solid fa-question-circle mr-2"></i> Ask a Question
+            </a>
+        </div>
+    </div>
+
 
     <h3 class="cal-sans-regular lg:text-xl text-lg pl-12 mt-10 mb-4">Newest Questions</h3>
-    
+
     <!-- Questions and Ask Question Section -->
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
-        <!-- Questions Section -->
         <div class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
             <!-- Loop through questions -->
             @foreach ($questions as $question)
-                <div class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
+                <div
+                    class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
                     <div class="absolute inset-0 bg-pattern opacity-5"></div>
-                        
-                    <!-- Save button -->
-                    <button class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]" data-question-id="{{ $question['id'] }}">
-                        <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
-                    </button>
-                    
+
+                    {{-- Use array access for 'is_saved_by_request_user' --}}
+                    @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
+                        <form action="{{ route('unsaveQuestion') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="question_id" value="{{ $question['id'] }}">
+                            <button type="submit"
+                                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                                data-question-id="{{ $question['id'] }}" title="Unsave Question">
+                                <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('saveQuestion') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="question_id" value="{{ $question['id'] }}">
+                            <button type="submit"
+                                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                                data-question-id="{{ $question['id'] }}" title="Save Question">
+                                <i
+                                    class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+                            </button>
+                        </form>
+                    @endif
+
                     <!-- Stats Column -->
-                    <div class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
+                    <div
+                        class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
                         <div class="stats-item flex flex-col items-center">
                             <i class="text-lg fa-regular fa-thumbs-up"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['vote'] }}</span>
+                            <span class="text-sm font-medium mt-1">{{ $question['vote'] ?? 0 }}</span>
                         </div>
                         <div class="stats-item flex flex-col items-center">
                             <i class="text-lg fa-solid fa-eye"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['view'] }}</span>
+                            <span class="text-sm font-medium mt-1">{{ $question['view'] ?? 0 }}</span>
                         </div>
                         <div class="stats-item flex flex-col items-center">
                             <i class="text-lg fa-regular fa-comment"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['comments_count'] }}</span>
+                            {{-- 'comments_count' is added by withCount and will be in the array --}}
+                            <span class="text-sm font-medium mt-1">{{ $question['comments_count'] ?? 0 }}</span>
                         </div>
                     </div>
 
                     <div class="flex-1 z-10">
                         <!-- Question Title -->
-                        <h2 class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-tertiary)] decoration-2 underline-offset-2">
-                            <a href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
+                        <h2
+                            class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-tertiary)] decoration-2 underline-offset-2">
+                            <a
+                                href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
                         </h2>
 
                         <!-- Question Snippet -->
-                        <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">{{ \Str::limit($question['question'], 150) }}</p>
-                        
+                        <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
+                            {{ \Str::limit($question['question'], 150) }}</p>
+
                         <!-- Tags -->
                         <div class="flex mt-3 flex-wrap gap-1">
-                            <span class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">tag1</span>
-                            <span class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">tag2</span>
+                            @foreach ($question['group_question'] as $tag)
+                                <span
+                                    class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
+                            @endforeach
                         </div>
                     </div>
                 </div>
             @endforeach
 
             <!-- Pagination -->
-            {{ $questions->links() }}
+            {{-- $questions->links() will still work if $questions is a Paginator instance whose items are arrays --}}
+            @if ($questions->hasPages())
+                <div class="mt-6">
+                    {{ $questions->links() }}
+                </div>
+            @endif
         </div>
 
         <div class="w-72 mt-6 ml-6 hidden md:flex sticky top-24 h-fit">
-            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+            <div
+                class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
                 <!-- Decorative elements -->
-                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
-                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
-                
+                <div
+                    class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
+                </div>
+                <div
+                    class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]">
+                </div>
+
                 <div class="flex flex-col items-center text-center relative z-10">
                     <div class="mb-5 bg-[var(--bg-accent-subtle)] p-3 rounded-full">
                         <i class="fa-solid fa-lightbulb text-3xl text-[var(--accent-tertiary)]"></i>
@@ -289,22 +341,27 @@
                     <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
                         Connect with fellow Petranesian Informates and get insights from your peers!
                     </p>
-                    
-                    <a href="{{ route('askPage') }}" class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+
+                    <a href="{{ route('askPage') }}"
+                        class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
                         <i class="fa-solid fa-plus mr-2"></i> Ask a Question
                     </a>
-                    
+
                     <!-- Quick links -->
                     <div class="w-full mt-5 pt-5 border-t border-[var(--border-color)]">
                         <h3 class="font-medium mb-3 text-sm">Quick Links</h3>
                         <ul class="space-y-2 text-left">
                             <li class="flex items-center text-sm">
                                 <i class="fa-solid fa-fire-flame-curved mr-2 text-amber-500"></i>
-                                <a href="#" class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Popular Questions</a>
+                                <a href="#"
+                                    class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Popular
+                                    Questions</a>
                             </li>
                             <li class="flex items-center text-sm">
                                 <i class="fa-solid fa-star mr-2 text-yellow-500"></i>
-                                <a href="#" class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Unanswered Questions</a>
+                                <a href="#"
+                                    class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Unanswered
+                                    Questions</a>
                             </li>
                         </ul>
                     </div>
@@ -315,156 +372,160 @@
 @endsection
 
 @section('script')
-<script>
- // Enhanced theme and interactions
-document.addEventListener('DOMContentLoaded', function() {
-    // Update interaction icon colors based on theme
-    function updateIconColors() {
-        const statsItems = document.querySelectorAll('.stats-item');
-        const isLightMode = document.documentElement.classList.contains('light-mode');
-        
-        if (statsItems) {
-            statsItems.forEach((item, index) => {
-                const icon = item.querySelector('i');
-                if (!icon) return;
-                
-                // First icon (thumbs up) - green
-                if (index % 3 === 0) {
-                    icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
-                }
-                // Second icon (eye) - amber/yellow
-                else if (index % 3 === 1) {
-                    icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
-                }
-                // Third icon (comment) - blue/purple
-                else {
-                    icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
-                }
-            });
-        }
-    }
+    <script>
+        // Enhanced theme and interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update interaction icon colors based on theme
+            function updateIconColors() {
+                const statsItems = document.querySelectorAll('.stats-item');
+                const isLightMode = document.documentElement.classList.contains('light-mode');
 
-        // Theme toggling with icon change
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeToggleIcon = document.getElementById('theme-toggle-icon');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
-        const themeLogoToggle = document.getElementById('theme-logo');
-        
-        function updateThemeIcons() {
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            
-            if (themeToggleIcon) {
-                themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-            
-            if (mobileThemeToggleIcon) {
-                mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                if (statsItems) {
+                    statsItems.forEach((item, index) => {
+                        const icon = item.querySelector('i');
+                        if (!icon) return;
+
+                        // First icon (thumbs up) - green
+                        if (index % 3 === 0) {
+                            icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
+                        }
+                        // Second icon (eye) - amber/yellow
+                        else if (index % 3 === 1) {
+                            icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
+                        }
+                        // Third icon (comment) - blue/purple
+                        else {
+                            icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
+                        }
+                    });
+                }
             }
 
-            if (themeToggleIcon) {
-                themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            // Theme toggling with icon change
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggleIcon = document.getElementById('theme-toggle-icon');
+            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
+            const themeLogoToggle = document.getElementById('theme-logo');
+
+            function updateThemeIcons() {
+                const isLightMode = document.documentElement.classList.contains('light-mode');
+
+                if (themeToggleIcon) {
+                    themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                }
+
+                if (mobileThemeToggleIcon) {
+                    mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                }
+
+                if (themeToggleIcon) {
+                    themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                }
+
+                if (themeLogoToggle) {
+                    themeLogoToggle.src = isLightMode ?
+                        "{{ asset('assets/p2p logo.svg') }}" :
+                        "{{ asset('assets/p2p logo - white.svg') }}";
+                }
+
             }
 
-            if (themeLogoToggle) {
-                themeLogoToggle.src = isLightMode 
-                    ? "{{ asset('assets/p2p logo.svg') }}" 
-                    : "{{ asset('assets/p2p logo - white.svg') }}";
-            }
+            // Run on page load and when theme changes
+            updateThemeIcons();
 
-        }
-        
-        // Run on page load and when theme changes
-        updateThemeIcons();
-        
-        // Watch for theme changes
-        const themeObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.attributeName === 'class') {
-                    updateThemeIcons();
-                }
-            });
-        });
-        
-        themeObserver.observe(document.documentElement, { attributes: true });
-        
-        // Ensure both theme toggles work
-        if (mobileThemeToggle) {
-            mobileThemeToggle.addEventListener('click', function() {
-                if (typeof toggleTheme === 'function') {
-                    toggleTheme();
-                }
-            });
-        }
-    
-    function lazyLoadImages() {
-        const lazyImages = document.querySelectorAll('.lazy-image');
-        
-        if ("IntersectionObserver" in window) {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const image = entry.target;
-                        image.src = image.dataset.src;
-                        image.classList.remove("lazy-image");
-                        imageObserver.unobserve(image);
+            // Watch for theme changes
+            const themeObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        updateThemeIcons();
                     }
                 });
             });
-            
-            lazyImages.forEach(image => {
-                imageObserver.observe(image);
+
+            themeObserver.observe(document.documentElement, {
+                attributes: true
             });
-        } else {
-            // Fallback for browsers without IntersectionObserver
-            lazyImages.forEach(image => {
-                image.src = image.dataset.src;
-                image.classList.remove("lazy-image");
-            });
-        }
-    }
-    
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 100,
-                    behavior: 'smooth'
+
+            // Ensure both theme toggles work
+            if (mobileThemeToggle) {
+                mobileThemeToggle.addEventListener('click', function() {
+                    if (typeof toggleTheme === 'function') {
+                        toggleTheme();
+                    }
                 });
             }
-        });
-    });
-    
-    updateIconColors();
-    lazyLoadImages();
-    
-    // Watch for theme changes
-    const themeObserver = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.attributeName === 'class') {
-                updateIconColors();
+
+            function lazyLoadImages() {
+                const lazyImages = document.querySelectorAll('.lazy-image');
+
+                if ("IntersectionObserver" in window) {
+                    const imageObserver = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const image = entry.target;
+                                image.src = image.dataset.src;
+                                image.classList.remove("lazy-image");
+                                imageObserver.unobserve(image);
+                            }
+                        });
+                    });
+
+                    lazyImages.forEach(image => {
+                        imageObserver.observe(image);
+                    });
+                } else {
+                    // Fallback for browsers without IntersectionObserver
+                    lazyImages.forEach(image => {
+                        image.src = image.dataset.src;
+                        image.classList.remove("lazy-image");
+                    });
+                }
             }
-        });
-    });
-    
-    themeObserver.observe(document.documentElement, { attributes: true });
-    
-    function showSkeletonLoaders() {
-        const questionContainer = document.querySelector('.question-container');
-        if (!questionContainer) return;
-        
-        const questionCards = questionContainer.querySelectorAll('.question-card');
-        
-        if (questionCards.length === 0) {
-            for (let i = 0; i < 3; i++) {
-                const skeletonCard = document.createElement('div');
-                skeletonCard.className = 'question-card skeleton rounded-lg mb-4 p-5 flex';
-                skeletonCard.innerHTML = `
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            updateIconColors();
+            lazyLoadImages();
+
+            // Watch for theme changes
+            const themeObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        updateIconColors();
+                    }
+                });
+            });
+
+            themeObserver.observe(document.documentElement, {
+                attributes: true
+            });
+
+            function showSkeletonLoaders() {
+                const questionContainer = document.querySelector('.question-container');
+                if (!questionContainer) return;
+
+                const questionCards = questionContainer.querySelectorAll('.question-card');
+
+                if (questionCards.length === 0) {
+                    for (let i = 0; i < 3; i++) {
+                        const skeletonCard = document.createElement('div');
+                        skeletonCard.className = 'question-card skeleton rounded-lg mb-4 p-5 flex';
+                        skeletonCard.innerHTML = `
                     <div class="flex flex-col items-center mr-4 space-y-3 px-3 border-r border-[var(--border-color)]">
                         <div class="w-8 h-8 rounded-full bg-gray-300"></div>
                         <div class="w-8 h-8 rounded-full bg-gray-300"></div>
@@ -476,66 +537,66 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="h-4 bg-gray-200 rounded w-2/3"></div>
                     </div>
                 `;
-                questionContainer.appendChild(skeletonCard);
+                        questionContainer.appendChild(skeletonCard);
+                    }
+                }
             }
-        }
-    }
-    
-    function removeSkeletonLoaders() {
-        const skeletons = document.querySelectorAll('.skeleton');
-        skeletons.forEach(skeleton => {
-            skeleton.classList.remove('skeleton');
-        });
-    }
-    
-    showSkeletonLoaders();
-        window.addEventListener('load', removeSkeletonLoaders);
-    });
 
-    const saveButtons = document.querySelectorAll('.save-question-btn');
-    
-    saveButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const questionId = this.getAttribute('data-question-id');
-            const icon = this.querySelector('i');
-            const isSaved = icon.classList.contains('fa-solid');
-            
-            if (isSaved) {
-                icon.classList.remove('fa-solid');
-                icon.classList.add('fa-regular');
-                icon.style.color = '';
-            } else {
-                icon.classList.remove('fa-regular');
-                icon.classList.add('fa-solid');
-                
-                const isLightMode = document.documentElement.classList.contains('light-mode');
+            function removeSkeletonLoaders() {
+                const skeletons = document.querySelectorAll('.skeleton');
+                skeletons.forEach(skeleton => {
+                    skeleton.classList.remove('skeleton');
+                });
+            }
+
+            showSkeletonLoaders();
+            window.addEventListener('load', removeSkeletonLoaders);
+        });
+
+        const saveButtons = document.querySelectorAll('.save-question-btn');
+
+        saveButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const questionId = this.getAttribute('data-question-id');
+                const icon = this.querySelector('i');
+                const isSaved = icon.classList.contains('fa-solid');
+
+                if (isSaved) {
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular');
+                    icon.style.color = '';
+                } else {
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid');
+
+                    const isLightMode = document.documentElement.classList.contains('light-mode');
+                    icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
+
+                    button.classList.add('saved-animation');
+                    setTimeout(() => {
+                        button.classList.remove('saved-animation');
+                    }, 300);
+                }
+
+                console.log('Save question:', questionId, !isSaved);
+
+                return false;
+            });
+
+        });
+
+        function updateSavedIcons() {
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+
+            savedIcons.forEach(icon => {
                 icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
-                
-                button.classList.add('saved-animation');
-                setTimeout(() => {
-                    button.classList.remove('saved-animation');
-                }, 300);
-            }
-            
-            console.log('Save question:', questionId, !isSaved);
-            
-            return false;
-        });
+            });
+        }
 
-    });
-
-    function updateSavedIcons() {
-        const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
-        const isLightMode = document.documentElement.classList.contains('light-mode');
-        
-        savedIcons.forEach(icon => {
-            icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
-        });
-    }
-
-    updateSavedIcons();
-</script>
+        updateSavedIcons();
+    </script>
 @endsection
