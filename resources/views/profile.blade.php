@@ -219,22 +219,12 @@
                         <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a>
                     </div>
                     <ul class="space-y-3">
-                        <li class="flex justify-between items-center tag-score p-1">
-                            <span class="text-[var(--text-secondary)]">angular</span>
-                            <span class="text-[var(--text-secondary)] font-medium">1,850</span>
-                        </li>
-                        <li class="flex justify-between items-center tag-score p-1">
-                            <span class="text-[var(--text-secondary)]">javascript</span>
-                            <span class="text-[var(--text-secondary)] font-medium">631</span>
-                        </li>
-                        <li class="flex justify-between items-center tag-score p-1">
-                            <span class="text-[var(--text-secondary)]">typescript</span>
-                            <span class="text-[var(--text-secondary)] font-medium">483</span>
-                        </li>
-                        <li class="flex justify-between items-center tag-score p-1">
-                            <span class="text-[var(--text-secondary)]">css</span>
-                            <span class="text-[var(--text-secondary)] font-medium">467</span>
-                        </li>
+                        @foreach ($currUser['top_subjects'] as $subjectName => $subjectCount)
+                            <li class="flex justify-between items-center tag-score p-1">
+                                <span class="text-[var(--text-secondary)]">{{ $subjectName }}</span>
+                                <span class="text-[var(--text-secondary)] font-medium">{{ $subjectCount }}</span>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>

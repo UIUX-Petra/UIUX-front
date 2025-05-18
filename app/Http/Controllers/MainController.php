@@ -50,19 +50,23 @@ class MainController extends Controller
   {
     $data['title'] = 'My Profile';
     $email = session('email');
-
-    // $currUser = $this->userController->getUserByEmail($email);
-    // $followers = collect($currUser['followers']);
-    // $countFollowers = count($followers);
-    // $data['countFollowers'] = $countFollowers;
     $currUser = $this->userController->getUserByEmail($email);
     $data['currUser'] = $currUser;
-
-    // $tags = $this->userController->getTags($email);
-    // $data['tags'] = $tags;
+    // dd($data);
     $data['image'] = $currUser['image'];
-    dd($data);
     return view('profile', $data);
+  }
+
+  public function viewUser(string $email)
+  {
+    $userViewed = $this->userController->getUserFollowers($email);
+    $currUser = $this->userController->getUserByEmail(session('email'));
+    $data['image'] = $currUser['image'];
+    $data['title'] = 'PROFILE | ' . $userViewed['user']['username'];
+    $data['userViewed'] = $userViewed['user'];
+    $data['image'] = $currUser['image'];
+    // dd($data);
+    return view('otherProfiles', $data);
   }
 
   public function editProfile()
@@ -94,10 +98,8 @@ class MainController extends Controller
     dd($data['user']);
     return view('userFollowers', $data);
   }
-  
-  public function userTags($email){
 
-  }
+  public function userTags($email) {}
   public function popular(Request $request)
   {
     $email = session('email');
@@ -111,16 +113,7 @@ class MainController extends Controller
     // dd($data);
     return view('popular', $data);
   }
-  public function viewUser(string $email)
-  {
-    $data = $this->userController->getUserFollowers($email);
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
-    $data['title'] = 'PROFILE | ' . $data['user']['username'];
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
-    return view('otherProfiles', $data);
-  }
+
   // hrse terima param id question, nih aku cuman mau coba view
   public function viewAnswers($questionId)
   {

@@ -84,8 +84,6 @@ class UserController extends Controller
         ];
     }
 
-
-
     public function getUserByEmail($email)
     {
         $api_url = env('API_URL') . '/users/get/' . $email;
@@ -97,40 +95,94 @@ class UserController extends Controller
         }
 
         $responseData = json_decode($response->body(), true);
-        // dd($responseData['data']);
 
         if (isset($responseData['data']) && is_array($responseData['data'])) {
-            $userData = $responseData['data'];
+            $originalUserData = $responseData['data'];
             $questionCount = 0;
             $answerCount = 0;
             $followerCount = 0;
             $followingCount = 0;
-            if (isset($userData['question']) && is_array($userData['question'])) {
-                $questionCount = count($userData['question']);
-            }
-            if (isset($userData['answer']) && is_array($userData['answer'])) {
-                $answerCount = count($userData['answer']);
+            $subjectCount = []; //store subject name counts
+
+            // Hitung subject punya questions
+            if (isset($originalUserData['question']) && is_array($originalUserData['question'])) {
+                $questionCount = count($originalUserData['question']);
+                foreach ($originalUserData['question'] as $questionItem) { // Ganti nama variabel agar tidak bentrok
+                    if (isset($questionItem['group_question']) && is_array($questionItem['group_question'])) {
+                        foreach ($questionItem['group_question'] as $group) {
+                            if (isset($group['subject']) && is_array($group['subject']) && isset($group['subject']['name'])) {
+                                $subjectName = $group['subject']['name'];
+                                if (isset($subjectCount[$subjectName])) {
+                                    $subjectCount[$subjectName]++;
+                                } else {
+                                    $subjectCount[$subjectName] = 1;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            if (isset($userData['followers']) && is_array($userData['followers'])) {
-                $followerCount = count($userData['followers']);
-            }
-            if (isset($userData['following']) && is_array($userData['following'])) {
-                $followingCount = count($userData['followers']);
+            // Hitung subject punya answers
+            if (isset($originalUserData['answer']) && is_array($originalUserData['answer'])) {
+                $answerCount = count($originalUserData['answer']);
+                foreach ($originalUserData['answer'] as $answerItem) { // Ganti nama variabel
+                    if (isset($answerItem['question']) && is_array($answerItem['question'])) {
+                        if (isset($answerItem['question']['group_question']) && is_array($answerItem['question']['group_question'])) {
+                            foreach ($answerItem['question']['group_question'] as $group) {
+                                if (isset($group['subject']) && is_array($group['subject']) && isset($group['subject']['name'])) {
+                                    $subjectName = $group['subject']['name'];
+                                    if (isset($subjectCount[$subjectName])) {
+                                        $subjectCount[$subjectName]++;
+                                    } else {
+                                        $subjectCount[$subjectName] = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            $userData['questions_count'] = $questionCount;
-            $userData['answers_count'] = $answerCount;
-            $userData['followers_count'] = $followerCount;
-            $userData['followings_count'] = $followingCount;
-            // dd($userData);
-            return $userData;
+            if (isset($originalUserData['followers']) && is_array($originalUserData['followers'])) {
+                $followerCount = count($originalUserData['followers']);
+            }
+
+            if (isset($originalUserData['following']) && is_array($originalUserData['following'])) {
+                $followingCount = count($originalUserData['following']);
+            }
+
+            $topSubjectsData = [];
+            if (!empty($subjectCount)) {
+                arsort($subjectCount); //urutin top down
+                $topSubjectsData = $subjectCount;
+            }
+
+            // Membangun array hasil yang difilter
+            $filteredUserData = [
+                'id' => $originalUserData['id'] ?? null,
+                'username' => $originalUserData['username'] ?? null,
+                'email' => $originalUserData['email'] ?? null,
+                'image' => $originalUserData['image'] ?? null,
+                'biodata' => $originalUserData['biodata'] ?? null,
+                'reputation' => $originalUserData['reputation'] ?? 0, // Default ke 0 jika tidak ada
+                'user_achievement' => $originalUserData['user_achievement'] ?? [],
+                'followers' => $originalUserData['followers'] ?? [],
+                // 'question' => $originalUserData['question'] ?? [], 
+                'top_subjects' => $topSubjectsData,
+                'questions_count' => $questionCount,
+                'answers_count' => $answerCount,
+                'followers_count' => $followerCount,
+                'followings_count' => $followingCount,
+            ];
+
+            // dd($filteredUserData); 
+            return $filteredUserData;
         } else {
-            Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", $responseData);
+            Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", (array)$responseData);
             return null;
         }
     }
-
 
     public function showUserQuestionsPage($userId)
     {
@@ -159,7 +211,7 @@ class UserController extends Controller
         $user = $this->getUserByEmail($email) ?? ['username' => 'User Profile', 'followers' => []];
         $currUserId = session('email');
 
-        $followers = collect($user['followers']); // Apakah currUser masuk/exist di user->followers
+        $followers = collect($user['followers']);
 
         $isFollowing = false;
 
@@ -173,7 +225,7 @@ class UserController extends Controller
         $data['user'] = $user;
         $data['isFollowing'] = $isFollowing;
         $data['countFollowers'] = $countFollowers;
-        dd($data);
+        // dd($data);
         return $data;
     }
 
