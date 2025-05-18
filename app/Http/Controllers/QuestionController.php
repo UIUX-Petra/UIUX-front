@@ -56,7 +56,7 @@ class QuestionController extends Controller
         ]);
 
         if ($response->failed()) {
-            \Log::error("API request to /questions-paginated failed: " . $response->body());
+            Log::error("API request to /questions-paginated failed: " . $response->body());
 
             return new LengthAwarePaginator([], 0, $per_page_from_request, $page, [
                 'path' => $request->url(),
@@ -67,7 +67,7 @@ class QuestionController extends Controller
         $apiResponseData = $response->json();
 
         if (!isset($apiResponseData['success']) || $apiResponseData['success'] !== true || !isset($apiResponseData['data'])) {
-            \Log::error("API request to /questions-paginated did not return a successful structure: " . $response->body());
+            Log::error("API request to /questions-paginated did not return a successful structure: " . $response->body());
             return new LengthAwarePaginator([], 0, $per_page_from_request, $page, [
                 'path' => $request->url(),
                 'query' => $request->query(),
@@ -97,8 +97,9 @@ class QuestionController extends Controller
     public function getAllQuestionsByPopularity(Request $request)
     {
         $api_url = env('API_URL') . '/questions';
-        $response = Http::get($api_url);
+        $response = Http::withToken(session('token'))->get($api_url);
         $response = json_decode($response, true);
+        // dd($response);
 
         // Get the data (questions)
         $data = $response['data'];

@@ -36,7 +36,8 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/myProfile', [MainController::class, 'seeProfile'])->name('seeProfile');
     // routes/web.php
 
-    Route::get('/user/{id}/my-questions', [MainController::class, 'userQuestions'])->name('user.questions.list');
+    Route::get('/user/{id}/questions', [MainController::class, 'userQuestions'])->name('user.questions.list');
+    Route::get('/user/{email}/followers', [MainController::class, 'userFollowers'])->name('user.followers.list');
     Route::get('/editProfile', [MainController::class, 'editProfile'])->name('editProfile');
     Route::post('/editProfile', [UserController::class, 'editProfilePost'])->name('editProfile.post');
     Route::get('/user/recommendation', [UserController::class, 'recommendation'])->name('recommendation');

@@ -97,27 +97,44 @@ class UserController extends Controller
         }
 
         $responseData = json_decode($response->body(), true);
+        // dd($responseData['data']);
 
         if (isset($responseData['data']) && is_array($responseData['data'])) {
             $userData = $responseData['data'];
             $questionCount = 0;
+            $answerCount = 0;
+            $followerCount = 0;
+            $followingCount = 0;
             if (isset($userData['question']) && is_array($userData['question'])) {
                 $questionCount = count($userData['question']);
             }
+            if (isset($userData['answer']) && is_array($userData['answer'])) {
+                $answerCount = count($userData['answer']);
+            }
+
+            if (isset($userData['followers']) && is_array($userData['followers'])) {
+                $followerCount = count($userData['followers']);
+            }
+            if (isset($userData['following']) && is_array($userData['following'])) {
+                $followingCount = count($userData['followers']);
+            }
 
             $userData['questions_count'] = $questionCount;
+            $userData['answers_count'] = $answerCount;
+            $userData['followers_count'] = $followerCount;
+            $userData['followings_count'] = $followingCount;
             // dd($userData);
             return $userData;
         } else {
             Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", $responseData);
-            return null; 
+            return null;
         }
     }
 
 
     public function showUserQuestionsPage($userId)
     {
-        $api_url_user = env('API_URL') . '/users/' . $userId; 
+        $api_url_user = env('API_URL') . '/users/' . $userId;
         $responseUser = Http::withToken(session('token'))->get($api_url_user);
 
         if ($responseUser->failed()) {
@@ -156,6 +173,7 @@ class UserController extends Controller
         $data['user'] = $user;
         $data['isFollowing'] = $isFollowing;
         $data['countFollowers'] = $countFollowers;
+        dd($data);
         return $data;
     }
 
@@ -204,37 +222,6 @@ class UserController extends Controller
         return [];
     }
 
-    public function popular()
-    {
-        $data['title'] = 'Popular';
-        return view('popular', $data);
-    }
-
-    public function seeProfile()
-    {
-        $data['title'] = 'My Profile';
-        $email = session('email');
-
-        $currUser = $this->getUserByEmail($email);
-        $data['currUser'] = $currUser;
-        $followers = collect($currUser['followers']);
-        $countFollowers = count($followers);
-        $data['countFollowers'] = $countFollowers;
-        $data['image'] = $currUser['image'];
-
-        return view('profile', $data);
-    }
-
-    public function editProfile()
-    {
-        $data['title'] = 'Edit Profile';
-
-        $email = session('email');
-        $currUser = $this->getUserByEmail($email);
-        $data['user'] = $currUser;
-        return view('editProfile', $data);
-    }
-
     public function editProfilePost(Request $request)
     {
         $email = session('email');
@@ -268,25 +255,21 @@ class UserController extends Controller
         }
     }
 
-
-
-    public function askPage()
+    // beta ga bisa nembak api - buat tau per tag user ada brp post questions
+    public function getTags($email)
     {
-        $api_url = env('API_URL') . '/tags';
-        $response = Http::withToken(session('token'))->get($api_url);
-        $response = json_decode($response, true);
-        Log::info($response);
+        $api_url = env('API_URL') . '/userTags';
+        $data = ['email' => $email];
+        $response = Http::get($api_url, $data);
 
-        $data['data'] = $response['data'];
-        $data['title'] = 'Ask a Question';
-        $user = $this->getUserByEmail(session('email'));
-        $data['image'] = $user['image'];
-        return view('ask', $data);
-    }
-
-    public function testUI()
-    {
-        $data['title'] = 'Popular';
-        return view('question', $data);
+        if ($response->failed()) {
+            // Log the API URL and error message
+            Log::error("API url: " . $api_url);
+            Log::error("API call failed for user email {$email}: " . $response->body());
+            return null;
+        } else {
+            $responseData = $response->json();
+            return $responseData['data'] ?? [];
+        }
     }
 }

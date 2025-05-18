@@ -22,6 +22,7 @@ class MainController extends Controller
     $this->questionController = $questionController;
     $this->tagController = $tagController;
   }
+
   public function home(Request $request)
   {
     $user = $this->userController->getUserByEmail(session('email'));
@@ -30,9 +31,12 @@ class MainController extends Controller
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestions($request);
     $data['questions'] = $questions;
-    // dd($data);]
+    $user = $this->userController->getUserByEmail(session('email'));
+    $data['user'] = $user;
+    // dd($data);
     return view('home', $data);
   }
+
   public function askPage()
   {
     $currUser = $this->userController->getUserByEmail(session('email'));
@@ -42,20 +46,26 @@ class MainController extends Controller
     $data['title'] = 'Ask a Question';
     return view('ask', $data);
   }
+
   public function seeProfile()
   {
     $data['title'] = 'My Profile';
     $email = session('email');
 
+    // $currUser = $this->userController->getUserByEmail($email);
+    // $followers = collect($currUser['followers']);
+    // $countFollowers = count($followers);
+    // $data['countFollowers'] = $countFollowers;
     $currUser = $this->userController->getUserByEmail($email);
     $data['currUser'] = $currUser;
-    $followers = collect($currUser['followers']);
-    $countFollowers = count($followers);
-    $data['countFollowers'] = $countFollowers;
-    $currUser = $this->userController->getUserByEmail(session('email'));
+
+    // $tags = $this->userController->getTags($email);
+    // $data['tags'] = $tags;
     $data['image'] = $currUser['image'];
+    dd($data);
     return view('profile', $data);
   }
+
   public function editProfile()
   {
     $data['title'] = 'Edit Profile';
@@ -67,13 +77,28 @@ class MainController extends Controller
     $data['image'] = $currUser['image'];
     return view('editProfile', $data);
   }
-  public function userQuestions($userId){
+  public function userQuestions($userId)
+  {
     $data['user'] = $this->userController->showUserQuestionsPage($userId);
     $image = $data['user']['image'];
     $data['image'] = $image;
     $data['title'] = 'User Questions';
     // dd($data['user']);
     return view('userQuestions', $data);
+  }
+
+  public function userFollowers($email)
+  {
+    $data['user'] = $this->userController->getUserFollowers($email);
+    $image = $data['user']['image'];
+    $data['image'] = $image;
+    $data['title'] = 'User Followers';
+    dd($data['user']);
+    return view('userFollowers', $data);
+  }
+  
+  public function userTags($email){
+
   }
   public function popular(Request $request)
   {

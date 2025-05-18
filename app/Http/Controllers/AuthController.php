@@ -27,22 +27,22 @@ class AuthController extends Controller
             if (!$user) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Please try to log in again!');
             }
-            
+
             $email = strtolower($user->getEmail());
             $name = $user->getName();
-            
+
             if (!str_ends_with($email, '@john.petra.ac.id')) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Please use your Petra Christian University email to log in!');
             }
-            
+
             $apiUrl = env('API_URL') . '/login';
-            
+
             $response = Http::post($apiUrl, [
                 'name' => $name,
                 'email' => $email,
                 'password' => env('API_SECRET')
             ]);
-            
+
             if ($response->failed()) {
                 return redirect()->route('loginOrRegist')->with('Error', 'There was an issue with the login request.');
             }
@@ -52,12 +52,13 @@ class AuthController extends Controller
             if (!isset($storedUser['email'], $storedUser['name'], $storedUser['token'])) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Invalid response structure from the API.');
             }
-
             session([
                 'email' => $storedUser['email'],
                 'name' => $storedUser['name'],
                 'token' => $storedUser['token']
             ]);
+
+            // Dump and die to inspect session data
             $url = session('url');
             if ($url) {
                 session()->forget('url');
