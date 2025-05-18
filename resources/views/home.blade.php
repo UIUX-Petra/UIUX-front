@@ -195,7 +195,7 @@
     @endif
     {{-- @include('utils.background2') --}}
 
-    <!-- Main content with proper margin for sidebar -->
+    <!-- Main content -->
     <div
         class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.2)] to-[rgba(128,237,153,0.2)] blur-2xl">
     </div>
@@ -219,11 +219,11 @@
                 <div class="flex space-x-6 mt-4 text-sm">
                     <div class="flex items-center">
                         <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
-                        <span>{{ $user['questions_count'] }} Questions</span>
+                        <span>23 Questions</span>
                     </div>
                     <div class="flex items-center">
                         <i class="fa-solid fa-comment mr-2 text-[var(--accent-secondary)]"></i>
-                        <span>{{ $user['answers_count'] }} Answers</span>
+                        <span>42 Answers</span>
                     </div>
                 </div>
             @endif
@@ -236,7 +236,6 @@
 
 
     <h3 class="cal-sans-regular lg:text-xl text-lg pl-12 mt-10 mb-4">Newest Questions</h3>
-
 
     <!-- Questions and Ask Question Section -->
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
@@ -272,8 +271,6 @@
                     @endif
 
                     <!-- Stats Column -->
-                    <div
-                        class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
                     <div
                         class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
                         <div class="stats-item flex flex-col items-center">
@@ -326,16 +323,7 @@
         <div class="w-72 mt-6 ml-6 hidden md:flex sticky top-24 h-fit">
             <div
                 class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
-            <div
-                class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
                 <!-- Decorative elements -->
-                <div
-                    class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
-                </div>
-                <div
-                    class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]">
-                </div>
-
                 <div
                     class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
                 </div>
@@ -356,12 +344,8 @@
 
                     <a href="{{ route('askPage') }}"
                         class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
-
-                    <a href="{{ route('askPage') }}"
-                        class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
                         <i class="fa-solid fa-plus mr-2"></i> Ask a Question
                     </a>
-
 
                     <!-- Quick links -->
                     <div class="w-full mt-5 pt-5 border-t border-[var(--border-color)]">
