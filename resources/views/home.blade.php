@@ -57,7 +57,6 @@
             transform: translateY(-5px);
         }
 
-        /* Add these to your existing CSS */
         .stats-item {
             transition: transform 0.2s;
         }
@@ -92,7 +91,6 @@
             --bg-accent-subtle: rgba(128, 237, 153, 0.15);
         }
 
-        /* Create a subtle pattern background */
         .bg-pattern {
             background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
             background-size: 20px 20px;
@@ -102,7 +100,6 @@
             background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Improve section headings */
         .section-heading {
             position: relative;
             padding-left: 1rem;
@@ -180,7 +177,6 @@
             animation: savedPulse 0.3s ease-in-out;
         }
 
-        /* Make sure the button doesn't interfere with card click */
         .save-question-btn:focus {
             outline: none;
         }
@@ -241,58 +237,77 @@
 
     <h3 class="cal-sans-regular lg:text-xl text-lg pl-12 mt-10 mb-4">Newest Questions</h3>
 
+
     <!-- Questions and Ask Question Section -->
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
-        <!-- Questions Section -->
         <div class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
             <!-- Loop through questions -->
             @foreach ($questions as $question)
                 <div
                     class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
-                    <!-- Add subtle pattern background -->
                     <div class="absolute inset-0 bg-pattern opacity-5"></div>
 
-                    <!-- Save button - added to top right -->
-                    <button
-                        class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                        data-question-id="{{ $question['id'] }}">
-                        <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
-                    </button>
+                    {{-- Use array access for 'is_saved_by_request_user' --}}
+                    @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
+                        <form action="{{ route('unsaveQuestion') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="question_id" value="{{ $question['id'] }}">
+                            <button type="submit"
+                                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                                data-question-id="{{ $question['id'] }}" title="Unsave Question">
+                                <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('saveQuestion') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="question_id" value="{{ $question['id'] }}">
+                            <button type="submit"
+                                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                                data-question-id="{{ $question['id'] }}" title="Save Question">
+                                <i
+                                    class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+                            </button>
+                        </form>
+                    @endif
 
                     <!-- Stats Column -->
                     <div
                         class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
+                    <div
+                        class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
                         <div class="stats-item flex flex-col items-center">
                             <i class="text-lg fa-regular fa-thumbs-up"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['vote'] }}</span>
+                            <span class="text-sm font-medium mt-1">{{ $question['vote'] ?? 0 }}</span>
                         </div>
                         <div class="stats-item flex flex-col items-center">
                             <i class="text-lg fa-solid fa-eye"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['view'] }}</span>
+                            <span class="text-sm font-medium mt-1">{{ $question['view'] ?? 0 }}</span>
                         </div>
                         <div class="stats-item flex flex-col items-center">
                             <i class="text-lg fa-regular fa-comment"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['comments_count'] }}</span>
+                            {{-- 'comments_count' is added by withCount and will be in the array --}}
+                            <span class="text-sm font-medium mt-1">{{ $question['comments_count'] ?? 0 }}</span>
                         </div>
                     </div>
 
                     <div class="flex-1 z-10">
-                        <!-- Question Title with improved typography -->
+                        <!-- Question Title -->
                         <h2
                             class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-tertiary)] decoration-2 underline-offset-2">
                             <a
                                 href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
                         </h2>
 
-                        <!-- Question Snippet with better readability -->
+                        <!-- Question Snippet -->
                         <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
                             {{ \Str::limit($question['question'], 150) }}</p>
 
                         <!-- Tags -->
                         <div class="flex mt-3 flex-wrap gap-1">
-                            @foreach ($question['group_question'] as $groupQuestion)
+                            @foreach ($question['group_question'] as $tag)
                                 <span
-                                    class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $groupQuestion['subject']['name'] }}</span>
+                                    class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
                             @endforeach
                         </div>
                     </div>
@@ -300,13 +315,27 @@
             @endforeach
 
             <!-- Pagination -->
-            {{ $questions->links() }}
+            {{-- $questions->links() will still work if $questions is a Paginator instance whose items are arrays --}}
+            @if ($questions->hasPages())
+                <div class="mt-6">
+                    {{ $questions->links() }}
+                </div>
+            @endif
         </div>
 
         <div class="w-72 mt-6 ml-6 hidden md:flex sticky top-24 h-fit">
             <div
                 class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+            <div
+                class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
                 <!-- Decorative elements -->
+                <div
+                    class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
+                </div>
+                <div
+                    class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]">
+                </div>
+
                 <div
                     class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
                 </div>
@@ -327,8 +356,12 @@
 
                     <a href="{{ route('askPage') }}"
                         class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+
+                    <a href="{{ route('askPage') }}"
+                        class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
                         <i class="fa-solid fa-plus mr-2"></i> Ask a Question
                     </a>
+
 
                     <!-- Quick links -->
                     <div class="w-full mt-5 pt-5 border-t border-[var(--border-color)]">

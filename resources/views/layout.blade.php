@@ -59,41 +59,8 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
-
-        * {
-            font-family: 'Jost', sans-serif;
-            --bblue: #7494ec;
-            --purple: #633F92;
-            --neutral: #292A67;
-            --yellow: #F6CE3E;
-            --red: #E62D63;
-            --red-lg: #ff6e9a;
-            --magenta: #902680;
-            --purple-dark: #5500a4;
-            --tosca: #4CB79C;
-            --tosca-lg: rgb(74, 231, 192);
-            --yellow-grad: linear-gradient(45deg, var(--yellow) 0%, var(--magenta) 100%);
-            --tosca-grad: linear-gradient(45deg, var(--tosca) 0%, var(--purple) 100%);
-            --ig-grad: linear-gradient(45deg, #ffde85 0%, #f7792a 30%, #f7504f 40%, #d82b81 60%, #d82b81 75%, #9536c2 100%);
-            --line-grad: linear-gradient(45deg, #1a6c2a, #4cc764);
-            --yt-grad: linear-gradient(45deg, #f76161, #dc2626);
-            --spotify-grad: linear-gradient(45deg, #1DB954, #191414);
-            --tiktok-grad: linear-gradient(45deg, #ff0050, #191414 40%, #191414 60%, #00f2ea);
-
-            --
-        }
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -122,26 +89,21 @@
         }
         
          /* Chrome, Edge and Safari */
-        *::-webkit-scrollbar {
-            height: 10px;
-            width: 10px;
+        ::-webkit-scrollbar {
+            width: 6px;
         }
 
-        *::-webkit-scrollbar-track {
-            border-radius: 6px;
-            background-color: #22577A;
+        ::-webkit-scrollbar-thumb {
+            background: #f0eff4;
+            border-radius: 8px;
         }
 
-        *::-webkit-scrollbar-track:hover {
-            background-color: #38A3A5;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dbdadf;
         }
 
-        *::-webkit-scrollbar-track:active {
-            background-color: #57CC99;
-        }
-
-        *::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, transparent, #80ED99);
+        ::-webkit-scrollbar-track {
+            background-color: #000000;
         }
 
 
@@ -272,14 +234,11 @@
         }
     </script>
 
-    <!-- Add these CSS variables to your <style> in the head section -->
     <style>
         :root {
-            /* Base theme variables (used by both modes) */
             --transition-speed: 0.3s;
         }
         
-        /* Dark mode variables (your current theme) */
         .dark-mode {
             /* Background colors */
             --bg-primary: #1C2245;
@@ -309,7 +268,6 @@
             --button-text: #111111;
         }
         
-        /* Light mode variables */
         .light-mode {
             /* Background colors */
             --bg-primary: #f3f6fb;
@@ -401,6 +359,7 @@
 </head>
 {{-- @include('partials.nav') --}}
 <body>
+    @include('partials.loader')
     <div class="lg:ml-[20rem] md:ml-64 pt-16 p-4"> 
         @yield('content')
         {{-- Insert <script> CDN below --}}

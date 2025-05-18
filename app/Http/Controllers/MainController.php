@@ -31,9 +31,8 @@ class MainController extends Controller
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestions($request);
     $data['questions'] = $questions;
-    $user = $this->userController->getUserByEmail(session('email'));
     $data['user'] = $user;
-    // dd($data);
+    // dd($data);]
     return view('home', $data);
   }
 
@@ -73,7 +72,6 @@ class MainController extends Controller
     $email = session('email');
     $currUser = $this->userController->getUserByEmail($email);
     $data['user'] = $currUser;
-    $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     return view('editProfile', $data);
   }
@@ -109,8 +107,7 @@ class MainController extends Controller
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestionsByPopularity($request);
     $data['questions'] = $questions;
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
+    $data['image'] = $user['image'];
     // dd($data);
     return view('popular', $data);
   }

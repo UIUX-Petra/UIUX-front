@@ -16,14 +16,14 @@
         /* Base styling */
         body {
             overflow-x: hidden;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            background: linear-gradient(135deg, #1C2245 0%, #30366A 100%);
         }
 
         /* Container and animations */
         .form-box {
             z-index: 1;
             transition: .6s ease-in-out 1.2s, visibility 0s 1s;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
         }
 
         .container.active .form-box {
@@ -51,14 +51,16 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .toggle-box::before {
             content: '';
             position: absolute;
             width: 300%;
             height: 100%;
             left: -250%;
-            background: linear-gradient(135deg, #7494ec 0%, #5e7dd9 100%);
+            /* background: linear-gradient(135deg, #F4AB24 0%, #FFD249 100%);  */
+            /* background: linear-gradient(135deg, #10b981 0%, #1ceaa5 100%);  */
+            background: linear-gradient(135deg, #1C2245 0%, #30366A 100%);
             border-radius: 150px;
             z-index: 2;
             transition: 1.2s ease-in-out;
@@ -96,7 +98,7 @@
 
         /* Form styling */
         .form-container {
-            backdrop-filter: blur(5px); 
+            backdrop-filter: blur(5px);
             border-radius: 30px;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
@@ -108,23 +110,23 @@
             background: rgba(245, 247, 250, 0.8);
             border: 2px solid transparent;
         }
-        
+
         .input-box input:focus {
             border-color: #7494ec;
             box-shadow: 0 0 0 4px rgba(116, 148, 236, 0.15);
             background: white;
         }
-        
+
         .input-error {
             border-color: #EF4444 !important;
             background-color: rgba(254, 226, 226, 0.5) !important;
         }
-        
+
         .input-error::placeholder {
             color: #EF4444;
             opacity: 0.7;
         }
-        
+
         .error-message {
             color: #EF4444;
             font-size: 0.8rem;
@@ -132,12 +134,12 @@
             display: none;
             font-weight: 500;
         }
-        
+
         .error-message.visible {
             display: block;
             animation: fadeIn 0.3s ease;
         }
-        
+
         .input-box .fa-solid.icon-hidden {
             display: none !important;
         }
@@ -148,7 +150,7 @@
             overflow: hidden;
             transition: all 0.3s ease;
         }
-        
+
         .form-btn::before {
             content: '';
             position: absolute;
@@ -159,11 +161,11 @@
             background: rgba(255, 255, 255, 0.2);
             transition: all 0.4s ease;
         }
-        
+
         .form-btn:hover::before {
             left: 100%;
         }
-        
+
         /* Toggle button styling */
         .toggle-btn {
             position: relative;
@@ -171,7 +173,7 @@
             z-index: 1;
             transition: all 0.3s ease;
         }
-        
+
         .toggle-btn::after {
             content: '';
             position: absolute;
@@ -179,15 +181,14 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.2);
             transition: all 0.4s ease;
             z-index: -1;
         }
-        
+
         .toggle-btn:hover::after {
             left: 0;
         }
-        
+
         .toggle-btn:hover {
             transform: translateY(-3px);
         }
@@ -196,21 +197,28 @@
         .input-box i {
             transition: all 0.3s ease;
         }
-        
+
         .input-box:focus-within i {
             color: #7494ec !important;
         }
 
         /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .form-title {
             position: relative;
         }
-        
+
         .form-title::after {
             content: '';
             position: absolute;
@@ -219,7 +227,7 @@
             transform: translateX(-50%);
             width: 50px;
             height: 3px;
-            background: linear-gradient(to right, #7494ec, #5e7dd9);
+            background: linear-gradient(to right, #10b981, #1ceaa5);
             border-radius: 3px;
         }
 
@@ -281,18 +289,22 @@
     <body>
         <div class="flex justify-center items-center h-screen w-full py-8 px-4">
             <div class="min-h-screen mx-auto cont relative w-full h-full flex justify-center items-center">
-                <div class="container form-container relative w-full m-[20px] max-w-[900px] h-[600px] bg-white rounded-[30px] shadow-xl overflow-hidden">
+                <div
+                    class="container form-container relative w-full m-[20px] max-w-[900px] h-[600px] bg-white rounded-[30px] shadow-xl overflow-hidden">
                     <!-- Login Form -->
-                    <div class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
+                    <div
+                        class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST" novalidate>
                             @csrf
-                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Welcome Back</h1>
+                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Sign in
+                            </h1>
 
                             <div class="input-box relative w-full mb-5">
                                 <input id="usernameOrEmail" type="text" aria-label="Username or Email"
                                     placeholder="Username or Email" required name="usernameOrEmail"
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i class="fa-solid fa-user absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <i
+                                    class="fa-solid fa-user absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
                             </div>
 
@@ -300,52 +312,78 @@
                                 <input id="loginPassword" type="password" aria-label="Password" placeholder="Password"
                                     required name="loginPassword"
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i class="fa-solid fa-eye password-toggle cursor-pointer absolute right-[1rem] top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <i
+                                    class="fa-solid fa-eye password-toggle cursor-pointer absolute right-[1rem] top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
                             </div>
 
                             <button type="submit"
-                                class="form-btn w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
+                                class="form-btn w-full bg-gradient-to-r from-[#10b981] to-[#1ceaa5] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
                                 Sign In
                             </button>
-                            
+
                             <div class="relative text-center my-5">
-                                <span class="bg-white px-4 text-gray-500 text-sm font-medium relative z-10">OR CONTINUE WITH</span>
+                                <span class="bg-white px-4 text-gray-500 text-sm font-medium relative z-10">OR CONTINUE
+                                    WITH</span>
                                 <div class="absolute top-1/2 left-0 w-full h-px bg-gray-200 -z-1"></div>
                             </div>
-                            
+
                             <button type="button" onclick="window.location.href='{{ route('auth') }}'"
-                                class="form-btn w-full bg-gradient-to-r from-[#6889e0] to-[#7494ec] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
-                                <i class="fa-brands fa-google mr-2"></i> Petra Email Login
+                                class="form-btn w-full bg-gradient-to-r from-[#F4AB24] to-[#FFD249] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
+                                <span
+                                    class="inline-flex items-center justify-center p-1.5 bg-white rounded-full shadow-md align-middle mr-3">
+                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="-3 0 262 262"
+                                        preserveAspectRatio="xMidYMid" fill="currentColor">
+                                        <path
+                                            d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                                            fill="#4285F4" />
+                                        <path
+                                            d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                                            fill="#34A853" />
+                                        <path
+                                            d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                                            fill="#FBBC05" />
+                                        <path
+                                            d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                                            fill="#EB4335" />
+                                    </svg>
+                                </span> Petra Email Login
                             </button>
                         </form>
                     </div>
 
                     <!-- Registration Form -->
-                    <div class="form-box registration absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
+                    <div
+                        class="form-box registration absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="submitRegisterForm" novalidate>
                             @csrf
-                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Create Account</h1>
+                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Create
+                                Account</h1>
 
                             <div class="input-box relative w-full mb-4">
-                                <input type="text" aria-label="Username" placeholder="Username" required id="username" name="username"
+                                <input type="text" aria-label="Username" placeholder="Username" required id="username"
+                                    name="username"
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i class="fa-solid fa-user absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <i
+                                    class="fa-solid fa-user absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
                             </div>
 
                             <div class="input-box relative w-full mb-4">
-                                <input type="email" aria-label="Email" placeholder="Email" required id="email" name="email"
+                                <input type="email" aria-label="Email" placeholder="Email" required id="email"
+                                    name="email"
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i class="fa-solid fa-envelope absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <i
+                                    class="fa-solid fa-envelope absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
                             </div>
 
                             <div class="input-box relative w-full mb-4">
-                                <input type="password" aria-label="Password" placeholder="Password" required
-                                    id="password" name="password" minlength="8"
+                                <input type="password" aria-label="Password" placeholder="Password" required id="password"
+                                    name="password" minlength="8"
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <i
+                                    class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
                             </div>
 
@@ -353,12 +391,13 @@
                                 <input type="password" aria-label="Confirm Password" placeholder="Confirm Password"
                                     id="confirmPassword" name="confirmPassword" minlength="8" required
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <i
+                                    class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
                             </div>
 
                             <button type="submit"
-                                class="form-btn w-full bg-gradient-to-r from-[#6889e0] to-[#7494ec] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                                class="form-btn w-full bg-gradient-to-r  from-[#10b981] to-[#1ceaa5] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
                                 Create Account
                             </button>
                         </form>
@@ -366,15 +405,32 @@
 
                     <!-- Toggle Box -->
                     <div class="toggle-box absolute w-full h-full">
-                        <div class="toggle-panel toggle-left left-0 absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
-                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Hello, Informates</h1>
-                            <p class="mb-8 mt-2 text-base lg:text-lg opacity-90">Don't have an account?<br>Register and start your journey!</p>
-                            <button class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent border-2 border-white rounded-xl hover:bg-white hover:text-[#6889e0] transition duration-300 font-bold text-lg">Get Started</button>
+                        <div
+                            class="toggle-panel toggle-left left-0 absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
+                            <div class="mb-6 float-animation">
+                                <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
+                                    class="h-20 hidden md:flex">
+                            </div>
+                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Hello, Informate!</h1>
+                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">New to <span
+                                    class="font-bold cal-sans-regular text-[#fff]">peer <span class="text-[#FFD249]">- to -
+                                    </span> peer?</span><br>Join and explore our community today!</p>
+                            <button
+                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Get
+                                Started</button>
                         </div>
-                        <div class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
-                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Welcome Back</h1>
-                            <p class="mb-8 mt-2 text-base lg:text-lg opacity-90">Already have an account?<br>Login to access your dashboard.</p>
-                            <button class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent border-2 border-white rounded-xl hover:bg-white hover:text-[#6889e0] transition duration-300 font-bold text-lg">Sign In</button>
+                        <div
+                            class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
+                            <div class="mb-6 float-animation">
+                                <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
+                                    class="h-20 hidden md:flex">
+                            </div>
+                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Welcome Back!</h1>
+                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Already part of our
+                                community? Sign in to continue your learning journey.</p>
+                            <button
+                                class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Sign
+                                In</button>
                         </div>
                     </div>
                 </div>
@@ -440,30 +496,31 @@
             // Password strength indicator
             const passwordStrengthIndicator = document.createElement('div');
             passwordStrengthIndicator.className = 'w-full h-1 mt-1 rounded-full overflow-hidden hidden';
-            
+
             if (document.getElementById('password')) {
                 const passwordInput = document.getElementById('password');
                 const passwordInputBox = passwordInput.closest('.input-box');
                 passwordInputBox.appendChild(passwordStrengthIndicator);
-                
+
                 passwordInput.addEventListener('input', function() {
                     if (this.value) {
                         passwordStrengthIndicator.classList.remove('hidden');
-                        
+
                         // Simple password strength calculation
                         let strength = 0;
                         if (this.value.length >= 8) strength += 1;
                         if (/[A-Z]/.test(this.value)) strength += 1;
                         if (/[0-9]/.test(this.value)) strength += 1;
                         if (/[^A-Za-z0-9]/.test(this.value)) strength += 1;
-                        
+
                         let strengthClass = '';
                         if (strength === 1) strengthClass = 'bg-red-500';
                         else if (strength === 2) strengthClass = 'bg-yellow-500';
                         else if (strength === 3) strengthClass = 'bg-blue-500';
                         else if (strength === 4) strengthClass = 'bg-green-500';
-                        
-                        passwordStrengthIndicator.className = `w-full h-1 mt-1 rounded-full overflow-hidden ${strengthClass}`;
+
+                        passwordStrengthIndicator.className =
+                            `w-full h-1 mt-1 rounded-full overflow-hidden ${strengthClass}`;
                     } else {
                         passwordStrengthIndicator.classList.add('hidden');
                     }
@@ -508,7 +565,9 @@
                         Swal.fire({
                             title: "Logging in...",
                             allowOutsideClick: false,
-                            didOpen: () => { Swal.showLoading(); }
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
                         });
                     }
                 });
@@ -525,7 +584,7 @@
                 submitRegisterForm.addEventListener('submit', async function(event) {
                     event.preventDefault();
                     let isValid = true;
-                     // Clear only errors related to this form before validating
+                    // Clear only errors related to this form before validating
                     submitRegisterForm.querySelectorAll('.input-box input').forEach(input => clearError(input));
 
                     // Validate Username
@@ -582,7 +641,9 @@
                         title: "Creating your account...",
                         text: "Just a moment while we set things up for you!",
                         allowOutsideClick: false,
-                        didOpen: () => { Swal.showLoading(); }
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
                     });
 
                     try {
@@ -597,7 +658,11 @@
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json'
                             },
-                            body: JSON.stringify({ username, email, password }),
+                            body: JSON.stringify({
+                                username,
+                                email,
+                                password
+                            }),
                         });
 
                         const data = await response.json();
@@ -612,7 +677,8 @@
                             }).then(() => {
                                 container.classList.remove('active');
                                 submitRegisterForm.reset();
-                                submitRegisterForm.querySelectorAll('.input-box input').forEach(input => clearError(input)); // Ensure all visual states are cleared
+                                submitRegisterForm.querySelectorAll('.input-box input').forEach(input =>
+                                    clearError(input)); // Ensure all visual states are cleared
                             });
                         } else {
                             let errorMessage = data.message || 'Registration failed.';
@@ -645,10 +711,10 @@
                 input.addEventListener('focus', function() {
                     this.closest('.input-box').classList.add('focus');
                 });
-                
+
                 input.addEventListener('blur', function() {
                     this.closest('.input-box').classList.remove('focus');
-                    
+
                     const currentForm = this.closest('form');
                     if (!currentForm) return;
 
@@ -656,19 +722,21 @@
                         if (!this.value.trim()) showError(this, 'Username or Email is required.');
                         else clearError(this);
                     } else if (this.id === 'loginPassword') {
-                         if (!this.value.trim()) showError(this, 'Password is required.');
-                         else clearError(this);
+                        if (!this.value.trim()) showError(this, 'Password is required.');
+                        else clearError(this);
                     } else if (this.id === 'username') {
-                         if (!this.value.trim()) showError(this, 'Username is required.'); else clearError(this);
+                        if (!this.value.trim()) showError(this, 'Username is required.');
+                        else clearError(this);
                     } else if (this.id === 'email') {
                         if (!this.value.trim()) showError(this, 'Email is required.');
                         else if (!emailRegex.test(this.value.trim())) showError(this, 'Invalid email format.');
                         else clearError(this);
                     } else if (this.id === 'password') {
                         if (!this.value) showError(this, 'Password is required.');
-                        else if (this.value.length < 8) showError(this, 'Password must be at least 8 characters.');
+                        else if (this.value.length < 8) showError(this,
+                            'Password must be at least 8 characters.');
                         else clearError(this);
-                         // Re-validate confirm password if password changes
+                        // Re-validate confirm password if password changes
                         if (confirmPasswordInput.value && this.value !== confirmPasswordInput.value) {
                             showError(confirmPasswordInput, 'Passwords do not match.');
                         } else if (confirmPasswordInput.value) {
@@ -676,11 +744,12 @@
                         }
                     } else if (this.id === 'confirmPassword') {
                         if (!this.value) showError(this, 'Please confirm password.');
-                        else if (passwordInput.value && this.value !== passwordInput.value) showError(this, 'Passwords do not match.');
+                        else if (passwordInput.value && this.value !== passwordInput.value) showError(this,
+                            'Passwords do not match.');
                         else clearError(this);
                     }
                 });
-                
+
                 input.addEventListener('input', function() {
                     // Only clear the error for the current input, don't affect others.
                     // The blur event will handle more comprehensive validation if needed.
@@ -720,23 +789,23 @@
             }
         </script>
         <script>
-    // Set up password toggle functionality
-    document.querySelectorAll('.password-toggle').forEach(toggle => {
-        toggle.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            
-            // Toggle password visibility
-            if (input.type === 'password') {
-                input.type = 'text';
-                this.classList.remove('fa-eye');
-                this.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                this.classList.remove('fa-eye-slash');
-                this.classList.add('fa-eye');
-            }
-        });
-    });
-</script>
+            // Set up password toggle functionality
+            document.querySelectorAll('.password-toggle').forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+
+                    // Toggle password visibility
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('fa-eye');
+                        this.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('fa-eye-slash');
+                        this.classList.add('fa-eye');
+                    }
+                });
+            });
+        </script>
     </body>
 @endsection

@@ -1,5 +1,4 @@
 <style>
-    /* Core navbar/sidebar styling with improved aesthetics */
     .navbar-container {
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
@@ -262,10 +261,10 @@
     }
 </style>
 
-<!-- Improved Navbar -->
+<!-- Navbar -->
 <nav class="navbar-container fixed top-0 left-0 bg-[var(--bg-primary)] bg-opacity-95 w-full h-auto shadow-md text-white z-50">
     <div class="max-w-screen-xl relative flex flex-wrap items-center justify-between mx-auto p-3">
-        <!-- Hamburger Button with improved animation -->
+        <!-- Hamburger Button -->
         <div class="hamburger md:hidden flex flex-col justify-center space-y-1.5 p-1.5">
             <div class="hamburger-line w-6 h-0.5 bg-[var(--text-primary)] rounded-full"></div>
             <div class="hamburger-line w-6 h-0.5 bg-[var(--text-primary)] rounded-full"></div>
@@ -286,10 +285,10 @@
 
         <!-- Desktop Actions -->
         <div class="hidden md:flex items-center gap-4 ml-auto">
-            <!-- Improved Search Input -->
+            <!-- Search Input -->
             <div class="search-container flex items-center">
                 <input type="text" placeholder="Search topics, questions, users..."
-                    class="search-input w-80 px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
+                    class="search-input placeholder-[var(--text-secondary)] xl:w-[56rem] w-[23rem] !bg-[var(--bg-tertiary)] px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
                 <button type="submit"
                     class="search-button text-[var(--text-dark)] bg-[var(--accent-tertiary)] hover:bg-[var(--accent-primary)] px-4 py-2 -ml-10 rounded-r-lg focus:outline-none transition-all duration-300">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -302,7 +301,7 @@
             </button>
 
             @if (!session()->has('email'))
-                <!-- Sign Up Button with improved styling -->
+                <!-- Sign Up Button -->
                 <a href="{{ route('loginOrRegist') }}"
                     class="bg-[var(--accent-tertiary)] text-white font-medium rounded-lg lg:text-sm lg:px-4 lg:py-2 text-xs px-3 py-2 hover:shadow-lg transition-all duration-300 hover:bg-[var(--accent-primary)]">
                     Sign Up / Login
@@ -319,7 +318,7 @@
                             alt="User avatar">
                     </button>
 
-                    <!-- Improved Dropdown Menu -->
+                    <!-- Dropdown Menu -->
                     <div class="user-dropdown hidden absolute right-0 mt-2 w-60 bg-[var(--bg-secondary)] rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 py-1"
                         id="user-menu" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
                         <div class="px-4 py-3 border-b border-[var(--border-color)]">
@@ -368,7 +367,7 @@
         @endif
     </div>
 
-    <!-- Improved Mobile Menu -->
+    <!-- Mobile Menu -->
     <div id="mobile-menu" class="mobile-menu hidden flex-col gap-1 p-4 md:hidden bg-[var(--bg-secondary)] text-[var(--text-primary)] w-full border-t border-[var(--border-color)]">
         <div class="px-2 pb-3">
             <input type="text" placeholder="Search..." class="search-input w-full px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
@@ -418,7 +417,7 @@
     </div>
 </nav>
 
-<!-- Improved Sidebar -->
+<!-- Sidebar -->
 <div class="hidden md:flex flex-col lg:w-[20rem] w-64 h-screen lg:pl-28 pl-6 pr-2 py-6 shadow-md fixed top-0 left-0 z-[10] bg-[var(--bg-primary)] bg-opacity-95 sidebar">
     <!-- Sidebar content -->
     <div class="flex flex-col h-full mt-16">
@@ -436,7 +435,7 @@
                 <a href="{{ route('viewAllTags') }}" class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-tags mr-3 w-5 text-center"></i> Tags
                 </a>
-                <a href="#" class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                <a href="#" class="nav-link {{ request()->routeIs('') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
                 </a>
             </nav>
@@ -458,10 +457,7 @@
 </div>
 
 <script>
-    // Enhanced JavaScript for smooth interactions
     document.addEventListener('DOMContentLoaded', function() {
-
-        // Hamburger menu toggle with animation
         const hamburger = document.querySelector('.hamburger');
         const mobileMenu = document.getElementById('mobile-menu');
         
@@ -471,7 +467,6 @@
             mobileMenu.classList.toggle('visible');
         });
         
-        // User dropdown menu with smooth animation
         const userMenuButton = document.getElementById('user-menu-button');
         const userMenu = document.getElementById('user-menu');
         
@@ -502,7 +497,6 @@
                 userMenu.classList.add('hidden');
             });
             
-            // Close on click outside
             document.addEventListener('click', (e) => {
                 if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
                     userMenu.classList.remove('visible');
@@ -511,7 +505,6 @@
             });
         }
         
-        // Mobile user menu (if present)
         const mobileUserMenuButton = document.getElementById('mobile-user-menu-button');
         if (mobileUserMenuButton) {
             mobileUserMenuButton.addEventListener('click', () => {
@@ -521,7 +514,6 @@
             });
         }
         
-        // Watch for theme changes
         const themeObserver = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.attributeName === 'class') {
@@ -532,7 +524,6 @@
         
         themeObserver.observe(document.documentElement, { attributes: true });
         
-        // Ensure both theme toggles work
         if (mobileThemeToggle) {
             mobileThemeToggle.addEventListener('click', function() {
                 if (typeof toggleTheme === 'function') {
@@ -541,7 +532,6 @@
             });
         }
         
-        // Add subtle hover effect to nav links
         const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             const icon = link.querySelector('i');
