@@ -2,67 +2,70 @@
 
 @section('head')
     <style>
-        @keyframes wiggle {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            50% {
-                transform: translateX(5px);
-            }
-        }
-
-        .animate-wiggle {
-            animation: wiggle 0.5s ease-in-out infinite;
-        }
-
-        .titleTopUser {
-            background: linear-gradient(90deg, #633F92, #7494ec, #5500a4, white, #633F92);
-            background-size: 400%;
-            font-weight: 900 !important;
-            word-spacing: 5px;
+        .titleGradient {
+            background: linear-gradient(90deg, #633F92, #7494ec, #5500a4);
+            background-size: 200%;
+            font-weight: 700;
             -webkit-text-fill-color: transparent;
             -webkit-background-clip: text;
-            animation: animateText 30s linear infinite;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
         }
 
-        @keyframes animateText {
-            0% {
-                background-position: 0%;
-            }
-            100% {
-                background-position: 500%;
-            }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .tab-active {
             background-color: var(--primary);
             color: white;
-            border-radius: 5px;
+            border-radius: 8px;
             padding: 10px 20px;
-            transition: all var(--transition-speed);
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
 
         .tab-inactive {
             background-color: var(--bg-card);
             color: var(--text-primary);
-            border-radius: 5px;
-            border: 1px solid var(--primary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
             padding: 10px 20px;
-            transition: all var(--transition-speed);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-inactive:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .user-card {
-            background-color: var(--bg-card);
+            background-color: var(--bg-primary);
             color: var(--text-primary);
-            transition: background-color var(--transition-speed);
-            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border-color: var(--primary);
         }
 
         .search-bar {
             background-color: var(--bg-card);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
-            transition: all var(--transition-speed);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 63, 146, 0.15);
         }
 
         .search-bar input {
@@ -74,17 +77,47 @@
             color: var(--text-secondary);
         }
 
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 5px #fffd44, 0 0 10px #fffd44, 0 0 15px #fffd44;
-            }
-            50% {
-                box-shadow: 0 0 8px #fffd44, 0 0 15px #fffd44, 0 0 20px #fffd44;
-            }
+        .recommended-user {
+            background-color: var(--bg-card);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(99, 63, 146, 0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
         }
 
-        .glowing {
-            animation: glow 2s infinite;
+        .recommended-user:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(99, 63, 146, 0.2);
+            border-color: var(--primary);
+        }
+
+        .badge {
+            background-color: var(--bg-muted);
+            color: var(--primary);
+            font-weight: 500;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+        }
+
+        .welcome-container {
+            background: linear-gradient(145deg, rgba(99, 63, 146, 0.05), rgba(116, 148, 236, 0.05));
+            border-radius: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .crown-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #FFC107;
+            color: #5a3e00;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
     </style>
 @endsection
@@ -92,7 +125,7 @@
 @section('content')
 @include('partials.nav')
     <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start justify-start my-6 welcome-container">
-        <h1 class="cal-sans-regular lg:text-3xl text-xl mb-2 welcome">Informates</h1>
+        <h1 class="cal-sans-regular lg:text-3xl text-2xl mb-2 welcome">Informates</h1>
         <p class="text-[var(--text-secondary)] text-md pl-0.5 font-regular">
             Connect with fellow students from Informatics, Business Information Systems, and Data Science & Analytics at Petra Christian University.
         </p>
@@ -100,20 +133,25 @@
 
     <div class="max-w-5xl items-start justify-start px-6">
         <!-- Recommended Users -->
-        @if ($recommended)
-            <div class="mb-12 items-start justidy-start">
-                <h2 class="titleTopUser text-2xl font-semibold mb-4 text-start">Recommended For You</h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+        @if(isset($recommended) && count($recommended) > 0)
+            <div class="mb-12 items-start justify-start">
+                <h2 class="titleGradient text-2xl font-semibold mb-6 text-start">Recommended For You</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
                     @foreach ($recommended as $user)
-                        <div class="bg-[var(--bg-card)] flex flex-col items-center justify-center rounded-xl py-6 px-4 shadow-lg glowing">
-                            <i class="fa-solid fa-crown text-xl text-yellow-500 mb-2"></i>
+                        <div class="recommended-user flex flex-col items-center justify-center rounded-xl py-6 px-4 relative">
+                            <div class="crown-badge">
+                                <i class="fa-solid fa-crown text-sm"></i>
+                            </div>
                             <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                alt="Profile Picture" class="w-16 h-16 rounded-full object-cover mb-3">
+                                alt="Profile Picture" class="w-16 h-16 rounded-full object-cover mb-3 border-2 border-[var(--primary)]">
                             <h3 class="font-semibold text-center">
                                 <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                                     class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
                             </h3>
-                            <p class="text-[0.70rem] text-[var(--text-secondary)]">Reputation: {{ $user['reputation'] }}</p>
+                            <p class="text-[0.75rem] mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-star text-yellow-500"></i>
+                                <span class="text-[var(--text-secondary)]">{{ $user['reputation'] }}</span>
+                            </p>
                         </div>
                     @endforeach
                 </div>
@@ -124,19 +162,23 @@
         <div class="mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <!-- Search Bar -->
-                <div class="search-bar flex items-center rounded-lg px-4 py-3 shadow-md w-full md:w-auto md:flex-1 max-w-md">
+                <div class="search-bar flex items-center px-4 py-3 shadow-sm w-full md:w-auto md:flex-1 max-w-md">
+                    <i class="fa-solid fa-magnifying-glass text-[var(--text-secondary)] mr-3"></i>
                     <input id="searchInput" type="text" placeholder="Search users..."
                         class="w-full outline-none" oninput="searchInput()">
-                    <button class="text-[var(--primary)] ml-2">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
                 </div>
 
                 <!-- Tabs -->
                 <div class="flex flex-wrap gap-3">
-                    <button onclick="showTab('reputations')" id="tab-reputations" class="tab-active">Reputations</button>
-                    <button onclick="showTab('new-users')" id="tab-new-users" class="tab-inactive">New Users</button>
-                    <button onclick="showTab('voters')" id="tab-voters" class="tab-inactive">Voters</button>
+                    <button onclick="showTab('reputations')" id="tab-reputations" class="tab-active">
+                        <i class="fa-solid fa-trophy mr-2"></i>Reputations
+                    </button>
+                    <button onclick="showTab('new-users')" id="tab-new-users" class="tab-inactive">
+                        <i class="fa-solid fa-user-plus mr-2"></i>New Users
+                    </button>
+                    <button onclick="showTab('voters')" id="tab-voters" class="tab-inactive">
+                        <i class="fa-solid fa-thumbs-up mr-2"></i>Voters
+                    </button>
                 </div>
             </div>
 
@@ -144,20 +186,23 @@
             <div class="user-lists">
                 <!-- Reputations Tab -->
                 <div id="reputations" class="tab-content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="reputationResult">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="reputationResult">
                         @foreach ($order_by_reputation as $user)
-                            <div class="bg-[var(--bg-card)] user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold">
+                                    <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                                             class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
                                     </h3>
-                                    <p class="text-sm text-[var(--text-secondary)]">Reputation: {{ $user['reputation'] }}</p>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">php</span>
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">java</span>
+                                    <p class="text-sm flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-star text-yellow-500"></i>
+                                        <span class="text-[var(--text-secondary)]">{{ $user['reputation'] }}</span>
+                                    </p>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        <span class="badge">php</span>
+                                        <span class="badge">java</span>
                                     </div>
                                 </div>
                             </div>
@@ -167,20 +212,23 @@
 
                 <!-- New Users Tab -->
                 <div id="new-users" class="tab-content hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="newestResult">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="newestResult">
                         @foreach ($order_by_newest as $user)
-                            <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold">
+                                    <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                                             class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
                                     </h3>
-                                    <p class="text-sm text-[var(--primary)]">Since {{ $user['created_at'] }}</p>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">php</span>
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">java</span>
+                                    <p class="text-sm flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
+                                        <span class="text-[var(--primary)]">Since {{ $user['created_at'] }}</span>
+                                    </p>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        <span class="badge">php</span>
+                                        <span class="badge">java</span>
                                     </div>
                                 </div>
                             </div>
@@ -190,20 +238,23 @@
 
                 <!-- Voters Tab -->
                 <div id="voters" class="tab-content hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="voterResult">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="voterResult">
                         @foreach ($order_by_vote as $user)
-                            <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold">
+                                    <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                                             class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
                                     </h3>
-                                    <p class="text-sm text-[var(--text-secondary)]">Voters: {{ $user['vote_count'] }}</p>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">react</span>
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">vue</span>
+                                    <p class="text-sm flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
+                                        <span class="text-[var(--text-secondary)]">{{ $user['vote_count'] }}</span>
+                                    </p>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        <span class="badge">react</span>
+                                        <span class="badge">vue</span>
                                     </div>
                                 </div>
                             </div>
@@ -249,18 +300,21 @@
                     const matchingUsers = byReputation.filter(user => results.includes(user.username.toLowerCase()));
 
                     resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                        <div class="user-card p-4 shadow-sm flex items-center gap-4">
                             <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
-                                alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                             <div class="flex-1">
-                                <h3 class="font-semibold">
+                                <h3 class="font-semibold text-lg">
                                     <a href="${baseUrl.replace(':email', user.email)}" 
                                         class="hover:underline text-[var(--text-primary)]">${user.username}</a>
                                 </h3>
-                                <p class="text-sm text-[var(--text-secondary)]">Reputation: ${user.reputation}</p>
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">php</span>
-                                    <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">java</span>
+                                <p class="text-sm flex items-center gap-1 mt-1">
+                                    <i class="fa-solid fa-star text-yellow-500"></i>
+                                    <span class="text-[var(--text-secondary)]">${user.reputation}</span>
+                                </p>
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    <span class="badge">php</span>
+                                    <span class="badge">java</span>
                                 </div>
                             </div>
                         </div>
@@ -271,18 +325,21 @@
                     const matchingUsers = byNewest.filter(user => results.includes(user.username.toLowerCase()));
 
                     resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                        <div class="user-card p-4 shadow-sm flex items-center gap-4">
                             <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
-                                alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                             <div class="flex-1">
-                                <h3 class="font-semibold">
+                                <h3 class="font-semibold text-lg">
                                     <a href="${baseUrl.replace(':email', user.email)}" 
                                         class="hover:underline text-[var(--text-primary)]">${user.username}</a>
                                 </h3>
-                                <p class="text-sm text-[var(--primary)]">Since ${user.created_at}</p>
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">php</span>
-                                    <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">java</span>
+                                <p class="text-sm flex items-center gap-1 mt-1">
+                                    <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
+                                    <span class="text-[var(--primary)]">Since ${user.created_at}</span>
+                                </p>
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    <span class="badge">php</span>
+                                    <span class="badge">java</span>
                                 </div>
                             </div>
                         </div>
@@ -293,18 +350,21 @@
                     const matchingUsers = byVote.filter(user => results.includes(user.username.toLowerCase()));
 
                     resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                        <div class="user-card p-4 shadow-sm flex items-center gap-4">
                             <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
-                                alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                             <div class="flex-1">
-                                <h3 class="font-semibold">
+                                <h3 class="font-semibold text-lg">
                                     <a href="${baseUrl.replace(':email', user.email)}" 
                                         class="hover:underline text-[var(--text-primary)]">${user.username}</a>
                                 </h3>
-                                <p class="text-sm text-[var(--text-secondary)]">Voters: ${user.vote_count}</p>
-                                <div class="flex flex-wrap gap-1 mt-1">
-                                    <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">react</span>
-                                    <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">vue</span>
+                                <p class="text-sm flex items-center gap-1 mt-1">
+                                    <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
+                                    <span class="text-[var(--text-secondary)]">${user.vote_count}</span>
+                                </p>
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    <span class="badge">react</span>
+                                    <span class="badge">vue</span>
                                 </div>
                             </div>
                         </div>
@@ -315,18 +375,21 @@
                 if (searchSwitch === 1) {
                     document.getElementById('reputationResult').innerHTML = `
                         @foreach ($order_by_reputation as $user)
-                            <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold">
+                                    <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                                             class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
                                     </h3>
-                                    <p class="text-sm text-[var(--text-secondary)]">Reputation: {{ $user['reputation'] }}</p>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">php</span>
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">java</span>
+                                    <p class="text-sm flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-star text-yellow-500"></i>
+                                        <span class="text-[var(--text-secondary)]">{{ $user['reputation'] }}</span>
+                                    </p>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        <span class="badge">php</span>
+                                        <span class="badge">java</span>
                                     </div>
                                 </div>
                             </div>
@@ -335,18 +398,21 @@
                 } else if (searchSwitch === 2) {
                     document.getElementById('newestResult').innerHTML = `
                         @foreach ($order_by_newest as $user)
-                            <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold">
+                                    <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                                             class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
                                     </h3>
-                                    <p class="text-sm text-[var(--primary)]">Since {{ $user['created_at'] }}</p>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">php</span>
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">java</span>
+                                    <p class="text-sm flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
+                                        <span class="text-[var(--primary)]">Since {{ $user['created_at'] }}</span>
+                                    </p>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        <span class="badge">php</span>
+                                        <span class="badge">java</span>
                                     </div>
                                 </div>
                             </div>
@@ -355,18 +421,21 @@
                 } else if (searchSwitch === 3) {
                     document.getElementById('voterResult').innerHTML = `
                         @foreach ($order_by_vote as $user)
-                            <div class="user-card rounded-xl p-4 shadow-md flex items-center gap-4">
+                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-12 h-12 rounded-full object-cover">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
-                                    <h3 class="font-semibold">
+                                    <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                                             class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
                                     </h3>
-                                    <p class="text-sm text-[var(--text-secondary)]">Voters: {{ $user['vote_count'] }}</p>
-                                    <div class="flex flex-wrap gap-1 mt-1">
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">react</span>
-                                        <span class="text-xs bg-[var(--bg-muted)] text-[var(--text-muted)] px-2 py-1 rounded-md">vue</span>
+                                    <p class="text-sm flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
+                                        <span class="text-[var(--text-secondary)]">{{ $user['vote_count'] }}</span>
+                                    </p>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        <span class="badge">react</span>
+                                        <span class="badge">vue</span>
                                     </div>
                                 </div>
                             </div>

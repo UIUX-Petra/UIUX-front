@@ -60,15 +60,22 @@ class AnswerController extends Controller
     {
         // kirim email
         $data['email'] = session('email');
-        if ($request->vote === true) {
+        $vote = filter_var($request->vote, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        if ($vote === true) {
             $api_url = env('API_URL') . '/answers/' . $request->answer_id . '/upvote';
         } else {
             $api_url = env('API_URL') . '/answers/' . $request->answer_id . '/downvote';
         }
         $response = Http::withToken(session('token'))->post($api_url, $data);
-        Log::info($response);
         if ($response->successful()) {
-            return response()->json(['success' => true, 'message' => 'Your Vote has been recorded']);
+            return response()->json(
+                [
+                    'success' => true,
+                    'message' => 'Your Vote has been recorded',
+                    'voteAnswerUpdated' => $response->json()['data']
+                ]
+            );
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
             return response()->json(['success' => false, 'message' => $errorMessage]);

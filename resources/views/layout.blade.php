@@ -49,6 +49,14 @@
     {{-- Alphine JS --}}
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
 
+    <script>
+        (function() {
+            const isLight = localStorage.getItem('color-theme') === 'light' || 
+                            (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: light)').matches);
+            document.documentElement.classList.add(isLight ? 'light-mode' : 'dark-mode');
+        })();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
 
@@ -262,9 +270,6 @@
                 themeToggleIcon.classList.add(isLightMode ? 'fa-moon' : 'fa-sun');
             }
         }
-        
-        // Run theme initialization when the DOM loads
-        document.addEventListener('DOMContentLoaded', initTheme);
     </script>
 
     <!-- Add these CSS variables to your <style> in the head section -->
@@ -280,13 +285,15 @@
             --bg-primary: #1C2245;
             --bg-secondary: #232753;
             --bg-tertiary: #32386E;
+            --bg-shadow: #32386E;
             --bg-card: #1c2246;
             --bg-card-hover: #232753;
             
             /* Text colors */
             --text-primary: #ffffff;
             --text-secondary: #d0d9ff;
-            --text-muted: #6173bc;
+            --text-muted: #929fd3;
+            --text-dark: #101838;
             
             
             /* Accent colors */
@@ -295,7 +302,7 @@
             --accent-tertiary: #ffd249;
             
             /* Border colors */
-            --border-color: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(9, 15, 56, 0.604);
             
             /* Button colors */
             --button-primary: linear-gradient(to right, #38A3A5, #80ED99);
@@ -307,7 +314,8 @@
             /* Background colors */
             --bg-primary: #f3f6fb;
             --bg-secondary: #fff;
-            --bg-tertiary: #ffffff;
+            --bg-tertiary: #fff;
+            --bg-shadow: #cdd4e7;
             --bg-card: #f6f7ff;
             --bg-card-hover: #EDF2FB;
             
@@ -315,14 +323,15 @@
             --text-primary: #12192c;
             --text-secondary: #2e406b;
             --text-muted: #1a2e5c;
+            --text-dark: #101838;
             
             /* Accent colors */
             --accent-primary: #5477c8;
             --accent-secondary: #10b981;
-            --accent-tertiary: #F48024;
+            --accent-tertiary: #f4ab24;
             
             /* Border colors */
-            --border-color: rgba(0, 0, 0, 0.1);
+            --border-color: rgba(90, 198, 198, 0.612);
             
             /* Button colors */
             --button-primary: linear-gradient(to right, #38A3A5, #80ED99);
@@ -392,7 +401,7 @@
 </head>
 {{-- @include('partials.nav') --}}
 <body>
-    <div class="lg:ml-[20rem] md:ml-64 mt-16 p-4"> 
+    <div class="lg:ml-[20rem] md:ml-64 pt-16 p-4"> 
         @yield('content')
         {{-- Insert <script> CDN below --}}
 
