@@ -160,14 +160,16 @@
                     <h3 id="countFollowers" class="text-[var(--text-primary)] text-xl font-bold">
                         {{ $currUser['followers_count'] }}
                     </h3>
-                    <a href="{{ route('user.followers.list', ['email' => $currUser['email']]) }}" class="hover:underline">
-                        <p class="text-[var(--text-muted)] text-sm">Followers</p>
+                    <a href="{{ route('user.connections', ['email' => $currUser['email'], 'type' => 'followers']) }}#followers"
+                        class="hover:underline">
+                        <p class="text-[var(--text-muted-dark)] text-sm">Followers</p>
                     </a>
                 </div>
                 <div class="text-center">
                     <h3 class="text-[var(--text-primary)] text-xl font-bold"> {{ $currUser['followings_count'] }}</h3>
-                    <a href="{{ route('user.followers.list', ['email' => $currUser['email']]) }}" class="hover:underline">
-                        <p class="text-[var(--text-muted)] text-sm">Followers</p>
+                    <a href="{{ route('user.connections', ['email' => $currUser['email'], 'type' => 'following']) }}#following"
+                        class="hover:underline">
+                        <p class="text-[var(--text-muted-dark)] text-sm">Followings</p>
                     </a>
                 </div>
             </div>
@@ -269,43 +271,53 @@
                 <div class="profile-card p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Top Posts</h3>
-                        <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a>
+                        {{-- <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a> --}}
                     </div>
                     <div class="space-y-4">
                         <div class="profile-post p-4 rounded-lg">
+
                             <div class="flex items-start">
-                                <div class="flex-1">
-                                    <a href="#"
-                                        class="text-[var(--text-primary)] font-medium hover:underline text-lg">
-                                        How does JVM Clojure store captured environments of closures under the hood?
-                                    </a>
-                                    <div class="flex flex-wrap gap-2 mt-2 mb-3">
-                                        <span
-                                            class="profile-tag px-2 py-0.5 text-white bg-[var(--bg-shadow)] text-xs rounded">clojure</span>
-                                        <span
-                                            class="profile-tag px-2 py-0.5 text-white bg-[var(--bg-shadow)] text-xs rounded">jvm</span>
-                                        <span
-                                            class="profile-tag px-2 py-0.5 text-white bg-[var(--bg-shadow)] text-xs rounded">closures</span>
+                                @if ($currUser['top_question_post'])
+                                    <div class="flex-1">
+                                        <a href="{{ route('user.viewQuestions', ['questionId' => $currUser['top_question_post']['id']]) }}"
+                                            class="text-[var(--text-primary)] font-medium hover:underline text-lg">
+                                            {{ $currUser['top_question_post']['title'] }}
+                                        </a>
+                                        <div class="flex flex-wrap gap-2 mt-2 mb-3">
+                                            @foreach ($currUser['top_question_post']['group_question'] as $groupQuestion)
+                                                <span
+                                                    class="profile-tag px-2 py-0.5 text-white bg-[var(--bg-shadow)] text-xs rounded">{{ $groupQuestion['subject']['name'] }}</span>
+                                            @endforeach
+                                        </div>
+                                        <div class="flex items-center mt-3 space-x-6">
+                                            <div class="flex items-center">
+                                                <div class="flex items-center">
+                                                    <i class="fa-regular fa-thumbs-up text-[var(--text-muted)] mr-1"></i>
+                                                    <span
+                                                        class="text-sm text-[var(--text-muted)]">{{ $currUser['top_question_post']['vote'] }}
+                                                        Likes</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa-regular fa-comment text-[var(--text-muted)] mr-1"></i>
+                                                <span
+                                                    class="text-sm text-[var(--text-muted)]">{{ $currUser['top_question_post']['comment_count'] }}
+                                                    Comments</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-eye text-[var(--text-muted)] mr-1"></i>
+                                                <span
+                                                    class="text-sm text-[var(--text-muted)]">{{ $currUser['top_question_post']['view'] }}
+                                                    Views</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center mt-3 space-x-6">
-                                        <div class="flex items-center">
-                                            <button
-                                                class="px-3 py-1 btn-primary text-white text-sm rounded-lg mr-2 flex items-center">
-                                                <i class="fa-regular fa-thumbs-up mr-1"></i>
-                                                Like
-                                            </button>
-                                            <span class="text-sm text-[var(--text-muted)]">12 Likes</span>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <i class="fa-regular fa-comment text-[var(--text-muted)] mr-1"></i>
-                                            <span class="text-sm text-[var(--text-muted)]">5 Comments</span>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <i class="fa-solid fa-eye text-[var(--text-muted)] mr-1"></i>
-                                            <span class="text-sm text-[var(--text-muted)]">142 Views</span>
-                                        </div>
+                                @else
+                                    <div class="flex-1">
+                                        You haven't posted anything yet!
                                     </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
 

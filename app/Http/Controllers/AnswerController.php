@@ -19,7 +19,7 @@ class AnswerController extends Controller
         $api_url = env('API_URL') . '/answers/' . $id;
         $response = Http::get($api_url);
         $response = json_decode($response, true);
-        dd($response['data']);
+        // dd($response['data']);
         return $response['data'];
     }
 

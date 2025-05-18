@@ -6,25 +6,32 @@
     @include('utils.background')
 
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      
+
         <div class="flex space-x-3 text-white">
             <img class="size-8 rounded-full"
                 src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/150' }}" alt="User avatar">
-            <h1 class="text-3xl font-bold text-white mb-8">
-                <a href="{{ route('viewUser', ['email' => $user['email']]) }}">{{ $user['username'] }}</a>
-            </h1>
-            
+            @if (session('email') != $user['email'])
+                <h1 class="text-3xl font-bold text-white mb-8">
+                    <a href="{{ route('viewUser', ['email' => $user['email']]) }}">My Questions</a>
+                </h1>
+            @else
+                <h1 class="text-3xl font-bold text-white mb-8">
+                    <a href="{{ route('viewUser', ['email' => $user['email']]) }}">{{ $user['username'] }}'s Questions</a>
+                </h1>
+            @endif
+
         </div>
-        <h1 class="text-3xl font-bold text-white mb-8">
+        {{-- <h1 class="text-3xl font-bold text-white mb-8">
             Questions
-        </h1>
+        </h1> --}}
 
         @if (!empty($user['question']) && count($user['question']) > 0)
             <div class="space-y-6">
                 @foreach ($user['question'] as $question)
                     <div class="bg-white shadow-xl rounded-lg p-6 hover:shadow-2xl transition-shadow duration-300">
                         <h2 class="text-xl font-semibold text-[#7494ec] mb-2">
-                            <a href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}" class="hover:underline">
+                            <a href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}"
+                                class="hover:underline">
                                 {{ $question['title'] ?? 'No Title Provided' }}
                             </a>
                         </h2>
@@ -54,11 +61,9 @@
         @endif
 
         <div class="mt-10 text-center">
-            {{-- <a href="{{ route('profile.show', ['idOrEmail' => $userId]) }}" class="text-[#633F92] hover:underline text-lg"> --}}
-            &larr; Back to {{ $user['username'] }}'s Profile
+             <a href="{{ route('viewUser', ['email' => $user['email']]) }}">
+             Back
             </a>
-            {{-- Ganti 'profile.show' dan ['idOrEmail' => $userId] dengan route dan parameter yang benar
-                 untuk menampilkan halaman profil pengguna berdasarkan ID atau email --}}
         </div>
     </div>
 @endsection

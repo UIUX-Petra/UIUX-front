@@ -27,7 +27,7 @@ class UserController extends Controller
 
         foreach ($users as &$user) {
             $countvotes = collect($user['question'])->sum(function ($question) {
-                return $question['vote'] ?? 0;  // Default to 0 if no votes
+                return $question['vote'] ?? 0;
             });
 
             $user['vote_count'] = $countvotes;
@@ -83,7 +83,6 @@ class UserController extends Controller
             'recommended' => $recUser
         ];
     }
-
     public function getUserByEmail($email)
     {
         $api_url = env('API_URL') . '/users/get/' . $email;
@@ -102,88 +101,186 @@ class UserController extends Controller
             $answerCount = 0;
             $followerCount = 0;
             $followingCount = 0;
-            $subjectCount = []; //store subject name counts
+            $subjectCount = [];
 
-            // Hitung subject punya questions
-            if (isset($originalUserData['question']) && is_array($originalUserData['question'])) {
-                $questionCount = count($originalUserData['question']);
-                foreach ($originalUserData['question'] as $questionItem) { // Ganti nama variabel agar tidak bentrok
+            $allQuestions = $originalUserData['question'] ?? [];
+            $topQuestionPost = null;
+
+            if (is_array($allQuestions) && !empty($allQuestions)) {
+                $questionCount = count($allQuestions);
+                $topQuestionPost = $allQuestions[0]; // Inisialisasi dengan pertanyaan pertama
+                $topQuestionPost['vote'] = $topQuestionPost['vote'] ?? 0;
+                $topQuestionPost['view'] = $topQuestionPost['view'] ?? 0;
+
+                foreach ($allQuestions as $questionItem) {
+                    // SubjectCount
                     if (isset($questionItem['group_question']) && is_array($questionItem['group_question'])) {
                         foreach ($questionItem['group_question'] as $group) {
-                            if (isset($group['subject']) && is_array($group['subject']) && isset($group['subject']['name'])) {
+                            if (isset($group['subject']['name'])) {
                                 $subjectName = $group['subject']['name'];
-                                if (isset($subjectCount[$subjectName])) {
-                                    $subjectCount[$subjectName]++;
-                                } else {
-                                    $subjectCount[$subjectName] = 1;
-                                }
+                                $subjectCount[$subjectName] = ($subjectCount[$subjectName] ?? 0) + 1;
                             }
                         }
                     }
+
+                    // Proses untuk menentukan top question post
+                    $currentVote = $questionItem['vote'] ?? 0;
+                    $currentView = $questionItem['view'] ?? 0;
+
+                    if ($currentVote > $topQuestionPost['vote']) {
+                        $topQuestionPost = $questionItem;
+                    } elseif ($currentVote == $topQuestionPost['vote']) {
+                        if ($currentView > ($topQuestionPost['view'] ?? 0)) { // Pastikan ada nilai default untuk view juga
+                            $topQuestionPost = $questionItem;
+                        }
+                    }
+                }
+                // Pastikan vote dan view selalu ada di topQuestionPost setelah loop
+                $topQuestionPost['vote'] = $topQuestionPost['vote'] ?? 0;
+                $topQuestionPost['view'] = $topQuestionPost['view'] ?? 0;
+
+
+                if ($topQuestionPost !== null) {
+                    $topQuestionPost['comment_count'] = count($topQuestionPost['comment'] ?? []);
                 }
             }
 
-            // Hitung subject punya answers
             if (isset($originalUserData['answer']) && is_array($originalUserData['answer'])) {
                 $answerCount = count($originalUserData['answer']);
-                foreach ($originalUserData['answer'] as $answerItem) { // Ganti nama variabel
-                    if (isset($answerItem['question']) && is_array($answerItem['question'])) {
-                        if (isset($answerItem['question']['group_question']) && is_array($answerItem['question']['group_question'])) {
-                            foreach ($answerItem['question']['group_question'] as $group) {
-                                if (isset($group['subject']) && is_array($group['subject']) && isset($group['subject']['name'])) {
-                                    $subjectName = $group['subject']['name'];
-                                    if (isset($subjectCount[$subjectName])) {
-                                        $subjectCount[$subjectName]++;
-                                    } else {
-                                        $subjectCount[$subjectName] = 1;
-                                    }
-                                }
+                foreach ($originalUserData['answer'] as $answerItem) {
+                    if (isset($answerItem['question']['group_question']) && is_array($answerItem['question']['group_question'])) {
+                        foreach ($answerItem['question']['group_question'] as $group) {
+                            if (isset($group['subject']['name'])) {
+                                $subjectName = $group['subject']['name'];
+                                $subjectCount[$subjectName] = ($subjectCount[$subjectName] ?? 0) + 1;
                             }
                         }
                     }
                 }
             }
 
-            if (isset($originalUserData['followers']) && is_array($originalUserData['followers'])) {
-                $followerCount = count($originalUserData['followers']);
-            }
+            $followerCount = isset($originalUserData['followers']) && is_array($originalUserData['followers']) ? count($originalUserData['followers']) : 0;
+            $followingCount = isset($originalUserData['following']) && is_array($originalUserData['following']) ? count($originalUserData['following']) : 0;
 
-            if (isset($originalUserData['following']) && is_array($originalUserData['following'])) {
-                $followingCount = count($originalUserData['following']);
-            }
 
             $topSubjectsData = [];
             if (!empty($subjectCount)) {
-                arsort($subjectCount); //urutin top down
+                arsort($subjectCount);
                 $topSubjectsData = $subjectCount;
             }
 
-            // Membangun array hasil yang difilter
-            $filteredUserData = [
+            return [
                 'id' => $originalUserData['id'] ?? null,
                 'username' => $originalUserData['username'] ?? null,
                 'email' => $originalUserData['email'] ?? null,
                 'image' => $originalUserData['image'] ?? null,
                 'biodata' => $originalUserData['biodata'] ?? null,
-                'reputation' => $originalUserData['reputation'] ?? 0, // Default ke 0 jika tidak ada
+                'reputation' => $originalUserData['reputation'] ?? 0,
                 'user_achievement' => $originalUserData['user_achievement'] ?? [],
                 'followers' => $originalUserData['followers'] ?? [],
-                // 'question' => $originalUserData['question'] ?? [], 
+                'following' => $originalUserData['following'] ?? [],
+                'top_question_post' => $topQuestionPost,
                 'top_subjects' => $topSubjectsData,
                 'questions_count' => $questionCount,
                 'answers_count' => $answerCount,
                 'followers_count' => $followerCount,
                 'followings_count' => $followingCount,
             ];
-
-            // dd($filteredUserData); 
-            return $filteredUserData;
         } else {
             Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", (array)$responseData);
             return null;
         }
     }
 
+    /**
+     * Helper untuk menentukan status follow dari logged-in user terhadap target user.
+     *
+     * @param array $targetUser Data pengguna target.
+     * @param array|null $loggedInUserFollowingArray Daftar email yang diikuti oleh pengguna yang login.
+     * @param array|null $loggedInUserFollowersArray Daftar email followers dari pengguna yang login.
+     * @param string $loggedInUserEmail Email pengguna yang login.
+     * @return array ['follow_status' => string, 'is_mutual' => bool]
+     */
+    public function determineFollowStatus(array $targetUser, ?array $loggedInUserFollowingArray, ?array $loggedInUserFollowersArray, string $loggedInUserEmail): array
+    {
+        if ($targetUser['email'] === $loggedInUserEmail) {
+            return ['follow_status' => 'is_self', 'is_mutual' => false];
+        }
+
+        $isFollowingTarget = $loggedInUserFollowingArray !== null && in_array($targetUser['email'], array_column($loggedInUserFollowingArray, 'email'));
+        $targetIsFollowingLoggedInUser = $loggedInUserFollowersArray !== null && in_array($targetUser['email'], array_column($loggedInUserFollowersArray, 'email'));
+
+        if ($isFollowingTarget) {
+            return ['follow_status' => 'following', 'is_mutual' => $targetIsFollowingLoggedInUser];
+        } elseif ($targetIsFollowingLoggedInUser) {
+            return ['follow_status' => 'follows_you', 'is_mutual' => false];
+        } else {
+            return ['follow_status' => 'not_following', 'is_mutual' => false];
+        }
+    }
+
+    /**
+     * Menyiapkan daftar followers atau following dengan status relasi terhadap logged-in user.
+     *
+     * @param string $profileUserEmail Email pengguna yang profilnya dilihat.
+     * @param string $type 'followers' atau 'following'.
+     * @return array
+     */
+    public function getConnectionList(string $profileUserEmail, string $type = 'followers'): array
+    {
+        $profileUser = $this->getUserByEmail($profileUserEmail);
+        if (!$profileUser) {
+            // Handle jika user profil tidak ditemukan, mungkin redirect atau tampilkan error
+            return ['profileUser' => null, 'list' => collect(), 'loggedInUser' => null, 'isOwnProfile' => false];
+        }
+
+        $loggedInUserEmail = session('email');
+        $loggedInUser = null;
+        $loggedInUserFollowingArray = null;
+        $loggedInUserFollowersArray = null;
+
+        if ($loggedInUserEmail) {
+            $loggedInUser = $this->getUserByEmail($loggedInUserEmail); // Ambil data lengkap logged-in user
+            if ($loggedInUser) {
+                 // Pastikan 'following' dan 'followers' adalah array sebelum di-pass
+                $loggedInUserFollowingArray = is_array($loggedInUser['following']) ? $loggedInUser['following'] : [];
+                $loggedInUserFollowersArray = is_array($loggedInUser['followers']) ? $loggedInUser['followers'] : [];
+            }
+        }
+
+        $isOwnProfile = $loggedInUserEmail === $profileUserEmail;
+
+        $listData = $profileUser[$type] ?? [];
+        $processedList = collect($listData)->map(function ($item) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
+            // Pastikan $item adalah array dan memiliki 'email'
+            if (!is_array($item) || !isset($item['email'])) {
+                // Log atau handle item yang tidak valid
+                Log::warning("Invalid item structure in connection list for user: " . ($profileUserEmail ?? 'N/A'), ['item' => $item]);
+                return null; // Atau return item asli jika tidak ingin memfilternya
+            }
+            $status = $loggedInUserEmail ? $this->determineFollowStatus($item, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) : ['follow_status' => 'not_logged_in', 'is_mutual' => false];
+            $item['follow_status'] = $status['follow_status'];
+            $item['is_mutual'] = $status['is_mutual'];
+            return $item;
+        })->filter(); // Hapus item null jika ada
+
+        // Tambahkan status relasi untuk pengguna profil utama (jika bukan profil sendiri)
+        if ($loggedInUserEmail && !$isOwnProfile) {
+            $relationToProfileUser = $this->determineFollowStatus($profileUser, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail);
+            $profileUser['current_user_relation'] = $relationToProfileUser;
+        }
+
+
+        return [
+            'profileUser' => $profileUser,
+            'list' => $processedList,
+            'loggedInUser' => $loggedInUser, // Kirim data loggedInUser ke view
+            'isOwnProfile' => $isOwnProfile,
+            'type' => $type // Untuk menentukan tab mana yang aktif
+        ];
+    }
+
+    
     public function showUserQuestionsPage($userId)
     {
         $api_url_user = env('API_URL') . '/users/' . $userId;

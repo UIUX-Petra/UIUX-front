@@ -25,13 +25,13 @@
         .interaction-icons span {
             color: var(--text-secondary);
         }
-        
+
         .page-title-container {
             border-bottom: 2px solid var(--border-color);
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
         }
-        
+
         .card-badge {
             font-size: 0.75rem;
             padding: 0.25rem 0.75rem;
@@ -40,19 +40,19 @@
             display: inline-flex;
             align-items: center;
         }
-        
+
         .vote-btn {
             transition: transform 0.15s ease;
         }
-        
+
         .vote-btn:hover {
             transform: scale(1.15);
         }
-        
+
         .answer-section {
             position: relative;
         }
-        
+
         .answer-section::before {
             content: '';
             position: absolute;
@@ -62,16 +62,15 @@
             height: 1px;
             background: linear-gradient(to right, transparent, var(--border-color), transparent);
         }
-        
+
         .comment-animation {
             transition: all 0.3s ease-in-out;
         }
-        
+
         /* Style for verified answer */
         .verified-answer {
             border-left: 4px solid #23BF7F;
         }
-
     </style>
 @endsection
 @section('content')
@@ -85,13 +84,13 @@
                 <h1 class="text-2xl my-3 ml-2 md:text-3xl font-bold text-[var(--text-primary)]">
                     {{ $question['title'] }}
                 </h1>
-                
+
                 <div class="flex items-center space-x-4 text-sm">
                     <div class="flex items-center" title="Views">
                         <i class="fa-solid fa-eye text-[var(--accent-tertiary)] mr-2"></i>
                         <span class="text-[var(--text-secondary)]">{{ $question['view'] }}</span>
                     </div>
-                    
+
                     <div class="flex items-center" title="Comments">
                         <i class="fa-solid fa-reply text-[var(--accent-tertiary)] mr-2"></i>
                         <span class="text-[var(--text-secondary)]">{{ $question['comment_count'] }}</span>
@@ -102,7 +101,7 @@
 
         <div class="question-card rounded-lg p-6 mb-6 flex items-start">
             <div class="interaction-section flex flex-col items-center mr-6">
-                <button id="upVoteQuestion" 
+                <button id="upVoteQuestion"
                     class="mb-2 vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up">
                     <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
                 </button>
@@ -140,14 +139,16 @@
                         <i class="fa-solid fa-circle-question mr-1"></i> Question
                     </div>
                     <!-- Add timestamp -->
-                    <span class="text-xs text-[var(--text-muted)] ml-3">Posted 3 days ago</span>
+                    <span class="text-xs text-[var(--text-muted)] ml-3">
+                        Posted {{ \Carbon\Carbon::parse($question['timestamp'])->diffForHumans() }}
+                    </span>
                 </div>
-                
+
                 <div class="prose max-w-none text-[var(--text-primary)]">
                     <p class="text-md md:text-lg text-[var(--text-primary)]">
                         {{ $question['question'] }}
                     </p>
-                    
+
                     @if ($question['image'])
                         <div class="mt-4">
                             <img src="{{ asset('storage/' . $question['image']) }}" alt="Question Image"
@@ -158,12 +159,13 @@
 
                 <div class="mt-6 flex justify-between items-center">
                     <div class="flex items-center text-sm text-[var(--text-muted)]">
-                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User" 
-                             class="w-6 h-6 rounded-full mr-2">
-                        <span>Asked by Anonymous</span>
+                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User"
+                            class="w-6 h-6 rounded-full mr-2">
+                        <span>Asked by {{ $question['user']['username'] }}</span>
                     </div>
-                    
-                    <button id="comment-count" class="flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+
+                    <button id="comment-count"
+                        class="flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                         <i class="fa-solid fa-comment-dots mr-2"></i>
                         <span>{{ $question['comment_count'] }} Comments</span>
                     </button>
@@ -189,8 +191,9 @@
                         Comments
                         <span class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
                     </h3>
-                    
-                    <button class="comment-btn text-[var(--text-primary)] bg-[var(--bg-button)] bg-opacity-80 px-3 py-1 rounded-md hover:bg-opacity-100 flex items-center space-x-2 focus:outline-none transition-all">
+
+                    <button
+                        class="comment-btn text-[var(--text-primary)] bg-[var(--bg-button)] bg-opacity-80 px-3 py-1 rounded-md hover:bg-opacity-100 flex items-center space-x-2 focus:outline-none transition-all">
                         <i class="fa-solid fa-reply text-sm mr-2"></i>
                         Add Comment
                     </button>
@@ -199,9 +202,8 @@
                 <!-- Comment Input Box -->
                 <div class="comment-box hidden mb-4">
                     <textarea id="question-comment"
-                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]" 
-                        rows="2"
-                        placeholder="Write your comment here!"></textarea>
+                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                        rows="2" placeholder="Write your comment here!"></textarea>
                     <button id="qComment-btn"
                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Submit Comment
@@ -214,18 +216,20 @@
                         @foreach ($question['comment'] as $comm)
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
                                 <div class="flex flex-col items-center mr-4">
-                                    <button class="vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
+                                    <button
+                                        class="vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
                                         <i class="text-sm text-[#23BF7F] fa-solid fa-chevron-up"></i>
                                     </button>
                                     <span class="text-xs text-[var(--text-secondary)]">0</span>
-                                    <button class="vote-btn text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
+                                    <button
+                                        class="vote-btn text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
                                         <i class="text-sm text-[#FE0081] fa-solid fa-chevron-down"></i>
                                     </button>
                                 </div>
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
                                     <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                        <span>Posted by Anonymous • 2 days ago</span>
+                                        <span>Posted by {{ $comm['username'] }} - {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -280,22 +284,29 @@
         <div class="mt-10 answer-section pt-6">
             <h2 class="text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center">
                 <i class="fa-solid fa-list-check mr-2 text-[var(--accent-primary)]"></i>
-                Answers <span class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answer'] ?? []) }})</span>
+                Answers <span
+                    class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answer'] ?? []) }})</span>
             </h2>
-            
+
             @if ($question['answer'])
                 <div class="space-y-6">
                     @foreach ($question['answer'] as $ans)
-                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
+                        <div
+                            class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
                             <div class="interaction-section flex flex-col items-center mr-6">
-                                <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up" data-answer-id="{{ $ans['id'] }}">
+                                <button
+                                    class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
+                                    data-answer-id="{{ $ans['id'] }}">
                                     <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
                                 </button>
-                                <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
-                                <button class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down" data-answer-id="{{ $ans['id'] }}">
+                                <span
+                                    class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
+                                <button
+                                    class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
+                                    data-answer-id="{{ $ans['id'] }}">
                                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                                 </button>
-                                
+
                                 @if ($loop->first)
                                     <div class="mt-4 flex flex-col items-center">
                                         <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
@@ -308,7 +319,7 @@
                                 <div class="prose max-w-none text-[var(--text-primary)]">
                                     <p>{{ $ans['answer'] }}</p>
                                 </div>
-                                
+
                                 @if ($ans['image'])
                                     <div class="mt-4">
                                         <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
@@ -318,22 +329,23 @@
 
                                 <div class="mt-4 flex justify-between items-center">
                                     <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User" 
-                                             class="w-6 h-6 rounded-full mr-2">
-                                        <span>Answered by Anonymous • 1 day ago</span>
+                                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User"
+                                            class="w-6 h-6 rounded-full mr-2">
+                                        <span>Answered by {{ $ans['username'] }} - {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
                                     </div>
-                                    
-                                    <button class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+
+                                    <button
+                                        class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                                         <i class="fa-solid fa-comment-dots mr-2"></i>
                                         <span>Add Comment</span>
                                     </button>
                                 </div>
-                            
+
                                 <!-- comment input box -->
                                 <div class="comment-box hidden mt-4 w-full comment-animation">
                                     <textarea id="answer-comment-{{ $ans['id'] }}"
-                                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]" rows="2"
-                                        placeholder="Write your comment here!"></textarea>
+                                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                                        rows="2" placeholder="Write your comment here!"></textarea>
                                     <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
                                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                                         Submit Comment
@@ -348,7 +360,8 @@
                     <i class="fa-solid fa-lightbulb text-4xl text-[var(--accent-secondary)] mb-4"></i>
                     <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-2">No Answers Yet</h3>
                     <p class="text-[var(--text-secondary)] mb-4">Be the first one to answer this question!</p>
-                    <a href="#answer-textArea" class="px-6 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                    <a href="#answer-textArea"
+                        class="px-6 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Write an Answer
                     </a>
                 </div>
@@ -424,16 +437,17 @@
                 submitButton.addEventListener('click', (event) => {
                     event.preventDefault();
                     const answerText = textArea.value.trim();
-                    
+
                     // Show loading state
                     const originalButtonText = submitButton.innerHTML;
-                    submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...';
+                    submitButton.innerHTML =
+                        '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Submitting...';
                     submitButton.disabled = true;
 
                     if (answerText === '') {
                         submitButton.innerHTML = originalButtonText;
                         submitButton.disabled = false;
-                        
+
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -447,7 +461,7 @@
                         if (fileInput.files.length > 0) {
                             formData.append('image', fileInput.files[0]);
                         }
-                        
+
                         const questionId = @json($question['id']);
 
                         fetch(`/submitAnswer/${questionId}`, {
@@ -461,17 +475,18 @@
                             .then(data => {
                                 submitButton.innerHTML = originalButtonText;
                                 submitButton.disabled = false;
-                                
+
                                 if (data.success) {
                                     // Clear form after successful submission
                                     textArea.value = '';
                                     fileInput.value = '';
-                                    const imagePreviewsContainer = document.querySelector(".image-previews");
+                                    const imagePreviewsContainer = document.querySelector(
+                                        ".image-previews");
                                     if (imagePreviewsContainer) {
                                         imagePreviewsContainer.innerHTML = '';
                                         imagePreviewsContainer.classList.add('hidden');
                                     }
-                                    
+
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Answer Submitted!',
@@ -494,7 +509,7 @@
                             .catch(error => {
                                 submitButton.innerHTML = originalButtonText;
                                 submitButton.disabled = false;
-                                
+
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
