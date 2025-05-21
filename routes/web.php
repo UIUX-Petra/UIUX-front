@@ -58,6 +58,7 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/leaderboard', [MainController::class, 'leaderboard'])->name('user.leaderboard');
     Route::get('/getTagLeaderboard/{id}', [TagController::class, 'getTagLeaderboard'])->name('tag.leaderboard');
     Route::get('/getMostViewed', [UserController::class, 'getMostViewed'])->name('user.mostViewed');
+    Route::get('/getSavedQuestion', [UserController::class, 'getSavedQuestion'])->name('savedQuestions');
     Route::post('/saveQuestion', [QuestionController::class, 'saveQuestion'])->name('saveQuestion');
     Route::post('/unsaveQuestion', [QuestionController::class, 'unsaveQuestion'])->name('unsaveQuestion');
 });
