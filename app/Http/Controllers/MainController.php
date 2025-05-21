@@ -162,6 +162,7 @@ class MainController extends Controller
             'isOwnProfile' => $isOwnProfile,
             'activeTab' => $initialTabType
         ];
+        // dd($data);
         
         // ---- UNTUK DEBUGGING ----
         // Hapus atau beri komentar setelah selesai debugging
