@@ -95,7 +95,7 @@ class QuestionController extends Controller
         return $paginator;
     }
 
-   public function getAllQuestionsByPopularity(Request $request)
+    public function getAllQuestionsByPopularity(Request $request)
     {
         $api_base_url = env('API_URL');
         $api_url = $api_base_url . '/questions-paginated';
@@ -303,10 +303,16 @@ class QuestionController extends Controller
         $response = Http::withToken(session('token'))->post($api_url);
 
         if ($response->successful()) {
-            return redirect()->back()->with('success', 'Question unsaved successfully!');
+            return response()->json([
+                'success' => $response->json()['success'],
+                'message' => $response->json()['message'],
+            ]);
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to save question.';
-            return redirect()->back()->with('error', $errorMessage);
+            return response()->json([
+                'success' => $response->json()['success'],
+                'message' => $errorMessage,
+            ]);
         }
     }
 }

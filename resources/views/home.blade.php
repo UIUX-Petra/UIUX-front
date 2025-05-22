@@ -264,8 +264,7 @@
                             <button type="submit"
                                 class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
                                 data-question-id="{{ $question['id'] }}" title="Save Question">
-                                <i
-                                    class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+                                <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
                             </button>
                         </form>
                     @endif

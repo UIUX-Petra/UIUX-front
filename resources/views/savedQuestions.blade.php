@@ -16,23 +16,21 @@
 
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
         <div class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
-            <!-- Loop through questions -->
+
             @if (isset($questions) && count($questions) > 0)
                 @foreach ($questions as $question)
-                    <div
+                    <div id="{{ $question['id'] }}"
                         class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
                         <div class="absolute inset-0 bg-pattern opacity-5"></div>
 
-                        {{-- Since these are saved questions, we know they're saved by the user --}}
-                        <form action="{{ route('unsaveQuestion') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="question_id" value="{{ $question['id'] }}">
-                            <button type="submit"
-                                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                                data-question-id="{{ $question['id'] }}" title="Unsave Question">
-                                <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
-                            </button>
-                        </form>
+                        <button onclick="unsaveQuestion(this)" type="submit"
+                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                            data-question-title="{{ $question['title'] }}" data-question-id="{{ $question['id'] }}"
+                            title="Unsave Question">
+                            <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+                            {{-- <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i> --}}
+
+                        </button>
 
                         <!-- Stats Column -->
                         <div
@@ -47,7 +45,7 @@
                             </div>
                             <div class="stats-item flex flex-col items-center">
                                 <i class="text-lg fa-regular fa-comment"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['comment_count'] ?? 0 }}</span>
+                                <span class="text-sm font-medium mt-1">{{ $question['comment_count'] ?? 0 }}</span>
                             </div>
                         </div>
 
@@ -133,4 +131,38 @@
 @endsection
 
 @section('script')
+    <script>
+        function unsaveQuestion(btn) {
+            const id = btn.getAttribute('data-question-id');
+            let formData = new FormData();
+            formData.append("question_id", id);
+
+            fetch("{{ route('unsaveQuestion') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                },
+                body: formData
+            }).then(response => response.json()).then(res => {
+                if (res.success) {
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        newWindow: true,
+                        close: true,
+                        gravity: "top", // `top` or `bottom`
+                        position: "right", // `left`, `center` or `right`
+                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        },
+                        onClick: function() {}
+                    }).showToast();
+                    btn.innerHTML = `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
+
+                    // UBAH BTN E DARI YANG UNSAVED JADI SAVED
+                }
+            });
+        }
+    </script>
 @endsection
