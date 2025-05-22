@@ -242,7 +242,7 @@ class UserController extends Controller
         if ($loggedInUserEmail) {
             $loggedInUser = $this->getUserByEmail($loggedInUserEmail); // Ambil data lengkap logged-in user
             if ($loggedInUser) {
-                 // Pastikan 'following' dan 'followers' adalah array sebelum di-pass
+                // Pastikan 'following' dan 'followers' adalah array sebelum di-pass
                 $loggedInUserFollowingArray = is_array($loggedInUser['following']) ? $loggedInUser['following'] : [];
                 $loggedInUserFollowersArray = is_array($loggedInUser['followers']) ? $loggedInUser['followers'] : [];
             }
@@ -280,7 +280,7 @@ class UserController extends Controller
         ];
     }
 
-    
+
     public function showUserQuestionsPage($userId)
     {
         $api_url_user = env('API_URL') . '/users/' . $userId;
@@ -420,5 +420,22 @@ class UserController extends Controller
             $responseData = $response->json();
             return $responseData['data'] ?? [];
         }
+    }
+    public function getSavedQuestion()
+    {
+        $email = session('email');
+        $api_url = env('API_URL') . '/getSavedQuestions/' . $email;
+        $response = Http::withToken(session('token'))->get($api_url);
+        if ($response->successful()) {
+            $responseData = $response->json();
+        } else {
+            Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
+        }
+        Log::info("SAVED QUESTION" . $response);
+
+        return view('savedQuestions', [
+            'title' => 'Saved Questions',
+            'questions' => $responseData['data'] ?? [],
+        ]);
     }
 }
