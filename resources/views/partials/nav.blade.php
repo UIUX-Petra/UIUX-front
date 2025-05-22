@@ -96,7 +96,7 @@
                         class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                         id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                         <span class="sr-only">Open user menu</span>
-                        <img class="size-8 rounded-full" src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/150' }}" alt="User avatar">
+                        <img class="size-8 rounded-full" src="{{ $image ? asset('storage/' . $image) : asset('assets/empty.jpg') }}" alt="User avatar">
                     </button>
                 </div>
 
@@ -105,9 +105,9 @@
                     id="user-menu" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">
                     <div class="py-1" role="none">
                         <!-- Ganti route -->
-                        <a href="{{route('seeProfile')}}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem">Profile</a>
-                        <a href="{{route('editProfile')}}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem">Settings</a>
-                        <a href="{{route('logout')}}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem">Sign
+                        <a href="{{route('seeProfile')}}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-300 ease transition duration-150" role="menuitem">Profile</a>
+                        <a href="{{route('editProfile')}}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-300 ease transition duration-150" role="menuitem">Settings</a>
+                        <a href="{{route('logout')}}" class="text-gray-700 block px-4 py-2 text-sm hover:bg-gray-300 ease transition duration-150" role="menuitem">Sign
                             out</a>
                     </div>
                 </div>
