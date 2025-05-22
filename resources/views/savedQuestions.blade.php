@@ -68,8 +68,6 @@
                             data-question-title="{{ $question['title'] }}" data-question-id="{{ $question['id'] }}"
                             title="Unsave Question">
                             <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
-                            {{-- <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i> --}}
-
                         </button>
 
                         <!-- Stats Column -->
@@ -87,7 +85,7 @@
                             </div>
 
                             <div class="stats-item flex flex-row items-center space-x-2">
-                                <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
+                                <span class="text-sm font-medium">{{ $question['comment_count'] ?? 0 }}</span>
                                 <i class="text-sm fa-regular fa-comment"></i>
                             </div>
                         </div>
@@ -183,6 +181,18 @@
             let formData = new FormData();
             formData.append("question_id", id);
 
+            let loadingToast = Toastify({
+                text: "Unsaving...",
+                duration: -1,
+                close: false,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#444",
+                },
+            });
+            loadingToast.showToast();
+
             fetch("{{ route('unsaveQuestion') }}", {
                 method: "POST",
                 headers: {
@@ -190,24 +200,90 @@
                 },
                 body: formData
             }).then(response => response.json()).then(res => {
+                loadingToast.hideToast();
                 if (res.success) {
                     Toastify({
                         text: res.message,
                         duration: 3000,
-                        newWindow: true,
                         close: true,
-                        gravity: "top", // `top` or `bottom`
-                        position: "right", // `left`, `center` or `right`
-                        stopOnFocus: true, // Prevents dismissing of toast on hover
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)",
-                        },
-                        onClick: function() {}
+                        }
                     }).showToast();
-                    btn.innerHTML = `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
-
-                    // UBAH BTN E DARI YANG UNSAVED JADI SAVED
+                    btn.innerHTML =
+                        `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
+                    btn.setAttribute("onclick", "saveQuestion(this)");
+                    btn.setAttribute("title", "Save Question");
                 }
+            }).catch(err => {
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c",
+                    }
+                }).showToast();
+            });
+        }
+
+        function saveQuestion(btn) {
+            const id = btn.getAttribute('data-question-id');
+            let formData = new FormData();
+            formData.append("question_id", id);
+
+            let loadingToast = Toastify({
+                text: "Saving...",
+                duration: -1,
+                close: false,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#444",
+                },
+            });
+            loadingToast.showToast();
+
+            fetch("{{ route('saveQuestion') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                },
+                body: formData
+            }).then(response => response.json()).then(res => {
+                loadingToast.hideToast();
+                if (res.success) {
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }
+                    }).showToast();
+                    btn.innerHTML = `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
+                    btn.setAttribute("onclick", "unsaveQuestion(this)");
+                    btn.setAttribute("title", "Unsave Question");
+                }
+            }).catch(err => {
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c",
+                    }
+                }).showToast();
             });
         }
     </script>

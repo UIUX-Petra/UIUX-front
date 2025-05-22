@@ -50,7 +50,7 @@ class AnswerController extends Controller
         $response = Http::withToken(session('token'))->post($api_url, $data);
 
         if ($response->successful()) {
-            return response()->json(['success' => true, 'message' => 'Answer submitted successfully!']);
+            return response()->json(['success' => true, 'message' => 'Answer submitted successfully!'], []);
         } else {
             return response()->json(['success' => false, 'message' => 'Failed to submit answer.']);
         }

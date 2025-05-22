@@ -290,13 +290,19 @@ class QuestionController extends Controller
         $response = Http::withToken(session('token'))->post($api_url);
 
         if ($response->successful()) {
-            return redirect()->back()->with('success', 'Question saved successfully!');
+            return response()->json([
+                'success' => $response->json()['success'],
+                'message' => $response->json()['message'],
+            ]);
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to save question.';
-            return redirect()->back()->with('error', $errorMessage);
+            return response()->json([
+                'success' => $response->json()['success'],
+                'message' => $errorMessage,
+            ]);
         }
     }
-
+    
     public function unsaveQuestion(Request $request)
     {
         $api_url = env('API_URL') . '/unsaveQuestion/' . session('email') . '/' . $request->question_id;
@@ -308,7 +314,7 @@ class QuestionController extends Controller
                 'message' => $response->json()['message'],
             ]);
         } else {
-            $errorMessage = $response->json()['message'] ?? 'Failed to save question.';
+            $errorMessage = $response->json()['message'] ?? 'Failed to unsave question.';
             return response()->json([
                 'success' => $response->json()['success'],
                 'message' => $errorMessage,

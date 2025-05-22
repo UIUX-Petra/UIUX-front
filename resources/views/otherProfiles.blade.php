@@ -4,7 +4,7 @@
 @endsection
 
 @section('content')
-<style>
+    <style>
         /* Core styling variables that match the homepage */
         :root {
             --text-link: #38A3A5;
@@ -116,23 +116,23 @@
             padding: 0.375rem 0.5rem;
             margin: -0.375rem -0.5rem;
         }
-        
+
         .clickable-stat:hover {
             background-color: var(--bg-card-hover);
             transform: translateY(-1px);
         }
-        
+
         .clickable-stat .text-link {
             color: var(--text-highlight);
             position: relative;
             display: inline-flex;
             align-items: center;
         }
-        
+
         .clickable-stat:hover .text-link {
             color: var(--text-link-hover);
         }
-        
+
         .clickable-stat .text-link::after {
             content: "\f0c1";
             font-family: "Font Awesome 6 Free";
@@ -142,7 +142,7 @@
             opacity: 0;
             transition: opacity 0.2s ease;
         }
-        
+
         .clickable-stat:hover .text-link::after {
             opacity: 1;
         }
@@ -157,7 +157,8 @@
     @include('partials.nav')
     @include('utils.background3')
 
-    <div class="text-[var(--text-primary)] min-h-screen p-4 sm:p-6 lg:p-8 max-w-[68rem] justify-start items-start profile-container">
+    <div
+        class="text-[var(--text-primary)] min-h-screen p-4 sm:p-6 lg:p-8 max-w-[68rem] justify-start items-start profile-container">
         <!-- Main Content -->
         <div class="w-full rounded-xl shadow-lg overflow-hidden profile-card">
             <div class="bg-gradient-to-r from-[#38A3A5] to-[#80ED99] h-32 sm:h-48 relative">
@@ -172,11 +173,23 @@
             <div class="pt-20 sm:pt-6 sm:pl-48 px-4 sm:px-8 pb-6">
                 <div class="flex flex-col sm:flex-row justify-between items-center sm:items-start">
                     <div class="text-center sm:text-left mb-4 sm:mb-0">
-                        <h2 class="text-[var(--text-primary)] text-3xl font-bold cal-sans-regular">{{ $userViewed['username'] }}
+                        <h2 class="text-[var(--text-primary)] text-3xl font-bold cal-sans-regular">
+                            {{ $userViewed['username'] }}
                         </h2>
                     </div>
 
                     <!-- Actions -->
+                    <button id="followBtn" onclick="follow(`{{ $userViewed['email'] }}`)"
+                        class="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5f83c8] transition">
+                        @if ($userRelation == 0)
+                            Follow
+                        @elseif($userRelation == 1)
+                            Following
+                        @else
+                            Follow Back
+                        @endif
+                    </button>
+
                 </div>
             </div>
 
@@ -184,17 +197,18 @@
             <div
                 class="bg-[var(--bg-card-hover)] px-6 py-4 flex justify-around border-t border-b border-[var(--border-color)]">
                 <div class="text-center">
-                    <h3 id="countFollowers" class="text-[var(--text-primary)] text-xl font-bold">
+                    <h3 id="followers_count" class="text-[var(--text-primary)] text-xl font-bold">
                         {{ $userViewed['followers_count'] }}
                     </h3>
-                     <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'followers']) }}#followers"
+                    <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'followers']) }}#followers"
                         class="hover:underline">
                         <p class="text-[var(--text-muted-dark)] text-sm">Followers</p>
                     </a>
                 </div>
                 <div class="text-center">
-                    <h3 class="text-[var(--text-primary)] text-xl font-bold"> {{ $userViewed['followings_count'] }}</h3>
-                     <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'following']) }}#following"
+                    <h3 id="followings_count" class="text-[var(--text-primary)] text-xl font-bold">
+                        {{ $userViewed['followings_count'] }}</h3>
+                    <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'following']) }}#following"
                         class="hover:underline">
                         <p class="text-[var(--text-muted-dark)] text-sm">Followings</p>
                     </a>
@@ -222,7 +236,7 @@
                 </div>
 
                 <!-- Stats Section -->
-                 <div class="profile-card p-6">
+                <div class="profile-card p-6">
                     <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Stats</h3>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
@@ -302,7 +316,7 @@
                     <div class="space-y-4">
                         <div class="profile-post bg-[var(--bg-card)] border border-[var(--border-color)] p-4 rounded-lg">
                             <div class="flex items-start">
-                                 @if ($userViewed['top_question_post'])
+                                @if ($userViewed['top_question_post'])
                                     <div class="flex-1">
                                         <a href="{{ route('user.viewQuestions', ['questionId' => $userViewed['top_question_post']['id']]) }}"
                                             class="text-[var(--text-highlight)] decoration-[var(--accent-secondary)] font-medium hover:underline text-lg">
@@ -317,7 +331,8 @@
                                         <div class="flex items-center mt-3 space-x-6">
                                             <div class="flex items-center">
                                                 <div class="flex items-center">
-                                                    <i class="fa-regular fa-thumbs-up text-[var(--accent-secondary)] mr-1"></i>
+                                                    <i
+                                                        class="fa-regular fa-thumbs-up text-[var(--accent-secondary)] mr-1"></i>
                                                     <span
                                                         class="text-sm text-[var(--text-muted)]">{{ $userViewed['top_question_post']['vote'] }}
                                                         Likes</span>
@@ -349,7 +364,8 @@
                         <div class="text-center py-8 bg-[var(--bg-card-hover)] rounded-lg">
                             <i class="fa-solid fa-file-circle-plus text-4xl text-[var(--text-muted)] mb-3"></i>
                             <h4 class="text-[var(--text-secondary)] font-medium">No more posts to show</h4>
-                            <p class="text-[var(--text-muted)] text-sm mt-1 mb-4">This user doesn't have that many questions yet.</p>
+                            <p class="text-[var(--text-muted)] text-sm mt-1 mb-4">This user doesn't have that many
+                                questions yet.</p>
                         </div>
                     </div>
                 </div>
@@ -425,5 +441,41 @@
             // Initial call
             updateThemeElements();
         });
+
+        function follow(email) {
+            fetch("{{ route('nembakFollow') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email
+                })
+            }).then(response => response.json()).then(res => {
+                if (res.success) {
+                    const btn = document.getElementById('followBtn');
+                    if (res.data.userRelation == 0) {
+                        btn.innerHTML = `Follow`;
+                    } else if (res.data.userRelation == 1) {
+                        btn.innerHTML = `Following`;
+                    } else {
+                        btn.innerHTML = `Follow Back`;
+                    }
+                    document.getElementById('followers_count').textContent = res.data.countFollowers;
+                } else {
+                    Toastify({
+                        text: "Something went wrong",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#e74c3c",
+                        }
+                    }).showToast();
+                }
+            });
+        }
     </script>
 @endsection

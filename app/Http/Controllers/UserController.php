@@ -350,7 +350,7 @@ class UserController extends Controller
         ]);
 
         return response()->json([
-            'ok' => isset($response['success']) ? $response['success'] : false,
+            'success' => isset($response['success']) ? $response['success'] : false,
             'message' => $response['message'] ?? 'An error occurred during execution.',
             'data' => $response['data'] ?? ''
         ], $response->status());
@@ -445,7 +445,6 @@ class UserController extends Controller
         } else {
             Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
         }
-        Log::info("SAVED QUESTION" . $response);
         $user = $this->getBasicUserByEmail($email);
         $data['questions'] = $responseData['data'];
         $data['username'] = $user['username'];

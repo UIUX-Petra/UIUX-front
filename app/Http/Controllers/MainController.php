@@ -64,7 +64,24 @@ class MainController extends Controller
     $data['image'] = $currUser['image'];
     $data['title'] = 'PROFILE | ' . $userViewed['user']['username'];
     $data['userViewed'] = $userViewed['user'];
-    $data['image'] = $currUser['image'];
+
+    $data['userRelation'] = 0; // tak ada relasi (asing bjir)
+    foreach ($userViewed['user']['followers'] as $follower) {
+      if ($follower['id'] == $currUser['id']) {
+        $data['userRelation'] = 1; // aku follow dirinya -> btn bertuliskan following
+        break;
+      }
+    }
+
+    if ($data['userRelation'] === 0) { // jika habis di cek, trnyt ak ga folo dia, cek apakah dia folo ak -> btn bertuliskan follow back
+      foreach ($userViewed['user']['following'] as $following) {
+        if ($following['id'] == $currUser['id']) {
+          $data['userRelation'] = 2;
+          break;
+        }
+      }
+    }
+
     // dd($data);
     return view('otherProfiles', $data);
   }
@@ -274,9 +291,7 @@ class MainController extends Controller
   public function savedQuestion()
   {
     $data = $this->userController->getSavedQuestion();
-    // dd($data['questions']);
 
     return view('savedQuestions', $data);
-  
   }
 }

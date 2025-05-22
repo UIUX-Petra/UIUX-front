@@ -248,41 +248,35 @@
 
                     {{-- Use array access for 'is_saved_by_request_user' --}}
                     @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
-                        <form action="{{ route('unsaveQuestion') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="question_id" value="{{ $question['id'] }}">
-                            <button type="submit"
-                                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                                data-question-id="{{ $question['id'] }}" title="Unsave Question">
-                                <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
-                            </button>
-                        </form>
+                        <button onclick="unsaveQuestion(this)" type="submit"
+                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                            data-question-title="{{ $question['title'] }}" data-question-id="{{ $question['id'] }}"
+                            title="Unsave Question">
+                            <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+                        </button>
                     @else
-                        <form action="{{ route('saveQuestion') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="question_id" value="{{ $question['id'] }}">
-                            <button type="submit"
-                                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                                data-question-id="{{ $question['id'] }}" title="Save Question">
-                                <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
-                            </button>
-                        </form>
+                        <button onclick="saveQuestion(this)" type="submit"
+                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                            data-question-title="{{ $question['title'] }}" data-question-id="{{ $question['id'] }}"
+                            title="Save Question">
+                            <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+                        </button>
                     @endif
 
                     <!-- Stats Column -->
                     <div
                         class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
-                        
+
                         <div class="stats-item flex flex-row items-center space-x-2">
                             <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
                             <i class="text-sm fa-regular fa-thumbs-up"></i>
                         </div>
-                        
+
                         <div class="stats-item flex flex-row items-center space-x-2">
                             <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
                             <i class="text-sm fa-solid fa-eye"></i>
                         </div>
-                        
+
                         <div class="stats-item flex flex-row items-center space-x-2">
                             <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
                             <i class="text-sm fa-regular fa-comment"></i>
@@ -375,172 +369,281 @@
 
 @section('script')
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Update interaction icon colors based on theme
-        function updateIconColors() {
-            const statsItems = document.querySelectorAll('.stats-item');
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            
-            console.log('updateIconColors running, light mode:', isLightMode);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update interaction icon colors based on theme
+            function updateIconColors() {
+                const statsItems = document.querySelectorAll('.stats-item');
+                const isLightMode = document.documentElement.classList.contains('light-mode');
 
-            if (statsItems) {
-                statsItems.forEach((item, index) => {
-                    const icon = item.querySelector('i');
-                    if (!icon) return;
+                console.log('updateIconColors running, light mode:', isLightMode);
 
-                    if (index % 3 === 0) {
-                        icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
-                    }
-                    else if (index % 3 === 1) {
-                        icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
-                    }
-                    else {
-                        icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
-                    }
-                });
-            }
-        }
+                if (statsItems) {
+                    statsItems.forEach((item, index) => {
+                        const icon = item.querySelector('i');
+                        if (!icon) return;
 
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeToggleIcon = document.getElementById('theme-toggle-icon');
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
-        const themeLogoToggle = document.getElementById('theme-logo');
-
-        function updateThemeIcons() {
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-
-            if (themeToggleIcon) {
-                themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-
-            if (mobileThemeToggleIcon) {
-                mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            }
-
-            if (themeLogoToggle) {
-                themeLogoToggle.src = isLightMode ?
-                    "{{ asset('assets/p2p logo.svg') }}" :
-                    "{{ asset('assets/p2p logo - white.svg') }}";
-            }
-        }
-
-        // Ensure both theme toggles work
-        if (mobileThemeToggle) {
-            mobileThemeToggle.addEventListener('click', function() {
-                if (typeof toggleTheme === 'function') {
-                    toggleTheme();
-                }
-            });
-        }
-
-        function lazyLoadImages() {
-            const lazyImages = document.querySelectorAll('.lazy-image');
-
-            if ("IntersectionObserver" in window) {
-                const imageObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const image = entry.target;
-                            image.src = image.dataset.src;
-                            image.classList.remove("lazy-image");
-                            imageObserver.unobserve(image);
+                        if (index % 3 === 0) {
+                            icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
+                        } else if (index % 3 === 1) {
+                            icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
+                        } else {
+                            icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
                         }
                     });
-                });
+                }
+            }
 
-                lazyImages.forEach(image => {
-                    imageObserver.observe(image);
-                });
-            } else {
-                // Fallback for browsers without IntersectionObserver
-                lazyImages.forEach(image => {
-                    image.src = image.dataset.src;
-                    image.classList.remove("lazy-image");
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggleIcon = document.getElementById('theme-toggle-icon');
+            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
+            const themeLogoToggle = document.getElementById('theme-logo');
+
+            function updateThemeIcons() {
+                const isLightMode = document.documentElement.classList.contains('light-mode');
+
+                if (themeToggleIcon) {
+                    themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                }
+
+                if (mobileThemeToggleIcon) {
+                    mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+                }
+
+                if (themeLogoToggle) {
+                    themeLogoToggle.src = isLightMode ?
+                        "{{ asset('assets/p2p logo.svg') }}" :
+                        "{{ asset('assets/p2p logo - white.svg') }}";
+                }
+            }
+
+            // Ensure both theme toggles work
+            if (mobileThemeToggle) {
+                mobileThemeToggle.addEventListener('click', function() {
+                    if (typeof toggleTheme === 'function') {
+                        toggleTheme();
+                    }
                 });
             }
-        }
 
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
+            function lazyLoadImages() {
+                const lazyImages = document.querySelectorAll('.lazy-image');
 
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
+                if ("IntersectionObserver" in window) {
+                    const imageObserver = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const image = entry.target;
+                                image.src = image.dataset.src;
+                                image.classList.remove("lazy-image");
+                                imageObserver.unobserve(image);
+                            }
+                        });
+                    });
 
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 100,
-                        behavior: 'smooth'
+                    lazyImages.forEach(image => {
+                        imageObserver.observe(image);
+                    });
+                } else {
+                    // Fallback for browsers without IntersectionObserver
+                    lazyImages.forEach(image => {
+                        image.src = image.dataset.src;
+                        image.classList.remove("lazy-image");
                     });
                 }
+            }
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            updateThemeIcons();
+            updateIconColors();
+            lazyLoadImages();
+
+            const themeObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        updateThemeIcons();
+                        updateIconColors();
+                    }
+                });
+            });
+
+            themeObserver.observe(document.documentElement, {
+                attributes: true
             });
         });
 
-        updateThemeIcons();
-        updateIconColors();
-        lazyLoadImages();
+        function initSaveButtons() {
+            const saveButtons = document.querySelectorAll('.save-question-btn');
 
-        const themeObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.attributeName === 'class') {
-                    updateThemeIcons();
-                    updateIconColors();
+            saveButtons.forEach(button => {
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+
+                newButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const questionId = this.getAttribute('data-question-id');
+                    const icon = this.querySelector('i');
+                    const isSaved = icon.classList.contains('fa-solid');
+
+                    if (isSaved) {
+                        icon.classList.remove('fa-solid');
+                        icon.classList.add('fa-regular');
+                        icon.style.color = '';
+                    } else {
+                        icon.classList.remove('fa-regular');
+                        icon.classList.add('fa-solid');
+
+                        const isLightMode = document.documentElement.classList.contains('light-mode');
+                        icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
+
+                        this.classList.add('saved-animation');
+                        setTimeout(() => {
+                            this.classList.remove('saved-animation');
+                        }, 300);
+                    }
+
+                    console.log('Save question:', questionId, !isSaved);
+
+                    return false;
+                });
+            });
+        }
+
+        function updateSavedIcons() {
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+
+            savedIcons.forEach(icon => {
+                icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
+            });
+        }
+
+        function unsaveQuestion(btn) {
+            const id = btn.getAttribute('data-question-id');
+            let formData = new FormData();
+            formData.append("question_id", id);
+
+            let loadingToast = Toastify({
+                text: "Unsaving...",
+                duration: -1,
+                close: false,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#444",
+                },
+            });
+            loadingToast.showToast();
+
+            fetch("{{ route('unsaveQuestion') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                },
+                body: formData
+            }).then(response => response.json()).then(res => {
+                loadingToast.hideToast();
+                if (res.success) {
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }
+                    }).showToast();
+                    btn.innerHTML =
+                        `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
+                    btn.setAttribute("onclick", "saveQuestion(this)");
+                    btn.setAttribute("title", "Save Question");
                 }
+            }).catch(err => {
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c",
+                    }
+                }).showToast();
             });
-        });
+        }
 
-        themeObserver.observe(document.documentElement, {
-            attributes: true
-        });
-    });
+        function saveQuestion(btn) {
+            const id = btn.getAttribute('data-question-id');
+            let formData = new FormData();
+            formData.append("question_id", id);
 
-    function initSaveButtons() {
-        const saveButtons = document.querySelectorAll('.save-question-btn');
+            let loadingToast = Toastify({
+                text: "Saving...",
+                duration: -1,
+                close: false,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#444",
+                },
+            });
+            loadingToast.showToast();
 
-        saveButtons.forEach(button => {
-            const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
-            
-            newButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const questionId = this.getAttribute('data-question-id');
-                const icon = this.querySelector('i');
-                const isSaved = icon.classList.contains('fa-solid');
-
-                if (isSaved) {
-                    icon.classList.remove('fa-solid');
-                    icon.classList.add('fa-regular');
-                    icon.style.color = '';
-                } else {
-                    icon.classList.remove('fa-regular');
-                    icon.classList.add('fa-solid');
-
-                    const isLightMode = document.documentElement.classList.contains('light-mode');
-                    icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
-
-                    this.classList.add('saved-animation');
-                    setTimeout(() => {
-                        this.classList.remove('saved-animation');
-                    }, 300);
+            fetch("{{ route('saveQuestion') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                },
+                body: formData
+            }).then(response => response.json()).then(res => {
+                loadingToast.hideToast();
+                if (res.success) {
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }
+                    }).showToast();
+                    btn.innerHTML = `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
+                    btn.setAttribute("onclick", "unsaveQuestion(this)");
+                    btn.setAttribute("title", "Unsave Question");
                 }
-
-                console.log('Save question:', questionId, !isSaved);
-
-                return false;
+            }).catch(err => {
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c",
+                    }
+                }).showToast();
             });
-        });
-    }
-
-    function updateSavedIcons() {
-        const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
-        const isLightMode = document.documentElement.classList.contains('light-mode');
-
-        savedIcons.forEach(icon => {
-            icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
-        });
-    }
+        }
     </script>
 @endsection

@@ -229,7 +229,8 @@
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
                                     <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                        <span>Posted by {{ $comm['username'] }} - {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
+                                        <span>Posted by {{ $comm['username'] }} -
+                                            {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -289,7 +290,7 @@
             </h2>
 
             @if ($question['answer'])
-                <div class="space-y-6">
+                <div id="answerList" class="space-y-6">
                     @foreach ($question['answer'] as $ans)
                         <div
                             class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
@@ -331,7 +332,8 @@
                                     <div class="flex items-center text-sm text-[var(--text-muted)]">
                                         <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User"
                                             class="w-6 h-6 rounded-full mr-2">
-                                        <span>Answered by {{ $ans['username'] }} - {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                        <span>Answered by {{ $ans['username'] }} -
+                                            {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
                                     </div>
 
                                     <button
@@ -487,17 +489,85 @@
                                         imagePreviewsContainer.classList.add('hidden');
                                     }
 
+                                    let htmlContent = `
+                                    <div
+                            class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
+                            <div class="interaction-section flex flex-col items-center mr-6">
+                                <button
+                                    class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
+                                    data-answer-id="{{ $ans['id'] }}">
+                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                </button>
+                                <span
+                                    class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
+                                <button
+                                    class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
+                                    data-answer-id="{{ $ans['id'] }}">
+                                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                </button>
+
+                                @if ($loop->first)
+                                    <div class="mt-4 flex flex-col items-center">
+                                        <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
+                                        <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="flex flex-col flex-grow">
+                                <div class="prose max-w-none text-[var(--text-primary)]">
+                                    <p>{{ $ans['answer'] }}</p>
+                                </div>
+
+                                @if ($ans['image'])
+                                    <div class="mt-4">
+                                        <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
+                                            class="max-w-lg max-h-96 object-contain rounded-lg border">
+                                    </div>
+                                @endif
+
+                                <div class="mt-4 flex justify-between items-center">
+                                    <div class="flex items-center text-sm text-[var(--text-muted)]">
+                                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User"
+                                            class="w-6 h-6 rounded-full mr-2">
+                                        <span>Answered by {{ $ans['username'] }} -
+                                            {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                    </div>
+
+                                    <button
+                                        class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+                                        <i class="fa-solid fa-comment-dots mr-2"></i>
+                                        <span>Add Comment</span>
+                                    </button>
+                                </div>
+
+                                <!-- comment input box -->
+                                <div class="comment-box hidden mt-4 w-full comment-animation">
+                                    <textarea id="answer-comment-{{ $ans['id'] }}"
+                                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                                        rows="2" placeholder="Write your comment here!"></textarea>
+                                    <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
+                                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                                        Submit Comment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                                    `;
+                                    document.getElementById('answerList').insertAdjacentHTML('beforeend', htmlContent);
+
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Answer Submitted!',
                                         text: 'Your answer has been successfully submitted.',
                                         confirmButtonText: 'Great!',
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            // Optionally refresh to see the new answer
-                                            window.location.reload();
-                                        }
-                                    });
+                                    })
+                                    // .then((result) => {
+                                    //     if (result.isConfirmed) {
+                                    //         // Optionally refresh to see the new answer
+                                    //         window.location.reload();
+                                    //     }
+                                    // });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
