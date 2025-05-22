@@ -273,8 +273,8 @@
 
         <!-- Logo Section with hover effect -->
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
-            <div class="relative overflow-hidden rounded-lg">
-                <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo" class="h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-110">
+            <div class="relative overflow-hidden">
+                <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo" class="h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-90">
             </div>
             <div class="text-md cal-sans-regular logo-text">
                 <span class="font-bold text-white transition-all">peer</span>
