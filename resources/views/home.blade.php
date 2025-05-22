@@ -201,13 +201,13 @@
     </div>
     <div
         class="w-full bg-transparent rounded-lg p-6 px-8 max-w-8xl mx-auto my-6 flex flex-col md:flex-row md:items-center md:space-x-6 welcome-container backdrop-blur-sm relative overflow-hidden">
-        <!-- Decorative element -->
+        {{-- <!-- Decorative element -->
         <div class="text-5xl hidden md:flex z-10">
             <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo"
                 class="h-12 lg:h-14 w-auto theme-logo">
-        </div>
+        </div> --}}
 
-        <div class="flex flex-col z-10">
+        <div class="flex flex-col pl-3 z-10">
             @if (session()->has('email'))
                 <h1 class="cal-sans-regular welcome lg:text-4xl text-2xl mb-2 font-bold">
                     Welcome, {{ $username }}!
@@ -271,26 +271,29 @@
 
                     <!-- Stats Column -->
                     <div
-                        class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
-                        <div class="stats-item flex flex-col items-center">
-                            <i class="text-lg fa-regular fa-thumbs-up"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['vote'] ?? 0 }}</span>
+                        class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
+                        
+                        <div class="stats-item flex flex-row items-center space-x-2">
+                            <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
+                            <i class="text-sm fa-regular fa-thumbs-up"></i>
                         </div>
-                        <div class="stats-item flex flex-col items-center">
-                            <i class="text-lg fa-solid fa-eye"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['view'] ?? 0 }}</span>
+                        
+                        <div class="stats-item flex flex-row items-center space-x-2">
+                            <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
+                            <i class="text-sm fa-solid fa-eye"></i>
                         </div>
-                        <div class="stats-item flex flex-col items-center">
-                            <i class="text-lg fa-regular fa-comment"></i>
-                            {{-- 'comments_count' is added by withCount and will be in the array --}}
-                            <span class="text-sm font-medium mt-1">{{ $question['comments_count'] ?? 0 }}</span>
+                        
+                        <div class="stats-item flex flex-row items-center space-x-2">
+                            <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
+                            <i class="text-sm fa-regular fa-comment"></i>
                         </div>
                     </div>
 
-                    <div class="flex-1 z-10">
+
+                    <div class="flex-1 pt-0 mr-4 z-10">
                         <!-- Question Title -->
                         <h2
-                            class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-tertiary)] decoration-2 underline-offset-2">
+                            class="text-xl font-medium text-[var(--text-highlight)] question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
                             <a
                                 href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
                         </h2>
@@ -300,10 +303,10 @@
                             {{ \Str::limit($question['question'], 150) }}</p>
 
                         <!-- Tags -->
-                        <div class="flex mt-3 flex-wrap gap-1">
+                        <div class="flex mt-2 flex-wrap gap-1">
                             @foreach ($question['group_question'] as $tag)
                                 <span
-                                    class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
+                                    class="text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
                             @endforeach
                         </div>
                     </div>
@@ -372,190 +375,134 @@
 
 @section('script')
     <script>
-        // Enhanced theme and interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Update interaction icon colors based on theme
-            function updateIconColors() {
-                const statsItems = document.querySelectorAll('.stats-item');
-                const isLightMode = document.documentElement.classList.contains('light-mode');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Update interaction icon colors based on theme
+        function updateIconColors() {
+            const statsItems = document.querySelectorAll('.stats-item');
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            
+            console.log('updateIconColors running, light mode:', isLightMode);
 
-                if (statsItems) {
-                    statsItems.forEach((item, index) => {
-                        const icon = item.querySelector('i');
-                        if (!icon) return;
+            if (statsItems) {
+                statsItems.forEach((item, index) => {
+                    const icon = item.querySelector('i');
+                    if (!icon) return;
 
-                        // First icon (thumbs up) - green
-                        if (index % 3 === 0) {
-                            icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
+                    if (index % 3 === 0) {
+                        icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
+                    }
+                    else if (index % 3 === 1) {
+                        icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
+                    }
+                    else {
+                        icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
+                    }
+                });
+            }
+        }
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeToggleIcon = document.getElementById('theme-toggle-icon');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
+        const themeLogoToggle = document.getElementById('theme-logo');
+
+        function updateThemeIcons() {
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+
+            if (themeToggleIcon) {
+                themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            }
+
+            if (mobileThemeToggleIcon) {
+                mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            }
+
+            if (themeLogoToggle) {
+                themeLogoToggle.src = isLightMode ?
+                    "{{ asset('assets/p2p logo.svg') }}" :
+                    "{{ asset('assets/p2p logo - white.svg') }}";
+            }
+        }
+
+        // Ensure both theme toggles work
+        if (mobileThemeToggle) {
+            mobileThemeToggle.addEventListener('click', function() {
+                if (typeof toggleTheme === 'function') {
+                    toggleTheme();
+                }
+            });
+        }
+
+        function lazyLoadImages() {
+            const lazyImages = document.querySelectorAll('.lazy-image');
+
+            if ("IntersectionObserver" in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const image = entry.target;
+                            image.src = image.dataset.src;
+                            image.classList.remove("lazy-image");
+                            imageObserver.unobserve(image);
                         }
-                        // Second icon (eye) - amber/yellow
-                        else if (index % 3 === 1) {
-                            icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
-                        }
-                        // Third icon (comment) - blue/purple
-                        else {
-                            icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
-                        }
+                    });
+                });
+
+                lazyImages.forEach(image => {
+                    imageObserver.observe(image);
+                });
+            } else {
+                // Fallback for browsers without IntersectionObserver
+                lazyImages.forEach(image => {
+                    image.src = image.dataset.src;
+                    image.classList.remove("lazy-image");
+                });
+            }
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
                     });
                 }
-            }
-
-            // Theme toggling with icon change
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeToggleIcon = document.getElementById('theme-toggle-icon');
-            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
-            const themeLogoToggle = document.getElementById('theme-logo');
-
-            function updateThemeIcons() {
-                const isLightMode = document.documentElement.classList.contains('light-mode');
-
-                if (themeToggleIcon) {
-                    themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-                }
-
-                if (mobileThemeToggleIcon) {
-                    mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-                }
-
-                if (themeToggleIcon) {
-                    themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-                }
-
-                if (themeLogoToggle) {
-                    themeLogoToggle.src = isLightMode ?
-                        "{{ asset('assets/p2p logo.svg') }}" :
-                        "{{ asset('assets/p2p logo - white.svg') }}";
-                }
-
-            }
-
-            // Run on page load and when theme changes
-            updateThemeIcons();
-
-            // Watch for theme changes
-            const themeObserver = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.attributeName === 'class') {
-                        updateThemeIcons();
-                    }
-                });
             });
-
-            themeObserver.observe(document.documentElement, {
-                attributes: true
-            });
-
-            // Ensure both theme toggles work
-            if (mobileThemeToggle) {
-                mobileThemeToggle.addEventListener('click', function() {
-                    if (typeof toggleTheme === 'function') {
-                        toggleTheme();
-                    }
-                });
-            }
-
-            function lazyLoadImages() {
-                const lazyImages = document.querySelectorAll('.lazy-image');
-
-                if ("IntersectionObserver" in window) {
-                    const imageObserver = new IntersectionObserver((entries, observer) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const image = entry.target;
-                                image.src = image.dataset.src;
-                                image.classList.remove("lazy-image");
-                                imageObserver.unobserve(image);
-                            }
-                        });
-                    });
-
-                    lazyImages.forEach(image => {
-                        imageObserver.observe(image);
-                    });
-                } else {
-                    // Fallback for browsers without IntersectionObserver
-                    lazyImages.forEach(image => {
-                        image.src = image.dataset.src;
-                        image.classList.remove("lazy-image");
-                    });
-                }
-            }
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 100,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-
-            updateIconColors();
-            lazyLoadImages();
-
-            // Watch for theme changes
-            const themeObserver = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.attributeName === 'class') {
-                        updateIconColors();
-                    }
-                });
-            });
-
-            themeObserver.observe(document.documentElement, {
-                attributes: true
-            });
-
-            function showSkeletonLoaders() {
-                const questionContainer = document.querySelector('.question-container');
-                if (!questionContainer) return;
-
-                const questionCards = questionContainer.querySelectorAll('.question-card');
-
-                if (questionCards.length === 0) {
-                    for (let i = 0; i < 3; i++) {
-                        const skeletonCard = document.createElement('div');
-                        skeletonCard.className = 'question-card skeleton rounded-lg mb-4 p-5 flex';
-                        skeletonCard.innerHTML = `
-                    <div class="flex flex-col items-center mr-4 space-y-3 px-3 border-r border-[var(--border-color)]">
-                        <div class="w-8 h-8 rounded-full bg-gray-300"></div>
-                        <div class="w-8 h-8 rounded-full bg-gray-300"></div>
-                        <div class="w-8 h-8 rounded-full bg-gray-300"></div>
-                    </div>
-                    <div class="flex-1">
-                        <div class="h-6 bg-gray-300 rounded w-3/4 mb-3"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                        <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-                    </div>
-                `;
-                        questionContainer.appendChild(skeletonCard);
-                    }
-                }
-            }
-
-            function removeSkeletonLoaders() {
-                const skeletons = document.querySelectorAll('.skeleton');
-                skeletons.forEach(skeleton => {
-                    skeleton.classList.remove('skeleton');
-                });
-            }
-
-            showSkeletonLoaders();
-            window.addEventListener('load', removeSkeletonLoaders);
         });
 
+        updateThemeIcons();
+        updateIconColors();
+        lazyLoadImages();
+
+        const themeObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    updateThemeIcons();
+                    updateIconColors();
+                }
+            });
+        });
+
+        themeObserver.observe(document.documentElement, {
+            attributes: true
+        });
+    });
+
+    function initSaveButtons() {
         const saveButtons = document.querySelectorAll('.save-question-btn');
 
         saveButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
+            
+            newButton.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -574,9 +521,9 @@
                     const isLightMode = document.documentElement.classList.contains('light-mode');
                     icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
 
-                    button.classList.add('saved-animation');
+                    this.classList.add('saved-animation');
                     setTimeout(() => {
-                        button.classList.remove('saved-animation');
+                        this.classList.remove('saved-animation');
                     }, 300);
                 }
 
@@ -584,18 +531,16 @@
 
                 return false;
             });
-
         });
+    }
 
-        function updateSavedIcons() {
-            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
-            const isLightMode = document.documentElement.classList.contains('light-mode');
+    function updateSavedIcons() {
+        const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
+        const isLightMode = document.documentElement.classList.contains('light-mode');
 
-            savedIcons.forEach(icon => {
-                icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
-            });
-        }
-
-        updateSavedIcons();
+        savedIcons.forEach(icon => {
+            icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
+        });
+    }
     </script>
 @endsection

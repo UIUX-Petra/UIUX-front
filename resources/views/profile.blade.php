@@ -1,20 +1,18 @@
 @extends('layout')
-
 @section('head')
-    <style>
+@endsection
+@section('content')
+    @include('partials.nav')
+    @include('utils.background3')
+        <style>
         /* Core styling variables that match the homepage */
         :root {
-            --text-primary: #7494ec;
-            --profile-secondary: #5f83c8;
-            --text-secondary: #38A3A5;
-            --text-secondary-hover: #80ED99;
-            --tag-bg: #7494ec;
-            --tag-bg-hover: #5f83c8;
+            --text-link: #38A3A5;
+            --text-link-hover: #80ED99;
         }
 
         /* Profile specific styles */
         .profile-container {
-            background-color: var(--bg-secondary);
             transition: background-color var(--transition-speed);
         }
 
@@ -39,12 +37,12 @@
         }
 
         .profile-tag {
-            background-color: var(--tag-bg);
+            background-color: var(--bg-shadow);
             transition: all 0.2s ease;
         }
 
         .profile-tag:hover {
-            background-color: var(--tag-bg-hover);
+            color:var(--bg-primary);
             transform: translateY(-1px);
         }
 
@@ -107,6 +105,46 @@
             background-color: var(--bg-card-hover);
         }
 
+        /* Link styling improvements */
+        .clickable-stat {
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            border-radius: 0.375rem;
+            padding: 0.375rem 0.5rem;
+            margin: -0.375rem -0.5rem;
+        }
+        
+        .clickable-stat:hover {
+            background-color: var(--bg-card-hover);
+            transform: translateY(-1px);
+        }
+        
+        .clickable-stat .text-link {
+            color: var(--text-highlight);
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .clickable-stat:hover .text-link {
+            color: var(--text-link-hover);
+        }
+        
+        .clickable-stat .text-link::after {
+            content: "\f0c1";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.75rem;
+            margin-left: 0.375rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .clickable-stat:hover .text-link::after {
+            opacity: 1;
+        }
+
         /* Responsive improvements */
         @media (max-width: 768px) {
             .profile-stats {
@@ -114,22 +152,17 @@
             }
         }
     </style>
-@endsection
-
-@section('content')
-    @include('partials.nav')
-    @include('utils.background3')
 
     <div
-        class="text-[var(--text-primary)] min-h-screen p-4 sm:p-6 lg:p-8 max-w-[70rem] justify-start items-start profile-container">
+        class="text-[var(--text-primary)] min-h-screen p-4 sm:p-6 lg:p-8 max-w-[68rem] justify-start items-start profile-container">
         <!-- Main Content -->
-        <div class="w-full rounded-xl shadow-lg overflow-hidden profile-card">
+        <div class="w-full rounded-xl shadow-lg overflow-hidden profile-card border border-[var(--border-color)] bg-[var(--bg-card)]">
             <!-- Profile Header with Cover Photo -->
             <div class="bg-gradient-to-r from-[#38A3A5] to-[#80ED99] h-32 sm:h-48 relative">
                 <div
                     class="absolute -bottom-16 left-1/2 transform -translate-x-1/2 sm:-bottom-16 sm:left-8 sm:transform-none">
                     <img src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/100' }}"
-                        alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover">
+                        alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-[var(--bg-tertiary)] shadow-md object-cover">
                 </div>
             </div>
 
@@ -162,14 +195,14 @@
                     </h3>
                     <a href="{{ route('user.connections', ['email' => $currUser['email'], 'type' => 'followers']) }}#followers"
                         class="hover:underline">
-                        <p class="text-[var(--text-muted-dark)] text-sm">Followers</p>
+                        <p class="text-[var(--text-muted)] font-semibold text-sm">Followers</p>
                     </a>
                 </div>
                 <div class="text-center">
                     <h3 class="text-[var(--text-primary)] text-xl font-bold"> {{ $currUser['followings_count'] }}</h3>
                     <a href="{{ route('user.connections', ['email' => $currUser['email'], 'type' => 'following']) }}#following"
                         class="hover:underline">
-                        <p class="text-[var(--text-muted-dark)] text-sm">Followings</p>
+                        <p class="text-[var(--text-muted)] font-semibold text-sm">Following</p>
                     </a>
                 </div>
             </div>
@@ -180,8 +213,8 @@
             <!-- Left Sidebar -->
             <div class="col-span-1 lg:col-span-3 space-y-6">
                 <!-- About Section -->
-                <div class="profile-card p-6">
-                    <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">About</h3>
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
+                    <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Skills</h3>
                     <div class="flex flex-wrap gap-2">
                         <span
                             class="profile-tag px-3 py-1 text-white bg-[var(--bg-shadow)] text-sm rounded cursor-pointer">angular</span>
@@ -195,7 +228,7 @@
                 </div>
 
                 <!-- Stats Section -->
-                <div class="profile-card p-6">
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
                     <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Stats</h3>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
@@ -206,25 +239,26 @@
                             <span class="text-[var(--text-secondary)]">Answers</span>
                             <span class="font-bold text-[var(--text-primary)]">{{ $currUser['answers_count'] }}</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <a href="{{ route('user.questions.list', ['id' => $currUser['id']]) }}"><span
-                                    class="text-[var(--text-secondary)]">Questions</span></a>
-                            <span class="font-bold text-[var(--text-primary)]">{{ $currUser['questions_count'] }}</span>
+                        <div class="clickable-stat flex justify-between items-center font-bold">
+                            <a href="{{ route('user.questions.list', ['id' => $currUser['id']]) }}" class="text-link">
+                                <span>Questions</span>
+                            </a>
+                            <span class="font-bold text-[var(--text-highlight)]">{{ $currUser['questions_count'] }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Top Tags Section -->
-                <div class="profile-card p-6">
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Top Tags</h3>
-                        <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a>
+                        {{-- <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a> --}}
                     </div>
                     <ul class="space-y-3">
                         @foreach ($currUser['top_subjects'] as $subjectName => $subjectCount)
                             <li class="flex justify-between items-center tag-score p-1">
-                                <span class="text-[var(--text-secondary)]">{{ $subjectName }}</span>
-                                <span class="text-[var(--text-secondary)] font-medium">{{ $subjectCount }}</span>
+                                <span class="text-[var(--text-secondary)] text-sm">{{ $subjectName }}</span>
+                                <span class="font-bold text-[var(--text-primary)]">{{ $subjectCount }}</span>
                             </li>
                         @endforeach
                     </ul>
@@ -234,7 +268,7 @@
             <!-- Main Content Area -->
             <div class="col-span-1 lg:col-span-9 space-y-6">
                 <!-- Achievements Section -->
-                <div class="profile-card p-6">
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Achievements</h3>
                         <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a>
@@ -246,7 +280,7 @@
                                 <i class="fa-solid fa-medal text-3xl text-[#FFA500]"></i>
                             </div>
                             <h4 class="text-white text-xl font-bold">5</h4>
-                            <p class="text-white text-sm">Gold Badges</p>
+                            <p class="text-white text-sm font-bold">Gold Badges</p>
                         </div>
                         <div
                             class="achievement-card bg-gradient-to-br from-[#A9A9A9] to-[#D3D3D3] rounded-xl p-5 text-center">
@@ -254,7 +288,7 @@
                                 <i class="fa-solid fa-medal text-3xl text-[#A9A9A9]"></i>
                             </div>
                             <h4 class="text-white text-xl font-bold">5</h4>
-                            <p class="text-white text-sm">Silver Badges</p>
+                            <p class="text-white text-sm font-bold">Silver Badges</p>
                         </div>
                         <div
                             class="achievement-card bg-gradient-to-br from-[#CD7F32] to-[#E6BE8A] rounded-xl p-5 text-center">
@@ -262,37 +296,37 @@
                                 <i class="fa-solid fa-medal text-3xl text-[#CD7F32]"></i>
                             </div>
                             <h4 class="text-white text-xl font-bold">5</h4>
-                            <p class="text-white text-sm">Bronze Badges</p>
+                            <p class="text-white text-sm font-bold">Bronze Badges</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Top Posts Section -->
-                <div class="profile-card p-6">
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Top Posts</h3>
                         {{-- <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a> --}}
                     </div>
                     <div class="space-y-4">
-                        <div class="profile-post p-4 rounded-lg">
+                        <div class="profile-post bg-[var(--bg-secondary)] border border-[var(--border-color)] p-4 rounded-lg">
 
                             <div class="flex items-start">
                                 @if ($currUser['top_question_post'])
                                     <div class="flex-1">
                                         <a href="{{ route('user.viewQuestions', ['questionId' => $currUser['top_question_post']['id']]) }}"
-                                            class="text-[var(--text-primary)] font-medium hover:underline text-lg">
+                                            class="text-[var(--text-highlight)] decoration-[var(--accent-secondary)] font-medium hover:underline text-lg">
                                             {{ $currUser['top_question_post']['title'] }}
                                         </a>
                                         <div class="flex flex-wrap gap-2 mt-2 mb-3">
                                             @foreach ($currUser['top_question_post']['group_question'] as $groupQuestion)
                                                 <span
-                                                    class="profile-tag px-2 py-0.5 text-white bg-[var(--bg-shadow)] text-xs rounded">{{ $groupQuestion['subject']['name'] }}</span>
+                                                    class="post-tag px-2 py-1 text-white bg-[var(--bg-shadow)] text-xs font-semibold rounded">{{ $groupQuestion['subject']['name'] }}</span>
                                             @endforeach
                                         </div>
                                         <div class="flex items-center mt-3 space-x-6">
                                             <div class="flex items-center">
                                                 <div class="flex items-center">
-                                                    <i class="fa-regular fa-thumbs-up text-[var(--text-muted)] mr-1"></i>
+                                                    <i class="fa-regular fa-thumbs-up text-[var(--accent-secondary)] mr-1"></i>
                                                     <span
                                                         class="text-sm text-[var(--text-muted)]">{{ $currUser['top_question_post']['vote'] }}
                                                         Likes</span>
@@ -300,16 +334,16 @@
 
                                             </div>
                                             <div class="flex items-center">
-                                                <i class="fa-regular fa-comment text-[var(--text-muted)] mr-1"></i>
-                                                <span
-                                                    class="text-sm text-[var(--text-muted)]">{{ $currUser['top_question_post']['comment_count'] }}
-                                                    Comments</span>
-                                            </div>
-                                            <div class="flex items-center">
-                                                <i class="fa-solid fa-eye text-[var(--text-muted)] mr-1"></i>
+                                                <i class="fa-solid fa-eye text-[var(--accent-tertiary)] mr-1"></i>
                                                 <span
                                                     class="text-sm text-[var(--text-muted)]">{{ $currUser['top_question_post']['view'] }}
                                                     Views</span>
+                                            </div>
+                                             <div class="flex items-center">
+                                                <i class="fa-regular fa-comment text-[var(--accent-primary)] mr-1"></i>
+                                                <span
+                                                    class="text-sm text-[var(--text-muted)]">{{ $currUser['top_question_post']['comment_count'] }}
+                                                    Comments</span>
                                             </div>
                                         </div>
                                     </div>
@@ -336,7 +370,7 @@
                 </div>
 
                 <!-- Activity Feed -->
-                <div class="profile-card p-6">
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Recent Activity</h3>
                         <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a>

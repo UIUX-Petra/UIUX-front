@@ -425,7 +425,7 @@
                                 <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
                                     class="h-20 hidden md:flex">
                             </div>
-                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Welcome Back!</h1>
+                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Already have an account?</h1>
                             <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Already part of our
                                 community? Sign in to continue your learning journey.</p>
                             <button

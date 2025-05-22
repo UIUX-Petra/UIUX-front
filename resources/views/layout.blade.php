@@ -251,6 +251,7 @@
             --bg-secondary: #232753;
             --bg-tertiary: #32386E;
             --bg-shadow: #32386E;
+            --bg-light: #383d66;
             --bg-card: #1c2246;
             --bg-card-hover: #232753;
 
@@ -258,12 +259,12 @@
             --text-primary: #ffffff;
             --text-secondary: #d0d9ff;
             --text-muted: #929fd3;
+            --text-highlight: #80ED99;            
             --text-dark: #101838;
-
-
+            
             /* Accent colors */
             --accent-primary: #7494ec;
-            --accent-secondary: #23BF7F;
+            --accent-secondary: #19b675;
             --accent-tertiary: #ffd249;
 
             /* Border colors */
@@ -271,6 +272,7 @@
 
             /* Button colors */
             --button-primary: linear-gradient(to right, #38A3A5, #80ED99);
+            --button-primary-trf: linear-gradient(to left, #38A3A5, #80ED99);
             --button-text: #111111;
         }
 
@@ -280,6 +282,7 @@
             --bg-secondary: #fff;
             --bg-tertiary: #fff;
             --bg-shadow: #cdd4e7;
+            --bg-light: #cfd5e8;
             --bg-card: #f6f7ff;
             --bg-card-hover: #EDF2FB;
 
@@ -288,7 +291,8 @@
             --text-secondary: #2e406b;
             --text-muted: #1a2e5c;
             --text-dark: #101838;
-
+            --text-highlight: #298b8d;
+            
             /* Accent colors */
             --accent-primary: #5477c8;
             --accent-secondary: #10b981;
@@ -400,5 +404,4 @@
         @yield('script')
     </div>
 </body>
-
 </html>

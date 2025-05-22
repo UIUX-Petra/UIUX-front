@@ -49,7 +49,7 @@
                 </button>
             @endif
         @elseif (!$loggedInUser && $userItem['email'] !== ($profileUser['email'] ?? '')) {{-- Tombol follow jika tidak login & bukan profil utama--}}
-            <a href="{{ route('login') }}" class="follow-btn btn-follow text-xs sm:text-sm">Follow</a>
+            <a href="{{ route('loginOrRegist') }}" class="follow-btn btn-follow text-xs sm:text-sm">Follow</a>
         @endif
     </div>
 </div>

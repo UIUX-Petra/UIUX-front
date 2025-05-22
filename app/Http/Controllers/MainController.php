@@ -90,95 +90,96 @@ class MainController extends Controller
   }
 
   public function userConnections(Request $request, string $email)
-    {
-        $initialTabType = $request->input('type', 'followers');
-        if (!in_array($initialTabType, ['followers', 'following'])) {
-            $initialTabType = 'followers'; // Default ke followers jika query 'type' tidak valid
-        }
-
-        $profileUser = $this->userController->getUserByEmail($email);
-
-        if (!$profileUser) {
-            abort(404, 'User not found.');
-        }
-
-        $loggedInUserEmail = session('email');
-        $loggedInUser = null;
-        $loggedInUserFollowingArray = []; 
-        $loggedInUserFollowersArray = []; 
-
-        if ($loggedInUserEmail) {
-            $loggedInUser = $this->userController->getUserByEmail($loggedInUserEmail);
-            if ($loggedInUser) {
-                $loggedInUserFollowingArray = is_array($loggedInUser['following']) ? $loggedInUser['following'] : [];
-                $loggedInUserFollowersArray = is_array($loggedInUser['followers']) ? $loggedInUser['followers'] : [];
-            }
-        }
-
-        $isOwnProfile = $loggedInUserEmail === $profileUser['email'];
-
-        // 3. Fungsi helper lokal untuk memproses daftar (followers atau following)
-        $processList = function (array $rawListFromProfileUser) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
-            return collect($rawListFromProfileUser)->map(function ($item) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
-                if (!is_array($item) || !isset($item['email'])) {
-                    Log::warning("Invalid item structure in connection list for profile.", ['item_structure' => $item]);
-                    return null; // Abaikan item yang tidak valid
-                }
-                // Panggil method public determineFollowStatus dari instance userController
-                $status = $loggedInUserEmail ? $this->userController->determineFollowStatus($item, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) : ['follow_status' => 'not_logged_in', 'is_mutual' => false];
-                $item['follow_status'] = $status['follow_status'];
-                $item['is_mutual'] = $status['is_mutual'];
-                return $item;
-            })->filter()->values(); // filter() untuk menghapus null, values() untuk re-index collection
-        };
-
-        // 4. Proses daftar followers dan following secara terpisah
-        // Pastikan $profileUser['followers'] dan $profileUser['following'] adalah array
-        $rawFollowers = isset($profileUser['followers']) && is_array($profileUser['followers']) ? $profileUser['followers'] : [];
-        $rawFollowing = isset($profileUser['following']) && is_array($profileUser['following']) ? $profileUser['following'] : [];
-
-        $followersList = $processList($rawFollowers);
-        $followingList = $processList($rawFollowing);
-
-        // 5. Tambahkan status relasi untuk pengguna profil utama (jika bukan profil sendiri)
-        if ($loggedInUser && !$isOwnProfile) {
-            $relationToProfileUser = $this->userController->determineFollowStatus(
-                $profileUser, // $profileUser adalah array yang sudah memiliki 'email'
-                $loggedInUserFollowingArray,
-                $loggedInUserFollowersArray,
-                $loggedInUserEmail
-            );
-            // Tambahkan ke array $profileUser sebelum dikirim ke view
-            $profileUser['current_user_relation'] = $relationToProfileUser;
-        }
-
-        $data = [
-            'title' => ($profileUser['username'] ?? 'User') . ($initialTabType === 'followers' ? ' - Followers' : ' - Following'),
-            'image' => $profileUser['image'],
-            'profileUser' => $profileUser,
-            'followersList' => $followersList,
-            'followingList' => $followingList,
-            'loggedInUser' => $loggedInUser,
-            'isOwnProfile' => $isOwnProfile,
-            'activeTab' => $initialTabType
-        ];
-        
-        // ---- UNTUK DEBUGGING ----
-        // Hapus atau beri komentar setelah selesai debugging
-        // dd([
-        // 'profileUser_email' => $profileUser['email'],
-        // 'loggedInUser_email' => $loggedInUserEmail,
-        // 'active_tab' => $initialTabType,
-        // 'followers_emails' => $followersList->pluck('email')->all(),
-        // 'following_emails' => $followingList->pluck('email')->all(),
-        // 'raw_profile_followers_count' => count($rawFollowers),
-        // 'raw_profile_following_count' => count($rawFollowing),
-        // 'profile_user_data_from_api_sample' => $profileUser // Untuk melihat struktur lengkap
-        // ]);
-        // ---- AKHIR DEBUGGING ----
-
-        return view('connections', $data); 
+  {
+    $initialTabType = $request->input('type', 'followers');
+    if (!in_array($initialTabType, ['followers', 'following'])) {
+      $initialTabType = 'followers'; // Default ke followers jika query 'type' tidak valid
     }
+
+    $profileUser = $this->userController->getUserByEmail($email);
+
+    if (!$profileUser) {
+      abort(404, 'User not found.');
+    }
+
+    $loggedInUserEmail = session('email');
+    $loggedInUser = null;
+    $loggedInUserFollowingArray = [];
+    $loggedInUserFollowersArray = [];
+
+    if ($loggedInUserEmail) {
+      $loggedInUser = $this->userController->getUserByEmail($loggedInUserEmail);
+      if ($loggedInUser) {
+        $loggedInUserFollowingArray = is_array($loggedInUser['following']) ? $loggedInUser['following'] : [];
+        $loggedInUserFollowersArray = is_array($loggedInUser['followers']) ? $loggedInUser['followers'] : [];
+      }
+    }
+
+    $isOwnProfile = $loggedInUserEmail === $profileUser['email'];
+
+    // 3. Fungsi helper lokal untuk memproses daftar (followers atau following)
+    $processList = function (array $rawListFromProfileUser) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
+      return collect($rawListFromProfileUser)->map(function ($item) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
+        if (!is_array($item) || !isset($item['email'])) {
+          Log::warning("Invalid item structure in connection list for profile.", ['item_structure' => $item]);
+          return null; // Abaikan item yang tidak valid
+        }
+        // Panggil method public determineFollowStatus dari instance userController
+        $status = $loggedInUserEmail ? $this->userController->determineFollowStatus($item, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) : ['follow_status' => 'not_logged_in', 'is_mutual' => false];
+        $item['follow_status'] = $status['follow_status'];
+        $item['is_mutual'] = $status['is_mutual'];
+        return $item;
+      })->filter()->values(); // filter() untuk menghapus null, values() untuk re-index collection
+    };
+
+    // 4. Proses daftar followers dan following secara terpisah
+    // Pastikan $profileUser['followers'] dan $profileUser['following'] adalah array
+    $rawFollowers = isset($profileUser['followers']) && is_array($profileUser['followers']) ? $profileUser['followers'] : [];
+    $rawFollowing = isset($profileUser['following']) && is_array($profileUser['following']) ? $profileUser['following'] : [];
+
+    $followersList = $processList($rawFollowers);
+    $followingList = $processList($rawFollowing);
+
+    // 5. Tambahkan status relasi untuk pengguna profil utama (jika bukan profil sendiri)
+    if ($loggedInUser && !$isOwnProfile) {
+      $relationToProfileUser = $this->userController->determineFollowStatus(
+        $profileUser, // $profileUser adalah array yang sudah memiliki 'email'
+        $loggedInUserFollowingArray,
+        $loggedInUserFollowersArray,
+        $loggedInUserEmail
+      );
+      // Tambahkan ke array $profileUser sebelum dikirim ke view
+      $profileUser['current_user_relation'] = $relationToProfileUser;
+    }
+
+    $data = [
+      'title' => ($profileUser['username'] ?? 'User') . ($initialTabType === 'followers' ? ' - Followers' : ' - Following'),
+      'image' => $profileUser['image'],
+      'profileUser' => $profileUser,
+      'followersList' => $followersList,
+      'followingList' => $followingList,
+      'loggedInUser' => $loggedInUser,
+      'isOwnProfile' => $isOwnProfile,
+      'activeTab' => $initialTabType
+    ];
+    // dd($data);
+
+    // ---- UNTUK DEBUGGING ----
+    // Hapus atau beri komentar setelah selesai debugging
+    // dd([
+    // 'profileUser_email' => $profileUser['email'],
+    // 'loggedInUser_email' => $loggedInUserEmail,
+    // 'active_tab' => $initialTabType,
+    // 'followers_emails' => $followersList->pluck('email')->all(),
+    // 'following_emails' => $followingList->pluck('email')->all(),
+    // 'raw_profile_followers_count' => count($rawFollowers),
+    // 'raw_profile_following_count' => count($rawFollowing),
+    // 'profile_user_data_from_api_sample' => $profileUser // Untuk melihat struktur lengkap
+    // ]);
+    // ---- AKHIR DEBUGGING ----
+
+    return view('connections', $data);
+  }
 
 
   public function popular(Request $request)
@@ -268,5 +269,14 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     return view('leaderboard', $data);
+  }
+
+  public function savedQuestion()
+  {
+    $data = $this->userController->getSavedQuestion();
+    // dd($data['questions']);
+
+    return view('savedQuestions', $data);
+  
   }
 }

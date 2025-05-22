@@ -1,8 +1,8 @@
 @extends('layout')
+@section('content')
 
-@section('head')
-    <style>
-        .titleGradient {
+<style>
+    .titleGradient {
             background: linear-gradient(90deg, #633F92, #7494ec, #5500a4);
             background-size: 200%;
             font-weight: 700;
@@ -19,8 +19,8 @@
         }
 
         .tab-active {
-            background-color: var(--primary);
-            color: white;
+            background-color: var(--accent-tertiary);
+            color: var(--text-dark);
             border-radius: 8px;
             padding: 10px 20px;
             font-weight: 600;
@@ -30,7 +30,7 @@
 
         .tab-inactive {
             background-color: var(--bg-card);
-            color: var(--text-primary);
+            color: var(--text-muted);
             border-radius: 8px;
             border: 1px solid var(--border-color);
             padding: 10px 20px;
@@ -39,20 +39,21 @@
         }
 
         .tab-inactive:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            border-color: var(--bg-primary);
+            color: var(--accent-tertiary);
         }
 
         .user-card {
-            background-color: var(--bg-primary);
+            background-color: var(--bg-secondary);
             color: var(--text-primary);
             transition: all 0.3s ease;
+            border-radius: 25px;
         }
 
         .user-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            border-color: var(--primary);
+            border-color: var(--accent-tertiary);
         }
 
         .search-bar {
@@ -64,7 +65,7 @@
         }
 
         .search-bar:focus-within {
-            border-color: var(--primary);
+            border-color: var(---bg-primary);
             box-shadow: 0 0 0 2px rgba(99, 63, 146, 0.15);
         }
 
@@ -91,8 +92,8 @@
         }
 
         .badge {
-            background-color: var(--bg-muted);
-            color: var(--primary);
+            background-color: var(--bg-shadow);
+            color: var(--text-primary);
             font-weight: 500;
             border-radius: 6px;
             padding: 4px 8px;
@@ -100,7 +101,6 @@
         }
 
         .welcome-container {
-            background: linear-gradient(145deg, rgba(99, 63, 146, 0.05), rgba(116, 148, 236, 0.05));
             border-radius: 16px;
             border-left: 4px solid var(--primary);
         }
@@ -119,10 +119,7 @@
             justify-content: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-    </style>
-@endsection
-
-@section('content')
+</style>
 @include('partials.nav')
     <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start justify-start my-6 welcome-container">
         <h1 class="cal-sans-regular lg:text-3xl text-2xl mb-2 welcome">Informates</h1>
@@ -131,7 +128,7 @@
         </p>
     </div>
 
-    <div class="max-w-5xl items-start justify-start px-6">
+    {{-- <div class="max-w-5xl items-start justify-start px-6">
         <!-- Recommended Users -->
         @if(isset($recommended) && count($recommended) > 0)
             <div class="mb-12 items-start justify-start">
@@ -156,10 +153,10 @@
                     @endforeach
                 </div>
             </div>
-        @endif
+        @endif --}}
 
         <!-- Search and Tabs -->
-        <div class="mb-8">
+        <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start justify-start mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <!-- Search Bar -->
                 <div class="search-bar flex items-center px-4 py-3 shadow-sm w-full md:w-auto md:flex-1 max-w-md">
@@ -188,9 +185,9 @@
                 <div id="reputations" class="tab-content">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="reputationResult">
                         @foreach ($order_by_reputation as $user)
-                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
@@ -214,13 +211,13 @@
                 <div id="new-users" class="tab-content hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="newestResult">
                         @foreach ($order_by_newest as $user)
-                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                            class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
+                                            class="hover:underline text-[var(--text-secondary)]">{{ $user['username'] }}</a>
                                     </h3>
                                     <p class="text-sm flex items-center gap-1 mt-1">
                                         <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
@@ -240,9 +237,9 @@
                 <div id="voters" class="tab-content hidden">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="voterResult">
                         @foreach ($order_by_vote as $user)
-                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
+                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-lg">
                                         <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
@@ -300,7 +297,7 @@
                     const matchingUsers = byReputation.filter(user => results.includes(user.username.toLowerCase()));
 
                     resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                        <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                             <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
                                 alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                             <div class="flex-1">
@@ -325,7 +322,7 @@
                     const matchingUsers = byNewest.filter(user => results.includes(user.username.toLowerCase()));
 
                     resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                        <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                             <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
                                 alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                             <div class="flex-1">
@@ -350,7 +347,7 @@
                     const matchingUsers = byVote.filter(user => results.includes(user.username.toLowerCase()));
 
                     resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                        <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                             <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
                                 alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                             <div class="flex-1">
@@ -375,7 +372,7 @@
                 if (searchSwitch === 1) {
                     document.getElementById('reputationResult').innerHTML = `
                         @foreach ($order_by_reputation as $user)
-                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
                                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
@@ -398,7 +395,7 @@
                 } else if (searchSwitch === 2) {
                     document.getElementById('newestResult').innerHTML = `
                         @foreach ($order_by_newest as $user)
-                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
                                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">
@@ -421,7 +418,7 @@
                 } else if (searchSwitch === 3) {
                     document.getElementById('voterResult').innerHTML = `
                         @foreach ($order_by_vote as $user)
-                            <div class="user-card p-4 shadow-sm flex items-center gap-4">
+                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
                                 <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
                                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                                 <div class="flex-1">

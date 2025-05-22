@@ -83,6 +83,20 @@ class UserController extends Controller
             'recommended' => $recUser
         ];
     }
+
+    public function getBasicUserByEmail($email)
+    {
+        $api_url = env('API_URL') . '/users/get/' . $email;
+        $response = Http::withToken(session('token'))->get($api_url);
+
+        if ($response->failed()) {
+            Log::error("API call failed for user email {$email}: " . $response->body());
+            return null;
+        }
+
+        $responseData = json_decode($response->body(), true);
+        return $responseData['data'];
+    }
     public function getUserByEmail($email)
     {
         $api_url = env('API_URL') . '/users/get/' . $email;
@@ -432,10 +446,11 @@ class UserController extends Controller
             Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
         }
         Log::info("SAVED QUESTION" . $response);
-
-        return view('savedQuestions', [
-            'title' => 'Saved Questions',
-            'questions' => $responseData['data'] ?? [],
-        ]);
+        $user = $this->getBasicUserByEmail($email);
+        $data['questions'] = $responseData['data'];
+        $data['username'] = $user['username'];
+        $data['image'] = $user['image'];
+        $data['title'] = 'Saved Questions';
+        return $data;
     }
 }

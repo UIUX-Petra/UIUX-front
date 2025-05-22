@@ -39,9 +39,9 @@
     {{-- @include('utils.background2') --}}
 
     <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start jsutify-start my-6 welcome-container">
-        <h1 class="cal-sans-regular lg:text-3xl text-xl mb-3 welcome">Tags</h1>
+        <h1 class="cal-sans-regular lg:text-3xl text-xl mb-3 welcome">Subjects</h1>
         <p class="text-[var(--text-secondary)] text-md lg:text-lg pl-0.5 font-regular">
-            Tags represent all the courses offered in the Informatics, Business Information Systems, and Data Science & Analytics programs at Petra Christian University.
+            Subjects represent all the courses offered in the Informatics, Business Information Systems, and Data Science & Analytics programs at Petra Christian University.
         </p>
     </div>
 

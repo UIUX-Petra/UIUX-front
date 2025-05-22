@@ -229,9 +229,9 @@
             </div>
         </div>
     </div>
-
+ 
     <!-- Main content area with questions list and sidebar -->
-    <div class="max-w-7xl mx-auto px-8">
+    <div class="max-w-7xl justify-start items-start px-8">
         <div class="flex flex-col md:flex-row gap-6">
             <!-- Questions List with enhanced design -->
             <div class="w-full md:w-3/4 bg-transparent rounded-lg">
@@ -250,25 +250,25 @@
 
                         <!-- Stats Column -->
                         <div
-                            class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
-                            <div class="stats-item flex flex-col items-center">
-                                <i class="text-lg fa-regular fa-thumbs-up"></i>
+                            class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <i class="text-sm fa-regular fa-thumbs-up"></i>
                                 <span class="text-sm font-medium mt-1">{{ $question['vote'] }}</span>
                             </div>
-                            <div class="stats-item flex flex-col items-center">
-                                <i class="text-lg fa-solid fa-eye"></i>
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <i class="text-sm fa-solid fa-eye"></i>
                                 <span class="text-sm font-medium mt-1">{{ $question['view'] }}</span>
                             </div>
-                            <div class="stats-item flex flex-col items-center">
-                                <i class="text-lg fa-regular fa-comment"></i>
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <i class="text-sm fa-regular fa-comment"></i>
                                 <span class="text-sm font-medium mt-1">{{ $question['comments_count'] }}</span>
                             </div>
                         </div>
 
-                        <div class="flex-1 z-10">
+                        <div class="flex-1  p-0 mr-4 z-10">
                             <!-- Question Titl -->
                             <h2
-                                class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[#f59e0b] decoration-2 underline-offset-2">
+                                class="text-xl font-medium text-[var(--text-highlight)] question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
                                 <a
                                     href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
                             </h2>
@@ -278,10 +278,10 @@
                                 {{ \Str::limit($question['question'], 150) }}</p>
 
                             <!-- Tags and engagement indicator -->
-                            <div class="flex mt-3 flex-wrap gap-2 items-center">
+                            <div class="flex mt-8 flex-wrap gap-2 items-center">
                                 @foreach ($question['group_question'] as $tag)
                                     <span
-                                        class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
+                                        class="text-xs px-2 py-1 rounded-md font-bold bg-[var(--bg-light)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
                                 @endforeach
 
                                 <!-- Engagement indicator -->
