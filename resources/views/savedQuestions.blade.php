@@ -1,5 +1,22 @@
 @extends('layout')
 @section('head')
+    <style>
+        .question-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .question-card:hover .save-question-btn {
+            opacity: 1;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -13,7 +30,30 @@
             });
         </script>
     @endif
+    <div
+        class="w-full bg-transparent rounded-lg p-6 px-8 max-w-7xl mx-auto mt-6 mb-6 flex items-center space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
+        <!-- Decorative fire elements -->
+        <div
+            class="absolute -right-20 -bottom-28 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(245,158,11,0.15)] to-[rgba(250,204,21,0.15)] blur-2xl">
+        </div>
+        <div
+            class="absolute -left-10 -top-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(245,158,11,0.1)] to-[rgba(250,204,21,0.1)] blur-xl">
+        </div>
 
+        <div class="text-4xl relative p-3 rounded-full bg-[rgba(245,158,11,0.15)] z-10">
+            <i class="fa-solid fa-bookmark text-[#80ED99]"></i>
+        </div>
+
+        <div class="flex flex-col z-10">
+            <h1 class="cal-sans-regular popular-title lg:text-3xl text-2xl mb-2 font-bold">
+                Saved Questions
+            </h1>
+            <p class="text-[var(--text-secondary)] text-lg pl-0.5 font-regular max-w-xl">
+                Questions saved by you
+            </p>
+
+        </div>
+    </div>
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
         <div class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
             <!-- Loop through questions -->
@@ -36,22 +76,25 @@
 
                         <!-- Stats Column -->
                         <div
-                            class="flex flex-col items-center justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
-                            <div class="stats-item flex flex-col items-center">
-                                <i class="text-lg fa-regular fa-thumbs-up"></i>
-                                <span class="text-sm font-medium mt-1">{{ $question['vote'] ?? 0 }}</span>
+                            class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
+
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
+                                <i class="text-sm fa-regular fa-thumbs-up"></i>
                             </div>
-                            <div class="stats-item flex flex-col items-center">
-                                <i class="text-lg fa-solid fa-eye"></i>
-                                <span class="text-sm font-medium mt-1">{{ $question['view'] ?? 0 }}</span>
+
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
+                                <i class="text-sm fa-solid fa-eye"></i>
                             </div>
-                            <div class="stats-item flex flex-col items-center">
-                                <i class="text-lg fa-regular fa-comment"></i>
-                            <span class="text-sm font-medium mt-1">{{ $question['comment_count'] ?? 0 }}</span>
+
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
+                                <i class="text-sm fa-regular fa-comment"></i>
                             </div>
                         </div>
 
-                        <div class="flex-1 z-10">
+                        <div class="flex-1 pt-0 mr-4 z-10">
                             <!-- Question Title -->
                             <h2
                                 class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-tertiary)] decoration-2 underline-offset-2">
@@ -64,14 +107,14 @@
                                 {{ \Str::limit($question['question'], 150) }}</p>
 
                             <!-- Tags -->
-                            @if($question['group_question'])
-                            <div class="flex mt-3 flex-wrap gap-1">
-                                
-                                @foreach ($question['group_question'] as $tag)
-                                    <span
-                                        class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
-                                @endforeach
-                            </div>
+                            @if ($question['group_question'])
+                                <div class="flex mt-2 flex-wrap gap-1">
+
+                                    @foreach ($question['group_question'] as $tag)
+                                        <span
+                                            class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
+                                    @endforeach
+                                </div>
                             @endif
 
                         </div>
