@@ -64,12 +64,15 @@
                                 {{ \Str::limit($question['question'], 150) }}</p>
 
                             <!-- Tags -->
+                            @if($question['group_question'])
                             <div class="flex mt-3 flex-wrap gap-1">
+                                
                                 @foreach ($question['group_question'] as $tag)
                                     <span
                                         class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
                                 @endforeach
                             </div>
+                            @endif
 
                         </div>
                     </div>

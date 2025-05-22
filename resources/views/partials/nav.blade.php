@@ -313,9 +313,9 @@
                         class="flex rounded-full bg-[var(--bg-card)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-primary)]"
                         id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                         <span class="sr-only">Open user menu</span>
-                        {{-- <img class="size-9 rounded-full avatar p-0.5 object-cover"
+                        <img class="size-9 rounded-full avatar p-0.5 object-cover"
                             src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/150' }}"
-                            alt="User avatar"> --}}
+                            alt="User avatar">
                     </button>
 
                     <!-- Dropdown Menu -->
@@ -357,9 +357,9 @@
                     class="relative flex rounded-full bg-[var(--bg-card)] text-sm focus:outline-none"
                     id="mobile-user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="sr-only">Open user menu</span>
-                    {{-- <img class="size-8 rounded-full p-0.5 border border-[var(--accent-tertiary)]" 
+                    <img class="size-8 rounded-full p-0.5 border border-[var(--accent-tertiary)]" 
                         src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/150' }}" 
-                        alt="User avatar"> --}}
+                        alt="User avatar">
                 </button>
                 
                 <!-- Mobile Dropdown Menu handled by JS -->
