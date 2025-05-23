@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MainController;
@@ -62,3 +63,20 @@ Route::middleware(['isLogin'])->group(function () {
     Route::post('/saveQuestion', [QuestionController::class, 'saveQuestion'])->name('saveQuestion');
     Route::post('/unsaveQuestion', [QuestionController::class, 'unsaveQuestion'])->name('unsaveQuestion');
 });
+
+
+// ADMIN
+Route::get('/admin/login', [AdminController::class, 'login'])->name('admin.login');
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+Route::get('/admin/users/index', [AdminController::class, 'userRegistration'])->name('admin.users.index');
+Route::get('/admin/users/activity', [AdminController::class, 'userActivity'])->name('admin.users.activity');
+Route::get('/admin/moderation/dashboard', [AdminController::class, 'moderationDashboard'])->name('admin.moderation.dashboard');
+Route::get('/admin/moderation/questions', [AdminController::class, 'moderationQuestions'])->name('admin.moderation.questions');
+Route::get('/admin/moderation/contents', [AdminController::class, 'moderationContents'])->name('admin.moderation.contents');
+Route::get('/admin/moderation/comments', [AdminController::class, 'moderationComments'])->name('admin.moderation.comments');
+Route::get('/admin/manage/content', [AdminController::class, 'manageContent'])->name('admin.content.manage');
+Route::get('/admin/subjects/index', [AdminController::class, 'subjects'])->name('admin.subjects.index');
+Route::get('/admin/moderation/log', [AdminController::class, 'moderationLog'])->name('admin.moderation.log');
+Route::get('/admin/support/index', [AdminController::class, 'support'])->name('admin.support.index');
+Route::get('/admin/platform/annoucement', [AdminController::class, 'announcement'])->name('admin.platform.announcements');
+Route::get('/admin/platform/role', [AdminController::class, 'role'])->name('admin.platform.roles');
