@@ -186,7 +186,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="reputationResult">
                         @foreach ($order_by_reputation as $user)
                             <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
+                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=2196F3&color=fff&size=128' }}"
                                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-lg">
@@ -212,7 +212,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="newestResult">
                         @foreach ($order_by_newest as $user)
                             <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
+                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=2196F3&color=fff&size=128' }}"
                                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-lg">
@@ -238,7 +238,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="voterResult">
                         @foreach ($order_by_vote as $user)
                             <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
+                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=2196F3&color=fff&size=128' }}"
                                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
                                 <div class="flex-1">
                                     <h3 class="font-semibold text-lg">
@@ -265,210 +265,165 @@
     @include('utils.trie')
 
     <script>
-        let searchSwitch = 1; // Switch search based on selected tab
+    let searchSwitch = 1; // Switch search based on selected tab
 
-        let byReputation = <?php echo json_encode($order_by_reputation); ?>;
-        let byNewest = <?php echo json_encode($order_by_newest); ?>;
-        let byVote = <?php echo json_encode($order_by_vote); ?>;
+    // Data dari PHP (Laravel)
+    let byReputation = <?php echo json_encode($order_by_reputation ?? []); ?>;
+    let byNewest = <?php echo json_encode($order_by_newest ?? []); ?>;
+    let byVote = <?php echo json_encode($order_by_vote ?? []); ?>;
 
-        const reputationTrie = new Trie(); // For Reputations tab
-        for (let i = 0; i < byReputation.length; i++) {
-            reputationTrie.insert(byReputation[i]['username'].toLowerCase())
+    // Inisialisasi Trie untuk setiap kategori
+    const reputationTrie = new Trie(); // Asumsikan Trie sudah didefinisikan
+    byReputation.forEach(user => reputationTrie.insert(user.username.toLowerCase()));
+
+    const newestUserTrie = new Trie();
+    byNewest.forEach(user => newestUserTrie.insert(user.username.toLowerCase()));
+
+    const voterTrie = new Trie();
+    byVote.forEach(user => voterTrie.insert(user.username.toLowerCase()));
+
+    /**
+     * Membuat HTML untuk satu kartu pengguna.
+     * @param {object} user - Objek pengguna.
+     * @param {string} baseUrl - URL dasar untuk profil pengguna.
+     * @param {string} tabType - Tipe tab ('reputation', 'newest', 'voter').
+     * @returns {string} HTML string untuk kartu pengguna.
+     */
+    function createUserCardHTML(user, baseUrl, tabType) {
+        let detailHTML = '';
+        let fallbackImageBgColor = '2196F3'; // Default untuk reputasi
+        let badges = ['php', 'java']; // Default badges
+
+        if (tabType === 'reputation') {
+            detailHTML = `
+                <p class="text-sm flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-star text-yellow-500"></i>
+                    <span class="text-[var(--text-secondary)]">${user.reputation || 0}</span>
+                </p>`;
+        } else if (tabType === 'newest') {
+            fallbackImageBgColor = '2196F3'; 
+            detailHTML = `
+                <p class="text-sm flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
+                       <span class="text-[var(--primary)]">Since ${user.created_at}</span>
+                </p>`;
+        } else if (tabType === 'voter') {
+            fallbackImageBgColor = '2196F3'; 
+            badges = ['react', 'vue']; // Badge berbeda untuk voter
+            detailHTML = `
+                <p class="text-sm flex items-center gap-1 mt-1">
+                    <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
+                    <span class="text-[var(--text-secondary)]">${user.vote_count || 0}</span>
+                </p>`;
         }
 
-        const newestUserTrie = new Trie(); // For New Users tab
-        for (let i = 0; i < byNewest.length; i++) {
-            newestUserTrie.insert(byNewest[i]['username'].toLowerCase())
+        const imageUrl = user.image
+            ? `storage/${user.image}`
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}&background=${fallbackImageBgColor}&color=fff&size=128`;
+
+        const badgeHTML = badges.map(badge => `<span class="badge">${badge}</span>`).join('');
+
+        return `
+            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
+                <img src="${imageUrl}"
+                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
+                <div class="flex-1">
+                    <h3 class="font-semibold text-lg">
+                        <a href="${baseUrl.replace(':email', user.email)}"
+                           class="hover:underline text-[var(--text-primary)]">${user.username}</a>
+                    </h3>
+                    ${detailHTML}
+                    <div class="flex flex-wrap gap-1 mt-2">
+                        ${badgeHTML}
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    /**
+     * Melakukan pencarian dan memperbarui tampilan daftar pengguna.
+     */
+    function searchInput() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const baseUrl = "{{ route('viewUser', ['email' => ':email']) }}";
+
+        let usersToDisplay = [];
+        let resultsDivId = '';
+        let tabType = '';
+
+        if (searchSwitch === 1) {
+            resultsDivId = 'reputationResult';
+            tabType = 'reputation';
+            usersToDisplay = input.length > 0
+                ? byReputation.filter(user => reputationTrie.search(input).includes(user.username.toLowerCase()))
+                : byReputation;
+        } else if (searchSwitch === 2) {
+            resultsDivId = 'newestResult';
+            tabType = 'newest';
+            usersToDisplay = input.length > 0
+                ? byNewest.filter(user => newestUserTrie.search(input).includes(user.username.toLowerCase()))
+                : byNewest;
+        } else if (searchSwitch === 3) {
+            resultsDivId = 'voterResult';
+            tabType = 'voter';
+            usersToDisplay = input.length > 0
+                ? byVote.filter(user => voterTrie.search(input).includes(user.username.toLowerCase()))
+                : byVote;
         }
 
-        const voterTrie = new Trie(); // For Voters tab
-        for (let i = 0; i < byVote.length; i++) {
-            voterTrie.insert(byVote[i]['username'].toLowerCase())
-        }
-
-        function searchInput() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const baseUrl = "{{ route('viewUser', ['email' => ':email']) }}";
-
-            if (input.length > 0) {
-                if (searchSwitch === 1) {
-                    const resultsDiv = document.getElementById('reputationResult');
-                    const results = reputationTrie.search(input);
-                    const matchingUsers = byReputation.filter(user => results.includes(user.username.toLowerCase()));
-
-                    resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                            <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
-                                alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-lg">
-                                    <a href="${baseUrl.replace(':email', user.email)}" 
-                                        class="hover:underline text-[var(--text-primary)]">${user.username}</a>
-                                </h3>
-                                <p class="text-sm flex items-center gap-1 mt-1">
-                                    <i class="fa-solid fa-star text-yellow-500"></i>
-                                    <span class="text-[var(--text-secondary)]">${user.reputation}</span>
-                                </p>
-                                <div class="flex flex-wrap gap-1 mt-2">
-                                    <span class="badge">php</span>
-                                    <span class="badge">java</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                } else if (searchSwitch === 2) {
-                    const resultsDiv = document.getElementById('newestResult');
-                    const results = newestUserTrie.search(input);
-                    const matchingUsers = byNewest.filter(user => results.includes(user.username.toLowerCase()));
-
-                    resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                            <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
-                                alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-lg">
-                                    <a href="${baseUrl.replace(':email', user.email)}" 
-                                        class="hover:underline text-[var(--text-primary)]">${user.username}</a>
-                                </h3>
-                                <p class="text-sm flex items-center gap-1 mt-1">
-                                    <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
-                                    <span class="text-[var(--primary)]">Since ${user.created_at}</span>
-                                </p>
-                                <div class="flex flex-wrap gap-1 mt-2">
-                                    <span class="badge">php</span>
-                                    <span class="badge">java</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                } else if (searchSwitch === 3) {
-                    const resultsDiv = document.getElementById('voterResult');
-                    const results = voterTrie.search(input);
-                    const matchingUsers = byVote.filter(user => results.includes(user.username.toLowerCase()));
-
-                    resultsDiv.innerHTML = matchingUsers.map(user => `
-                        <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                            <img src="${user.image ? `storage/${user.image}` : 'https://via.placeholder.com/50'}" 
-                                alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-lg">
-                                    <a href="${baseUrl.replace(':email', user.email)}" 
-                                        class="hover:underline text-[var(--text-primary)]">${user.username}</a>
-                                </h3>
-                                <p class="text-sm flex items-center gap-1 mt-1">
-                                    <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
-                                    <span class="text-[var(--text-secondary)]">${user.vote_count}</span>
-                                </p>
-                                <div class="flex flex-wrap gap-1 mt-2">
-                                    <span class="badge">react</span>
-                                    <span class="badge">vue</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
+        const resultsDiv = document.getElementById(resultsDivId);
+        if (resultsDiv) {
+            if (usersToDisplay.length > 0) {
+                resultsDiv.innerHTML = usersToDisplay.map(user => createUserCardHTML(user, baseUrl, tabType)).join('');
             } else {
-                // Reset to default views when search input is empty
-                if (searchSwitch === 1) {
-                    document.getElementById('reputationResult').innerHTML = `
-                        @foreach ($order_by_reputation as $user)
-                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-lg">
-                                        <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                            class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
-                                    </h3>
-                                    <p class="text-sm flex items-center gap-1 mt-1">
-                                        <i class="fa-solid fa-star text-yellow-500"></i>
-                                        <span class="text-[var(--text-secondary)]">{{ $user['reputation'] }}</span>
-                                    </p>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        <span class="badge">php</span>
-                                        <span class="badge">java</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    `;
-                } else if (searchSwitch === 2) {
-                    document.getElementById('newestResult').innerHTML = `
-                        @foreach ($order_by_newest as $user)
-                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-lg">
-                                        <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                            class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
-                                    </h3>
-                                    <p class="text-sm flex items-center gap-1 mt-1">
-                                        <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
-                                        <span class="text-[var(--primary)]">Since {{ $user['created_at'] }}</span>
-                                    </p>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        <span class="badge">php</span>
-                                        <span class="badge">java</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    `;
-                } else if (searchSwitch === 3) {
-                    document.getElementById('voterResult').innerHTML = `
-                        @foreach ($order_by_vote as $user)
-                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-lg">
-                                        <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                            class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
-                                    </h3>
-                                    <p class="text-sm flex items-center gap-1 mt-1">
-                                        <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
-                                        <span class="text-[var(--text-secondary)]">{{ $user['vote_count'] }}</span>
-                                    </p>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        <span class="badge">react</span>
-                                        <span class="badge">vue</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    `;
-                }
+                resultsDiv.innerHTML = '<p class="p-4 text-center text-[var(--text-secondary)]">No users found.</p>';
             }
         }
+    }
 
-        function showTab(tab) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
-            });
+    /**
+     * Menampilkan tab yang dipilih dan menyembunyikan yang lain.
+     * @param {string} tabId - ID dari elemen KONTEN tab yang akan ditampilkan (e.g., 'reputations').
+     */
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
 
-            // Show selected tab
-            document.getElementById(tab).classList.remove('hidden');
-
-            // Update search switch based on active tab
-            if (tab === 'reputations') {
-                searchSwitch = 1;
-            } else if (tab === 'new-users') {
-                searchSwitch = 2;
-            } else {
-                searchSwitch = 3;
-            }
-
-            // Update tab styles
-            document.querySelectorAll('[id^="tab-"]').forEach(tabBtn => {
-                tabBtn.className = 'tab-inactive';
-            });
-
-            document.getElementById('tab-' + tab).className = 'tab-active';
-            
-            // Refresh search results
-            searchInput();
+        const selectedTabContent = document.getElementById(tabId);
+        if (selectedTabContent) {
+            selectedTabContent.classList.remove('hidden');
         }
-    </script>
+
+        if (tabId === 'reputations') {
+            searchSwitch = 1;
+        } else if (tabId === 'new-users') {
+            searchSwitch = 2;
+        } else if (tabId === 'voters') { 
+            searchSwitch = 3;
+        }
+
+        document.querySelectorAll('[id^="tab-"]').forEach(tabButtonElement => {
+            if (tabButtonElement.id !== tabId) { 
+                 tabButtonElement.className = 'tab-inactive';
+            }
+        });
+        
+        // Tombol aktif diasumsikan memiliki ID 'tab-' + ID konten tab.
+        // Misalnya, jika tabId (konten) adalah 'reputations', ID tombolnya adalah 'tab-reputations'.
+        const activeTabButton = document.getElementById('tab-' + tabId); 
+        if (activeTabButton) {
+            activeTabButton.className = 'tab-active';
+        }
+        
+        searchInput(); // Muat ulang hasil untuk tab yang aktif
+    }
+
+    // Panggil showTab untuk tab default saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+        // Ganti 'reputations' dengan ID KONTEN tab default Anda jika berbeda.
+        // Ini akan secara otomatis mengaktifkan tombol dengan ID 'tab-reputations'.
+        showTab('reputations'); 
+    });
+</script>
 @endsection

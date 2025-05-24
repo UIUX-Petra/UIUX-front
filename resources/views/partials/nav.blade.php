@@ -317,7 +317,7 @@
                         id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                         <span class="sr-only">Open user menu</span>
                         <img class="size-9 rounded-full avatar p-0.5 object-cover"
-                            src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/150' }}"
+                           src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                             alt="User avatar">
                     </button>
 

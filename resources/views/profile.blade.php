@@ -161,7 +161,7 @@
             <div class="bg-gradient-to-r from-[#38A3A5] to-[#80ED99] h-32 sm:h-48 relative">
                 <div
                     class="absolute -bottom-16 left-1/2 transform -translate-x-1/2 sm:-bottom-16 sm:left-8 sm:transform-none">
-                    <img src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/100' }}"
+                    <img src="{{ $currUser['image'] ? asset('storage/' . $currUser['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($currUser['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                         alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-[var(--bg-tertiary)] shadow-md object-cover">
                 </div>
             </div>

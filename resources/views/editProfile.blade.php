@@ -130,7 +130,7 @@
             <div class="absolute -top-16 left-1/2 transform -translate-x-1/2 sm:left-8 sm:transform-none">
                 <div class="relative profile-upload group">
                     <img id="profile-img"
-                        src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/150' }}"
+                        src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                         alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-[var(--bg-tertiary)] shadow-md object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center profile-upload-icon">
                         <i class="fa-solid fa-camera text-white text-2xl"></i>
