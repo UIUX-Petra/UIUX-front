@@ -45,12 +45,24 @@ class AnswerController extends Controller
         $data['email'] = session('email');
         $data['question_id'] = $questionId;
 
-        // Send the data to the API
         $api_url = env('API_URL') . '/answers';
         $response = Http::withToken(session('token'))->post($api_url, $data);
 
         if ($response->successful()) {
-            return response()->json(['success' => true, 'message' => 'Answer submitted successfully!'], []);
+            $data = $response->object();
+
+            $answer = $data->data->answer;
+
+            $formattedAnswer = [
+                'id' => $answer->id,
+                'username' => $answer->user->username ?? null,
+                'image' => $answer->image,
+                'answer' => $answer->answer,
+                'vote' => $answer->vote,
+                'timestamp' => $answer->created_at,
+            ];
+
+            return response()->json(['success' => true, 'message' => 'Answer submitted successfully!', 'answer' => $formattedAnswer]);
         } else {
             return response()->json(['success' => false, 'message' => 'Failed to submit answer.']);
         }

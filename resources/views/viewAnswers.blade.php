@@ -94,6 +94,7 @@
                     <div class="flex items-center" title="Comments">
                         <i class="fa-solid fa-reply text-[var(--accent-tertiary)] mr-2"></i>
                         <span class="text-[var(--text-secondary)]">{{ $question['comment_count'] }}</span>
+                        {{-- Comment atau answer count ?? // ini yang diatas --}}
                     </div>
                 </div>
             </div>
@@ -127,7 +128,7 @@
                         <i class="fa-solid fa-reply text-md"></i>
                     </button>
                     <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
-                        {{ $question['comment_count'] }}
+                        {{ $question['comment_count'] }} {{-- comment atau answer count ?? comment count sudah ada di kanan e loh --}}
                     </small>
                 </div>
             </div>
@@ -301,7 +302,7 @@
                                     <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
                                 </button>
                                 <span
-                                    class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
+                                    class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
                                 <button
                                     class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
                                     data-answer-id="{{ $ans['id'] }}">
@@ -353,6 +354,7 @@
                                         Submit Comment
                                     </button>
                                 </div>
+                                
                             </div>
                         </div>
                     @endforeach
@@ -428,9 +430,10 @@
         });
     </script>
 
-    {{-- uploading answer to question in database: --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            let currentAnswerCount = @json(count($question['answer'] ?? []));
+
             const submitButton = document.getElementById("submitAnswer-btn");
             const textArea = document.getElementById('answer-textArea');
             const fileInput = document.getElementById("question-img");
@@ -455,141 +458,198 @@
                             title: 'Oops...',
                             text: 'Please provide an answer!',
                         });
-                    } else {
-                        const formData = new FormData();
-                        formData.append('answer', answerText);
+                        return;
+                    }
 
-                        // Check if there is an image selected
-                        if (fileInput.files.length > 0) {
-                            formData.append('image', fileInput.files[0]);
-                        }
+                    const formData = new FormData();
+                    formData.append('answer', answerText);
 
-                        const questionId = @json($question['id']);
+                    if (fileInput.files.length > 0) {
+                        formData.append('image', fileInput.files[0]);
+                    }
 
-                        fetch(`/submitAnswer/${questionId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                                },
-                                body: formData,
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                submitButton.innerHTML = originalButtonText;
-                                submitButton.disabled = false;
+                    const questionId = @json($question['id']);
 
-                                if (data.success) {
-                                    // Clear form after successful submission
-                                    textArea.value = '';
-                                    fileInput.value = '';
-                                    const imagePreviewsContainer = document.querySelector(
-                                        ".image-previews");
-                                    if (imagePreviewsContainer) {
-                                        imagePreviewsContainer.innerHTML = '';
-                                        imagePreviewsContainer.classList.add('hidden');
-                                    }
+                    fetch(`/submitAnswer/${questionId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                            },
+                            body: formData,
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            submitButton.innerHTML = originalButtonText;
+                            submitButton.disabled = false;
 
-                                    let htmlContent = `
-                                    <div
-                            class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
+
+                            if (data.success) {
+                                // Clear form
+                                textArea.value = '';
+                                fileInput.value = '';
+                                const imagePreviewsContainer = document.querySelector(
+                                    ".image-previews");
+                                if (imagePreviewsContainer) {
+                                    imagePreviewsContainer.innerHTML = '';
+                                    imagePreviewsContainer.classList.add('hidden');
+                                }
+
+                                currentAnswerCount++;
+                                const isFirstAnswer = currentAnswerCount === 1;
+
+                                const timeAgo = formatTimeAgo(new Date(data.answer.timestamp));
+
+                                const imageHtml = data.answer.image ?
+                                    `<div class="mt-4">
+                            <img src="/storage/${data.answer.image}" alt="Answer Image" 
+                                 class="max-w-lg max-h-96 object-contain rounded-lg border">
+                         </div>` : '';
+
+                                const bestAnswerBadge = isFirstAnswer ?
+                                    `<div class="mt-4 flex flex-col items-center">
+                            <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
+                            <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
+                         </div>` : '';
+
+                                const htmlContent = `
+                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start ${isFirstAnswer ? 'verified-answer' : ''}">
                             <div class="interaction-section flex flex-col items-center mr-6">
-                                <button
-                                    class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
-                                    data-answer-id="{{ $ans['id'] }}">
+                                <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
+                                        data-answer-id="${data.answer.id}">
                                     <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
                                 </button>
-                                <span
-                                    class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
-                                <button
-                                    class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
-                                    data-answer-id="{{ $ans['id'] }}">
+                                <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
+                                <button class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
+                                        data-answer-id="${data.answer.id}">
                                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                                 </button>
-
-                                @if ($loop->first)
-                                    <div class="mt-4 flex flex-col items-center">
-                                        <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
-                                        <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
-                                    </div>
-                                @endif
+                                ${bestAnswerBadge}
                             </div>
 
                             <div class="flex flex-col flex-grow">
                                 <div class="prose max-w-none text-[var(--text-primary)]">
-                                    <p>{{ $ans['answer'] }}</p>
+                                    <p>${escapeHtml(data.answer.answer)}</p>
                                 </div>
-
-                                @if ($ans['image'])
-                                    <div class="mt-4">
-                                        <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
-                                            class="max-w-lg max-h-96 object-contain rounded-lg border">
-                                    </div>
-                                @endif
-
+                                ${imageHtml}
+                                
                                 <div class="mt-4 flex justify-between items-center">
                                     <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User"
-                                            class="w-6 h-6 rounded-full mr-2">
-                                        <span>Answered by {{ $ans['username'] }} -
-                                            {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.answer.username)}&background=random" 
+                                             alt="User" class="w-6 h-6 rounded-full mr-2">
+                                        <span>Answered by ${escapeHtml(data.answer.username)} - ${timeAgo}</span>
                                     </div>
-
-                                    <button
-                                        class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+                                    <button class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                                         <i class="fa-solid fa-comment-dots mr-2"></i>
                                         <span>Add Comment</span>
                                     </button>
                                 </div>
 
-                                <!-- comment input box -->
                                 <div class="comment-box hidden mt-4 w-full comment-animation">
-                                    <textarea id="answer-comment-{{ $ans['id'] }}"
-                                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                                        rows="2" placeholder="Write your comment here!"></textarea>
-                                    <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
-                                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                                    <textarea id="answer-comment-${data.answer.id}"
+                                              class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                                              rows="2" placeholder="Write your comment here!"></textarea>
+                                    <button id="submit-comment-${data.answer.id}" data-answer-id="${data.answer.id}"
+                                            class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                                         Submit Comment
                                     </button>
                                 </div>
                             </div>
                         </div>
-                                    `;
-                                    document.getElementById('answerList').insertAdjacentHTML('beforeend', htmlContent);
+                    `;
 
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Answer Submitted!',
-                                        text: 'Your answer has been successfully submitted.',
-                                        confirmButtonText: 'Great!',
-                                    })
-                                    // .then((result) => {
-                                    //     if (result.isConfirmed) {
-                                    //         // Optionally refresh to see the new answer
-                                    //         window.location.reload();
-                                    //     }
-                                    // });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: data.message || 'Something went wrong',
-                                    });
+                                let answerList = document.getElementById('answerList');
+                                if (!answerList) {
+                                    const noAnswersSection = document.querySelector(
+                                        '.answer-section .bg-\\[var\\(--bg-secondary\\)\\]');
+                                    if (noAnswersSection) {
+                                        answerList = document.createElement('div');
+                                        answerList.id = 'answerList';
+                                        answerList.className = 'space-y-6';
+                                        noAnswersSection.parentNode.replaceChild(answerList,
+                                            noAnswersSection);
+                                    }
                                 }
-                            })
-                            .catch(error => {
-                                submitButton.innerHTML = originalButtonText;
-                                submitButton.disabled = false;
 
+                                if (answerList) {
+                                    answerList.insertAdjacentHTML('beforeend', htmlContent);
+
+                                    const answerHeader = document.querySelector(
+                                        '.answer-section h2 span');
+                                    if (answerHeader) {
+                                        answerHeader.textContent = `(${currentAnswerCount})`;
+                                    }
+
+                                    attachAnswerEventListeners(data.answer.id);
+                                }
+
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Answer Submitted!',
+                                    text: 'Your answer has been successfully submitted.',
+                                    confirmButtonText: 'Great!',
+                                });
+
+                            } else {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
-                                    text: 'There was a network error. Please try again.',
+                                    text: data.message || 'Something went wrong',
                                 });
+                            }
+                        })
+                        .catch(error => {
+                            submitButton.innerHTML = originalButtonText;
+                            submitButton.disabled = false;
+                            console.error('Error:', error);
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'There was a network error. Please try again.',
                             });
-                    }
+                        });
                 });
             }
         });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+            return `${Math.floor(diffInSeconds / 86400)} days ago`;
+        }
+
+        function attachAnswerEventListeners(answerId) {
+            const commentBtn = document.querySelector(`#submit-comment-${answerId}`).previousElementSibling
+                .previousElementSibling;
+            if (commentBtn && commentBtn.classList.contains('comment-btn')) {
+                commentBtn.addEventListener('click', () => {
+                    const commentBox = commentBtn.closest('.flex-grow').querySelector('.comment-box');
+                    if (commentBox) {
+                        commentBox.classList.toggle('hidden');
+                    }
+                });
+            }
+
+            const upVoteBtn = document.querySelector(`[data-answer-id="${answerId}"].upVoteAnswer`);
+            const downVoteBtn = document.querySelector(`[data-answer-id="${answerId}"].downVoteAnswer`);
+
+            if (upVoteBtn) {
+                upVoteBtn.addEventListener('click', () => handleVote(true, answerId));
+            }
+            if (downVoteBtn) {
+                downVoteBtn.addEventListener('click', () => handleVote(false, answerId));
+            }
+        }
     </script>
 
     {{-- logic for submitting comment for question --}}
@@ -771,68 +831,66 @@
         });
 
         // Vote Answer
-        document.addEventListener('DOMContentLoaded', () => {
-            const upVoteButtons = document.querySelectorAll('.upVoteAnswer');
-            const downVoteButtons = document.querySelectorAll('.downVoteAnswer');
+        const upVoteButtons = document.querySelectorAll('.upVoteAnswer');
+        const downVoteButtons = document.querySelectorAll('.downVoteAnswer');
 
-            const handleVote = (voteType, id) => {
+        const handleVote = (voteType, id) => {
 
-                const formData = new FormData();
-                formData.append('vote', voteType);
-                formData.append('answer_id', id);
+            const formData = new FormData();
+            formData.append('vote', voteType);
+            formData.append('answer_id', id);
 
-                fetch(`/answer/vote`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                        },
-                        body: formData,
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Update the vote count
-                            const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
-                                .nextElementSibling;
-                            if (voteCountElement) {
-                                voteCountElement.textContent = `${data.voteAnswerUpdated}`;
-                            }
-
-                            // Display success message
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Vote Submitted!',
-                                text: 'Your vote has been successfully recorded.',
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message,
-                            });
+            fetch(`/answer/vote`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                    },
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the vote count
+                        const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
+                            .nextElementSibling;
+                        if (voteCountElement) {
+                            voteCountElement.textContent = `${data.voteAnswerUpdated}`;
                         }
-                    })
-                    .catch(error => {
+
+                        // Display success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Vote Submitted!',
+                            text: 'Your vote has been successfully recorded.',
+                        });
+                    } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Unexpected Error',
-                            text: 'An unexpected error occurred.',
+                            title: 'Error',
+                            text: data.message,
                         });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Unexpected Error',
+                        text: 'An unexpected error occurred.',
                     });
-            };
-
-            upVoteButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const answerId = button.getAttribute('data-answer-id');
-                    handleVote(true, answerId);
                 });
+        };
+
+        upVoteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const answerId = button.getAttribute('data-answer-id');
+                handleVote(true, answerId);
             });
+        });
 
-            downVoteButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const answerId = button.getAttribute('data-answer-id');
-                    handleVote(false, answerId);
-                });
+        downVoteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const answerId = button.getAttribute('data-answer-id');
+                handleVote(false, answerId);
             });
         });
     </script>
