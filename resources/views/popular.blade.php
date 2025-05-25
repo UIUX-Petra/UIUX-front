@@ -268,15 +268,11 @@
         }
 
         .skeleton {
-            /* Warna dasar skeleton, sesuaikan dengan tema Anda */
             background-color: var(--bg-card-hover);
-            /* Contoh, bisa juga var(--border-color) atau warna abu-abu netral */
         }
 
         .skeleton .bg-gray-300 {
-            /* Ganti bg-gray-300 dengan class yang Anda gunakan untuk elemen shimmer */
             background-color: var(--bg-secondary);
-            /* Warna elemen shimmer, lebih terang/gelap dari dasar */
             animation: shimmer 2s infinite linear;
         }
 
@@ -285,13 +281,11 @@
                 background-position: -1000px 0;
             }
 
-            /* Sesuaikan ukuran ini agar lebih besar dari lebar elemen */
             100% {
                 background-position: 1000px 0;
             }
         }
 
-        /* Tambahan untuk elemen skeleton agar memiliki background-size yang besar untuk efek shimmer */
         .skeleton .bg-gray-300,
         .skeleton .h-5,
         .skeleton .h-3,

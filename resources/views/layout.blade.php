@@ -243,6 +243,7 @@
     <style>
         :root {
             --transition-speed: 0.3s;
+             --text-tag: rgba(56, 163, 165, 1);
         }
 
         .dark-mode {
