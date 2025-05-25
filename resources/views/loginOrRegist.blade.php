@@ -284,6 +284,15 @@
                 bottom: 0;
             }
         }
+
+        #passwordRequirements li {
+            display: flex;
+            align-items: center;
+        }
+
+        #passwordRequirements i {
+            width: 16px;
+        }
     </style>
 
     <body>
@@ -378,13 +387,38 @@
                                 <small class="error-message"></small>
                             </div>
 
-                            <div class="input-box relative w-full mb-4">
+                            <div class="input-box relative w-full mb-4"> 
                                 <input type="password" aria-label="Password" placeholder="Password" required id="password"
                                     name="password" minlength="8"
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                 <i
                                     class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
-                                <small class="error-message"></small>
+                                <small class="error-message"></small> 
+
+                                {{-- Tooltip --}}
+                                <div id="passwordStrengthContainer"
+                                    class="absolute top-full left-0 right-0 mt-1 p-3 bg-white border border-gray-300 rounded-md shadow-lg z-20 hidden">
+                                
+                                    <div id="passwordStrengthBar"
+                                        class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-1">
+                                        <div id="passwordStrengthFill"
+                                            class="h-full transition-all duration-300 ease-in-out"></div>
+                                    </div>
+                                    <p id="passwordStrengthText" class="text-xs font-medium text-gray-500 mb-1 text-right">
+                                    </p>
+                                    <ul id="passwordRequirements" class="text-xs text-gray-500 space-y-0.5">
+                                        <li data-requirement="length"><i class="fas fa-times text-red-500 mr-1"></i> At
+                                            least 8 characters</li>
+                                        <li data-requirement="uppercase"><i class="fas fa-times text-red-500 mr-1"></i> An
+                                            uppercase letter</li>
+                                        <li data-requirement="lowercase"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                            lowercase letter</li>
+                                        <li data-requirement="number"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                            number</li>
+                                        <li data-requirement="special"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                            special character (e.g., !@#$%^&*)</li>
+                                    </ul>
+                                </div>
                             </div>
 
                             <div class="input-box relative w-full mb-7">
@@ -413,7 +447,8 @@
                             </div>
                             <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Hello, Informate!</h1>
                             <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">New to <span
-                                    class="font-bold cal-sans-regular text-[#fff]">peer <span class="text-[#FFD249]">- to -
+                                    class="font-bold cal-sans-regular text-[#fff]">peer <span class="text-[#FFD249]">- to
+                                        -
                                     </span> peer?</span><br>Join and explore our community today!</p>
                             <button
                                 class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Get
@@ -442,89 +477,226 @@
             const registerBtn = document.querySelector('.register-btn');
             const loginBtn = document.querySelector('.login-btn');
 
-            registerBtn.addEventListener('click', () => {
-                clearAllFormErrors();
-                container.classList.add('active');
-                // Add animation class
-                document.querySelector('.form-box.registration').classList.add('animate-fadeIn');
-            });
+            if (registerBtn) {
+                registerBtn.addEventListener('click', () => {
+                    clearAllFormErrors();
+                    container.classList.add('active');
+                    const registrationFormBox = document.querySelector('.form-box.registration');
+                    if (registrationFormBox) {
+                        registrationFormBox.classList.add('animate-fadeIn');
+                    }
+                });
+            }
 
-            loginBtn.addEventListener('click', () => {
-                clearAllFormErrors();
-                container.classList.remove('active');
-                // Add animation class
-                document.querySelector('.form-box.login').classList.add('animate-fadeIn');
-            });
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    clearAllFormErrors();
+                    container.classList.remove('active');
+                    const loginFormBox = document.querySelector('.form-box.login');
+                    if (loginFormBox) {
+                        loginFormBox.classList.add('animate-fadeIn');
+                    }
+                });
+            }
 
             // --- Input Validation ---
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             function showError(inputElement, message) {
                 const inputBox = inputElement.closest('.input-box');
+                if (!inputBox) return;
                 const errorElement = inputBox.querySelector('.error-message');
-                const iconElement = inputBox.querySelector('i.fa-solid'); // Get the icon
+                const iconElement = inputBox.querySelector('i.fa-solid');
 
                 inputElement.classList.add('input-error');
                 if (errorElement) {
                     errorElement.textContent = message;
                     errorElement.classList.add('visible');
                 }
-                if (iconElement) { // If icon exists, hide it
+                if (iconElement) {
                     iconElement.classList.add('icon-hidden');
                 }
             }
 
             function clearError(inputElement) {
                 const inputBox = inputElement.closest('.input-box');
+                if (!inputBox) return;
                 const errorElement = inputBox.querySelector('.error-message');
-                const iconElement = inputBox.querySelector('i.fa-solid'); // Get the icon
+                const iconElement = inputBox.querySelector('i.fa-solid');
 
                 inputElement.classList.remove('input-error');
                 if (errorElement) {
                     errorElement.classList.remove('visible');
                     errorElement.textContent = '';
                 }
-                if (iconElement) { // If icon exists, show it
+                if (iconElement) {
                     iconElement.classList.remove('icon-hidden');
                 }
             }
 
-            function clearAllFormErrors() {
-                document.querySelectorAll('.input-box input').forEach(input => clearError(input));
-            }
+            const passwordInputForStrength = document.getElementById('password');
+            const strengthContainer = document.getElementById('passwordStrengthContainer');
+            const strengthBarFill = document.getElementById('passwordStrengthFill');
+            const strengthText = document.getElementById('passwordStrengthText');
+            const requirementsList = document.getElementById('passwordRequirements');
 
-            // Password strength indicator
-            const passwordStrengthIndicator = document.createElement('div');
-            passwordStrengthIndicator.className = 'w-full h-1 mt-1 rounded-full overflow-hidden hidden';
+            const strengthLevels = [{
+                    text: "Very Weak",
+                    color: "bg-red-500",
+                    width: "20%"
+                },
+                {
+                    text: "Weak",
+                    color: "bg-orange-500",
+                    width: "40%"
+                },
+                {
+                    text: "Medium",
+                    color: "bg-yellow-500",
+                    width: "60%"
+                },
+                {
+                    text: "Good",
+                    color: "bg-blue-500",
+                    width: "80%"
+                },
+                {
+                    text: "Strong",
+                    color: "bg-green-500",
+                    width: "100%"
+                }
+            ];
 
-            if (document.getElementById('password')) {
-                const passwordInput = document.getElementById('password');
-                const passwordInputBox = passwordInput.closest('.input-box');
-                passwordInputBox.appendChild(passwordStrengthIndicator);
+            const passwordCriteria = [{
+                    id: 'length',
+                    regex: /.{8,}/,
+                    el: requirementsList?.querySelector('[data-requirement="length"]')
+                },
+                {
+                    id: 'uppercase',
+                    regex: /[A-Z]/,
+                    el: requirementsList?.querySelector('[data-requirement="uppercase"]')
+                },
+                {
+                    id: 'lowercase',
+                    regex: /[a-z]/,
+                    el: requirementsList?.querySelector('[data-requirement="lowercase"]')
+                },
+                {
+                    id: 'number',
+                    regex: /[0-9]/,
+                    el: requirementsList?.querySelector('[data-requirement="number"]')
+                },
+                {
+                    id: 'special',
+                    regex: /[^A-Za-z0-9\s]/, // Added \s to ensure space is not counted as special
+                    el: requirementsList?.querySelector('[data-requirement="special"]')
+                }
+            ];
 
-                passwordInput.addEventListener('input', function() {
-                    if (this.value) {
-                        passwordStrengthIndicator.classList.remove('hidden');
+            function updatePasswordStrengthUI(password) {
+                if (!strengthBarFill || !strengthText || !requirementsList) {
+                    return;
+                }
 
-                        // Simple password strength calculation
-                        let strength = 0;
-                        if (this.value.length >= 8) strength += 1;
-                        if (/[A-Z]/.test(this.value)) strength += 1;
-                        if (/[0-9]/.test(this.value)) strength += 1;
-                        if (/[^A-Za-z0-9]/.test(this.value)) strength += 1;
+                let metCriteriaCount = 0;
+                passwordCriteria.forEach(criterion => {
+                    const icon = criterion.el?.querySelector('i');
+                    if (!icon) return;
 
-                        let strengthClass = '';
-                        if (strength === 1) strengthClass = 'bg-red-500';
-                        else if (strength === 2) strengthClass = 'bg-yellow-500';
-                        else if (strength === 3) strengthClass = 'bg-blue-500';
-                        else if (strength === 4) strengthClass = 'bg-green-500';
-
-                        passwordStrengthIndicator.className =
-                            `w-full h-1 mt-1 rounded-full overflow-hidden ${strengthClass}`;
+                    if (criterion.regex.test(password)) {
+                        metCriteriaCount++;
+                        icon.classList.remove('fa-times', 'text-red-500');
+                        icon.classList.add('fa-check', 'text-green-500');
+                        criterion.el?.classList.remove('text-gray-500');
+                        criterion.el?.classList.add('text-green-700');
                     } else {
-                        passwordStrengthIndicator.classList.add('hidden');
+                        icon.classList.remove('fa-check', 'text-green-500');
+                        icon.classList.add('fa-times', 'text-red-500');
+                        criterion.el?.classList.remove('text-green-700');
+                        criterion.el?.classList.add('text-gray-500');
                     }
                 });
+
+                const lengthMet = passwordCriteria.find(c => c.id === 'length')?.regex.test(password);
+                let levelIndex = metCriteriaCount - 1;
+
+                if (!lengthMet) {
+                    levelIndex = Math.min(levelIndex, 0);
+                    if (metCriteriaCount > 0 && password.length > 0) levelIndex =
+                    0; 
+                }
+                if (password.length === 0) { 
+                    levelIndex = -1; 
+                } else if (metCriteriaCount === 0 && password.length > 0) {
+                    levelIndex = 0; 
+                }
+
+
+                // Ensure levelIndex is valid for strengthLevels array
+                levelIndex = Math.max(0, Math.min(levelIndex, strengthLevels.length - 1));
+                const currentStrength = (password.length === 0 || metCriteriaCount === 0 && password.length > 0 && !lengthMet) ?
+                    strengthLevels[0] : strengthLevels[levelIndex];
+
+
+                if (password.length === 0) {
+                    strengthBarFill.className = 'h-full transition-all duration-300 ease-in-out bg-gray-200';
+                    strengthBarFill.style.width = '0%';
+                    strengthText.textContent = '';
+                } else {
+                    strengthBarFill.className = `h-full transition-all duration-300 ease-in-out ${currentStrength.color}`;
+                    strengthBarFill.style.width = currentStrength.width;
+                    strengthText.textContent = currentStrength.text;
+                    strengthText.className =
+                        `text-xs font-medium mb-1 text-right ${currentStrength.color.replace('bg-', 'text-')}`;
+                }
+            }
+
+            function resetPasswordStrengthUI() {
+                if (!strengthBarFill || !strengthText || !requirementsList) return;
+
+                passwordCriteria.forEach(criterion => {
+                    const icon = criterion.el?.querySelector('i');
+                    if (!icon) return;
+                    icon.classList.remove('fa-check', 'text-green-500');
+                    icon.classList.add('fa-times', 'text-red-500');
+                    criterion.el?.classList.remove('text-green-700');
+                    criterion.el?.classList.add('text-gray-500');
+                });
+                strengthBarFill.className = 'h-full transition-all duration-300 ease-in-out bg-gray-200';
+                strengthBarFill.style.width = '0%';
+                strengthText.textContent = '';
+            }
+
+            if (passwordInputForStrength) {
+                passwordInputForStrength.addEventListener('input', function() {
+                    updatePasswordStrengthUI(this.value);
+                });
+
+                passwordInputForStrength.addEventListener('focus', function() {
+                    if (strengthContainer) {
+                        updatePasswordStrengthUI(this.value);
+                        strengthContainer.classList.remove('hidden');
+                    }
+                });
+
+                passwordInputForStrength.addEventListener('blur', function() {
+                    if (strengthContainer) {
+                        setTimeout(() => {
+                            if (document.activeElement !== this) {
+                                strengthContainer.classList.add('hidden');
+                            }
+                        }, 150); 
+                    }
+                });
+            }
+
+            function clearAllFormErrors() {
+                document.querySelectorAll('.input-box input').forEach(input => clearError(input));
+                resetPasswordStrengthUI(); 
+                if (strengthContainer && document.activeElement !== passwordInputForStrength) {
+                    strengthContainer.classList.add('hidden'); 
+                }
             }
 
             // --- Login Form Validation ---
@@ -535,28 +707,24 @@
             if (manualLoginForm) {
                 manualLoginForm.addEventListener('submit', function(event) {
                     let isValid = true;
-                    // Clear only errors related to this form before validating
                     manualLoginForm.querySelectorAll('.input-box input').forEach(input => clearError(input));
 
-                    // Validate Username/Email
                     if (!usernameOrEmailInput.value.trim()) {
                         showError(usernameOrEmailInput, 'Username or Email is required.');
                         isValid = false;
                     } else {
-                        clearError(usernameOrEmailInput); // Ensure icon is back if valid
+                        clearError(usernameOrEmailInput);
                     }
 
-                    // Validate Password
                     if (!loginPasswordInput.value.trim()) {
                         showError(loginPasswordInput, 'Password is required.');
                         isValid = false;
                     } else {
-                        clearError(loginPasswordInput); // Ensure icon is back if valid
+                        clearError(loginPasswordInput);
                     }
 
                     if (!isValid) {
-                        event.preventDefault(); // Prevent form submission
-                        // Shake animation for invalid form
+                        event.preventDefault();
                         manualLoginForm.classList.add('animate-shake');
                         setTimeout(() => {
                             manualLoginForm.classList.remove('animate-shake');
@@ -577,14 +745,13 @@
             const submitRegisterForm = document.getElementById('submitRegisterForm');
             const usernameInput = document.getElementById('username');
             const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
+            // passwordInputForStrength is already defined as 'password' input
             const confirmPasswordInput = document.getElementById('confirmPassword');
 
             if (submitRegisterForm) {
                 submitRegisterForm.addEventListener('submit', async function(event) {
                     event.preventDefault();
                     let isValid = true;
-                    // Clear only errors related to this form before validating
                     submitRegisterForm.querySelectorAll('.input-box input').forEach(input => clearError(input));
 
                     // Validate Username
@@ -607,21 +774,49 @@
                     }
 
                     // Validate Password
-                    if (!passwordInput.value) {
-                        showError(passwordInput, 'Password is required.');
+                    const currentPassword = passwordInputForStrength.value;
+                    if (!currentPassword) {
+                        showError(passwordInputForStrength, 'Password is required.');
                         isValid = false;
-                    } else if (passwordInput.value.length < 8) {
-                        showError(passwordInput, 'Password must be at least 8 characters long.');
-                        isValid = false;
+                        if (strengthContainer) strengthContainer.classList.add(
+                        'hidden'); 
                     } else {
-                        clearError(passwordInput);
+                        let passwordIssues = [];
+                        if (!passwordCriteria.find(c => c.id === 'length')?.regex.test(currentPassword))
+                            passwordIssues.push("be at least 8 characters");
+                        if (!passwordCriteria.find(c => c.id === 'uppercase')?.regex.test(currentPassword))
+                            passwordIssues.push("contain an uppercase letter");
+                        if (!passwordCriteria.find(c => c.id === 'lowercase')?.regex.test(currentPassword))
+                            passwordIssues.push("contain a lowercase letter");
+                        if (!passwordCriteria.find(c => c.id === 'number')?.regex.test(currentPassword))
+                            passwordIssues.push("contain a number");
+                        if (!passwordCriteria.find(c => c.id === 'special')?.regex.test(currentPassword))
+                            passwordIssues.push("contain a special character");
+
+                        if (passwordIssues.length > 0) {
+                            let errorMsg = "Password " + passwordIssues.join(", ") + ".";
+                            if (passwordIssues.length > 2) errorMsg =
+                                "Password needs to meet all criteria shown below.";
+                            else if (passwordIssues.length === 1 && passwordIssues[0] ===
+                                "be at least 8 characters") errorMsg =
+                                "Password must be at least 8 characters long.";
+
+
+                            showError(passwordInputForStrength, errorMsg);
+                            isValid = false;
+                            if (strengthContainer) strengthContainer.classList.remove(
+                            'hidden'); 
+                        } else {
+                            clearError(passwordInputForStrength); 
+                            
+                        }
                     }
 
                     // Validate Confirm Password
                     if (!confirmPasswordInput.value) {
                         showError(confirmPasswordInput, 'Please confirm your password.');
                         isValid = false;
-                    } else if (passwordInput.value && confirmPasswordInput.value !== passwordInput.value) {
+                    } else if (currentPassword && confirmPasswordInput.value !== currentPassword) {
                         showError(confirmPasswordInput, 'Passwords do not match.');
                         isValid = false;
                     } else {
@@ -629,12 +824,11 @@
                     }
 
                     if (!isValid) {
-                        // Shake animation for invalid form
                         submitRegisterForm.classList.add('animate-shake');
                         setTimeout(() => {
                             submitRegisterForm.classList.remove('animate-shake');
                         }, 500);
-                        return; // Stop if validation fails
+                        return;
                     }
 
                     Swal.fire({
@@ -649,7 +843,7 @@
                     try {
                         const username = usernameInput.value.trim();
                         const email = emailInput.value.trim();
-                        const password = passwordInput.value;
+                        const password = currentPassword; // Use currentPassword
 
                         const response = await fetch("{{ route('submitRegister') }}", {
                             method: 'POST',
@@ -675,10 +869,13 @@
                                 text: data.message || 'Your account has been created successfully!',
                                 confirmButtonColor: '#3085d6',
                             }).then(() => {
-                                container.classList.remove('active');
+                                if (container) container.classList.remove('active');
                                 submitRegisterForm.reset();
+                                resetPasswordStrengthUI(); 
+                                if (strengthContainer) strengthContainer.classList.add(
+                                'hidden'); 
                                 submitRegisterForm.querySelectorAll('.input-box input').forEach(input =>
-                                    clearError(input)); // Ensure all visual states are cleared
+                                    clearError(input));
                             });
                         } else {
                             let errorMessage = data.message || 'Registration failed.';
@@ -707,14 +904,12 @@
 
             // Add live validation on blur and clear on input
             document.querySelectorAll('.input-box input').forEach(input => {
-                // Add focus effect
                 input.addEventListener('focus', function() {
-                    this.closest('.input-box').classList.add('focus');
+                    this.closest('.input-box')?.classList.add('focus');
                 });
 
                 input.addEventListener('blur', function() {
-                    this.closest('.input-box').classList.remove('focus');
-
+                    this.closest('.input-box')?.classList.remove('focus');
                     const currentForm = this.closest('form');
                     if (!currentForm) return;
 
@@ -732,77 +927,99 @@
                         else if (!emailRegex.test(this.value.trim())) showError(this, 'Invalid email format.');
                         else clearError(this);
                     } else if (this.id === 'password') {
-                        if (!this.value) showError(this, 'Password is required.');
-                        else if (this.value.length < 8) showError(this,
-                            'Password must be at least 8 characters.');
-                        else clearError(this);
-                        // Re-validate confirm password if password changes
-                        if (confirmPasswordInput.value && this.value !== confirmPasswordInput.value) {
+                        if (!this.value && document.activeElement !==
+                            this) { 
+                            showError(this, 'Password is required.');
+                        } else if (this.value && this.value.length < 8 && document.activeElement !== this) {
+                            showError(this, 'Password must be at least 8 characters.');
+                        } else if (this.classList.contains('input-error') && this.value.length >=
+                            8) { 
+                            clearError(this);
+                        }
+                        if (confirmPasswordInput && confirmPasswordInput.value && this.value !==
+                            confirmPasswordInput.value) {
                             showError(confirmPasswordInput, 'Passwords do not match.');
-                        } else if (confirmPasswordInput.value) {
+                        } else if (confirmPasswordInput && confirmPasswordInput.value) {
                             clearError(confirmPasswordInput);
                         }
                     } else if (this.id === 'confirmPassword') {
-                        if (!this.value) showError(this, 'Please confirm password.');
-                        else if (passwordInput.value && this.value !== passwordInput.value) showError(this,
-                            'Passwords do not match.');
+                        if (!this.value && document.activeElement !== this) showError(this,
+                            'Please confirm password.');
+                        else if (passwordInputForStrength && passwordInputForStrength.value && this.value !==
+                            passwordInputForStrength.value) showError(this, 'Passwords do not match.');
                         else clearError(this);
                     }
                 });
 
                 input.addEventListener('input', function() {
-                    // Only clear the error for the current input, don't affect others.
-                    // The blur event will handle more comprehensive validation if needed.
                     if (this.classList.contains('input-error')) {
-                        clearError(this);
+                        if (this.id === 'password') {
+                            let passwordStillHasIssues = false;
+                            if (!this.value) passwordStillHasIssues =
+                            true; 
+                            else if (this.value.length < 8) passwordStillHasIssues =
+                            true;
+
+                            if (!
+                                passwordStillHasIssues) { // Example: clear "too short" if it becomes long enough
+                                const errorMsgElement = this.closest('.input-box').querySelector(
+                                    '.error-message');
+                                if (errorMsgElement && (errorMsgElement.textContent.includes('8 characters') ||
+                                        errorMsgElement.textContent.includes('required'))) {
+                                    clearError(this);
+                                }
+                            }
+                        } else {
+                            clearError(this);
+                        }
                     }
                 });
             });
 
-            // Add animations
             document.addEventListener('DOMContentLoaded', function() {
-                document.querySelector('.container').classList.add('animate-fadeIn');
+                const mainContainer = document.querySelector('.container.form-container'); 
+                if (mainContainer) mainContainer.classList.add('animate-fadeIn');
+
+                // Initial state for password strength tooltip if password field exists
+                if (passwordInputForStrength && strengthContainer) {
+                    resetPasswordStrengthUI(); 
+                    strengthContainer.classList.add('hidden'); 
+                }
             });
 
-            // Define animations if not already defined by Tailwind
             if (!document.querySelector('style.animation-styles')) {
                 const styleSheet = document.createElement('style');
                 styleSheet.className = 'animation-styles';
                 styleSheet.textContent = `
-                    @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(10px); }
-                        to { opacity: 1; transform: translateY(0); }
-                    }
-                    @keyframes shake {
-                        0%, 100% { transform: translateX(0); }
-                        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-                        20%, 40%, 60%, 80% { transform: translateX(5px); }
-                    }
-                    .animate-fadeIn {
-                        animation: fadeIn 0.5s ease forwards;
-                    }
-                    .animate-shake {
-                        animation: shake 0.5s ease-in-out;
-                    }
-                `;
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+            .animate-fadeIn { animation: fadeIn 0.5s ease forwards; }
+            .animate-shake { animation: shake 0.5s ease-in-out; }
+        `;
                 document.head.appendChild(styleSheet);
             }
-        </script>
-        <script>
-            // Set up password toggle functionality
+
+            // Password toggle functionality
             document.querySelectorAll('.password-toggle').forEach(toggle => {
                 toggle.addEventListener('click', function() {
                     const input = this.previousElementSibling;
-
-                    // Toggle password visibility
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        this.classList.remove('fa-eye');
-                        this.classList.add('fa-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        this.classList.remove('fa-eye-slash');
-                        this.classList.add('fa-eye');
+                    if (input && (input.type === 'password' || input.type === 'text')) {
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            this.classList.remove('fa-eye');
+                            this.classList.add('fa-eye-slash');
+                        } else {
+                            input.type = 'password';
+                            this.classList.remove('fa-eye-slash');
+                            this.classList.add('fa-eye');
+                        }
                     }
                 });
             });

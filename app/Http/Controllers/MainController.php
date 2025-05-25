@@ -32,7 +32,7 @@ class MainController extends Controller
     $questions = $this->questionController->getAllQuestions($request);
     $data['questions'] = $questions;
     $data['user'] = $user;
-    // dd($data);]
+    // dd($data);
     return view('home', $data);
   }
 
@@ -209,6 +209,7 @@ class MainController extends Controller
     $questions = $this->questionController->getAllQuestionsByPopularity($request);
     $data['questions'] = $questions;
     $data['image'] = $user['image'];
+    $data['tags'] = $this->tagController->getAllTags();
     // dd($data);
     return view('popular', $data);
   }
