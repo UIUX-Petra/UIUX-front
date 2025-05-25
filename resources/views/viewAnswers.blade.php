@@ -354,7 +354,7 @@
                                         Submit Comment
                                     </button>
                                 </div>
-                                
+
                             </div>
                         </div>
                     @endforeach
@@ -790,7 +790,16 @@
                 const formData = new FormData();
                 formData.append('vote', voteType);
                 formData.append('question_id', questionId);
-
+                Swal.fire({
+                    title: '',
+                    background: 'transparent',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
                 fetch(`/question/vote`, {
                         method: 'POST',
                         headers: {
@@ -800,15 +809,16 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        Swal.close();
                         if (data.success) {
                             const voteTotal = document.getElementById('voteTotal');
                             voteTotal.textContent = `${data.voteUpdated}`;
 
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Vote Submitted!',
-                                text: 'Your vote has been successfully recorded.',
-                            });
+                            // Swal.fire({
+                            //     icon: 'success',
+                            //     title: 'Vote Submitted!',
+                            //     text: 'Your vote has been successfully recorded.',
+                            // });
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -839,7 +849,16 @@
             const formData = new FormData();
             formData.append('vote', voteType);
             formData.append('answer_id', id);
-
+            Swal.fire({
+                title: '',
+                background: 'transparent',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             fetch(`/answer/vote`, {
                     method: 'POST',
                     headers: {
@@ -849,6 +868,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    Swal.close();
                     if (data.success) {
                         // Update the vote count
                         const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
@@ -857,12 +877,11 @@
                             voteCountElement.textContent = `${data.voteAnswerUpdated}`;
                         }
 
-                        // Display success message
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Vote Submitted!',
-                            text: 'Your vote has been successfully recorded.',
-                        });
+                        // Swal.fire({
+                        //     icon: 'success',
+                        //     title: 'Vote Submitted!',
+                        //     text: 'Your vote has been successfully recorded.',
+                        // });
                     } else {
                         Swal.fire({
                             icon: 'error',
