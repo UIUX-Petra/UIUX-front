@@ -493,6 +493,8 @@
     @include('utils.trie') 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            initSaveButtons(); 
+            updateSavedIcons();
             if (typeof Trie === 'undefined') {
                 console.error(
                     'FATAL ERROR: Trie class is not defined. Make sure utils.trie.blade.php is included correctly and defines the Trie class globally.'
@@ -767,5 +769,141 @@
                 });
             }
         });
+        function initSaveButtons() {
+            const saveButtons = document.querySelectorAll('.save-question-btn');
+            saveButtons.forEach(button => {
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+
+                newButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation(); 
+
+                    const currentOnClick = this.getAttribute('onclick');
+                    if (currentOnClick && currentOnClick.includes('unsaveQuestion')) {
+                        unsaveQuestion(this);
+                    } else {
+                        saveQuestion(this);
+                    }
+                });
+            });
+        }
+
+        function updateSavedIcons() {
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark'); 
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            savedIcons.forEach(icon => {
+                icon.style.color = isLightMode ? 'var(--accent-secondary)' :
+                    'var(--accent-secondary)'; 
+            });
+        }
+
+        function unsaveQuestion(btn) {
+            const id = btn.getAttribute('data-question-id');
+            let formData = new FormData();
+            formData.append("question_id", id);
+
+            let loadingToast = Toastify({
+                text: "Unsaving...",
+                duration: -1,
+                style: {
+                    background: "#444"
+                }
+            });
+            loadingToast.showToast();
+
+            fetch("{{ route('unsaveQuestion') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: formData
+            }).then(response => response.json()).then(res => {
+                loadingToast.hideToast();
+                if (res.success) {
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                        }
+                    }).showToast();
+                    btn.innerHTML =
+                        `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
+                    btn.setAttribute("onclick", "saveQuestion(this)");
+                    btn.setAttribute("title", "Save Question");
+                } else {
+                    Toastify({
+                        text: res.message || "Failed to unsave.",
+                        duration: 3000,
+                    }).showToast();
+                }
+            }).catch(err => {
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
+            });
+        }
+
+        function saveQuestion(btn) {
+            const id = btn.getAttribute('data-question-id');
+            let formData = new FormData();
+            formData.append("question_id", id);
+
+            let loadingToast = Toastify({
+                text: "Saving...",
+                duration: -1,
+                /* ...sisanya... */
+                style: {
+                    background: "#444"
+                }
+            });
+            loadingToast.showToast();
+
+            fetch("{{ route('saveQuestion') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: formData
+            }).then(response => response.json()).then(res => {
+                loadingToast.hideToast();
+                if (res.success) {
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                        }
+                    }).showToast();
+                    btn.innerHTML =
+                        `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`; 
+                    btn.setAttribute("onclick", "unsaveQuestion(this)");
+                    btn.setAttribute("title", "Unsave Question");
+                    updateSavedIcons(); 
+                    btn.classList.add('saved-animation'); 
+                    setTimeout(() => btn.classList.remove('saved-animation'), 300);
+                } else {
+                    Toastify({
+                        text: res.message || "Failed to save.",
+                        duration: 3000,
+                    }).showToast();
+                }
+            }).catch(err => {
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
+            });
+        }
     </script>
 @endsection

@@ -192,10 +192,13 @@
                             @endif
                         </button>
                     @else
-                        <a href="{{ route('editProfile') }}"><button
-                                class="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5f83c8] transition">
-                                Edit Profile
-                            </button></a>
+                         <div class="flex space-x-4">
+                        <a href="{{ route('editProfile') }}"
+                            class="px-4 py-2 btn-primary text-white rounded-lg flex items-center">
+                            <i class="fa-solid fa-user-pen mr-2"></i>
+                            Edit Profile
+                        </a>
+                    </div>
                     @endif
 
                 </div>
