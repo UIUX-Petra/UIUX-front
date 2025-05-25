@@ -24,7 +24,6 @@ class AuthController extends Controller
     {
         try {
             $user = Socialite::driver('google')->user();
-
             if (!$user) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Please try to log in again!');
             }
@@ -47,24 +46,24 @@ class AuthController extends Controller
             if ($response->failed()) {
                 return redirect()->route('loginOrRegist')->with('Error', 'There was an issue with the login request.');
             }
-
             $responseData = $response->json();
             $storedUser = $responseData['data'];
             if (!isset($storedUser['email'], $storedUser['name'], $storedUser['token'])) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Invalid response structure from the API.');
             }
-
             session([
                 'email' => $storedUser['email'],
                 'name' => $storedUser['name'],
                 'token' => $storedUser['token']
             ]);
+
+            // Dump and die to inspect session data
             $url = session('url');
             if ($url) {
                 session()->forget('url');
                 return redirect()->to($url);
             }
-            return redirect()->route('loginOrRegist');
+            return redirect()->route('home');
         } catch (\Exception $e) {
             Log::error('Login error: ' . $e->getMessage());
             return redirect()->route('loginOrRegist')->with('Error', 'An unexpected error occurred. Please try again.');
@@ -144,7 +143,7 @@ class AuthController extends Controller
         ]);
         Log::info($response);
         if ($response->failed()) {
-            return redirect()->route('loginOrRegist')->with('Error', 'There was an issue with the login request.');
+            return redirect()->route('loginOrRegist')->with('Error', $response['message']);
         }
 
         $responseData = $response->json();

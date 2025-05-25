@@ -2,9 +2,63 @@
 
 @section('content')
 @include('partials.nav')
-@include('utils.background-overlay')
+
+    <!-- Decorative background element -->
+    <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.2)] to-[rgba(128,237,153,0.2)] blur-2xl">
+    </div>
+
+    <div class="max-w-7xl min-h-screen mx-auto z-50 p-8">
+        <h1 class="text-center text-[var(--text-primary)] font-bold text-2xl md:text-4xl py-4 md:py-8 uppercase cal-sans-regular">Leaderboard</h1>
+        
+        <!-- Best user in each tag section -->
+        <div class="flex flex-col items-center justify-center">
+            <h2 class="text-2xl text-[var(--text-primary)] font-semibold mb-4">BEST USER IN EACH TAGS</h2>
+            <select name="tags" id="tags"
+                class="my-4 appearance-none border-0 border-b-2 border-current font-bold tracking-widest bg-[var(--bg-card)] focus:outline-none text-[--purple] rounded-lg p-2">
+                <option value="" disabled selected class="text-[var(--text-muted)]">Choose one tag you want</option>
+                @foreach ($tags as $tag)
+                    <option value="{{ $tag['id'] }}" class="text-[var(--text-muted)]">{{ $tag['name'] }}</option>
+                @endforeach
+            </select>
+            
+            <!-- Card for best user in tag -->
+            <div class="card1 mt-4 w-[274px] h-[431px] mx-auto">
+                <div class="reveal flex flex-col items-center justify-center p-8" id="reveal-card">
+                    <img src="" class="mb-2 w-40 h-40 object-cover rounded-full"
+                        id="best-user-image">
+                    <h1 class="text-2xl font-semibold text-[var(--text-primary)] text-center" id="best-user-name"></h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special person section -->
+        <div class="mt-16 flex flex-col items-center justify-center">
+            <h2 class="text-2xl font-semibold mb-4 text-[--purple] glowing-text">YOUR SPECIAL PERSON</h2>
+            <div class="card-container">
+                <div class="card transition-transform hover:scale-105">
+                    <div class="front flex flex-col items-center justify-center">
+                        <small class="absolute bottom-[10%] text-[var(--text-primary)]">click to open</small>
+                    </div>
+                    <div class="back relative flex flex-col items-center justify-center">
+                        @if ($mostViewed)
+                            @if ($mostViewed['image'])
+                                <img src="{{ asset('storage/' . $mostViewed['image']) }}" alt="front"
+                                    class="mb-2 w-40 h-40 object-cover rounded-full">
+                            @else
+                                <img src="{{ asset('assets/empty.jpg') }}" alt="front"
+                                    class="mb-2 w-40 h-40 object-cover rounded-full">
+                            @endif
+                            <h1 class="text-2xl font-semibold text-[var(--text-primary)]">{{ $mostViewed['username'] }}</h1>
+                        @else
+                            <h1 class="text-2xl font-semibold text-[var(--text-primary)] text-center">Your special person awaits!</h1>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
     <style>
-        /* Title Styling */
+        
+        /* Title Styling (Keep the gradient effect) */
         .titleTopUser {
             background: linear-gradient(90deg, #633F92, #7494ec, #5500a4, white, #633F92);
             -webkit-background-clip: text;
@@ -16,115 +70,11 @@
         }
 
         @keyframes animateText {
-            0% {
-                background-position: 0%;
-            }
-
-            100% {
-                background-position: 500%;
-            }
-        }
-
-        /* Container for Top 5 Users */
-        .topUser-grid {
-            display: grid;
-            /* grid-template-columns: repeat(auto-fit, minmax(220px, 4fr)); */
-            gap: 1rem;
-            justify-content: center;
-            align-items: stretch;
+            0% { background-position: 0%; }
+            100% { background-position: 500%; }
         }
 
         /* Card Styling */
-        .user-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            /* Make it responsive within the grid */
-            width: 150px;
-            /* Set a maximum width for cards */
-            height: 250px;
-            /* Uniform height */
-            padding: 1rem;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-
-        /* Hover Effects */
-        .user-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Profile Image */
-        .user-card .user-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 1rem;
-        }
-
-        /* Text Styling */
-        .user-card h3 {
-            font-size: 1rem;
-            text-align: center;
-            margin: 0.5rem 0;
-        }
-
-        .user-card p {
-            font-size: 0.875rem;
-            text-align: center;
-            margin: 0;
-        }
-
-        .user-card i {
-            font-size: 2rem;
-            color: #f39c12;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .user-card {
-                height: 280px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .user-card {
-                height: 200px;
-                width: 200px;
-            }
-        }
-
-        /* Glowing Text Effect */
-        .glowing-text {
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #633F92, 0 0 20px #633F92, 0 0 25px #633F92, 0 0 30px #633F92, 0 0 35px #633F92;
-            animation: glow 1s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #633F92, 0 0 20px #633F92, 0 0 25px #633F92, 0 0 30px #633F92, 0 0 35px #633F92;
-            }
-            to {
-                text-shadow: 0 0 10px #fff, 0 0 20px #633F92, 0 0 30px #633F92, 0 0 40px #633F92, 0 0 50px #633F92, 0 0 60px #633F92, 0 0 70px #633F92;
-            }
-        }
-
-    </style>
-
-    <style>
-        div {
-            margin: auto;
-        }
-
         .card-container {
             perspective: 800px;
         }
@@ -143,6 +93,7 @@
             width: 274px;
             height: 431px;
             transition: transform 0.6s ease-in-out;
+            margin: 0 auto; /* Center the card */
         }
 
         .card .front,
@@ -157,6 +108,11 @@
         .card1 .reveal {
             background-image: url("{{ asset('assets/reveal_card.png') }}");
             background-size: cover;
+            background-position: center; /* Center the background image */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .card .front {
@@ -174,74 +130,42 @@
             transform: rotateY(180deg);
         }
 
-        /* select {
-                                            margin-bottom: 1em;
-                                            padding: .25em;
-                                            border: 0;
-                                            border-bottom: 2px solid currentcolor;
-                                            font-weight: bold;
-                                            letter-spacing: .15em;
-                                            border-radius: 0;
+        /* Section styling adapted from home page */
+        .section-heading {
+            position: relative;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-                                            &:focus,
-                                            &:active {
-                                                outline: 0;
-                                                border-bottom-color: red;
-                                            }
-                                        } */
+        .section-heading::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 70%;
+            background: linear-gradient(to bottom, #38A3A5, #80ED99);
+            border-radius: 2px;
+        }
+
+        /* Glowing Text Effect */
+        .glowing-text {
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #633F92, 0 0 20px #633F92, 0 0 25px #633F92, 0 0 30px #633F92, 0 0 35px #633F92;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #633F92, 0 0 20px #633F92, 0 0 25px #633F92, 0 0 30px #633F92, 0 0 35px #633F92;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #633F92, 0 0 30px #633F92, 0 0 40px #633F92, 0 0 50px #633F92, 0 0 60px #633F92, 0 0 70px #633F92;
+            }
+        }
     </style>
-    <div class="max-w-7xl min-h-screen mx-auto z-50 p-8">
-        <h1 class="text-center text-white font-bold text-2xl md:text-4xl p-4 md:p-8 uppercase">Leaderboard</h1>
-        {{-- each tags best user --}}
-        <div class="flex flex-col items-center justify-center">
-            <h1 class="text-2xl text-white font-semibold">BEST USER IN EACH TAGS</h1>
-            <select name="tags" id="tags"
-                class="my-4 appearance-none border-0 border-b-2 border-current font-bold tracking-widest bg-white !focus:outline-none text-[--purple] rounded-lg">
-                <option value="" disabled selected class="text-gray-500">Choose one tag you want</option>
-                @foreach ($tags as $tag)
-                    <option value="{{ $tag['id'] }}" class="text-gray-500">{{ $tag['name'] }}</option>
-                @endforeach
-            </select>
-            <div class="card1 mt-4">
-                <div class="reveal flex flex-col items-center justify-center p-8" id="reveal-card">
-                    <img src="" class="mb-2 w-40 h-40 object-cover rounded-full"
-                        id="best-user-image">
-                    <h1 class="text-2xl font-semibold text-white text-center" id="best-user-name"></h1>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-8 flex flex-col items-center justify-center">
-            <h1 class="text-2xl font-semibold text-[--purple] mb-4 glowing-text">YOUR SPECIAL PERSON</h1>
-            <div class="card-container">
-                <div class="card">
-                    <div class="front flex flex-col items-center justify-center">
-                        <small class="absolute bottom-[10%] text-white">click to open</small>
-
-                    </div>
-                    <div class="back relative flex flex-col items-center justify-center">
-                        @if ($mostViewed)
-                            @if ($mostViewed['image'])
-                                <img src="{{ asset('storage/' . $mostViewed['image']) }}" alt="front"
-                                    class="mb-2 w-40 h-40 object-cover rounded-full">
-                            @else
-                                <img src="{{ asset('assets/empty.jpg') }}" alt="front"
-                                    class="mb-2 w-40 h-40 object-cover rounded-full">
-                            @endif
-                            <h1 class="text-2xl font-semibold text-white">{{ $mostViewed['username'] }}</h1>
-                        @else
-                            <h1 class="text-2xl font-semibold text-white text-center">Your special person awaits!</h1>
-                        @endif
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

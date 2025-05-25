@@ -1,15 +1,11 @@
 @extends('layout')
-@section('content')
-    @include('partials.nav')
-    @include('utils.background')
+
+@section('head')
     <style>
         @keyframes wiggle {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translateX(0);
             }
-
             50% {
                 transform: translateX(5px);
             }
@@ -18,62 +14,76 @@
         .animate-wiggle {
             animation: wiggle 0.5s ease-in-out infinite;
         }
+
+        .tag-card {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            transition: background-color var(--transition-speed);
+        }
+
+        .description-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .description-wrapper.open {
+            max-height: 500px; /* arbitrary large height */
+        }
+
     </style>
-    <div class="container mx-auto py-8 px-4 max-w-7xl">
-        <div class=" mb-6">
-            <h1 class="text-2xl font-bold text-white flex items-center">
-                Tags
-            </h1>
-            <div class="mt-2 ml-4 p-2 rounded-lg">
-                <p class="text-sm md:text-lg text-white">Tags represent all the courses offered in the Informatics,
-                    Business Information Systems, and Data Science and Analytics programs
-                    at Petra Christian University.
-                    Each tag corresponds to a specific course.</p>
-            </div>
+@endsection
 
-        </div>
+@section('content')
+@include('partials.nav')
+    {{-- @include('utils.background2') --}}
 
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @foreach ($tags as $index => $tag)
-                <div class="bg-white shadow-md rounded-lg p-4 border-b-4 border-l-4 border-b-[--purple] border-l-[--bblue]">
-                    <div class="flex items-center">
-                        <h3 class="text-lg font-semibold text-[--purple] capitalize">{{ $tag['name'] }}</h3>
-
-                        <span
-                            class="material-symbols-outlined text-[--purple] text-2xl cursor-pointer toggle-btn hover:animate-wiggle"
-                            data-target="description-{{ $index }}">
-                            play_arrow
-                        </span>
-                    </div>
-
-                    <div id="description-{{ $index }}" class="hidden my-1 text-[--purple] text-sm">
-                        <p>{{ $tag['description'] }}</p>
-                    </div>
-
-                    <div class="text-[--bblue] text-xs">
-                        <p><strong>{{ number_format($tag['questions']) }}</strong> questions</p>
-                    </div>
-                </div>
-            @endforeach
-        </div>
+    <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start jsutify-start my-6 welcome-container">
+        <h1 class="cal-sans-regular lg:text-3xl text-xl mb-3 welcome">Subjects</h1>
+        <p class="text-[var(--text-secondary)] text-md lg:text-lg pl-0.5 font-regular">
+            Subjects represent all the courses offered in the Informatics, Business Information Systems, and Data Science & Analytics programs at Petra Christian University.
+        </p>
     </div>
 
-    <!-- JavaScript -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl items-start justify-start px-6">
+        @foreach ($tags as $index => $tag)
+            <div class="tag-card shadow-lg rounded-xl p-5 bg-[var(--bg-card)]">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg font-semibold capitalize text-[var(--text-primary)]">{{ $tag['name'] }}</h3>
+                    {{-- <span
+                        class="material-symbols-outlined text-[var(--text-primary)] text-2xl cursor-pointer toggle-btn hover:animate-wiggle"
+                        data-target="description-{{ $index }}">
+                        expand_more
+                    </span> --}}
+
+
+                </div>
+
+                <div id="description-{{ $index }}" class="description-wrapper text-sm text-[var(--text-secondary)] my-2">
+                    <p>{{ $tag['description'] }}</p>
+                </div>
+
+                <div class="text-sm text-[var(--text-muted)] mt-1">
+                    <p><strong>{{ number_format($tag['questions']) }}</strong> questions</p>
+                </div>
+            </div>
+        @endforeach
+    </div>
+@endsection
+
+@section('script')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButtons = document.querySelectorAll('.toggle-btn');
+        // document.querySelectorAll('.toggle-btn').forEach(btn => {
+        //     btn.addEventListener('click', function () {
+        //         const targetId = this.getAttribute('data-target');
+        //         const target = document.getElementById(targetId);
 
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const targetId = button.getAttribute('data-target');
-                    const targetElement = document.getElementById(targetId);
-
-                    if (targetElement) {
-                        targetElement.classList.toggle('hidden');
-                    }
-                });
-            });
-        });
+        //         if (target) {
+        //             const isOpen = target.classList.toggle('open');
+        //             target.style.maxHeight = isOpen ? target.scrollHeight + "px" : null;
+        //             this.textContent = isOpen ? 'expand_less' : 'expand_more';
+        //         }
+        //     });
+        // });
     </script>
 @endsection

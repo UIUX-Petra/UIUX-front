@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\UserController;
+use Illuminate\Container\Attributes\Tag;
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\QuestionController;
-use Illuminate\Container\Attributes\Tag;
 
 class MainController extends Controller
 {
@@ -21,20 +22,20 @@ class MainController extends Controller
     $this->questionController = $questionController;
     $this->tagController = $tagController;
   }
+
   public function home(Request $request)
   {
-    $email = session('email');
-    $user = $this->userController->getUserByEmail($email);
-    $data['username'] = $user['username'];
+    $user = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $user['image'];
+    $data['username'] = $user['username'];
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestions($request);
     $data['questions'] = $questions;
+    $data['user'] = $user;
     // dd($data);
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
     return view('home', $data);
   }
+
   public function askPage()
   {
     $currUser = $this->userController->getUserByEmail(session('email'));
@@ -44,20 +45,47 @@ class MainController extends Controller
     $data['title'] = 'Ask a Question';
     return view('ask', $data);
   }
+
   public function seeProfile()
   {
     $data['title'] = 'My Profile';
     $email = session('email');
-
     $currUser = $this->userController->getUserByEmail($email);
     $data['currUser'] = $currUser;
-    $followers = collect($currUser['followers']);
-    $countFollowers = count($followers);
-    $data['countFollowers'] = $countFollowers;
-    $currUser = $this->userController->getUserByEmail(session('email'));
+    // dd($data);
     $data['image'] = $currUser['image'];
     return view('profile', $data);
   }
+
+  public function viewUser(string $email)
+  {
+    $userViewed = $this->userController->getUserFollowers($email);
+    $currUser = $this->userController->getUserByEmail(session('email'));
+    $data['image'] = $currUser['image'];
+    $data['title'] = 'PROFILE | ' . $userViewed['user']['username'];
+    $data['userViewed'] = $userViewed['user'];
+
+    $data['userRelation'] = 0; // tak ada relasi (asing bjir)
+    foreach ($userViewed['user']['followers'] as $follower) {
+      if ($follower['id'] == $currUser['id']) {
+        $data['userRelation'] = 1; // aku follow dirinya -> btn bertuliskan following
+        break;
+      }
+    }
+
+    if ($data['userRelation'] === 0) { // jika habis di cek, trnyt ak ga folo dia, cek apakah dia folo ak -> btn bertuliskan follow back
+      foreach ($userViewed['user']['following'] as $following) {
+        if ($following['id'] == $currUser['id']) {
+          $data['userRelation'] = 2;
+          break;
+        }
+      }
+    }
+
+    // dd($data);
+    return view('otherProfiles', $data);
+  }
+
   public function editProfile()
   {
     $data['title'] = 'Edit Profile';
@@ -65,10 +93,112 @@ class MainController extends Controller
     $email = session('email');
     $currUser = $this->userController->getUserByEmail($email);
     $data['user'] = $currUser;
-    $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     return view('editProfile', $data);
   }
+  public function userQuestions($userId)
+  {
+    $data['user'] = $this->userController->showUserQuestionsPage($userId);
+    $image = $data['user']['image'];
+    $data['image'] = $image;
+    $data['title'] = 'User Questions';
+    // dd($data['user']);
+    return view('userQuestions', $data);
+  }
+
+  public function userConnections(Request $request, string $email)
+  {
+    $initialTabType = $request->input('type', 'followers');
+    if (!in_array($initialTabType, ['followers', 'following'])) {
+      $initialTabType = 'followers'; // Default ke followers jika query 'type' tidak valid
+    }
+
+    $profileUser = $this->userController->getUserByEmail($email);
+
+    if (!$profileUser) {
+      abort(404, 'User not found.');
+    }
+
+    $loggedInUserEmail = session('email');
+    $loggedInUser = null;
+    $loggedInUserFollowingArray = [];
+    $loggedInUserFollowersArray = [];
+
+    if ($loggedInUserEmail) {
+      $loggedInUser = $this->userController->getUserByEmail($loggedInUserEmail);
+      if ($loggedInUser) {
+        $loggedInUserFollowingArray = is_array($loggedInUser['following']) ? $loggedInUser['following'] : [];
+        $loggedInUserFollowersArray = is_array($loggedInUser['followers']) ? $loggedInUser['followers'] : [];
+      }
+    }
+
+    $isOwnProfile = $loggedInUserEmail === $profileUser['email'];
+
+    // 3. Fungsi helper lokal untuk memproses daftar (followers atau following)
+    $processList = function (array $rawListFromProfileUser) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
+      return collect($rawListFromProfileUser)->map(function ($item) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
+        if (!is_array($item) || !isset($item['email'])) {
+          Log::warning("Invalid item structure in connection list for profile.", ['item_structure' => $item]);
+          return null; // Abaikan item yang tidak valid
+        }
+        // Panggil method public determineFollowStatus dari instance userController
+        $status = $loggedInUserEmail ? $this->userController->determineFollowStatus($item, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) : ['follow_status' => 'not_logged_in', 'is_mutual' => false];
+        $item['follow_status'] = $status['follow_status'];
+        $item['is_mutual'] = $status['is_mutual'];
+        return $item;
+      })->filter()->values(); // filter() untuk menghapus null, values() untuk re-index collection
+    };
+
+    // 4. Proses daftar followers dan following secara terpisah
+    // Pastikan $profileUser['followers'] dan $profileUser['following'] adalah array
+    $rawFollowers = isset($profileUser['followers']) && is_array($profileUser['followers']) ? $profileUser['followers'] : [];
+    $rawFollowing = isset($profileUser['following']) && is_array($profileUser['following']) ? $profileUser['following'] : [];
+
+    $followersList = $processList($rawFollowers);
+    $followingList = $processList($rawFollowing);
+
+    // 5. Tambahkan status relasi untuk pengguna profil utama (jika bukan profil sendiri)
+    if ($loggedInUser && !$isOwnProfile) {
+      $relationToProfileUser = $this->userController->determineFollowStatus(
+        $profileUser, // $profileUser adalah array yang sudah memiliki 'email'
+        $loggedInUserFollowingArray,
+        $loggedInUserFollowersArray,
+        $loggedInUserEmail
+      );
+      // Tambahkan ke array $profileUser sebelum dikirim ke view
+      $profileUser['current_user_relation'] = $relationToProfileUser;
+    }
+
+    $data = [
+      'title' => ($profileUser['username'] ?? 'User') . ($initialTabType === 'followers' ? ' - Followers' : ' - Following'),
+      'image' => $profileUser['image'],
+      'profileUser' => $profileUser,
+      'followersList' => $followersList,
+      'followingList' => $followingList,
+      'loggedInUser' => $loggedInUser,
+      'isOwnProfile' => $isOwnProfile,
+      'activeTab' => $initialTabType
+    ];
+    // dd($data);
+
+    // ---- UNTUK DEBUGGING ----
+    // Hapus atau beri komentar setelah selesai debugging
+    // dd([
+    // 'profileUser_email' => $profileUser['email'],
+    // 'loggedInUser_email' => $loggedInUserEmail,
+    // 'active_tab' => $initialTabType,
+    // 'followers_emails' => $followersList->pluck('email')->all(),
+    // 'following_emails' => $followingList->pluck('email')->all(),
+    // 'raw_profile_followers_count' => count($rawFollowers),
+    // 'raw_profile_following_count' => count($rawFollowing),
+    // 'profile_user_data_from_api_sample' => $profileUser // Untuk melihat struktur lengkap
+    // ]);
+    // ---- AKHIR DEBUGGING ----
+
+    return view('connections', $data);
+  }
+
+
   public function popular(Request $request)
   {
     $email = session('email');
@@ -78,21 +208,12 @@ class MainController extends Controller
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestionsByPopularity($request);
     $data['questions'] = $questions;
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
+    $data['image'] = $user['image'];
+    $data['tags'] = $this->tagController->getAllTags();
     // dd($data);
     return view('popular', $data);
   }
-  public function viewUser(string $email)
-  {
-    $data = $this->userController->getUserFollowers($email);
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
-    $data['title'] = 'PROFILE | ' . $data['user']['username'];
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
-    return view('otherProfiles', $data);
-  }
+
   // hrse terima param id question, nih aku cuman mau coba view
   public function viewAnswers($questionId)
   {
@@ -103,6 +224,7 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     // dd($data);
+    Log::info($data['question']);
     return view('viewAnswers', $data);
   }
 
@@ -165,5 +287,12 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     return view('leaderboard', $data);
+  }
+
+  public function savedQuestion()
+  {
+    $data = $this->userController->getSavedQuestion();
+
+    return view('savedQuestions', $data);
   }
 }

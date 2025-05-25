@@ -27,7 +27,7 @@ class UserController extends Controller
 
         foreach ($users as &$user) {
             $countvotes = collect($user['question'])->sum(function ($question) {
-                return $question['vote'] ?? 0;  // Default to 0 if no votes
+                return $question['vote'] ?? 0;
             });
 
             $user['vote_count'] = $countvotes;
@@ -84,16 +84,237 @@ class UserController extends Controller
         ];
     }
 
-
-
-    public function getUserByEmail($email)
+    public function getBasicUserByEmail($email)
     {
-        // $email = session('email');
         $api_url = env('API_URL') . '/users/get/' . $email;
         $response = Http::withToken(session('token'))->get($api_url);
-        $response = json_decode($response, true);
-        // dd($response['data']);
-        return $response['data'];
+
+        if ($response->failed()) {
+            Log::error("API call failed for user email {$email}: " . $response->body());
+            return null;
+        }
+
+        $responseData = json_decode($response->body(), true);
+        return $responseData['data'];
+    }
+    public function getUserByEmail($email)
+    {
+        $api_url = env('API_URL') . '/users/get/' . $email;
+        $response = Http::withToken(session('token'))->get($api_url);
+
+        if ($response->failed()) {
+            Log::error("API call failed for user email {$email}: " . $response->body());
+            return null;
+        }
+
+        $responseData = json_decode($response->body(), true);
+
+        if (isset($responseData['data']) && is_array($responseData['data'])) {
+            $originalUserData = $responseData['data'];
+            $questionCount = 0;
+            $answerCount = 0;
+            $followerCount = 0;
+            $followingCount = 0;
+            $subjectCount = [];
+
+            $allQuestions = $originalUserData['question'] ?? [];
+            $topQuestionPost = null;
+
+            if (is_array($allQuestions) && !empty($allQuestions)) {
+                $questionCount = count($allQuestions);
+                $topQuestionPost = $allQuestions[0]; // Inisialisasi dengan pertanyaan pertama
+                $topQuestionPost['vote'] = $topQuestionPost['vote'] ?? 0;
+                $topQuestionPost['view'] = $topQuestionPost['view'] ?? 0;
+
+                foreach ($allQuestions as $questionItem) {
+                    // SubjectCount
+                    if (isset($questionItem['group_question']) && is_array($questionItem['group_question'])) {
+                        foreach ($questionItem['group_question'] as $group) {
+                            if (isset($group['subject']['name'])) {
+                                $subjectName = $group['subject']['name'];
+                                $subjectCount[$subjectName] = ($subjectCount[$subjectName] ?? 0) + 1;
+                            }
+                        }
+                    }
+
+                    // Proses untuk menentukan top question post
+                    $currentVote = $questionItem['vote'] ?? 0;
+                    $currentView = $questionItem['view'] ?? 0;
+
+                    if ($currentVote > $topQuestionPost['vote']) {
+                        $topQuestionPost = $questionItem;
+                    } elseif ($currentVote == $topQuestionPost['vote']) {
+                        if ($currentView > ($topQuestionPost['view'] ?? 0)) { // Pastikan ada nilai default untuk view juga
+                            $topQuestionPost = $questionItem;
+                        }
+                    }
+                }
+                // Pastikan vote dan view selalu ada di topQuestionPost setelah loop
+                $topQuestionPost['vote'] = $topQuestionPost['vote'] ?? 0;
+                $topQuestionPost['view'] = $topQuestionPost['view'] ?? 0;
+
+
+                if ($topQuestionPost !== null) {
+                    $topQuestionPost['comment_count'] = count($topQuestionPost['comment'] ?? []);
+                }
+            }
+
+            if (isset($originalUserData['answer']) && is_array($originalUserData['answer'])) {
+                $answerCount = count($originalUserData['answer']);
+                foreach ($originalUserData['answer'] as $answerItem) {
+                    if (isset($answerItem['question']['group_question']) && is_array($answerItem['question']['group_question'])) {
+                        foreach ($answerItem['question']['group_question'] as $group) {
+                            if (isset($group['subject']['name'])) {
+                                $subjectName = $group['subject']['name'];
+                                $subjectCount[$subjectName] = ($subjectCount[$subjectName] ?? 0) + 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $followerCount = isset($originalUserData['followers']) && is_array($originalUserData['followers']) ? count($originalUserData['followers']) : 0;
+            $followingCount = isset($originalUserData['following']) && is_array($originalUserData['following']) ? count($originalUserData['following']) : 0;
+
+
+            $topSubjectsData = [];
+            if (!empty($subjectCount)) {
+                arsort($subjectCount);
+                $topSubjectsData = $subjectCount;
+            }
+
+            return [
+                'id' => $originalUserData['id'] ?? null,
+                'username' => $originalUserData['username'] ?? null,
+                'email' => $originalUserData['email'] ?? null,
+                'image' => $originalUserData['image'] ?? null,
+                'biodata' => $originalUserData['biodata'] ?? null,
+                'reputation' => $originalUserData['reputation'] ?? 0,
+                'user_achievement' => $originalUserData['user_achievement'] ?? [],
+                'followers' => $originalUserData['followers'] ?? [],
+                'following' => $originalUserData['following'] ?? [],
+                'top_question_post' => $topQuestionPost,
+                'top_subjects' => $topSubjectsData,
+                'questions_count' => $questionCount,
+                'answers_count' => $answerCount,
+                'followers_count' => $followerCount,
+                'followings_count' => $followingCount,
+            ];
+        } else {
+            Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", (array)$responseData);
+            return null;
+        }
+    }
+
+    /**
+     * Helper untuk menentukan status follow dari logged-in user terhadap target user.
+     *
+     * @param array $targetUser Data pengguna target.
+     * @param array|null $loggedInUserFollowingArray Daftar email yang diikuti oleh pengguna yang login.
+     * @param array|null $loggedInUserFollowersArray Daftar email followers dari pengguna yang login.
+     * @param string $loggedInUserEmail Email pengguna yang login.
+     * @return array ['follow_status' => string, 'is_mutual' => bool]
+     */
+    public function determineFollowStatus(array $targetUser, ?array $loggedInUserFollowingArray, ?array $loggedInUserFollowersArray, string $loggedInUserEmail): array
+    {
+        if ($targetUser['email'] === $loggedInUserEmail) {
+            return ['follow_status' => 'is_self', 'is_mutual' => false];
+        }
+
+        $isFollowingTarget = $loggedInUserFollowingArray !== null && in_array($targetUser['email'], array_column($loggedInUserFollowingArray, 'email'));
+        $targetIsFollowingLoggedInUser = $loggedInUserFollowersArray !== null && in_array($targetUser['email'], array_column($loggedInUserFollowersArray, 'email'));
+
+        if ($isFollowingTarget) {
+            return ['follow_status' => 'following', 'is_mutual' => $targetIsFollowingLoggedInUser];
+        } elseif ($targetIsFollowingLoggedInUser) {
+            return ['follow_status' => 'follows_you', 'is_mutual' => false];
+        } else {
+            return ['follow_status' => 'not_following', 'is_mutual' => false];
+        }
+    }
+
+    /**
+     * Menyiapkan daftar followers atau following dengan status relasi terhadap logged-in user.
+     *
+     * @param string $profileUserEmail Email pengguna yang profilnya dilihat.
+     * @param string $type 'followers' atau 'following'.
+     * @return array
+     */
+    public function getConnectionList(string $profileUserEmail, string $type = 'followers'): array
+    {
+        $profileUser = $this->getUserByEmail($profileUserEmail);
+        if (!$profileUser) {
+            // Handle jika user profil tidak ditemukan, mungkin redirect atau tampilkan error
+            return ['profileUser' => null, 'list' => collect(), 'loggedInUser' => null, 'isOwnProfile' => false];
+        }
+
+        $loggedInUserEmail = session('email');
+        $loggedInUser = null;
+        $loggedInUserFollowingArray = null;
+        $loggedInUserFollowersArray = null;
+
+        if ($loggedInUserEmail) {
+            $loggedInUser = $this->getUserByEmail($loggedInUserEmail); // Ambil data lengkap logged-in user
+            if ($loggedInUser) {
+                // Pastikan 'following' dan 'followers' adalah array sebelum di-pass
+                $loggedInUserFollowingArray = is_array($loggedInUser['following']) ? $loggedInUser['following'] : [];
+                $loggedInUserFollowersArray = is_array($loggedInUser['followers']) ? $loggedInUser['followers'] : [];
+            }
+        }
+
+        $isOwnProfile = $loggedInUserEmail === $profileUserEmail;
+
+        $listData = $profileUser[$type] ?? [];
+        $processedList = collect($listData)->map(function ($item) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
+            // Pastikan $item adalah array dan memiliki 'email'
+            if (!is_array($item) || !isset($item['email'])) {
+                // Log atau handle item yang tidak valid
+                Log::warning("Invalid item structure in connection list for user: " . ($profileUserEmail ?? 'N/A'), ['item' => $item]);
+                return null; // Atau return item asli jika tidak ingin memfilternya
+            }
+            $status = $loggedInUserEmail ? $this->determineFollowStatus($item, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) : ['follow_status' => 'not_logged_in', 'is_mutual' => false];
+            $item['follow_status'] = $status['follow_status'];
+            $item['is_mutual'] = $status['is_mutual'];
+            return $item;
+        })->filter(); // Hapus item null jika ada
+
+        // Tambahkan status relasi untuk pengguna profil utama (jika bukan profil sendiri)
+        if ($loggedInUserEmail && !$isOwnProfile) {
+            $relationToProfileUser = $this->determineFollowStatus($profileUser, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail);
+            $profileUser['current_user_relation'] = $relationToProfileUser;
+        }
+
+
+        return [
+            'profileUser' => $profileUser,
+            'list' => $processedList,
+            'loggedInUser' => $loggedInUser, // Kirim data loggedInUser ke view
+            'isOwnProfile' => $isOwnProfile,
+            'type' => $type // Untuk menentukan tab mana yang aktif
+        ];
+    }
+
+
+    public function showUserQuestionsPage($userId)
+    {
+        $api_url_user = env('API_URL') . '/users/' . $userId;
+        $responseUser = Http::withToken(session('token'))->get($api_url_user);
+
+        if ($responseUser->failed()) {
+            Log::error("API call failed to get user data for ID {$userId} for questions page: " . $responseUser->body());
+            return null;
+        }
+
+        $userDataResponse = json_decode($responseUser->body(), true);
+
+        if (isset($userDataResponse['success']) && $userDataResponse['success'] && isset($userDataResponse['data'])) {
+            $userData = $userDataResponse['data'];
+            // dd($userData); 
+            return $userData;
+        } else {
+            Log::warning("Unexpected API response or user data not found for ID {$userId} for questions page: ", $userDataResponse);
+            return null;
+        }
     }
 
     public function getUserFollowers(string $email)
@@ -101,7 +322,7 @@ class UserController extends Controller
         $user = $this->getUserByEmail($email) ?? ['username' => 'User Profile', 'followers' => []];
         $currUserId = session('email');
 
-        $followers = collect($user['followers']); // Apakah currUser masuk/exist di user->followers
+        $followers = collect($user['followers']);
 
         $isFollowing = false;
 
@@ -115,6 +336,7 @@ class UserController extends Controller
         $data['user'] = $user;
         $data['isFollowing'] = $isFollowing;
         $data['countFollowers'] = $countFollowers;
+        // dd($data);
         return $data;
     }
 
@@ -128,7 +350,7 @@ class UserController extends Controller
         ]);
 
         return response()->json([
-            'ok' => isset($response['success']) ? $response['success'] : false,
+            'success' => isset($response['success']) ? $response['success'] : false,
             'message' => $response['message'] ?? 'An error occurred during execution.',
             'data' => $response['data'] ?? ''
         ], $response->status());
@@ -161,37 +383,6 @@ class UserController extends Controller
             Log::error('Error fetching most viewed user: ' . $e->getMessage());
         }
         return [];
-    }
-
-    public function popular()
-    {
-        $data['title'] = 'Popular';
-        return view('popular', $data);
-    }
-
-    public function seeProfile()
-    {
-        $data['title'] = 'My Profile';
-        $email = session('email');
-
-        $currUser = $this->getUserByEmail($email);
-        $data['currUser'] = $currUser;
-        $followers = collect($currUser['followers']);
-        $countFollowers = count($followers);
-        $data['countFollowers'] = $countFollowers;
-        $data['image'] = $currUser['image'];
-
-        return view('profile', $data);
-    }
-
-    public function editProfile()
-    {
-        $data['title'] = 'Edit Profile';
-
-        $email = session('email');
-        $currUser = $this->getUserByEmail($email);
-        $data['user'] = $currUser;
-        return view('editProfile', $data);
     }
 
     public function editProfilePost(Request $request)
@@ -227,26 +418,38 @@ class UserController extends Controller
         }
     }
 
-
-
-    public function askPage()
+    // beta ga bisa nembak api - buat tau per tag user ada brp post questions
+    public function getTags($email)
     {
-        $api_url = env('API_URL') . '/tags';
+        $api_url = env('API_URL') . '/userTags';
+        $data = ['email' => $email];
+        $response = Http::get($api_url, $data);
+
+        if ($response->failed()) {
+            // Log the API URL and error message
+            Log::error("API url: " . $api_url);
+            Log::error("API call failed for user email {$email}: " . $response->body());
+            return null;
+        } else {
+            $responseData = $response->json();
+            return $responseData['data'] ?? [];
+        }
+    }
+    public function getSavedQuestion()
+    {
+        $email = session('email');
+        $api_url = env('API_URL') . '/getSavedQuestions/' . $email;
         $response = Http::withToken(session('token'))->get($api_url);
-        $response = json_decode($response, true);
-        Log::info($response);
-
-        $data['data'] = $response['data'];
-        $data['title'] = 'Ask a Question';
-        $user = $this->getUserByEmail(session('email'));
+        if ($response->successful()) {
+            $responseData = $response->json();
+        } else {
+            Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
+        }
+        $user = $this->getBasicUserByEmail($email);
+        $data['questions'] = $responseData['data'];
+        $data['username'] = $user['username'];
         $data['image'] = $user['image'];
-        return view('ask', $data);
+        $data['title'] = 'Saved Questions';
+        return $data;
     }
-
-    public function testUI()
-    {
-        $data['title'] = 'Popular';
-        return view('question', $data);
-    }
-
 }

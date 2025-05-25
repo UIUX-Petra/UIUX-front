@@ -19,7 +19,7 @@ class AnswerController extends Controller
         $api_url = env('API_URL') . '/answers/' . $id;
         $response = Http::get($api_url);
         $response = json_decode($response, true);
-        dd($response['data']);
+        // dd($response['data']);
         return $response['data'];
     }
 
@@ -45,12 +45,24 @@ class AnswerController extends Controller
         $data['email'] = session('email');
         $data['question_id'] = $questionId;
 
-        // Send the data to the API
         $api_url = env('API_URL') . '/answers';
         $response = Http::withToken(session('token'))->post($api_url, $data);
 
         if ($response->successful()) {
-            return response()->json(['success' => true, 'message' => 'Answer submitted successfully!']);
+            $data = $response->object();
+
+            $answer = $data->data->answer;
+
+            $formattedAnswer = [
+                'id' => $answer->id,
+                'username' => $answer->user->username ?? null,
+                'image' => $answer->image,
+                'answer' => $answer->answer,
+                'vote' => $answer->vote,
+                'timestamp' => $answer->created_at,
+            ];
+
+            return response()->json(['success' => true, 'message' => 'Answer submitted successfully!', 'answer' => $formattedAnswer]);
         } else {
             return response()->json(['success' => false, 'message' => 'Failed to submit answer.']);
         }
@@ -60,15 +72,22 @@ class AnswerController extends Controller
     {
         // kirim email
         $data['email'] = session('email');
-        if ($request->vote === true) {
+        $vote = filter_var($request->vote, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        if ($vote === true) {
             $api_url = env('API_URL') . '/answers/' . $request->answer_id . '/upvote';
         } else {
             $api_url = env('API_URL') . '/answers/' . $request->answer_id . '/downvote';
         }
         $response = Http::withToken(session('token'))->post($api_url, $data);
-        Log::info($response);
         if ($response->successful()) {
-            return response()->json(['success' => true, 'message' => 'Your Vote has been recorded']);
+            return response()->json(
+                [
+                    'success' => true,
+                    'message' => 'Your Vote has been recorded',
+                    'voteAnswerUpdated' => $response->json()['data']
+                ]
+            );
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
             return response()->json(['success' => false, 'message' => $errorMessage]);

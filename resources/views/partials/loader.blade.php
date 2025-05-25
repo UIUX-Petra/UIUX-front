@@ -6,7 +6,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(168, 125, 223, 1); 
+        /* background-color: rgba(168, 125, 223, 1);  */
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -66,7 +66,7 @@
     }
 </style>
 
-<div class="loader-overlay" id="loaderOverlay">
+<div class="loader-overlay bg-gradient-to-r from-[#38A3A5] to-[#80ED99]" id="loaderOverlay">
     <svg id="Layer_2" class="loader-logo p2p-logo-animated" xmlns="http://www.w3.org/2000/svg" viewBox="-80 -50 734.66 662.34">
       <g id="Layer_7">
         <g id="p2p_logo">
@@ -114,7 +114,7 @@
         }
 
         let progress = 0;
-        const animationDuration = 2500; 
+        const animationDuration = 1500; 
         let startTime = null;
         let animationFrameId = null;
         let hasWindowLoaded = false;
