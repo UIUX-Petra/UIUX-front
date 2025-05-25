@@ -298,7 +298,7 @@
                 {{-- <span class="text-[var(--text-secondary)] font-medium text-sm mr-1">Sort by:</span> --}}
                 <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'latest', 'page' => 1, 'search_term' => request('search_term')]) }}"  {{-- Pertahankan search_term jika ada --}}
                     class="filter-button {{ (request('sort_by', 'latest') == 'latest') ? 'active' : '' }}">
-                    <i class="fa-solid fa-bolt"></i> Latest
+                    <i class="fa-solid fa-bolt"></i> New Questions
                 </a>
                 <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'views', 'page' => 1, 'search_term' => request('search_term')]) }}"
                     class="filter-button {{ request('sort_by') == 'views' ? 'active' : '' }}">
