@@ -21,6 +21,11 @@
             transition: background-color var(--transition-speed);
         }
 
+          .tag-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* Contoh shadow, sesuaikan */
+        }
+
         .description-wrapper {
             max-height: 0;
             overflow: hidden;
@@ -46,28 +51,40 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl items-start justify-start px-6">
-        @foreach ($tags as $index => $tag)
-            <div class="tag-card shadow-lg rounded-xl p-5 bg-[var(--bg-card)]">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-lg font-semibold capitalize text-[var(--text-primary)]">{{ $tag['name'] }}</h3>
-                    {{-- <span
-                        class="material-symbols-outlined text-[var(--text-primary)] text-2xl cursor-pointer toggle-btn hover:animate-wiggle"
-                        data-target="description-{{ $index }}">
-                        expand_more
-                    </span> --}}
+        @if(isset($tags) && count($tags) > 0)
+            @foreach ($tags as $index => $tag)
+                {{-- Bungkus seluruh tag-card dengan <a> jika ingin seluruh card bisa diklik --}}
+                {{-- ATAU hanya h3 seperti di bawah --}}
+                <div class="tag-card shadow-lg rounded-xl p-5 bg-[var(--bg-card)]">
+                    <div class="flex justify-between items-center mb-2">
+                        {{-- UBAH BAGIAN INI: Jadikan h3 sebagai link --}}
+                        <h3 class="text-lg font-semibold capitalize text-[var(--text-primary)]">
+                            <a href="{{ route('popular', ['filter_tag' => $tag['name'], 'sort_by' => 'latest', 'page' => 1]) }}" class="block tag-link hover:underline">
+                                {{ $tag['abbreviation'] }} ({{ $tag['name'] }})
+                            </a>
+                        </h3>
+                        {{-- Tombol expand (jika masih digunakan) --}}
+                        {{-- <span
+                            class="material-symbols-outlined text-[var(--text-primary)] text-2xl cursor-pointer toggle-btn hover:animate-wiggle"
+                            data-target="description-{{ $index }}">
+                            expand_more
+                        </span> --}}
+                    </div>
 
+                    <div id="description-{{ $index }}" class="description-wrapper text-sm text-[var(--text-secondary)] my-2">
+                        <p>{{ $tag['description'] ?? 'No description available.' }}</p>
+                    </div>
 
+                    <div class="text-sm text-[var(--text-muted)] mt-1">
+                        <p><strong>{{ isset($tag['questions']) ? number_format($tag['questions']) : '0' }}</strong> questions</p>
+                    </div>
                 </div>
-
-                <div id="description-{{ $index }}" class="description-wrapper text-sm text-[var(--text-secondary)] my-2">
-                    <p>{{ $tag['description'] }}</p>
-                </div>
-
-                <div class="text-sm text-[var(--text-muted)] mt-1">
-                    <p><strong>{{ number_format($tag['questions']) }}</strong> questions</p>
-                </div>
+            @endforeach
+        @else
+            <div class="col-span-full text-center py-10">
+                <p class="text-[var(--text-secondary)] text-lg">No subjects found at the moment.</p>
             </div>
-        @endforeach
+        @endif
     </div>
 @endsection
 

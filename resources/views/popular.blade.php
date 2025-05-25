@@ -230,8 +230,8 @@
         .tag-filter-select {
             /* Untuk <select> element */
             background-color: var(--bg-card);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;;
             border-radius: 8px;
             padding: 10px 16px;
             /* Mirip tombol, tinggi sama, padding horizontal sedikit beda utk arrow */
@@ -255,10 +255,10 @@
             cursor: pointer;
         }
 
-        .tag-filter-select:hover {
+        /* .tag-filter-select:hover {
             border-color: #f59e0b;
             color: #f59e0b;
-        }
+        } */
 
         .tag-filter-select:focus {
             border-color: #f59e0b;
@@ -392,7 +392,7 @@
                 <h4 class="text-lg font-medium mb-1">Top Contributor</h4>
                 <p class="text-sm text-[var(--text-muted)] mb-2">This Month</p>
                 <div class="flex items-center justify-center">
-                    <img src="{{ asset('assets/default-avatar.png') }}" class="w-8 h-8 rounded-full mr-2">
+                    <img src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}" class="w-8 h-8 rounded-full mr-2">
                     <span class="font-medium">User123</span>
                 </div>
             </div>

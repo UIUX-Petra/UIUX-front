@@ -393,7 +393,7 @@
         </a>
         <a href="{{ route('viewAllTags') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-tags mr-3"></i> Tags
+            <i class="fa-solid fa-tags mr-3"></i> Subjects
         </a>
         <a href="{{ route('viewAllUsers') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">

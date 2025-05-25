@@ -283,6 +283,7 @@ class MainController extends Controller
     $data['title'] = 'View Tags';
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
+    // dd($data);
 
     return view('viewTags', $data);
   }
