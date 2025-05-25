@@ -61,4 +61,9 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/getSavedQuestion', [MainController::class, 'savedQuestion'])->name('savedQuestions');
     Route::post('/saveQuestion', [QuestionController::class, 'saveQuestion'])->name('saveQuestion');
     Route::post('/unsaveQuestion', [QuestionController::class, 'unsaveQuestion'])->name('unsaveQuestion');
+
+
+    Route::get('/questions/{id}/edit', [QuestionController::class, 'showEditQuestionPage'])->name('editQuestionPage');
+    Route::post('/questions/{id}', [QuestionController::class, 'updateQuestion'])->name('updateQuestion');
+    Route::post('/questions/{id}/delete', [QuestionController::class, 'deleteQuestion'])->name('deleteQuestion');
 });
