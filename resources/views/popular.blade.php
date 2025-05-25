@@ -154,21 +154,27 @@
             }
         }
 
-       .question-search-bar {
+        .question-search-bar {
             background-color: var(--bg-card);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
-            border-radius: 10px; /* Sesuai referensi */
+            border-radius: 10px;
+            /* Sesuai referensi */
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            padding: 0.60rem 1rem; /* Disesuaikan agar tinggi mirip tombol */
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            padding: 0.60rem 1rem;
+            /* Disesuaikan agar tinggi mirip tombol */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
+
         .question-search-bar:focus-within {
-            border-color: #f59e0b; /* Tema popular */
-            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15); /* Tema popular */
+            border-color: #f59e0b;
+            /* Tema popular */
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+            /* Tema popular */
         }
+
         .question-search-bar input {
             background-color: transparent;
             color: var(--text-primary);
@@ -176,9 +182,11 @@
             width: 100%;
             font-size: 0.9rem;
         }
+
         .question-search-bar input::placeholder {
             color: var(--text-secondary);
         }
+
         .question-search-bar i {
             color: var(--text-secondary);
             margin-right: 0.75rem;
@@ -186,42 +194,53 @@
 
 
         /* MODIFIKASI: Tombol filter/sort dan select, disesuaikan dengan style tab referensi */
-        .filter-button { /* Untuk <a> tag (Sort by) */
+        .filter-button {
+            /* Untuk <a> tag (Sort by) */
             background-color: var(--bg-card);
             color: var(--text-muted);
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            padding: 10px 20px; /* Sesuai referensi tabs */
+            padding: 10px 20px;
+            /* Sesuai referensi tabs */
             font-weight: 500;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
+
         .filter-button:hover {
             border-color: #f59e0b;
             color: #f59e0b;
         }
+
         .filter-button.active {
-            background-color: #f59e0b; /* Warna tema popular, bukan var(--accent-tertiary) dari referensi */
+            background-color: #f59e0b;
+            /* Warna tema popular, bukan var(--accent-tertiary) dari referensi */
             color: var(--text-dark, #1a202c);
-            font-weight: 600; /* Sesuai referensi tabs */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sesuai referensi tabs */
+            font-weight: 600;
+            /* Sesuai referensi tabs */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Sesuai referensi tabs */
             border-color: #f59e0b;
         }
 
-        .tag-filter-select { /* Untuk <select> element */
+        .tag-filter-select {
+            /* Untuk <select> element */
             background-color: var(--bg-card);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;;
             border-radius: 8px;
-            padding: 10px 16px; /* Mirip tombol, tinggi sama, padding horizontal sedikit beda utk arrow */
+            padding: 10px 16px;
+            /* Mirip tombol, tinggi sama, padding horizontal sedikit beda utk arrow */
             font-weight: 500;
             transition: all 0.3s ease;
-            font-size: 0.9rem; /* Samakan dengan search input jika perlu */
-            line-height: 1.5; /* Sesuaikan dengan padding vertikal */
+            font-size: 0.9rem;
+            /* Samakan dengan search input jika perlu */
+            line-height: 1.5;
+            /* Sesuaikan dengan padding vertikal */
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -230,24 +249,63 @@
             background-position: right 0.75rem center;
             background-size: 1.25em 1.25em;
             padding-right: 2.5rem;
-            min-width: 150px; /* Lebar minimal agar "All Tags" terbaca */
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            min-width: 150px;
+            /* Lebar minimal agar "All Tags" terbaca */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             cursor: pointer;
         }
-        .tag-filter-select:hover {
+
+        /* .tag-filter-select:hover {
             border-color: #f59e0b;
             color: #f59e0b;
-        }
+        } */
+
         .tag-filter-select:focus {
             border-color: #f59e0b;
             box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
             outline: none;
             color: #f59e0b;
         }
-    </style>
-{{-- @endsection --}}
 
-{{-- @section('content') --}}
+        .skeleton {
+            /* Warna dasar skeleton, sesuaikan dengan tema Anda */
+            background-color: var(--bg-card-hover);
+            /* Contoh, bisa juga var(--border-color) atau warna abu-abu netral */
+        }
+
+        .skeleton .bg-gray-300 {
+            /* Ganti bg-gray-300 dengan class yang Anda gunakan untuk elemen shimmer */
+            background-color: var(--bg-secondary);
+            /* Warna elemen shimmer, lebih terang/gelap dari dasar */
+            animation: shimmer 2s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            /* Sesuaikan ukuran ini agar lebih besar dari lebar elemen */
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Tambahan untuk elemen skeleton agar memiliki background-size yang besar untuk efek shimmer */
+        .skeleton .bg-gray-300,
+        .skeleton .h-5,
+        .skeleton .h-3,
+        .skeleton .h-4,
+        .skeleton .w-6 {
+            /* Target elemen yang akan shimmer */
+            background-image: linear-gradient(to right, transparent 0%, var(--bg-card) 50%, transparent 100%);
+            background-size: 1000px 100%;
+            /* Lebar besar untuk shimmer */
+        }
+    </style>
+    {{-- @endsection --}}
+
+    {{-- @section('content') --}}
     @include('partials.nav')
     @if (session()->has('Error'))
         <script>
@@ -287,57 +345,37 @@
 
     <div class="max-w-7xl mx-auto px-8 mt-6 mb-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            {{-- Search Bar --}}
             <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="questionSearchInput" type="text" placeholder="Search questions by title..."
-                       oninput="searchQuestions()">
+                       value="{{ $initialSearchTerm ?? '' }}">
             </div>
 
+            {{-- Sort & Tag Filters --}}
             <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
-                {{-- Label "Sort by:" bisa dihilangkan jika desain tab sudah cukup jelas --}}
-                {{-- <span class="text-[var(--text-secondary)] font-medium text-sm mr-1">Sort by:</span> --}}
-                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'latest', 'page' => 1, 'search_term' => request('search_term')]) }}"  {{-- Pertahankan search_term jika ada --}}
-                    class="filter-button {{ (request('sort_by', 'latest') == 'latest') ? 'active' : '' }}">
-                    <i class="fa-solid fa-bolt"></i> Latest
+                <a href="#" data-sortby="latest" class="filter-button {{ ($initialSortBy ?? 'latest') == 'latest' ? 'active' : '' }}">
+                    <i class="fa-solid fa-bolt"></i> New Questions
                 </a>
-                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'views', 'page' => 1, 'search_term' => request('search_term')]) }}"
-                    class="filter-button {{ request('sort_by') == 'views' ? 'active' : '' }}">
+                <a href="#" data-sortby="views" class="filter-button {{ ($initialSortBy ?? '') == 'views' ? 'active' : '' }}">
                     <i class="fa-solid fa-eye"></i> Views
                 </a>
-                <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'votes', 'page' => 1, 'search_term' => request('search_term')]) }}"
-                    class="filter-button {{ request('sort_by') == 'votes' ? 'active' : '' }}">
+                <a href="#" data-sortby="votes" class="filter-button {{ ($initialSortBy ?? '') == 'votes' ? 'active' : '' }}">
                     <i class="fa-solid fa-thumbs-up"></i> Votes
                 </a>
 
-                <form method="GET" action="{{ request()->url() }}" id="filterTagForm" class="contents">
-                    <input type="hidden" name="sort_by" value="{{ request('sort_by', 'latest') }}">
-                    <input type="hidden" name="page" value="1">
-                    <input type="hidden" name="search_term" value="{{ request('search_term') }}"> {{-- Pertahankan search_term --}}
-                    @foreach (request()->except(['filter_tag', 'page', 'sort_by', 'search_term']) as $key => $value)
-                        @if(is_array($value))
-                            @foreach($value as $subValue)
-                                <input type="hidden" name="{{ $key }}[]" value="{{ $subValue }}">
-                            @endforeach
-                        @else
-                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                        @endif
-                    @endforeach
-                    
-                    <select id="filter_tag_select" name="filter_tag"
-                            class="tag-filter-select"
-                            onchange="this.form.submit();">
-                        <option value="">All Tags</option>
-                        @if(isset($tags) && count($tags) > 0)
-                            @foreach ($tags as $tag)
-                                <option value="{{ $tag['name']}}" {{ request('filter_tag') == $tag['name'] ? 'selected' : '' }}>
-                                    {{ $tag['name'] }}
-                                </option>
-                            @endforeach
-                        @else
-                            <option value="" disabled>No tags available</option> 
-                        @endif
-                    </select>
-                </form>
+                <select id="filter_tag_select" name="filter_tag" class="tag-filter-select">
+                    <option value="">All Tags</option>
+                    @if(isset($tags) && count($tags) > 0)
+                        @foreach ($tags as $tag)
+                            <option value="{{ $tag['name'] }}" {{ ($initialFilterTag ?? '') == $tag['name'] ? 'selected' : '' }}>
+                                {{ $tag['name'] }}
+                            </option>
+                        @endforeach
+                    @else
+                        <option value="" disabled>No tags available</option>
+                    @endif
+                </select>
             </div>
         </div>
     </div>
@@ -354,7 +392,7 @@
                 <h4 class="text-lg font-medium mb-1">Top Contributor</h4>
                 <p class="text-sm text-[var(--text-muted)] mb-2">This Month</p>
                 <div class="flex items-center justify-center">
-                    <img src="{{ asset('assets/default-avatar.png') }}" class="w-8 h-8 rounded-full mr-2">
+                    <img src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}" class="w-8 h-8 rounded-full mr-2">
                     <span class="font-medium">User123</span>
                 </div>
             </div>
@@ -392,88 +430,12 @@
     <!-- Main content area with questions list and sidebar -->
     <div class="max-w-7xl justify-start items-start px-8">
         <div class="flex flex-col md:flex-row gap-6">
-            <!-- Questions List with enhanced design -->
-            <div class="w-full md:w-3/4 bg-transparent rounded-lg">
-                @if ($questions->isEmpty())
-                    <div class="popular-question-card rounded-lg p-8 text-center">
-                        <i class="fa-solid fa-folder-open text-4xl text-[var(--text-muted)] mb-4"></i>
-                        <p class="text-xl font-semibold text-[var(--text-primary)]">No Questions Found</p>
-                        @if (request('filter_tag'))
-                            <p class="text-[var(--text-secondary)] mt-2">There are no questions matching the tag
-                                "{{ request('filter_tag') }}". Try a different tag or clear the filter.</p>
-                        @else
-                            <p class="text-[var(--text-secondary)] mt-2">It seems there are no questions yet. Why not be the
-                                first to ask?</p>
-                        @endif
-                        @if (request('filter_tag'))
-                            <a href="{{ request()->fullUrlWithQuery(['filter_tag' => null, 'page' => 1]) }}"
-                                class="mt-4 inline-block px-4 py-2 text-sm font-medium text-white bg-[#f59e0b] rounded-md hover:bg-amber-600 transition-colors">
-                                Clear Tag Filter
-                            </a>
-                        @endif
-                    </div>
-                @else
-                    @foreach ($questions as $question)
-                        <div
-                            class="question-card popular-question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[#f59e0b] relative overflow-hidden">
-                            <!-- Hot indicator for extremely popular questions -->
-                            @if ($question['vote'] > 50)
-                                <div class="absolute top-0 right-0">
-                                    <div
-                                        class="bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs py-1 px-3 rounded-bl-lg rounded-tr-lg font-medium flex items-center">
-                                        <i class="fa-solid fa-fire-flame-curved mr-1.5"></i> Hot
-                                    </div>
-                                </div>
-                            @endif
-
-                            <!-- Stats Column -->
-                            <div
-                                class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
-                                <div class="stats-item flex flex-row items-center space-x-2">
-                                    <i class="text-sm fa-regular fa-thumbs-up"></i>
-                                    <span class="text-sm font-medium mt-1">{{ $question['vote'] }}</span>
-                                </div>
-                                <div class="stats-item flex flex-row items-center space-x-2">
-                                    <i class="text-sm fa-solid fa-eye"></i>
-                                    <span class="text-sm font-medium mt-1">{{ $question['view'] }}</span>
-                                </div>
-                                <div class="stats-item flex flex-row items-center space-x-2">
-                                    <i class="text-sm fa-regular fa-comment"></i>
-                                    <span class="text-sm font-medium mt-1">{{ $question['comments_count'] }}</span>
-                                </div>
-                            </div>
-
-                            <div class="flex-1  p-0 mr-4 z-10">
-                                <!-- Question Titl -->
-                                <h2
-                                    class="text-xl font-medium text-[var(--text-highlight)] question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
-                                    <a
-                                        href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
-                                </h2>
-
-                                <!-- Question Snippet -->
-                                <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
-                                    {{ \Str::limit($question['question'], 150) }}</p>
-
-                                <!-- Tags and engagement indicator -->
-                                <div class="flex mt-4 flex-wrap gap-2 items-center">
-                                    @foreach ($question['group_question'] as $tag)
-                                        <span
-                                            class="text-xs px-2 py-1 rounded-md font-bold bg-[var(--bg-light)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
-                                    @endforeach
-
-                                    <!-- Engagement indicator -->
-                                    {{-- <span class="ml-auto text-xs text-[var(--text-muted)] flex items-center">
-                                        <i class="fa-solid fa-chart-line text-amber-500 mr-1.5"></i>
-                                        {{ rand(50, 95) }}% engagement rate
-                                    </span> --}}
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
-
-                <!-- Pagination-->
+            <div class="w-full md:w-3/4 bg-transparent rounded-lg" id="questions-list-ajax-container">
+                @include('partials.questions_list_content', [
+                    'questions' => $questions,
+                    'currentFilterTag' => $initialFilterTag,
+                    'currentSearchTerm' => $initialSearchTerm
+                ])
                 <div class="pagination-container mt-8">
                     {{ $questions->appends(request()->query())->links() }}
                 </div>
@@ -534,21 +496,21 @@
 
 
 @section('script')
-    @include('utils.trie') {{-- Pastikan ini di-include SEBELUM script di bawahnya --}}
+    @include('utils.trie') 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Pemeriksaan Definisi Kelas Trie
             if (typeof Trie === 'undefined') {
-                console.error('FATAL ERROR: Trie class is not defined. Make sure utils.trie.blade.php is included correctly and defines the Trie class globally.');
-                // Anda bisa menghentikan eksekusi script lebih lanjut atau menampilkan pesan error ke pengguna
+                console.error(
+                    'FATAL ERROR: Trie class is not defined. Make sure utils.trie.blade.php is included correctly and defines the Trie class globally.'
+                    );
                 const questionsListOutputContainer = document.getElementById('questionsListOutput');
-                if(questionsListOutputContainer) {
-                    questionsListOutputContainer.innerHTML = '<p style="color:red; text-align:center; padding:20px;">Search functionality is currently unavailable due to a configuration error. Please contact support.</p>';
+                if (questionsListOutputContainer) {
+                    questionsListOutputContainer.innerHTML =
+                        '<p style="color:red; text-align:center; padding:20px;">Search functionality is currently unavailable due to a configuration error. Please contact support.</p>';
                 }
-                return; 
+                return;
             }
 
-            // 2. Fungsi updateIconColors (didefinisikan sekali)
             function updateIconColors() {
                 const statsItems = document.querySelectorAll('.stats-item');
                 const isLightMode = document.documentElement.classList.contains('light-mode');
@@ -570,141 +532,176 @@
                         if (mutation.attributeName === 'class') updateIconColors();
                     });
                 });
-                window.pageThemeObserver.observe(document.documentElement, { attributes: true });
+                window.pageThemeObserver.observe(document.documentElement, {
+                    attributes: true
+                });
             }
 
 
-            let allQuestionsData = [];
+           const questionsListContainer = document.getElementById('questions-list-ajax-container');
+        const paginationLinksContainer = questionsListContainer.querySelector('.pagination-container');
+        const searchInput = document.getElementById('questionSearchInput');
+        const tagFilterSelect = document.getElementById('filter_tag_select');
+        const sortByButtons = document.querySelectorAll('.filter-button[data-sortby]');
+
+        let currentPage = {{ $initialPage ?? 1 }};
+        let currentSortBy = '{{ $initialSortBy ?? 'latest' }}';
+        let currentFilterTag = '{{ $initialFilterTag ?? '' }}';
+        let currentSearchTerm = '{{ $initialSearchTerm ?? '' }}';
+
+        const ajaxUrl = '{{ route('popular') }}';
+
+        function showLoadingSkeleton() {
+            if (!questionsListContainer) return;
+            while(questionsListContainer.firstChild && questionsListContainer.firstChild !== paginationLinksContainer) {
+                questionsListContainer.removeChild(questionsListContainer.firstChild);
+            }
+            let skeletonHTML = '';
+            const skeletonCount = 3;
+            for (let i = 0; i < skeletonCount; i++) {
+                skeletonHTML += `
+                    <div class="question-card popular-question-card rounded-lg mb-4 p-5 flex skeleton">
+                        <div class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)]">
+                            <div class="w-6 h-4 rounded bg-gray-300"></div> <div class="w-6 h-4 rounded bg-gray-300"></div> <div class="w-6 h-4 rounded bg-gray-300"></div>
+                        </div>
+                        <div class="flex-1 p-0 mr-4 z-10">
+                            <div class="h-5 rounded w-3/4 mb-3 bg-gray-300"></div> <div class="h-3 rounded w-full mb-2 bg-gray-300"></div>
+                            <div class="h-3 rounded w-5/6 mb-4 bg-gray-300"></div>
+                            <div class="flex flex-wrap gap-2 items-center"> <div class="h-4 w-16 rounded bg-gray-300"></div> <div class="h-4 w-20 rounded bg-gray-300"></div> </div>
+                        </div>
+                    </div>`;
+            }
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = skeletonHTML;
+            Array.from(tempDiv.children).forEach(skelNode => {
+                 questionsListContainer.insertBefore(skelNode, paginationLinksContainer);
+            });
+            if (paginationLinksContainer) paginationLinksContainer.innerHTML = '';
+        }
+
+        async function fetchQuestions(page = 1, updateUrlHistory = true) {
+            showLoadingSkeleton();
+            const params = new URLSearchParams({ page, sort_by: currentSortBy });
+            if (currentFilterTag) params.append('filter_tag', currentFilterTag);
+            if (currentSearchTerm) params.append('search_term', currentSearchTerm);
+
+            const displayParams = new URLSearchParams(params.toString()); 
+            if (parseInt(page) === 1 && displayParams.has('page')) {
+                 displayParams.delete('page'); // Hapus page=1 dari URL display
+            }
+
+            const requestUrl = `${ajaxUrl}?${params.toString()}`;
+            const historyUrl = `${window.location.pathname}${displayParams.toString() ? '?' + displayParams.toString() : ''}`;
+
             try {
-                const jsonData = @json($questions->items() ?? []);
-                if (Array.isArray(jsonData)) {
-                    allQuestionsData = jsonData;
-                } else {
-                    console.warn('Parsed questions data is not an array. Initializing as empty. Data:', jsonData);
+                const response = await fetch(requestUrl, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+
+                while(questionsListContainer.firstChild && questionsListContainer.firstChild !== paginationLinksContainer) {
+                    questionsListContainer.removeChild(questionsListContainer.firstChild);
                 }
-            } catch (e) {
-                console.error('Error parsing questions data from Blade:', e);
-            }
-            
-            let baseUrlQuestionView = "{{ route('user.viewQuestions', ['questionId' => '_QUESTION_ID_PLACEHOLDER_']) }}";
-            baseUrlQuestionView = baseUrlQuestionView.replace('_QUESTION_ID_PLACEHOLDER_', ':questionId');
+                const tempContentDiv = document.createElement('div');
+                tempContentDiv.innerHTML = data.html;
+                Array.from(tempContentDiv.children).forEach(contentNode => {
+                    questionsListContainer.insertBefore(contentNode, paginationLinksContainer);
+                });
 
-            let questionTitleTrie;
-            try {
-                questionTitleTrie = new Trie(); 
-                if (Array.isArray(allQuestionsData)) {
-                    allQuestionsData.forEach(question => {
-                        if (question && typeof question.title === 'string' && question.title.trim() !== '') {
-                            questionTitleTrie.insert(question.title.toLowerCase());
-                        } else if (question && question.title) {
-                             questionTitleTrie.insert(String(question.title).toLowerCase());
-                        }
-                    });
+                if (paginationLinksContainer) {
+                    paginationLinksContainer.innerHTML = data.pagination_html;
+                    initializePaginationLinks();
                 }
-                // console.log("Trie initialized with titles:", questionTitleTrie);
-            } catch (e) {
-                console.error('Error initializing or populating Trie:', e);
-                return; // Hentikan jika Trie gagal diinisialisasi
-            }
-            
-            const searchInputElement = document.getElementById('questionSearchInput');
-            const questionsListOutputContainer = document.getElementById('questionsListOutput');
-            const noSearchResultsMessageElement = document.getElementById('noSearchResultsMessage');
-            const paginationContainerElement = document.querySelector('.pagination-container');
-            const noQuestionsInitialElement = questionsListOutputContainer ? questionsListOutputContainer.querySelector('.no-questions-initial') : null;
-            
-            // Helper functions
-            function escapeHtml(unsafe) { if (unsafe === null || typeof unsafe === 'undefined') return ''; return unsafe.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-            function stripTags(input) { if (input === null || typeof input === 'undefined') return ''; return input.toString().replace(/<\/?[^>]+(>|$)/g, ""); }
-            function strLimit(text, limit = 150, end = '...') { if (text === null || typeof text === 'undefined') return ''; let strippedText = stripTags(text.toString()); if (strippedText.length <= limit) return escapeHtml(strippedText); return escapeHtml(strippedText.substring(0, limit - end.length)) + end; }
-
-            function createQuestionCardHTML(question) {
-                // ... (Implementasi createQuestionCardHTML dari respons sebelumnya)
-                let hotIndicatorHtml = ''; if (question.vote > 50) { hotIndicatorHtml = `<div class="absolute top-0 right-0"><div class="bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs py-1 px-3 rounded-bl-lg rounded-tr-lg font-medium flex items-center"><i class="fa-solid fa-fire-flame-curved mr-1.5"></i> Hot</div></div>`; }
-                let tagsHtml = ''; if (question.group_question && Array.isArray(question.group_question)) { tagsHtml = question.group_question.map(tagItem => (tagItem && tagItem.subject && tagItem.subject.name) ? `<span class="text-xs px-2 py-1 rounded-md font-bold bg-[var(--bg-light)] text-[var(--text-tag)]">${escapeHtml(tagItem.subject.name)}</span>` : '').join(''); }
-                const questionUrl = baseUrlQuestionView.replace(':questionId', question.id); const engagementRate = Math.floor(Math.random() * (95 - 50 + 1)) + 50;
-                const title = question.title ? escapeHtml(question.title) : 'Untitled Question'; const snippet = question.question ? strLimit(question.question, 150) : 'No content available.';
-                return `<div class="question-card popular-question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[#f59e0b] relative overflow-hidden"> ${hotIndicatorHtml} <div class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]"> <div class="stats-item flex flex-row items-center space-x-2"> <i class="text-sm fa-regular fa-thumbs-up"></i> <span class="text-sm font-medium mt-1">${question.vote || 0}</span> </div> <div class="stats-item flex flex-row items-center space-x-2"> <i class="text-sm fa-solid fa-eye"></i> <span class="text-sm font-medium mt-1">${question.view || 0}</span> </div> <div class="stats-item flex flex-row items-center space-x-2"> <i class="text-sm fa-regular fa-comment"></i> <span class="text-sm font-medium mt-1">${question.comments_count || 0}</span> </div> </div> <div class="flex-1 p-0 mr-4 z-10"> <h2 class="text-xl font-medium text-[var(--text-highlight)] question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2"> <a href="${questionUrl}">${title}</a> </h2> <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">${snippet}</p> <div class="flex mt-8 flex-wrap gap-2 items-center"> ${tagsHtml} <span class="ml-auto text-xs text-[var(--text-muted)] flex items-center"> <i class="fa-solid fa-chart-line text-amber-500 mr-1.5"></i> ${engagementRate}% engagement rate </span> </div> </div> </div>`;
-            }
-            
-            // 4. Jadikan searchQuestions dan searchQuestionsDebounced global
-            window.searchQuestionsInternal = function() { // Ubah nama agar tidak konflik jika ada 'searchQuestions' lain
-                if (!searchInputElement || !questionsListOutputContainer || !questionTitleTrie) {
-                    console.warn('Search dependencies not ready for searchQuestionsInternal call.');
-                    return;
-                }
-                const searchTerm = searchInputElement.value.toLowerCase().trim();
-                let filteredQuestions = [];
-
-                if (searchTerm === "") {
-                    filteredQuestions = allQuestionsData;
-                } else {
-                    if (typeof questionTitleTrie.search !== 'function') {
-                        console.error('CRITICAL: questionTitleTrie.search is still not a function! Trie object:', questionTitleTrie);
-                        return; 
-                    }
-                    const matchingTitles = questionTitleTrie.search(searchTerm);
-                    if (!Array.isArray(matchingTitles)) {
-                        console.error('Trie search did not return an array:', matchingTitles);
-                        return;
-                    }
-                    filteredQuestions = allQuestionsData.filter(question => 
-                        question.title && matchingTitles.includes(question.title.toLowerCase())
-                    );
-                }
-
-                let newHtml = '';
-                if (filteredQuestions.length > 0) {
-                    filteredQuestions.forEach(question => {
-                        newHtml += createQuestionCardHTML(question);
-                    });
-                    if (noSearchResultsMessageElement) noSearchResultsMessageElement.style.display = 'none';
-                    if (noQuestionsInitialElement) noQuestionsInitialElement.style.display = 'none';
-                } else {
-                     if (searchTerm !== "" && noSearchResultsMessageElement) {
-                        noSearchResultsMessageElement.style.display = 'block';
-                    } else if (searchTerm === "" && noQuestionsInitialElement) { 
-                        noQuestionsInitialElement.style.display = 'block'; // atau 'flex' atau 'grid' sesuai display aslinya
-                    }
-                    if (noQuestionsInitialElement && searchTerm !== "") noQuestionsInitialElement.style.display = 'none';
-                }
-                questionsListOutputContainer.innerHTML = newHtml || (noSearchResultsMessageElement ? '' : '<p>No questions available.</p>'); // Fallback jika noSearchResultsMessageElement juga tidak ada
-
-                if (paginationContainerElement) {
-                    let showPagination = false;
-                    const itemsPerPage = {{ $questions->perPage() }}; // Ambil perPage dari paginator
-                    const totalServerItems = {{ $questions->total() }}; // Total item dari server untuk filter saat ini
-
-                    if (searchTerm === "") {
-                        showPagination = totalServerItems > itemsPerPage;
-                    } else {
-                        // Untuk client-side search, pagination biasanya tetap berdasarkan jumlah total dari server
-                        // karena link pagination akan load ulang dari server.
-                        // Kecuali jika kita mau menyembunyikan jika hasil filter client < 1 halaman penuh.
-                        // Untuk konsistensi, kita biarkan server yang menentukan paginasi.
-                        // Namun, jika filteredQuestions 0, maka sembunyikan.
-                        showPagination = filteredQuestions.length > 0 && totalServerItems > itemsPerPage;
-                    }
-                    paginationContainerElement.style.display = showPagination ? 'flex' : 'none';
+                currentPage = data.current_page || page;
+                if (updateUrlHistory) {
+                    window.history.pushState({ page: currentPage, sortBy: currentSortBy, filterTag: currentFilterTag, searchTerm: currentSearchTerm }, '', historyUrl);
                 }
                 updateIconColors();
-            };
-            
-            let searchDebounceTimer;
-            window.searchQuestionsDebounced = function() {
-                clearTimeout(searchDebounceTimer);
-                searchDebounceTimer = setTimeout(window.searchQuestionsInternal, 300);
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                while(questionsListContainer.firstChild && questionsListContainer.firstChild !== paginationLinksContainer) {
+                    questionsListContainer.removeChild(questionsListContainer.firstChild);
+                }
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'popular-question-card rounded-lg p-8 text-center text-red-500';
+                errorDiv.innerHTML = '<p>Sorry, something went wrong. Please try refreshing the page.</p>';
+                questionsListContainer.insertBefore(errorDiv, paginationLinksContainer);
+                if (paginationLinksContainer) paginationLinksContainer.innerHTML = '';
             }
+        }
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const initialSearchTerm = urlParams.get('search_term');
-            if (initialSearchTerm && searchInputElement) {
-                searchInputElement.value = initialSearchTerm;
+        function initializePaginationLinks() {
+            if (!paginationLinksContainer) return;
+            paginationLinksContainer.querySelectorAll('a[href]').forEach(link => {
+                if (link.getAttribute('aria-current') === 'page' || link.closest('span[aria-disabled="true"]')) return;
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = new URL(this.href);
+                    const page = url.searchParams.get('page');
+                    if (page) fetchQuestions(parseInt(page));
+                });
+            });
+        }
+        initializePaginationLinks();
+
+        sortByButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const newSortBy = this.dataset.sortby;
+                if (newSortBy && newSortBy !== currentSortBy) {
+                    currentSortBy = newSortBy; currentPage = 1; fetchQuestions(currentPage);
+                    sortByButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        if (tagFilterSelect) {
+            tagFilterSelect.addEventListener('change', function() {
+                currentFilterTag = this.value; currentPage = 1; fetchQuestions(currentPage);
+            });
+        }
+
+        let searchDebounceTimeout;
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchDebounceTimeout);
+                searchDebounceTimeout = setTimeout(() => {
+                    currentSearchTerm = this.value.trim(); currentPage = 1; fetchQuestions(currentPage);
+                }, 500);
+            });
+        }
+
+        window.addEventListener('popstate', function(event) {
+            const state = event.state || {};
+            const paramsFromUrl = new URLSearchParams(window.location.search);
+
+            currentPage = state.page || parseInt(paramsFromUrl.get('page')) || 1;
+            currentSortBy = state.sortBy || paramsFromUrl.get('sort_by') || 'latest';
+            currentFilterTag = state.filterTag || paramsFromUrl.get('filter_tag') || '';
+            currentSearchTerm = state.searchTerm || paramsFromUrl.get('search_term') || '';
+
+            if (searchInput) searchInput.value = currentSearchTerm;
+            if (tagFilterSelect) tagFilterSelect.value = currentFilterTag;
+            sortByButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.sortby === currentSortBy));
+            fetchQuestions(currentPage, false);
+        });
+
+        // Event listener untuk clear filter link di partial
+        questionsListContainer.addEventListener('click', function(event) {
+            if (event.target.matches('a.filter-clear-link')) {
+                event.preventDefault();
+                currentFilterTag = '';
+                currentSearchTerm = '';
+                currentPage = 1; 
+                // currentSortBy = 'latest'; 
+                if (searchInput) searchInput.value = '';
+                if (tagFilterSelect) tagFilterSelect.value = '';
+                sortByButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.sortby === currentSortBy));
+                fetchQuestions(currentPage);
             }
-            
-            if (typeof Trie !== 'undefined' && questionsListOutputContainer && Array.isArray(allQuestionsData)) {
-                 window.searchQuestionsInternal(); 
-            }
+        });
 
             // Show skeleton loading animation
             function showLoadingState() {

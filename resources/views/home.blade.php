@@ -216,7 +216,7 @@
                     Ask questions, share answers, and learn together with fellow Petranesian Informates.
                 </p>
                 <!-- Stats summary -->
-                <div class="flex space-x-6 mt-4 text-sm">
+                {{-- <div class="flex space-x-6 mt-4 text-sm">
                     <div class="flex items-center">
                         <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
                         <span>23 Questions</span>
@@ -225,7 +225,7 @@
                         <i class="fa-solid fa-comment mr-2 text-[var(--accent-secondary)]"></i>
                         <span>42 Answers</span>
                     </div>
-                </div>
+                </div> --}}
             @endif
             <a href="{{ route('askPage') }}"
                 class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} md:hidden flex mt-5 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium text-[0.85rem] p-2.5 rounded-lg items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">

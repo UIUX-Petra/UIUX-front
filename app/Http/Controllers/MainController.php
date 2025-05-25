@@ -141,12 +141,11 @@ class MainController extends Controller
           Log::warning("Invalid item structure in connection list for profile.", ['item_structure' => $item]);
           return null; // Abaikan item yang tidak valid
         }
-        // Panggil method public determineFollowStatus dari instance userController
         $status = $loggedInUserEmail ? $this->userController->determineFollowStatus($item, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) : ['follow_status' => 'not_logged_in', 'is_mutual' => false];
         $item['follow_status'] = $status['follow_status'];
         $item['is_mutual'] = $status['is_mutual'];
         return $item;
-      })->filter()->values(); // filter() untuk menghapus null, values() untuk re-index collection
+      })->filter()->values(); //filter() untuk menghapus null, values() untuk re-index collection
     };
 
     // 4. Proses daftar followers dan following secara terpisah
@@ -181,38 +180,47 @@ class MainController extends Controller
     ];
     // dd($data);
 
-    // ---- UNTUK DEBUGGING ----
-    // Hapus atau beri komentar setelah selesai debugging
-    // dd([
-    // 'profileUser_email' => $profileUser['email'],
-    // 'loggedInUser_email' => $loggedInUserEmail,
-    // 'active_tab' => $initialTabType,
-    // 'followers_emails' => $followersList->pluck('email')->all(),
-    // 'following_emails' => $followingList->pluck('email')->all(),
-    // 'raw_profile_followers_count' => count($rawFollowers),
-    // 'raw_profile_following_count' => count($rawFollowing),
-    // 'profile_user_data_from_api_sample' => $profileUser // Untuk melihat struktur lengkap
-    // ]);
-    // ---- AKHIR DEBUGGING ----
-
     return view('connections', $data);
   }
 
 
-  public function popular(Request $request)
-  {
-    $email = session('email');
-    $user = $this->userController->getUserByEmail($email);
-    $data['username'] = $user['username'];
-    $data['image'] = $user['image'];
-    $data['title'] = 'Home';
-    $questions = $this->questionController->getAllQuestionsByPopularity($request);
-    $data['questions'] = $questions;
-    $data['image'] = $user['image'];
-    $data['tags'] = $this->tagController->getAllTags();
-    // dd($data);
-    return view('popular', $data);
-  }
+    public function popular(Request $request)
+    {
+        $email = session('email');
+        $user = $email ? $this->userController->getUserByEmail($email) : null;
+
+        $questionsPaginator = $this->questionController->getAllQuestionsByPopularity($request);
+        $tags = $this->tagController->getAllTags();
+
+        // Handle AJAX requests
+        if ($request->ajax() || $request->wantsJson()) {
+            $activeFilters = [
+                'currentFilterTag' => $request->input('filter_tag'),
+                'currentSearchTerm' => $request->input('search_term'),
+            ];
+            return response()->json([
+                'html' => view('partials.questions_list_content', array_merge(['questions' => $questionsPaginator], $activeFilters))->render(),
+                'pagination_html' => $questionsPaginator->appends($request->query())->links()->toHtml(),
+                'total_results' => $questionsPaginator->total(),
+                'current_page' => $questionsPaginator->currentPage(),
+            ]);
+        }
+
+        // Untuk Initial Page Load (Non-AJAX)
+        $data = [
+            'username' => $user['username'] ?? 'Guest',
+            'image' => $user['image'], 
+            'title' => 'Popular Questions',
+            'questions' => $questionsPaginator,
+            'tags' => $tags,
+            'initialSortBy' => $request->input('sort_by', 'latest'),
+            'initialFilterTag' => $request->input('filter_tag', null),
+            'initialSearchTerm' => $request->input('search_term', null),
+            'initialPage' => $request->input('page', 1),
+        ];
+
+        return view('popular', $data);
+    }
 
   // hrse terima param id question, nih aku cuman mau coba view
   public function viewAnswers($questionId)
@@ -275,6 +283,7 @@ class MainController extends Controller
     $data['title'] = 'View Tags';
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
+    // dd($data);
 
     return view('viewTags', $data);
   }
