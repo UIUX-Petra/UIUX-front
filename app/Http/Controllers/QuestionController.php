@@ -277,9 +277,20 @@ class QuestionController extends Controller
 
         $api_url = env('API_URL') . '/comments';
         $response = Http::withToken(session('token'))->post($api_url, $data);
-        Log::info($response);
+        // Log::info($response);
         if ($response->successful()) {
-            return response()->json(['success' => true, 'message' => 'Comment on this Question is submitted successfully!']);
+
+            $data = $response->object();
+
+            $comment = $data->data->comment;
+
+            $formattedComment = [
+                'id' => $comment->id,
+                'username' => $comment->user->username ?? null,
+                'comment' => $comment->comment,
+                'timestamp' => $comment->created_at,
+            ];
+            return response()->json(['success' => true, 'message' => 'Comment is submitted successfully!', 'comment'=>$formattedComment]);
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
             return response()->json(['success' => false, 'message' => $errorMessage]);

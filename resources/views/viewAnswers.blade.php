@@ -91,9 +91,9 @@
                         <span class="text-[var(--text-secondary)]">{{ $question['view'] }}</span>
                     </div>
 
-                    <div class="flex items-center" title="Comments">
+                    <div id="answerCountAtas" class="flex items-center" title="Comments">
                         <i class="fa-solid fa-reply text-[var(--accent-tertiary)] mr-2"></i>
-                        <span class="text-[var(--text-secondary)]">{{ $question['comment_count'] }}</span>
+                        <span class="text-[var(--text-secondary)]">{{ count($question['answer']) }}</span>
                         {{-- Comment atau answer count ?? // ini yang diatas --}}
                     </div>
                 </div>
@@ -123,12 +123,12 @@
                     </small>
                 </div>
 
-                <div class="flex flex-col items-center mt-4" id="comment-count">
+                <div class="flex flex-col items-center mt-4" id="reply-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
                         <i class="fa-solid fa-reply text-md"></i>
                     </button>
                     <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
-                        {{ $question['comment_count'] }} {{-- comment atau answer count ?? comment count sudah ada di kanan e loh --}}
+                        {{ count($question['answer']) }} {{-- comment atau answer count ?? comment count sudah ada di kanan e loh --}}
                     </small>
                 </div>
             </div>
@@ -195,7 +195,7 @@
 
                     <button
                         class="comment-btn text-[var(--text-primary)] bg-[var(--bg-button)] bg-opacity-80 px-3 py-1 rounded-md hover:bg-opacity-100 flex items-center space-x-2 focus:outline-none transition-all">
-                        <i class="fa-solid fa-reply text-sm mr-2"></i>
+                        <i class="fa-solid fa-comment-dots mr-2"></i>
                         Add Comment
                     </button>
                 </div>
@@ -213,10 +213,10 @@
 
                 <!-- Comments List -->
                 @if ($question['comment_count'] > 0)
-                    <div class="space-y-3">
+                    <div id="question-comments" class="space-y-3">
                         @foreach ($question['comment'] as $comm)
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
-                                <div class="flex flex-col items-center mr-4">
+                                {{-- <div class="flex flex-col items-center mr-4">
                                     <button
                                         class="vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
                                         <i class="text-sm text-[#23BF7F] fa-solid fa-chevron-up"></i>
@@ -226,7 +226,7 @@
                                         class="vote-btn text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
                                         <i class="text-sm text-[#FE0081] fa-solid fa-chevron-down"></i>
                                     </button>
-                                </div>
+                                </div> --}}
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
                                     <div class="mt-2 text-xs text-[var(--text-muted)]">
@@ -340,11 +340,11 @@
                                     <button
                                         class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                                         <i class="fa-solid fa-comment-dots mr-2"></i>
-                                        <span>Add Comment</span>
+                                        <span>{{ count($ans['comments'] ?? []) }} Comments</span>
                                     </button>
                                 </div>
 
-                                <!-- comment input box -->
+                                <!-- Comment input box -->
                                 <div class="comment-box hidden mt-4 w-full comment-animation">
                                     <textarea id="answer-comment-{{ $ans['id'] }}"
                                         class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
@@ -355,6 +355,45 @@
                                     </button>
                                 </div>
 
+                                <!-- Comments Display Section -->
+                                @if (isset($ans['comments']) && count($ans['comments']) > 0)
+                                    <div class="answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]">
+                                        <h4
+                                            class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                                            <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
+                                            Comments ({{ count($ans['comments']) }})
+                                        </h4>
+
+                                        <div class="space-y-3">
+                                            @foreach ($ans['comments'] as $comment)
+                                                <div
+                                                    class="answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]">
+                                                    <div class="flex items-start">
+                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($comment['username']) }}&background=random"
+                                                            alt="{{ $comment['username'] }}"
+                                                            class="w-6 h-6 rounded-full mr-3 mt-1">
+
+                                                        <div class="flex-grow">
+                                                            <div class="flex items-center mb-1">
+                                                                <span
+                                                                    class="text-sm font-medium text-[var(--text-primary)]">
+                                                                    {{ $comment['username'] }}
+                                                                </span>
+                                                                <span class="text-xs text-[var(--text-muted)] ml-2">
+                                                                    {{ \Carbon\Carbon::parse($comment['timestamp'])->diffForHumans() }}
+                                                                </span>
+                                                            </div>
+
+                                                            <p class="text-sm text-[var(--text-primary)] leading-relaxed">
+                                                                {{ $comment['comment'] }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @endforeach
@@ -379,7 +418,8 @@
             const commentButtons = document.querySelectorAll('.comment-btn');
             commentButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    const commentBox = button.nextElementSibling;
+                    const parentDiv = button.parentElement;
+                    const commentBox = parentDiv?.nextElementSibling;
                     commentBox.classList.toggle('hidden');
                 });
             });
@@ -419,13 +459,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Get the comment count element and comments section
-            const commentCount = document.getElementById('comment-count');
-            const commentsSection = document.getElementById('comments-section');
+            const commentCount = document.getElementById('reply-count');
+            const answerTextArea = document.getElementById('answer-textArea');
 
-            // Toggle visibility of the comments section when the "comments" link is clicked
-            commentCount.addEventListener('click', () => {
-                commentsSection.classList.toggle('hidden');
+            commentCount.addEventListener('click', (e) => {
+                e.preventDefault();
+                answerTextArea?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                answerTextArea?.focus();
             });
         });
     </script>
@@ -589,6 +632,13 @@
                                     confirmButtonText: 'Great!',
                                 });
 
+                                let replies = document.querySelector('#reply-count small')
+                                let answerCountAtas = document.querySelector('#answerCountAtas span')
+                                let count = parseInt(replies.textContent.trim(), 10) + 1;
+
+                                replies.textContent = count;
+                                answerCountAtas.textContent = count;
+
                             } else {
                                 Swal.fire({
                                     icon: 'error',
@@ -629,14 +679,13 @@
         }
 
         function attachAnswerEventListeners(answerId) {
-            const commentBtn = document.querySelector(`#submit-comment-${answerId}`).previousElementSibling
-                .previousElementSibling;
+            const commentBtn = document.querySelector(`#submit-comment-${answerId}`).parentElement
+                .previousElementSibling.lastElementChild;
             if (commentBtn && commentBtn.classList.contains('comment-btn')) {
                 commentBtn.addEventListener('click', () => {
-                    const commentBox = commentBtn.closest('.flex-grow').querySelector('.comment-box');
-                    if (commentBox) {
-                        commentBox.classList.toggle('hidden');
-                    }
+                    const parentDiv = commentBtn.parentElement;
+                    const commentBox = parentDiv?.nextElementSibling;
+                    commentBox.classList.toggle('hidden');
                 });
             }
 
@@ -648,6 +697,137 @@
             }
             if (downVoteBtn) {
                 downVoteBtn.addEventListener('click', () => handleVote(false, answerId));
+            }
+
+            const submitCommentButton = document.getElementById(`submit-comment-${answerId}`);
+            if (submitCommentButton) {
+                submitCommentButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+
+                    const commentTextArea = document.getElementById(`answer-comment-${answerId}`);
+                    const commentText = commentTextArea.value.trim();
+
+                    if (commentText === '') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Please write a comment!',
+                        });
+                    } else {
+                        const formData = new FormData();
+                        formData.append('comment', commentText);
+                        formData.append('answer_id', answerId);
+
+                        fetch(`/submit/question/comment/${answerId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                },
+                                body: formData,
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Comment Submitted!',
+                                        text: 'Your comment has been successfully posted.',
+                                    });
+
+                                    const commentBox = commentTextArea.closest('.comment-box');
+                                    if (commentBox) {
+                                        commentBox.classList.add('hidden');
+                                    }
+                                    commentTextArea.value = '';
+
+                                    const answerContainer = document.querySelector(
+                                        `[data-answer-id="${answerId}"]`).closest(
+                                        '.bg-\\[var\\(--bg-secondary\\)\\]');
+
+                                    let commentsSection = answerContainer.querySelector(
+                                        '.answer-comments-section');
+
+                                    if (!commentsSection) {
+                                        commentsSection = document.createElement('div');
+                                        commentsSection.className =
+                                            'answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]';
+                                        commentsSection.innerHTML = `
+                                <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                                    <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
+                                    Comments (1)
+                                </h4>
+                                <div class="space-y-3"></div>
+                            `;
+                                        const flexGrowDiv = answerContainer.querySelector('.flex-grow');
+                                        flexGrowDiv.appendChild(commentsSection);
+                                    }
+
+                                    const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
+                                    const commentDiv = document.createElement('div');
+                                    commentDiv.className =
+                                        'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
+                                    commentDiv.innerHTML = `
+                            <div class="flex items-start">
+                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.comment.username)}&background=random" 
+                                     alt="${data.comment.username}"
+                                     class="w-6 h-6 rounded-full mr-3 mt-1">
+                                <div class="flex-grow">
+                                    <div class="flex items-center mb-1">
+                                        <span class="text-sm font-medium text-[var(--text-primary)]">
+                                            ${data.comment.username}
+                                        </span>
+                                        <span class="text-xs text-[var(--text-muted)] ml-2">
+                                            ${timeAgo}
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-[var(--text-primary)] leading-relaxed">
+                                        ${data.comment.comment}
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+
+                                    const commentsList = commentsSection.querySelector('.space-y-3');
+                                    commentsList.appendChild(commentDiv);
+
+                                    const commentsHeader = commentsSection.querySelector('h4');
+                                    const currentCount = commentsSection.querySelectorAll('.answer-comment')
+                                        .length;
+                                    commentsHeader.innerHTML = `
+                            <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
+                            Comments (${currentCount})
+                        `;
+
+                                    const commentButton = answerContainer.querySelector('.comment-btn span');
+                                    if (commentButton) {
+                                        commentButton.textContent = `${currentCount} Comments`;
+                                    }
+
+                                    commentDiv.style.opacity = '0';
+                                    commentDiv.style.transform = 'translateY(-10px)';
+                                    setTimeout(() => {
+                                        commentDiv.style.transition = 'all 0.3s ease-in-out';
+                                        commentDiv.style.opacity = '1';
+                                        commentDiv.style.transform = 'translateY(0)';
+                                    }, 100);
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: data.message,
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'An unexpected error occurred.',
+                                });
+                                console.log(error);
+                            });
+                    }
+                });
             }
         }
     </script>
@@ -684,11 +864,67 @@
                             body: formData,
 
                         })
-                        .then(response => response.json()) // Handle the response
+                        .then(response => response.json())
                         .then(data => {
-                            console.log(data);
 
                             if (data.success) {
+                                let commentList = document.getElementById('question-comments');
+                                const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
+
+                                const htmlContent = `
+                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
+                                <div class="flex-grow">
+                                    <p class="text-[var(--text-primary)]">${escapeHtml(data.comment.comment)}</p>
+                                    <div class="mt-2 text-xs text-[var(--text-muted)]">
+                                        <span>Posted by ${escapeHtml(data.comment.username)} - ${timeAgo}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                                if (!commentList) {
+                                    const noCommentsSection = document.querySelector(
+                                        '#comments-section .bg-\\[var\\(--bg-card\\)\\]');
+
+                                    if (noCommentsSection && noCommentsSection.textContent.includes(
+                                            'There are no comments yet')) {
+                                        commentList = document.createElement('div');
+                                        commentList.id = 'question-comments';
+                                        commentList.className = 'space-y-3';
+
+                                        noCommentsSection.parentNode.replaceChild(commentList,
+                                            noCommentsSection);
+                                    }
+                                }
+
+                                if (commentList) {
+                                    commentList.insertAdjacentHTML('beforeend', htmlContent);
+                                }
+
+                                // Update comment counts
+                                const commentCount = document.querySelector('#comment-count span');
+                                const commentSectionCount = document.querySelector(
+                                    '#comments-section h3 span');
+
+                                if (commentCount) {
+                                    let count1 = parseInt(commentCount.textContent.trim(), 10);
+                                    count1 += 1;
+                                    commentCount.textContent = `${count1} Comments`;
+                                }
+
+                                if (commentSectionCount) {
+                                    let count2 = parseInt(commentSectionCount.textContent.replace(
+                                        /[()]/g, ''), 10);
+                                    count2 += 1;
+                                    commentSectionCount.textContent = `(${count2})`;
+                                }
+
+                                const commentBox = commentTextArea.closest('.comment-box');
+                                if (commentBox) {
+                                    commentBox.classList.add('hidden');
+                                }
+                                commentTextArea.value = '';
+
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Comment Submitted!',
@@ -718,7 +954,6 @@
         // COMMENT DI ANSWERRRR
 
         document.addEventListener('DOMContentLoaded', () => {
-
             const submitCommentButtons = document.querySelectorAll('[id^="submit-comment-"]');
 
             submitCommentButtons.forEach(button => {
@@ -726,7 +961,6 @@
                     event.preventDefault();
 
                     const answerId = button.getAttribute('data-answer-id');
-
                     const commentTextArea = document.getElementById(`answer-comment-${answerId}`);
                     const commentText = commentTextArea.value.trim();
 
@@ -757,7 +991,99 @@
                                         text: 'Your comment has been successfully posted.',
                                     });
 
+                                    const commentBox = commentTextArea.closest('.comment-box');
+                                    if (commentBox) {
+                                        commentBox.classList.add('hidden');
+                                    }
                                     commentTextArea.value = '';
+
+                                    // Find the answer container
+                                    const answerContainer = document.querySelector(
+                                        `[data-answer-id="${answerId}"]`).closest(
+                                        '.bg-\\[var\\(--bg-secondary\\)\\]');
+
+                                    // Look for existing comments section
+                                    let commentsSection = answerContainer.querySelector(
+                                        '.answer-comments-section');
+
+                                    if (!commentsSection) {
+                                        // Create comments section if it doesn't exist
+                                        commentsSection = document.createElement('div');
+                                        commentsSection.className =
+                                            'answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]';
+                                        commentsSection.innerHTML = `
+                                    <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                                        <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
+                                        Comments (1)
+                                    </h4>
+                                    <div class="space-y-3"></div>
+                                `;
+
+                                        // Insert it before the end of the answer container's flex-grow div
+                                        const flexGrowDiv = answerContainer.querySelector(
+                                            '.flex-grow');
+                                        flexGrowDiv.appendChild(commentsSection);
+                                    }
+
+                                    // Create the new comment element
+                                    const timeAgo = formatTimeAgo(new Date(data.comment
+                                        .timestamp));
+
+                                    const commentDiv = document.createElement('div');
+                                    commentDiv.className =
+                                        'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
+
+                                    commentDiv.innerHTML = `
+                                <div class="flex items-start">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.comment.username)}&background=random" 
+                                         alt="${data.comment.username}"
+                                         class="w-6 h-6 rounded-full mr-3 mt-1">
+                                    
+                                    <div class="flex-grow">
+                                        <div class="flex items-center mb-1">
+                                            <span class="text-sm font-medium text-[var(--text-primary)]">
+                                                ${data.comment.username}
+                                            </span>
+                                            <span class="text-xs text-[var(--text-muted)] ml-2">
+                                                ${timeAgo}
+                                            </span>
+                                        </div>
+                                        
+                                        <p class="text-sm text-[var(--text-primary)] leading-relaxed">
+                                            ${data.comment.comment}
+                                        </p>
+                                    </div>
+                                </div>
+                            `;
+
+                                    const commentsList = commentsSection.querySelector(
+                                        '.space-y-3');
+                                    commentsList.appendChild(commentDiv);
+
+                                    const commentsHeader = commentsSection.querySelector('h4');
+                                    const currentCount = commentsSection.querySelectorAll(
+                                        '.answer-comment').length;
+                                    commentsHeader.innerHTML = `
+                                <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
+                                Comments (${currentCount})
+                            `;
+
+                                    const commentButton = answerContainer.querySelector(
+                                        '.comment-btn span');
+                                    if (commentButton) {
+                                        commentButton.textContent =
+                                            `${currentCount} Comments`;
+                                    }
+
+                                    commentDiv.style.opacity = '0';
+                                    commentDiv.style.transform = 'translateY(-10px)';
+                                    setTimeout(() => {
+                                        commentDiv.style.transition =
+                                            'all 0.3s ease-in-out';
+                                        commentDiv.style.opacity = '1';
+                                        commentDiv.style.transform = 'translateY(0)';
+                                    }, 100);
+
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
