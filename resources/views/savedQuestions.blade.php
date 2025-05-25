@@ -1,5 +1,5 @@
 @extends('layout')
-@section('head')
+@section('content')
     <style>
         .question-card {
             border: 1px solid var(--border-color);
@@ -17,9 +17,9 @@
             opacity: 1;
         }
     </style>
-@endsection
+    {{-- @endsection --}}
 
-@section('content')
+    {{-- @section('content') --}}
     @include('partials.nav')
     @if (session()->has('Error'))
         <script>
@@ -93,7 +93,7 @@
                         <div class="flex-1 pt-0 mr-4 z-10">
                             <!-- Question Title -->
                             <h2
-                                class="text-xl font-medium question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-tertiary)] decoration-2 underline-offset-2">
+                                class="text-xl font-medium text-[var(--text-highlight)] question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
                                 <a
                                     href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
                             </h2>
@@ -107,8 +107,11 @@
                                 <div class="flex mt-2 flex-wrap gap-1">
 
                                     @foreach ($question['group_question'] as $tag)
-                                        <span
-                                            class="text-xs px-2 py-1 rounded-full bg-[var(--bg-tag)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
+                                        <a
+                                            href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"><span
+                                                class="hover:border-white hover:border-2 text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                                {{ $tag['subject']['name'] }}
+                                            </span></a>
                                     @endforeach
                                 </div>
                             @endif

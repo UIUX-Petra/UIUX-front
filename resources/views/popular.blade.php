@@ -773,14 +773,18 @@
             const saveButtons = document.querySelectorAll('.save-question-btn');
             saveButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
+                newButton.removeAttribute('onclick'); // <--- PENTING: Hapus atribut onclick dari kloningan
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
                     e.preventDefault();
-                    e.stopPropagation(); 
+                    e.stopPropagation();
 
-                    const currentOnClick = this.getAttribute('onclick');
-                    if (currentOnClick && currentOnClick.includes('unsaveQuestion')) {
+                    // Tentukan aksi berdasarkan kondisi tombol saat ini (misalnya, kelas ikonnya)
+                    const icon = this.querySelector('i');
+                    // Periksa apakah ikon saat ini adalah ikon "tersimpan" (solid bookmark)
+                    if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
+                            'fa-bookmark')) {
                         unsaveQuestion(this);
                     } else {
                         saveQuestion(this);
@@ -790,11 +794,11 @@
         }
 
         function updateSavedIcons() {
-            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark'); 
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
             const isLightMode = document.documentElement.classList.contains('light-mode');
             savedIcons.forEach(icon => {
                 icon.style.color = isLightMode ? 'var(--accent-secondary)' :
-                    'var(--accent-secondary)'; 
+                    'var(--accent-secondary)';
             });
         }
 
@@ -830,7 +834,7 @@
                     }).showToast();
                     btn.innerHTML =
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
-                    btn.setAttribute("onclick", "saveQuestion(this)");
+                    // btn.setAttribute("onclick", "saveQuestion(this)");
                     btn.setAttribute("title", "Save Question");
                 } else {
                     Toastify({
@@ -882,11 +886,11 @@
                         }
                     }).showToast();
                     btn.innerHTML =
-                        `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`; 
-                    btn.setAttribute("onclick", "unsaveQuestion(this)");
+                        `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
+                    // btn.setAttribute("onclick", "unsaveQuestion(this)");
                     btn.setAttribute("title", "Unsave Question");
-                    updateSavedIcons(); 
-                    btn.classList.add('saved-animation'); 
+                    updateSavedIcons();
+                    btn.classList.add('saved-animation');
                     setTimeout(() => btn.classList.remove('saved-animation'), 300);
                 } else {
                     Toastify({

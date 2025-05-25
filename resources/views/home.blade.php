@@ -22,14 +22,15 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
             background-color: var(--bg-card-hover);
         }
-/* 
-        .question-title {
-            color: var(--text-primary);
-        }
 
-        .question-title:hover {
-            color: var(--text-primary);
-        } */
+        /*
+            .question-title {
+                color: var(--text-primary);
+            }
+
+            .question-title:hover {
+                color: var(--text-primary);
+            } */
 
         .interaction-icons i {
             color: var(--text-muted);
@@ -371,8 +372,8 @@
             outline: none;
         }
     </style>
-{{-- @endsection --}}
-{{-- @section('content') --}}
+    {{-- @endsection --}}
+    {{-- @section('content') --}}
     @include('partials.nav')
     @if (session()->has('Error'))
         <script>
@@ -510,7 +511,7 @@
                     if (mutation.attributeName === 'class') {
                         updateThemeIcons();
                         updateIconColors();
-                        updateSavedIcons(); 
+                        updateSavedIcons();
                     }
                 });
             });
@@ -526,10 +527,10 @@
                     let target = event.target;
                     console.log("Target Setelah Diproses (seharusnya <a>):", target);
                     if (target) console.log("ClassList Target Setelah Diproses:", target
-                    .classList); 
+                        .classList);
 
                     const url = target ? target.getAttribute('href') :
-                    null; 
+                        null;
                     console.log("URL yang Ditemukan:", url);
 
                     if (url && url !== '#') {
@@ -549,14 +550,14 @@
             updateIconColors();
             lazyLoadImages();
             initSmoothScroll();
-            initSaveButtons(); 
+            initSaveButtons();
             updateSavedIcons();
         }
 
         function showLoadingIndicator() {
             const overlay = document.querySelector('#questions-container .loading-overlay');
             if (overlay) {
-                console.log("Attempting to show global loading indicator (overlay)"); 
+                console.log("Attempting to show global loading indicator (overlay)");
                 overlay.classList.add('visible');
             }
         }
@@ -564,18 +565,18 @@
         function hideLoadingIndicator() {
             const overlay = document.querySelector('#questions-container .loading-overlay');
             if (overlay) {
-                console.log("Attempting to hide global loading indicator (overlay)"); 
+                console.log("Attempting to hide global loading indicator (overlay)");
                 overlay.classList.remove('visible');
             }
         }
 
         function showSkeletonPlaceholder(count = 3) {
-            console.log("Showing skeleton placeholder"); 
+            console.log("Showing skeleton placeholder");
             const listContainer = document.getElementById('questions-list-wrapper');
             const paginationContainer = document.querySelector('#questions-container .pagination-links');
 
             if (listContainer) {
-                listContainer.innerHTML = ''; 
+                listContainer.innerHTML = '';
                 let skeletonHTML = '';
                 for (let i = 0; i < count; i++) {
                     skeletonHTML += `
@@ -600,29 +601,29 @@
                 listContainer.innerHTML = skeletonHTML;
             }
             if (paginationContainer) {
-                paginationContainer.innerHTML = ''; 
+                paginationContainer.innerHTML = '';
             }
         }
 
         function loadQuestions(url) {
-            console.log("loadQuestions called for URL:", url); 
+            console.log("loadQuestions called for URL:", url);
 
-            showSkeletonPlaceholder(); 
+            showSkeletonPlaceholder();
 
             fetch(url, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json' 
+                        'Accept': 'application/json'
                     }
                 })
                 .then(response => {
-                    console.log("Fetch response status:", response.status); 
+                    console.log("Fetch response status:", response.status);
                     if (!response.ok) {
                         return response.json().catch(() => {
                             throw new Error(
                                 `HTTP error ${response.status} - ${response.statusText}. Server did not return a valid JSON error response.`
-                                );
+                            );
                         }).then(errData => {
                             throw new Error(errData.message ||
                                 `HTTP error ${response.status} - ${response.statusText}.`);
@@ -631,9 +632,9 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Data received from AJAX:", data); 
+                    console.log("Data received from AJAX:", data);
 
-                   
+
                     if (data.error) {
                         throw new Error(data.message || 'An error occurred while fetching data from the server.');
                     }
@@ -654,19 +655,19 @@
                     if (paginationContainer && data.pagination_html !== undefined) {
                         paginationContainer.innerHTML = data.pagination_html;
                     } else if (paginationContainer) {
-                        paginationContainer.innerHTML = ''; 
+                        paginationContainer.innerHTML = '';
                     }
 
                     history.pushState({
                         path: url
-                    }, '', url); 
-                    initializePageFunctions(); 
+                    }, '', url);
+                    initializePageFunctions();
 
                     const containerElement = document.getElementById('questions-container');
                     if (containerElement) {
                         const offsetTop = containerElement.offsetTop;
                         const headerOffset = document.querySelector('nav.is-fixed-top, .fixed-header-class')
-                            ?.offsetHeight || 80; 
+                            ?.offsetHeight || 80;
                         window.scrollTo({
                             top: offsetTop - headerOffset,
                             behavior: 'smooth'
@@ -702,7 +703,7 @@
                 })
                 .finally(() => {
                     // console.log("Fetch process finished for URL:", url); 
-                   
+
                 });
         }
 
@@ -786,14 +787,18 @@
             const saveButtons = document.querySelectorAll('.save-question-btn');
             saveButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
+                newButton.removeAttribute('onclick'); // <--- PENTING: Hapus atribut onclick dari kloningan
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
                     e.preventDefault();
-                    e.stopPropagation(); 
+                    e.stopPropagation();
 
-                    const currentOnClick = this.getAttribute('onclick');
-                    if (currentOnClick && currentOnClick.includes('unsaveQuestion')) {
+                    // Tentukan aksi berdasarkan kondisi tombol saat ini (misalnya, kelas ikonnya)
+                    const icon = this.querySelector('i');
+                    // Periksa apakah ikon saat ini adalah ikon "tersimpan" (solid bookmark)
+                    if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
+                            'fa-bookmark')) {
                         unsaveQuestion(this);
                     } else {
                         saveQuestion(this);
@@ -803,11 +808,11 @@
         }
 
         function updateSavedIcons() {
-            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark'); 
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
             const isLightMode = document.documentElement.classList.contains('light-mode');
             savedIcons.forEach(icon => {
                 icon.style.color = isLightMode ? 'var(--accent-secondary)' :
-                    'var(--accent-secondary)'; 
+                    'var(--accent-secondary)';
             });
         }
 
@@ -843,7 +848,7 @@
                     }).showToast();
                     btn.innerHTML =
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
-                    btn.setAttribute("onclick", "saveQuestion(this)");
+                    // btn.setAttribute("onclick", "saveQuestion(this)");
                     btn.setAttribute("title", "Save Question");
                 } else {
                     Toastify({
@@ -895,11 +900,11 @@
                         }
                     }).showToast();
                     btn.innerHTML =
-                        `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`; 
-                    btn.setAttribute("onclick", "unsaveQuestion(this)");
+                        `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
+                    // btn.setAttribute("onclick", "unsaveQuestion(this)");
                     btn.setAttribute("title", "Unsave Question");
-                    updateSavedIcons(); 
-                    btn.classList.add('saved-animation'); 
+                    updateSavedIcons();
+                    btn.classList.add('saved-animation');
                     setTimeout(() => btn.classList.remove('saved-animation'), 300);
                 } else {
                     Toastify({
