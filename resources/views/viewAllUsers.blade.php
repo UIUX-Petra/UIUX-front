@@ -174,7 +174,7 @@
                         <i class="fa-solid fa-user-plus mr-2"></i>New Users
                     </button>
                     <button onclick="showTab('voters')" id="tab-voters" class="tab-inactive">
-                        <i class="fa-solid fa-thumbs-up mr-2"></i>Voters
+                        <i class="fa-solid fa-thumbs-up mr-2"></i>Votes
                     </button>
                 </div>
             </div>
