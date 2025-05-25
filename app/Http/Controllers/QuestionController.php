@@ -98,36 +98,35 @@ class QuestionController extends Controller
     public function getAllQuestionsByPopularity(Request $request)
     {
         $api_base_url = env('API_URL');
-        // Pastikan ini adalah endpoint yang benar yang mengarah ke method getQuestionPaginated di API Anda
         $api_url = $api_base_url . '/questions-paginated';
 
         $page = $request->input('page', 1);
         $per_page_from_request = $request->input('per_page', 10);
-
-        // Ambil parameter sorting dan filtering dari request frontend
         $sortBy = $request->input('sort_by', 'latest');
         $filterTag = $request->input('filter_tag', null);
+        $searchTerm = $request->input('search_term', null);
 
-        // Siapkan query parameter untuk dikirim ke API
         $queryParams = [
             'page' => $page,
             'per_page' => $per_page_from_request,
-            'email' => session('email'),
-            'sort_by' => $sortBy,     // Teruskan parameter sort_by ke API
-            'filter_tag' => $filterTag, // Teruskan parameter filter_tag ke API
+            'email' => session('email'), // Pastikan session 'email' ada dan valid
+            'sort_by' => $sortBy,
         ];
 
-        if (empty($queryParams['filter_tag'])) { // empty() akan menangani null, "", 0, "0", false
-            unset($queryParams['filter_tag']);
+        if (!empty($filterTag)) {
+            $queryParams['filter_tag'] = $filterTag;
+        }
+        if (!empty($searchTerm)) {
+            $queryParams['search_term'] = $searchTerm;
         }
 
-        Log::info("Requesting API: {$api_url} with params: " . json_encode($queryParams)); // Logging untuk debug
+        Log::info("QuestionController: Requesting API: {$api_url} with params: " . json_encode($queryParams));
 
-        $response = Http::withToken(session('token'))->get($api_url, $queryParams);
+        $response = Http::withToken(session('token'))->get($api_url, $queryParams); // Pastikan session 'token' ada
 
         if ($response->failed()) {
-            Log::error("API request to {$api_url} with params " . json_encode($queryParams) . " failed: " . $response->status() . " - " . $response->body());
-            return $this->emptyPaginator($request, $per_page_from_request, $page);
+            Log::error("QuestionController: API request failed: {$response->status()} - {$response->body()}", $queryParams);
+            return $this->emptyPaginator($request, $per_page_from_request, $page, $queryParams);
         }
 
         $apiResponseData = $response->json();
@@ -140,46 +139,30 @@ class QuestionController extends Controller
             !isset($apiResponseData['data']['per_page']) ||
             !isset($apiResponseData['data']['current_page'])
         ) {
-            Log::error("API request to {$api_url} did not return a successful and valid paginated structure: " . $response->body());
-            return $this->emptyPaginator($request, $per_page_from_request, $page);
+            Log::error("QuestionController: Invalid API response structure: " . $response->body(), $queryParams);
+            return $this->emptyPaginator($request, $per_page_from_request, $page, $queryParams);
         }
 
-        $paginatedApiResponse = $apiResponseData['data'];
-        $items = $paginatedApiResponse['data']; // Data ini sudah di-filter dan di-sort oleh API
-        $total = $paginatedApiResponse['total']; // Total ini sekarang akurat dari API
-        $perPage = $paginatedApiResponse['per_page'];
-        $currentPage = $paginatedApiResponse['current_page'];
+        $paginatedData = $apiResponseData['data'];
+        $items = $paginatedData['data'];
+        $total = (int) $paginatedData['total'];
+        $perPage = (int) $paginatedData['per_page'];
+        $currentPage = (int) $paginatedData['current_page'];
 
-        // Tidak perlu lagi sorting atau filtering $items di sini
-
-        $paginator = new LengthAwarePaginator(
+        return new LengthAwarePaginator(
             $items,
             $total,
             $perPage,
             $currentPage,
-            [
-                'path' => $request->url(), // URL saat ini (tanpa query string)
-                'query' => $request->query(), // Semua parameter query saat ini untuk pagination links
-            ]
+            ['path' => $request->url(), 'query' => $request->query()]
         );
-
-        // Jika Anda merender view dari controller ini:
-        // return view('questions.index', ['questions' => $paginator]);
-        // Untuk file blade `page question` Anda:
-        // Anda perlu meneruskan $questions ke view.
-        // Jika fungsi ini dipanggil dari route yang merender blade:
-        // return view('nama_view_anda', ['questions' => $paginator]);
-        return $paginator; // Jika ini adalah service atau dipanggil oleh controller lain
     }
 
-    /**
-     * Helper function to return an empty paginator.
-     */
-    private function emptyPaginator(Request $request, int $perPage, int $currentPage)
+    private function emptyPaginator(Request $request, int $perPage, int $currentPage, array $query = [])
     {
         return new LengthAwarePaginator([], 0, $perPage, $currentPage, [
             'path' => $request->url(),
-            'query' => $request->query(),
+            'query' => $query,
         ]);
     }
 
