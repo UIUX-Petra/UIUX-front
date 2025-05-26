@@ -26,13 +26,13 @@ class MainController extends Controller
   {
     $user = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $user['image'] ?? null;
-    $data['username'] = $user['username'] ?? 'Guest'; 
+    $data['username'] = $user['username'] ?? 'Guest';
     $data['title'] = 'Home';
-    $questions = $this->questionController->getAllQuestions($request); 
+    $questions = $this->questionController->getAllQuestions($request);
 
     if ($request->ajax() || $request->wantsJson()) {
       $questionsHtml = view('partials.questions_only_list', ['questions' => $questions])->render();
-      $paginationHtml = $questions->links()->toHtml(); 
+      $paginationHtml = $questions->links()->toHtml();
 
       return response()->json([
         'success' => true,
@@ -41,20 +41,33 @@ class MainController extends Controller
       ]);
     }
     $data['questions'] = $questions;
-    $data['user'] = $user; 
+    $data['user'] = $user;
     return view('home', $data);
   }
 
-  public function askPage()
+  public function askPage(Request $request, $questionId = null) // Added Request for consistency if needed later
   {
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
-    $tags = $this->tagController->getTagOnly();
-    $data['data'] = $tags;
-    $data['title'] = 'Ask a Question';
-    return view('ask', $data);
+    $viewData = [];
+    $currUser = $this->userController->getUserByEmail($request->session()->get('email'));
+    $viewData['image'] = $currUser['image'] ?? null;
+    $allTags = $this->tagController->getTagOnly();
+    $viewData['allTags'] = $allTags;
+    $viewData['questionToEdit'] = null;
+    if ($questionId !== null) {
+      $questionDetails = $this->questionController->getQuestionDetails($questionId);
+      if ($questionDetails && isset($currUser['id']) && isset($questionDetails['user_id']) && $currUser['id'] === $questionDetails['user_id']) {
+        $viewData['questionToEdit'] = $questionDetails;
+      } else if ($questionDetails) {
+        return redirect()->route('home')
+          ->with('Error', 'You are not authorized to edit this question.');
+      } else {
+        return redirect()->route('askPage')
+          ->with('Error', 'The question you are trying to edit was not found.');
+      }
+    }
+    $viewData['title'] = isset($viewData['questionToEdit']) ? 'Edit Question' : 'Ask a Question';
+    return view('ask', $viewData);
   }
-
   public function seeProfile()
   {
     $data['title'] = 'My Profile';
@@ -147,7 +160,7 @@ class MainController extends Controller
       return collect($rawListFromProfileUser)->map(function ($item) use ($loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) {
         if (!is_array($item) || !isset($item['email'])) {
           Log::warning("Invalid item structure in connection list for profile.", ['item_structure' => $item]);
-          return null; 
+          return null;
         }
         $status = $loggedInUserEmail ? $this->userController->determineFollowStatus($item, $loggedInUserFollowingArray, $loggedInUserFollowersArray, $loggedInUserEmail) : ['follow_status' => 'not_logged_in', 'is_mutual' => false];
         $item['follow_status'] = $status['follow_status'];

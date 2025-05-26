@@ -179,16 +179,27 @@
                     </div>
 
                     <!-- Actions -->
-                    <button id="followBtn" onclick="follow(`{{ $userViewed['email'] }}`)"
-                        class="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5f83c8] transition">
-                        @if ($userRelation == 0)
-                            Follow
-                        @elseif($userRelation == 1)
-                            Following
-                        @else
-                            Follow Back
-                        @endif
-                    </button>
+                    @if (session('email') != $userViewed['email'])
+                        <button id="followBtn" onclick="follow(`{{ $userViewed['email'] }}`)"
+                            class="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5f83c8] transition">
+
+                            @if ($userRelation == 0 && session('email'))
+                                Follow
+                            @elseif($userRelation == 1)
+                                Following
+                            @else
+                                Follow Back
+                            @endif
+                        </button>
+                    @else
+                         <div class="flex space-x-4">
+                        <a href="{{ route('editProfile') }}"
+                            class="px-4 py-2 btn-primary text-white rounded-lg flex items-center">
+                            <i class="fa-solid fa-user-pen mr-2"></i>
+                            Edit Profile
+                        </a>
+                    </div>
+                    @endif
 
                 </div>
             </div>

@@ -160,7 +160,7 @@
 
         /* Follow Buttons */
         .follow-btn {
-            padding: 8px 16px;
+            padding: 4px 8px;
             border-radius: 20px;
             font-size: 0.875rem;
             font-weight: 600;

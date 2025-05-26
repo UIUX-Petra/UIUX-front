@@ -75,7 +75,9 @@
 @endsection
 @section('content')
     @include('partials.nav')
-
+    @php
+        $isQuestionOwner = $question['user']['email'] === session('email');
+    @endphp
     <!-- Main content container -->
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Question Title Section - Moved outside the card to make it more pronounced -->
@@ -293,6 +295,9 @@
             @if ($question['answer'])
                 <div id="answerList" class="space-y-6">
                     @foreach ($question['answer'] as $ans)
+                        @php
+                            $isVerified = (int) $ans['verified'] === 1;
+                        @endphp
                         <div
                             class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
                             <div class="interaction-section flex flex-col items-center mr-6">
@@ -309,12 +314,37 @@
                                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                                 </button>
 
-                                @if ($loop->first)
-                                    <div class="mt-4 flex flex-col items-center">
-                                        <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
-                                        <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
-                                    </div>
-                                @endif
+                                <div id="answer-verify-block-{{ $ans['id'] }}"
+                                    class="mt-4 flex flex-col items-center">
+                                    @if ($isQuestionOwner)
+                                        <i id="verify-icon-{{ $ans['id'] }}"
+                                            class="fa-{{ $isVerified ? 'solid' : 'regular' }} fa-check-circle text-[#23BF7F] text-lg {{ !$isVerified ? 'cursor-pointer verify-toggle-button' : '' }}"
+                                            data-answer-id="{{ $ans['id'] }}"
+                                            data-current-verified="{{ $ans['verified'] }}">
+                                        </i>
+                                        <span id="verify-text-{{ $ans['id'] }}" class="text-xs text-[#23BF7F] mt-1">
+                                            {{ $isVerified ? 'Verified Answer' : 'Verify Answer' }}
+                                        </span>
+                                        @if (!$isVerified)
+                                            <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                                data-answer-id="{{ $ans['id'] }}"
+                                                data-current-verified="{{ $ans['verified'] }}" style="cursor:pointer;">
+                                                (Click icon or text to verify)
+                                            </span>
+                                        @else
+                                            <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                                data-answer-id="{{ $ans['id'] }}"
+                                                data-current-verified="{{ $ans['verified'] }}" style="cursor:pointer;">
+                                                (Click icon or text to unverify)
+                                            </span>
+                                        @endif
+                                    @else
+                                        @if ($isVerified)
+                                            <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
+                                            <span class="text-xs text-[#23BF7F] mt-1">Verified Answer</span>
+                                        @endif
+                                    @endif
+                                </div>
                             </div>
 
                             <div class="flex flex-col flex-grow">
@@ -548,11 +578,11 @@
                                  class="max-w-lg max-h-96 object-contain rounded-lg border">
                          </div>` : '';
 
-                                const bestAnswerBadge = isFirstAnswer ?
-                                    `<div class="mt-4 flex flex-col items-center">
-                            <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
-                            <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
-                         </div>` : '';
+                        //         const bestAnswerBadge = isFirstAnswer ?
+                        //             `<div class="mt-4 flex flex-col items-center">
+                        //     <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
+                        //     <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
+                        //  </div>` : '';
 
                                 const htmlContent = `
                         <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start ${isFirstAnswer ? 'verified-answer' : ''}">
@@ -1103,10 +1133,126 @@
                     }
                 });
             });
-        });
 
-        // Vote Question
-        document.addEventListener('DOMContentLoaded', () => {
+            const apiBaseUrl = (("{{ env('API_URL') }}" || window.location.origin) + '/').replace(/\/+$/, '/');
+            const apiToken = "{{ session('token') }}"
+            document.querySelectorAll('.verify-toggle-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const answerId = this.dataset.answerId;
+                    const currentVerifiedStatus = parseInt(this.dataset.currentVerified);
+                    const newVerifiedStatus = currentVerifiedStatus === 0 ? 1 : 0;
+
+                    const actionText = newVerifiedStatus === 1 ? 'verify' : 'un-verify';
+                    const iconElement = document.getElementById(`verify-icon-${answerId}`);
+                    const textElement = document.getElementById(`verify-text-${answerId}`);
+                    const allToggleButtonsForThisAnswer = document.querySelectorAll(
+                        `.verify-toggle-button[data-answer-id="${answerId}"]`);
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: `You are about to ${actionText} this answer.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: `Yes, ${actionText} it!`
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`${apiBaseUrl}answers/${answerId}/updatePartial`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Authorization': `Bearer ${apiToken}`
+                                    },
+                                    body: JSON.stringify({
+                                        verified: newVerifiedStatus
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw err;
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success || data.status ===
+                                        'success') {
+                                        Swal.fire(
+                                            `${newVerifiedStatus === 1 ? 'Verified!' : 'Un-verified!'}`,
+                                            `The answer has been ${actionText}d.`,
+                                            'success'
+                                        );
+
+                                        if (iconElement) {
+                                            if (newVerifiedStatus === 1) {
+                                                iconElement.classList.remove(
+                                                    'fa-regular');
+                                                iconElement.classList.add('fa-solid');
+                                                iconElement.classList.remove(
+                                                    'cursor-pointer'
+                                                );
+                                            } else {
+                                                iconElement.classList.remove(
+                                                    'fa-solid');
+                                                iconElement.classList.add('fa-regular');
+                                                iconElement.classList.add(
+                                                    'cursor-pointer'
+                                                );
+                                            }
+                                        }
+                                        if (textElement) {
+                                            textElement.textContent =
+                                                newVerifiedStatus === 1 ?
+                                                'Verified Answer' : 'Verify Answer';
+                                        }
+
+                                        allToggleButtonsForThisAnswer.forEach(btn => {
+                                            btn.dataset.currentVerified =
+                                                newVerifiedStatus;
+                                        });
+
+                                        const helperTextElement = document
+                                            .querySelector(
+                                                `#answer-verify-block-${answerId} span.text-gray-500`
+                                            );
+                                        if (helperTextElement) {
+                                            helperTextElement.textContent =
+                                                newVerifiedStatus === 1 ?
+                                                '(Click icon or text to unverify)' :
+                                                '(Click icon or text to verify)';
+                                        }
+                                    } else {
+                                        Swal.fire(
+                                            'Error!',
+                                            data.message ||
+                                            'Could not update verification status.',
+                                            'error'
+                                        );
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    let errorMessage =
+                                        'An error occurred while updating the answer.';
+                                    if (error && error.message) {
+                                        errorMessage = error.message;
+                                    } else if (typeof error === 'string') {
+                                        errorMessage = error;
+                                    }
+                                    Swal.fire(
+                                        'Request Failed!',
+                                        errorMessage,
+                                        'error'
+                                    );
+                                });
+                        }
+                    });
+                });
+            });
+
             const questionId = @json($question['id']);
 
             const upVoteButton = document.getElementById('upVoteQuestion');

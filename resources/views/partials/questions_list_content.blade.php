@@ -29,12 +29,27 @@
     @foreach ($questions as $question)
         <div class="question-card popular-question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[#f59e0b] relative overflow-hidden">
             @if (isset($question['vote']) && $question['vote'] > 50)
-                <div class="absolute top-0 right-0">
-                    <div class="bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs py-1 px-3 rounded-bl-lg rounded-tr-lg font-medium flex items-center">
+                <div class="absolute bottom-0 right-0">
+                    <div class="bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs py-1 px-3 rounded-tl-lg rounded-tr-lg font-medium flex items-center">
                         <i class="fa-solid fa-fire-flame-curved mr-1.5"></i> Hot
                     </div>
                 </div>
             @endif
+            @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
+            <button onclick="unsaveQuestion(this)" type="button"
+                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                data-question-id="{{ $question['id'] }}"
+                title="Unsave Question">
+                <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+            </button>
+        @else
+            <button onclick="saveQuestion(this)" type="button"
+                class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                data-question-id="{{ $question['id'] }}"
+                title="Save Question">
+                <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+            </button>
+        @endif
 
             {{-- Stats Column --}}
             <div class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
