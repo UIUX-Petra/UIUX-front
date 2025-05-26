@@ -288,13 +288,17 @@
         <!-- Desktop Actions -->
         <div class="hidden md:flex items-center gap-4 ml-auto">
             <!-- Search Input -->
-            <div class="search-container flex items-center">
-                <input type="text" placeholder="Search topics, questions, users..."
+            <div class="search-container flex items-center relative">
+                <input id="searchInput" type="text" placeholder="Search anything..."
                     class="search-input placeholder-[var(--text-secondary)] xl:w-[56rem] w-[23rem] !bg-[var(--bg-tertiary)] px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
-                <button type="submit"
+                <button type="button" id="searchButton"
                     class="search-button text-[var(--text-dark)] bg-[var(--accent-tertiary)] hover:bg-[var(--accent-primary)] px-4 py-2 -ml-10 rounded-r-lg focus:outline-none transition-all duration-300">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
+                <div id="searchResultsDropdownContainer"
+                    class="absolute top-full left-0 w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
+                    {{-- Content will be populated by JS --}}
+                </div>
             </div>
 
             <!-- Theme Toggle with subtle animation -->
@@ -317,7 +321,7 @@
                         id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                         <span class="sr-only">Open user menu</span>
                         <img class="size-9 rounded-full avatar p-0.5 object-cover"
-                           src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                            src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                             alt="User avatar">
                     </button>
 
@@ -393,7 +397,7 @@
         </a>
         <a href="{{ route('viewAllTags') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-tags mr-3"></i> Tags
+            <i class="fa-solid fa-tags mr-3"></i> Subjects
         </a>
         <a href="{{ route('viewAllUsers') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">
@@ -555,13 +559,13 @@
             attributes: true
         });
 
-        if (mobileThemeToggle) {
-            mobileThemeToggle.addEventListener('click', function() {
-                if (typeof toggleTheme === 'function') {
-                    toggleTheme();
-                }
-            });
-        }
+        // if (mobileThemeToggle) {
+        //     mobileThemeToggle.addEventListener('click', function() {
+        //         if (typeof toggleTheme === 'function') {
+        //             toggleTheme();
+        //         }
+        //     });
+        // }
 
         const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
@@ -576,5 +580,170 @@
                 });
             }
         });
+
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const searchContainer = searchInput ? searchInput.closest('.search-container') : null;
+        const suggestionsContainer = document.getElementById('searchResultsDropdownContainer');
+
+        let debounceTimer;
+        const API_BASE_URL = "{{ env('API_URL', 'http://default-api-url.com/api') }}";
+
+        async function fetchSearchSuggestions(query) {
+            if (query.length < 1) {
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.classList.add('hidden');
+                }
+                return null;
+            }
+
+            try {
+                if (suggestionsContainer) {
+                    suggestionsContainer.innerHTML =
+                        '<div class="p-2 text-sm text-[var(--text-muted)]">Searching...</div>';
+                    suggestionsContainer.classList.remove('hidden');
+                }
+
+                const response = await fetch(
+                    `${API_BASE_URL}/search?q=${encodeURIComponent(query)}&context=all&limit=5`
+                    ); 
+                if (!response.ok) {
+                    console.error('API search error:', response.status, await response.text());
+                    if (suggestionsContainer) suggestionsContainer.innerHTML =
+                        '<div class="p-2 text-sm text-red-500">Error fetching results.</div>';
+                    return null;
+                }
+                const result = await response.json();
+                return (result.success && result.data) ? result.data : null;
+            } catch (error) {
+                console.error('Failed to fetch search suggestions:', error);
+                if (suggestionsContainer) suggestionsContainer.innerHTML =
+                    '<div class="p-2 text-sm text-red-500">Search request failed.</div>';
+                return null;
+            }
+        }
+
+        function displaySuggestions(categorizedResults) {
+            if (!suggestionsContainer) return;
+            suggestionsContainer.innerHTML = '';
+
+            if (!categorizedResults || Object.keys(categorizedResults).length === 0) {
+                suggestionsContainer.innerHTML =
+                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
+                suggestionsContainer.classList.remove('hidden');
+                return;
+            }
+
+            let hasContent = false;
+            const categoryOrder = ['questions', 'subjects', 'users'];
+
+            categoryOrder.forEach(categoryKey => {
+                if (categorizedResults[categoryKey] && categorizedResults[categoryKey].length > 0) {
+                    hasContent = true;
+                    const items = categorizedResults[categoryKey];
+
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'mb-2';
+
+                    const title = document.createElement('h4');
+                    title.className =
+                        'text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold';
+                    title.textContent = categoryKey.charAt(0).toUpperCase() + categoryKey.slice(
+                    1);
+                    sectionDiv.appendChild(title);
+
+                    const ul = document.createElement('ul');
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        let displayText = '';
+                        if (item.type === 'question') {
+                            displayText = item.title;
+                            if (item.author_username) displayText +=
+                                ` (by ${item.author_username})`;
+                        } else if (item.type === 'subject') {
+                            displayText = item.name;
+                        } else if (item.type === 'user') {
+                            displayText = item.username;
+                            if (item.name && item.name !== item.username) displayText +=
+                                ` (${item.name})`;
+                        } else {
+                            displayText = item.title || item.name || item.username ||
+                                'Unknown item';
+                        }
+
+                        li.innerHTML =
+                            `<a href="${item.url}" class="block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
+                        ul.appendChild(li);
+                    });
+                    sectionDiv.appendChild(ul);
+                    suggestionsContainer.appendChild(sectionDiv);
+                }
+            });
+
+
+            if (hasContent) {
+                suggestionsContainer.classList.remove('hidden');
+            } else {
+                suggestionsContainer.innerHTML =
+                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
+                suggestionsContainer.classList.remove('hidden');
+            }
+        }
+
+
+        if (searchInput && searchContainer && suggestionsContainer) {
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.trim();
+                clearTimeout(debounceTimer);
+
+                if (searchTerm.length === 0) {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.classList.add('hidden');
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetchSearchSuggestions(searchTerm).then(apiResults => {
+                        displaySuggestions(apiResults);
+                    });
+                }, 300);
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!searchContainer.contains(event.target)) {
+                    suggestionsContainer.classList.add('hidden');
+                }
+            });
+
+            function performFullSearch(query) {
+                if (query) {
+                    window.location.href =
+                    `/search-results?q=${encodeURIComponent(query)}`;
+                }
+            }
+
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performFullSearch(searchInput.value.trim());
+                    suggestionsContainer.classList.add('hidden');
+                }
+            });
+
+            if (searchButton) {
+                searchButton.addEventListener('click', function() {
+                    performFullSearch(searchInput.value.trim());
+                    suggestionsContainer.classList.add('hidden');
+                });
+            }
+
+        } else {
+            if (!searchInput) console.error("Search input #searchInput not found.");
+            if (!searchContainer) console.error(
+                "Search container .search-container not found for #searchInput.");
+            if (!suggestionsContainer) console.error(
+                "Suggestions container #searchResultsDropdownContainer not found.");
+        }
     });
 </script>

@@ -190,6 +190,14 @@
                                 Follow Back
                             @endif
                         </button>
+                    @else
+                        <div class="flex space-x-4">
+                            <a href="{{ route('editProfile') }}"
+                                class="px-4 py-2 btn-primary text-white rounded-lg flex items-center">
+                                <i class="fa-solid fa-user-pen mr-2"></i>
+                                Edit Profile
+                            </a>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -463,7 +471,7 @@
                         btn.innerHTML = `Follow`;
                     } else if (res.data.userRelation == 1 || res.data.userRelation == 3) {
                         btn.innerHTML = `Following`;
-                    } else if(res.data.userRelation == 2){
+                    } else if (res.data.userRelation == 2) {
                         btn.innerHTML = `Follow Back`;
                     }
                     document.getElementById('followers_count').textContent = res.data.countFollowers;

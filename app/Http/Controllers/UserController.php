@@ -297,9 +297,8 @@ class UserController extends Controller
 
     public function showUserQuestionsPage($userId)
     {
-        $api_url_user = env('API_URL') . '/users/' . $userId;
+        $api_url_user = env('API_URL') . '/users/' . $userId . '/questions';
         $responseUser = Http::withToken(session('token'))->get($api_url_user);
-
         if ($responseUser->failed()) {
             Log::error("API call failed to get user data for ID {$userId} for questions page: " . $responseUser->body());
             return null;

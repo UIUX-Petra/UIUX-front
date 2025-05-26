@@ -1,5 +1,5 @@
 @extends('layout')
-@section('head')
+@section('content')
     <style>
         .welcome {
             /* color: var(--text-primary); */
@@ -23,13 +23,14 @@
             background-color: var(--bg-card-hover);
         }
 
-        .question-title {
-            color: var(--text-primary);
-        }
+        /*
+            .question-title {
+                color: var(--text-primary);
+            }
 
-        .question-title:hover {
-            color: var(--text-primary);
-        }
+            .question-title:hover {
+                color: var(--text-primary);
+            } */
 
         .interaction-icons i {
             color: var(--text-muted);
@@ -80,7 +81,7 @@
         /* Define some additional theme variables */
         :root {
             --bg-tag: rgba(56, 163, 165, 0.15);
-            --text-tag: rgba(56, 163, 165, 1);
+            /* --text-tag: rgba(56, 163, 165, 1); */
             --bg-accent-subtle: rgba(128, 237, 153, 0.1);
             --transition-speed-fast: 0.2s;
         }
@@ -135,7 +136,197 @@
             animation: shimmer 2s infinite linear;
         }
 
-        /* Add this to your CSS styles */
+        /* CSS untuk Loading Overlay dan Skeleton */
+        #questions-container {
+            position: relative;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(var(--bg-secondary-rgb), 0.6);
+            /* Overlay transparan */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 990;
+            /* Di bawah elemen UI penting, di atas konten */
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .loading-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .loader {
+            border: 5px solid var(--border-color);
+            border-top: 5px solid var(--accent-primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .skeleton-question-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 1.25rem;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .skeleton-shimmer-bg {
+            background: linear-gradient(to right, var(--bg-card) 8%, var(--bg-card-hover) 38%, var(--bg-card) 54%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+            border-radius: 0.25rem;
+        }
+
+        .skeleton-stats-area {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-start;
+            margin-right: 1rem;
+            padding-right: 0.75rem;
+            border-right: 1px solid var(--border-color);
+            gap: 0.9rem;
+            padding-top: 0.25rem;
+        }
+
+        .skeleton-stats-area .stat-line {
+            height: 0.875rem;
+            width: 2.5rem;
+        }
+
+        .skeleton-main-content {
+            flex: 1;
+        }
+
+        .skeleton-main-content .title-line {
+            height: 1.25rem;
+            width: 75%;
+            margin-bottom: 0.75rem;
+        }
+
+        .skeleton-main-content .text-line {
+            height: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skeleton-main-content .text-line.short {
+            width: 90%;
+        }
+
+        .skeleton-main-content .text-line.long {
+            width: 100%;
+            margin-bottom: 0.75rem;
+        }
+
+        .skeleton-tags-area {
+            display: flex;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .skeleton-tags-area .tag-line {
+            height: 1.25rem;
+            width: 4.5rem;
+            border-radius: 9999px;
+        }
+
+        /* Styling untuk pagination (sesuaikan jika menggunakan Tailwind atau Bootstrap) */
+        .pagination-links nav {
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination-links ul.pagination {
+            /* Bootstrap default */
+            padding-left: 0;
+            margin: 20px 0;
+            border-radius: 4px;
+            list-style: none;
+            display: inline-block;
+        }
+
+        .pagination-links .page-item {
+            display: inline;
+        }
+
+        .pagination-links .page-link {
+            position: relative;
+            display: block;
+            padding: .5rem .75rem;
+            margin-left: -1px;
+            line-height: 1.25;
+            color: var(--accent-primary);
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .pagination-links .page-item:first-child .page-link {
+            margin-left: 0;
+            border-top-left-radius: .25rem;
+            border-bottom-left-radius: .25rem;
+        }
+
+        .pagination-links .page-item:last-child .page-link {
+            border-top-right-radius: .25rem;
+            border-bottom-right-radius: .25rem;
+        }
+
+        .pagination-links .page-link:hover {
+            z-index: 2;
+            color: var(--accent-secondary);
+            background-color: var(--bg-card-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .pagination-links .page-item.active .page-link {
+            z-index: 3;
+            color: var(--text-dark);
+            background-color: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .pagination-links .page-item.disabled .page-link {
+            color: var(--text-muted);
+            pointer-events: none;
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+        }
+
 
         /* Save button styles */
         .save-question-btn {
@@ -181,8 +372,8 @@
             outline: none;
         }
     </style>
-@endsection
-@section('content')
+    {{-- @endsection --}}
+    {{-- @section('content') --}}
     @include('partials.nav')
     @if (session()->has('Error'))
         <script>
@@ -216,7 +407,7 @@
                     Ask questions, share answers, and learn together with fellow Petranesian Informates.
                 </p>
                 <!-- Stats summary -->
-                <div class="flex space-x-6 mt-4 text-sm">
+                {{-- <div class="flex space-x-6 mt-4 text-sm">
                     <div class="flex items-center">
                         <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
                         <span>23 Questions</span>
@@ -225,7 +416,7 @@
                         <i class="fa-solid fa-comment mr-2 text-[var(--accent-secondary)]"></i>
                         <span>42 Answers</span>
                     </div>
-                </div>
+                </div> --}}
             @endif
             <a href="{{ route('askPage') }}"
                 class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} md:hidden flex mt-5 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium text-[0.85rem] p-2.5 rounded-lg items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
@@ -239,81 +430,24 @@
 
     <!-- Questions and Ask Question Section -->
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
-        <div class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
-            <!-- Loop through questions -->
-            @foreach ($questions as $question)
-                <div
-                    class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
-                    <div class="absolute inset-0 bg-pattern opacity-5"></div>
+        <div id="questions-container"
+            class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
+            {{-- Loading Overlay --}}
+            {{-- <div class="loading-overlay">
+                <div class="loader"></div>
+            </div> --}}
 
-                    {{-- Use array access for 'is_saved_by_request_user' --}}
-                    @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
-                        <button onclick="unsaveQuestion(this)" type="submit"
-                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                            data-question-title="{{ $question['title'] }}" data-question-id="{{ $question['id'] }}"
-                            title="Unsave Question">
-                            <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
-                        </button>
-                    @else
-                        <button onclick="saveQuestion(this)" type="submit"
-                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                            data-question-title="{{ $question['title'] }}" data-question-id="{{ $question['id'] }}"
-                            title="Save Question">
-                            <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
-                        </button>
-                    @endif
+            {{-- Wrapper untuk daftar pertanyaan (diisi oleh skeleton atau konten AJAX) --}}
+            <div id="questions-list-wrapper" class="bg-transparent rounded-lg">
+                @include('partials.questions_only_list', ['questions' => $questions])
+            </div>
 
-                    <!-- Stats Column -->
-                    <div
-                        class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
-
-                        <div class="stats-item flex flex-row items-center space-x-2">
-                            <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
-                            <i class="text-sm fa-regular fa-thumbs-up"></i>
-                        </div>
-
-                        <div class="stats-item flex flex-row items-center space-x-2">
-                            <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
-                            <i class="text-sm fa-solid fa-eye"></i>
-                        </div>
-
-                        <div class="stats-item flex flex-row items-center space-x-2">
-                            <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
-                            <i class="text-sm fa-regular fa-comment"></i>
-                        </div>
-                    </div>
-
-
-                    <div class="flex-1 pt-0 mr-4 z-10">
-                        <!-- Question Title -->
-                        <h2
-                            class="text-xl font-medium text-[var(--text-highlight)] question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
-                            <a
-                                href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] }}</a>
-                        </h2>
-
-                        <!-- Question Snippet -->
-                        <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
-                            {{ \Str::limit($question['question'], 150) }}</p>
-
-                        <!-- Tags -->
-                        <div class="flex mt-2 flex-wrap gap-1">
-                            @foreach ($question['group_question'] as $tag)
-                                <span
-                                    class="text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)]">{{ $tag['subject']['name'] }}</span>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-
-            <!-- Pagination -->
-            {{-- $questions->links() will still work if $questions is a Paginator instance whose items are arrays --}}
-            @if ($questions->hasPages())
-                <div class="mt-6">
+            {{-- Wrapper untuk pagination (diisi oleh AJAX) --}}
+            <div id="pagination-container" class="mt-8 pagination-links">
+                @if ($questions->hasPages())
                     {{ $questions->links() }}
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
 
         <div class="w-72 mt-6 ml-6 hidden md:flex sticky top-24 h-fit">
@@ -370,96 +504,263 @@
 @section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Update interaction icon colors based on theme
-            function updateIconColors() {
-                const statsItems = document.querySelectorAll('.stats-item');
-                const isLightMode = document.documentElement.classList.contains('light-mode');
+            initializePageFunctions();
 
-                console.log('updateIconColors running, light mode:', isLightMode);
+            const themeObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        updateThemeIcons();
+                        updateIconColors();
+                        updateSavedIcons();
+                    }
+                });
+            });
+            themeObserver.observe(document.documentElement, {
+                attributes: true
+            });
 
-                if (statsItems) {
-                    statsItems.forEach((item, index) => {
-                        const icon = item.querySelector('i');
-                        if (!icon) return;
+            const questionsContainer = document.getElementById('pagination-container');
+            if (questionsContainer) {
+                questionsContainer.addEventListener('click', function(event) {
+                    let target = event.target;
+                    const url = target ? target.getAttribute('href') :
+                        null;
+                    console.log("URL yang Ditemukan:", url);
 
-                        if (index % 3 === 0) {
-                            icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
-                        } else if (index % 3 === 1) {
-                            icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
-                        } else {
-                            icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
-                        }
-                    });
-                }
-            }
-
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeToggleIcon = document.getElementById('theme-toggle-icon');
-            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
-            const themeLogoToggle = document.getElementById('theme-logo');
-
-            function updateThemeIcons() {
-                const isLightMode = document.documentElement.classList.contains('light-mode');
-
-                if (themeToggleIcon) {
-                    themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-                }
-
-                if (mobileThemeToggleIcon) {
-                    mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-                }
-
-                if (themeLogoToggle) {
-                    themeLogoToggle.src = isLightMode ?
-                        "{{ asset('assets/p2p logo.svg') }}" :
-                        "{{ asset('assets/p2p logo - white.svg') }}";
-                }
-            }
-
-            // Ensure both theme toggles work
-            if (mobileThemeToggle) {
-                mobileThemeToggle.addEventListener('click', function() {
-                    if (typeof toggleTheme === 'function') {
-                        toggleTheme();
+                    if (url && url !== '#') {
+                        event.preventDefault();
+                        loadQuestions(url);
+                    } else {
+                        console.log("Kondisi URL TIDAK terpenuhi. Navigasi default akan terjadi.");
                     }
                 });
             }
+        });
 
-            function lazyLoadImages() {
-                const lazyImages = document.querySelectorAll('.lazy-image');
+        function initializePageFunctions() {
+            updateThemeIcons();
+            updateIconColors();
+            lazyLoadImages();
+            initSmoothScroll();
+            initSaveButtons();
+            updateSavedIcons();
+        }
 
-                if ("IntersectionObserver" in window) {
-                    const imageObserver = new IntersectionObserver((entries, observer) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                const image = entry.target;
-                                image.src = image.dataset.src;
-                                image.classList.remove("lazy-image");
-                                imageObserver.unobserve(image);
-                            }
-                        });
-                    });
-
-                    lazyImages.forEach(image => {
-                        imageObserver.observe(image);
-                    });
-                } else {
-                    // Fallback for browsers without IntersectionObserver
-                    lazyImages.forEach(image => {
-                        image.src = image.dataset.src;
-                        image.classList.remove("lazy-image");
-                    });
-                }
+        function showLoadingIndicator() {
+            const overlay = document.querySelector('#questions-container .loading-overlay');
+            if (overlay) {
+                console.log("Attempting to show global loading indicator (overlay)");
+                overlay.classList.add('visible');
             }
+        }
 
+        function hideLoadingIndicator() {
+            const overlay = document.querySelector('#questions-container .loading-overlay');
+            if (overlay) {
+                console.log("Attempting to hide global loading indicator (overlay)");
+                overlay.classList.remove('visible');
+            }
+        }
+
+        function showSkeletonPlaceholder(count = 3) {
+            console.log("Showing skeleton placeholder");
+            const listContainer = document.getElementById('questions-list-wrapper');
+            const paginationContainer = document.querySelector('#questions-container .pagination-links');
+
+            if (listContainer) {
+                listContainer.innerHTML = '';
+                let skeletonHTML = '';
+                for (let i = 0; i < count; i++) {
+                    skeletonHTML += `
+                <div class="skeleton-question-card">
+                    <div class="skeleton-stats-area">
+                        <div class="stat-line skeleton-shimmer-bg"></div>
+                        <div class="stat-line skeleton-shimmer-bg"></div>
+                        <div class="stat-line skeleton-shimmer-bg"></div>
+                    </div>
+                    <div class="skeleton-main-content">
+                        <div class="title-line skeleton-shimmer-bg"></div>
+                        <div class="text-line long skeleton-shimmer-bg"></div>
+                        <div class="text-line short skeleton-shimmer-bg"></div>
+                        <div class="skeleton-tags-area">
+                            <div class="tag-line skeleton-shimmer-bg"></div>
+                            <div class="tag-line skeleton-shimmer-bg" style="width: 5.5rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+                }
+                listContainer.innerHTML = skeletonHTML;
+            }
+            if (paginationContainer) {
+                paginationContainer.innerHTML = '';
+            }
+        }
+
+        function loadQuestions(url) {
+            showSkeletonPlaceholder();
+
+            fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    console.log("Fetch response status:", response.status);
+                    if (!response.ok) {
+                        return response.json().catch(() => {
+                            throw new Error(
+                                `HTTP error ${response.status} - ${response.statusText}. Server did not return a valid JSON error response.`
+                            );
+                        }).then(errData => {
+                            throw new Error(errData.message ||
+                                `HTTP error ${response.status} - ${response.statusText}.`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received from AJAX:", data);
+
+                    if (data.error) {
+                        throw new Error(data.message || 'An error occurred while fetching data from the server.');
+                    }
+
+                    const questionsListWrapper = document.getElementById('questions-list-wrapper');
+                    const paginationContainer = document.querySelector('#questions-container .pagination-links');
+
+                    if (questionsListWrapper && data.questions_html !== undefined) {
+                        questionsListWrapper.innerHTML = data.questions_html;
+                    } else if (questionsListWrapper) {
+                        questionsListWrapper.innerHTML =
+                            '<p class="text-center text-[var(--text-muted)] py-5">Could not load questions content (missing data).</p>';
+                        console.warn(
+                            "Data format warning: 'questions_html' was missing or undefined in the AJAX response.",
+                            data);
+                    }
+
+                    if (paginationContainer && data.pagination_html !== undefined) {
+                        paginationContainer.innerHTML = data.pagination_html;
+                    } else if (paginationContainer) {
+                        paginationContainer.innerHTML = '';
+                    }
+
+                    history.pushState({
+                        path: url
+                    }, '', url);
+                    initializePageFunctions();
+
+                    const containerElement = document.getElementById('questions-container');
+                    if (containerElement) {
+                        const offsetTop = containerElement.offsetTop;
+                        const headerOffset = document.querySelector('nav.is-fixed-top, .fixed-header-class')
+                            ?.offsetHeight || 80;
+                        window.scrollTo({
+                            top: offsetTop - headerOffset,
+                            behavior: 'smooth'
+                        });
+                    }
+                })
+                .catch(error => {
+                    const questionsListWrapper = document.getElementById('questions-list-wrapper');
+                    if (questionsListWrapper) {
+                        questionsListWrapper.innerHTML = `
+                <div class="text-center py-10 text-red-500">
+                    <i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i>
+                    <p class="text-lg">Sorry, an error occurred: ${error.message}. Please try refreshing the page.</p>
+                </div>`;
+                    }
+                    const paginationContainer = document.querySelector('#questions-container .pagination-links');
+                    if (paginationContainer) paginationContainer.innerHTML = '';
+
+                    if (typeof Toastify !== 'undefined') {
+                        Toastify({
+                            text: `Error: ${error.message}`,
+                            duration: 7000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
+                    } else {
+                        alert(`Error: ${error.message}`);
+                    }
+                })
+                .finally(() => {
+                    // console.log("Fetch process finished for URL:", url); 
+
+                });
+        }
+
+        function updateIconColors() {
+            const statsItems = document.querySelectorAll('.stats-item');
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            if (statsItems) {
+                statsItems.forEach((item, index) => {
+                    const icon = item.querySelector('i');
+                    if (!icon) return;
+                    if (index % 3 === 0) {
+                        icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
+                    } else if (index % 3 === 1) {
+                        icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
+                    } else {
+                        icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
+                    }
+                });
+            }
+        }
+
+        function updateThemeIcons() {
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            const themeToggleIcon = document.getElementById('theme-toggle-icon');
+            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
+            const themeLogoToggle = document.getElementById('theme-logo');
+
+            if (themeToggleIcon) themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+            if (mobileThemeToggleIcon) mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' :
+                'fa-solid fa-sun';
+            if (themeLogoToggle) themeLogoToggle.src = isLightMode ? "{{ asset('assets/p2p logo.svg') }}" :
+                "{{ asset('assets/p2p logo - white.svg') }}";
+        }
+
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        if (mobileThemeToggle && typeof toggleTheme === 'function') {
+            mobileThemeToggle.addEventListener('click', toggleTheme);
+        }
+
+
+        function lazyLoadImages() {
+            const lazyImages = document.querySelectorAll('.lazy-image');
+            if ("IntersectionObserver" in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const image = entry.target;
+                            image.src = image.dataset.src;
+                            image.classList.remove("lazy-image");
+                            imageObserver.unobserve(image);
+                        }
+                    });
+                });
+                lazyImages.forEach(image => imageObserver.observe(image));
+            } else {
+                lazyImages.forEach(image => {
+                    image.src = image.dataset.src;
+                    image.classList.remove("lazy-image");
+                });
+            }
+        }
+
+        function initSmoothScroll() {
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
-
                     const targetId = this.getAttribute('href');
                     const targetElement = document.querySelector(targetId);
-
                     if (targetElement) {
                         window.scrollTo({
                             top: targetElement.offsetTop - 100,
@@ -468,70 +769,36 @@
                     }
                 });
             });
-
-            updateThemeIcons();
-            updateIconColors();
-            lazyLoadImages();
-
-            const themeObserver = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.attributeName === 'class') {
-                        updateThemeIcons();
-                        updateIconColors();
-                    }
-                });
-            });
-
-            themeObserver.observe(document.documentElement, {
-                attributes: true
-            });
-        });
+        }
 
         function initSaveButtons() {
             const saveButtons = document.querySelectorAll('.save-question-btn');
-
             saveButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
+                newButton.removeAttribute('onclick');
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    const questionId = this.getAttribute('data-question-id');
                     const icon = this.querySelector('i');
-                    const isSaved = icon.classList.contains('fa-solid');
-
-                    if (isSaved) {
-                        icon.classList.remove('fa-solid');
-                        icon.classList.add('fa-regular');
-                        icon.style.color = '';
+                    if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
+                            'fa-bookmark')) {
+                        unsaveQuestion(this);
                     } else {
-                        icon.classList.remove('fa-regular');
-                        icon.classList.add('fa-solid');
-
-                        const isLightMode = document.documentElement.classList.contains('light-mode');
-                        icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
-
-                        this.classList.add('saved-animation');
-                        setTimeout(() => {
-                            this.classList.remove('saved-animation');
-                        }, 300);
+                        saveQuestion(this);
                     }
-
-                    console.log('Save question:', questionId, !isSaved);
-
-                    return false;
                 });
             });
         }
 
         function updateSavedIcons() {
-            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid');
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
             const isLightMode = document.documentElement.classList.contains('light-mode');
-
             savedIcons.forEach(icon => {
-                icon.style.color = isLightMode ? '#38A3A5' : '#80ED99';
+                icon.style.color = isLightMode ? 'var(--accent-secondary)' :
+                    'var(--accent-secondary)';
             });
         }
 
@@ -547,15 +814,15 @@
                 gravity: "top",
                 position: "right",
                 style: {
-                    background: "#444",
-                },
+                    background: "#444"
+                }
             });
             loadingToast.showToast();
 
             fetch("{{ route('unsaveQuestion') }}", {
                 method: "POST",
                 headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
                 body: formData
             }).then(response => response.json()).then(res => {
@@ -568,13 +835,18 @@
                         gravity: "top",
                         position: "right",
                         style: {
-                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
                     btn.innerHTML =
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
-                    btn.setAttribute("onclick", "saveQuestion(this)");
+                    // btn.setAttribute("onclick", "saveQuestion(this)");
                     btn.setAttribute("title", "Save Question");
+                } else {
+                    Toastify({
+                        text: res.message || "Failed to unsave.",
+                        duration: 3000,
+                    }).showToast();
                 }
             }).catch(err => {
                 loadingToast.hideToast();
@@ -585,7 +857,7 @@
                     gravity: "top",
                     position: "right",
                     style: {
-                        background: "#e74c3c",
+                        background: "#e74c3c"
                     }
                 }).showToast();
             });
@@ -603,15 +875,15 @@
                 gravity: "top",
                 position: "right",
                 style: {
-                    background: "#444",
-                },
+                    background: "#444"
+                }
             });
             loadingToast.showToast();
 
             fetch("{{ route('saveQuestion') }}", {
                 method: "POST",
                 headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
                 body: formData
             }).then(response => response.json()).then(res => {
@@ -624,12 +896,21 @@
                         gravity: "top",
                         position: "right",
                         style: {
-                            background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
-                    btn.innerHTML = `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
-                    btn.setAttribute("onclick", "unsaveQuestion(this)");
+                    btn.innerHTML =
+                        `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
+                    // btn.setAttribute("onclick", "unsaveQuestion(this)");
                     btn.setAttribute("title", "Unsave Question");
+                    updateSavedIcons();
+                    btn.classList.add('saved-animation');
+                    setTimeout(() => btn.classList.remove('saved-animation'), 300);
+                } else {
+                    Toastify({
+                        text: res.message || "Failed to save.",
+                        duration: 3000,
+                    }).showToast();
                 }
             }).catch(err => {
                 loadingToast.hideToast();
@@ -640,7 +921,7 @@
                     gravity: "top",
                     position: "right",
                     style: {
-                        background: "#e74c3c",
+                        background: "#e74c3c"
                     }
                 }).showToast();
             });

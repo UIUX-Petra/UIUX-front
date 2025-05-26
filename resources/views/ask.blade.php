@@ -1,21 +1,13 @@
 @extends('layout')
-@section('content')
-    @if (session()->has('Error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}'
-            });
-        </script>
-    @endif
-    
+
+@section('style')
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--bg-primary);
             overflow-x: hidden;
         }
+
         .section-container {
             background-color: transparent;
             border-radius: 1rem;
@@ -226,57 +218,83 @@
             color: var(--text-dark);
         }
     </style>
-
+@endsection
+@section('content')
+    @if (session()->has('Error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '{{ session('Error') }}'
+            });
+        </script>
+    @endif
     @include('partials.nav')
 
-    <div class="max-w-5xl justify-start items-start px-4 py-8">
+    @php
+        $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
+        $formActionUrl = $isEditMode
+            ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
+            : route('addQuestion');
+        $formMethod = 'POST';
+        $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
+        $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
+    @endphp
+
+    <div class="max-w-5xl mx-auto justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
         <div class="flex items-center gap-4">
-                <div class="page-title-icon flex items-center justify-center">
-                    <i class="fa-solid fa-question"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-[var(--text-primary)]">Ask a Question</h1>
-                    <p class="text-[var(--text-secondary)]">Share your problem and get help from the community</p>
-                </div>
+            <div class="page-title-icon flex items-center justify-center">
+                <i class="fa-solid {{ $isEditMode ? 'fa-pen-to-square' : 'fa-question' }}"></i>
             </div>
-
-         <!-- Tips Section -->
-        <div class="tips-section p-6 my-8">
-            <div class="tips-title flex items-center gap-2 mb-4">
-                <i class="fa-solid fa-lightbulb"></i>
-                <span>Tips for a Great Question</span>
+            <div>
+                <h1 class="text-2xl font-bold text-[var(--text-primary)]">{{ $pageH1Title }}</h1>
+                <p class="text-[var(--text-secondary)]">
+                    @if ($isEditMode)
+                        Update the details of your question.
+                    @else
+                        Share your problem and get help from the community.
+                    @endif
+                </p>
             </div>
-            <ul class="tips-list">
-                <li class="flex items-start gap-2 mb-2">
-                    <i class="fa-solid fa-check-circle mt-1"></i>
-                    <span>Be specific and clear about your problem</span>
-                </li>
-                <li class="flex items-start gap-2 mb-2">
-                    <i class="fa-solid fa-check-circle mt-1"></i>
-                    <span>Include relevant code snippets or error messages</span>
-                </li>
-                <li class="flex items-start gap-2 mb-2">
-                    <i class="fa-solid fa-check-circle mt-1"></i>
-                    <span>Explain what you've already tried to solve the problem</span>
-                </li>
-                <li class="flex items-start gap-2 mb-2">
-                    <i class="fa-solid fa-check-circle mt-1"></i>
-                    <span>Select appropriate tags to reach the right audience</span>
-                </li>
-            </ul>
         </div>
 
-        <!-- Main Form Container -->
+        @if (!$isEditMode)
+            <!-- Tips Section (Show only for new questions) -->
+            <div class="tips-section p-6 my-8">
+                <div class="tips-title flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Tips for a Great Question</span>
+                </div>
+                <ul class="tips-list">
+                    <li class="flex items-start gap-2 mb-2"><i class="fa-solid fa-check-circle mt-1"></i><span>Be specific
+                            and clear</span></li>
+                    <li class="flex items-start gap-2 mb-2"><i class="fa-solid fa-check-circle mt-1"></i><span>Include
+                            relevant code</span></li>
+                    <li class="flex items-start gap-2 mb-2"><i class="fa-solid fa-check-circle mt-1"></i><span>Explain what
+                            you tried</span></li>
+                    <li class="flex items-start gap-2 mb-2"><i class="fa-solid fa-check-circle mt-1"></i><span>Select
+                            appropriate tags</span></li>
+                </ul>
+            </div>
+        @endif
+
         <form id="post-form" enctype="multipart/form-data">
+            @if ($isEditMode)
+                <input type="hidden" id="question_id_for_js" value="{{ $questionToEdit['id'] }}">
+            @endif
+
             <!-- Title Section -->
             <div class="p-6 mb-6">
                 <div class="flex items-center mb-4">
                     <i class="fa-solid fa-heading section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Question Title</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your question quickly</p>
-                <input type="text" id="title" class="input-field p-3" placeholder="What's your question about?" required>
+                <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your
+                    question quickly</p>
+                <input type="text" id="title" name="title" class="input-field p-3 text-black"
+                    placeholder="What's your question about?"
+                    value="{{ old('title', $isEditMode ? $questionToEdit['title'] ?? '' : '') }}" required>
             </div>
 
             <!-- Details Section -->
@@ -285,21 +303,28 @@
                     <i class="fa-solid fa-align-left section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Question Details</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details to help others understand your problem</p>
-                
-                <!-- Editor -->
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details</p>
                 <div id="editor" class="w-full">
                     <div class="toolbar flex items-center gap-4 p-3">
-                        <button type="button" id="upload-image-btn" class="image-upload-button flex items-center gap-2 py-2 px-4">
+                        <button type="button" id="upload-image-btn"
+                            class="image-upload-button flex items-center gap-2 py-2 px-4">
                             <i class="fa-solid fa-image"></i> Add Image
                         </button>
                     </div>
                     <div class="p-4 bg-[var(--bg-secondary)]">
-                        <textarea id="question" rows="8" class="block w-full px-0 text-[var(--text-primary)] bg-transparent border-0 focus:ring-0" placeholder="Describe your question in detail..." required></textarea>
-
-                        <!-- Image Preview Section -->
+                        <textarea id="question" name="question" rows="8"
+                            class="block w-full px-0 text-[var(--text-primary)] bg-transparent border-0 focus:ring-0"
+                            placeholder="Describe your question in detail..." required>{{ old('question', $isEditMode ? $questionToEdit['question'] ?? '' : '') }}</textarea>
                         <div id="image-preview" class="flex flex-wrap gap-4 mt-4 p-2">
-                            <!-- Images will be dynamically added here -->
+                            @if ($isEditMode && !empty($questionToEdit['image']))
+                                <div class="image-preview-item existing-image">
+                                    <img src="{{ asset('storage/' . $questionToEdit['image']) }}"
+                                        alt="Current question image" style="max-width: 100px; max-height: 100px;">
+                                    <button type="button" class="delete-existing-image-btn"
+                                        data-image-filename="{{ $questionToEdit['image'] }}">X</button>
+                                    {{-- <input type="hidden" name="existing_image_filename" value="{{ $questionToEdit['image'] }}"> --}}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -311,92 +336,78 @@
                     <i class="fa-solid fa-tags section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Tags</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to categorize your question and reach the right audience</p>
-                
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags</p>
                 <div class="flex flex-wrap gap-6 mb-6">
-                    <!-- Programming Languages Category -->
-                    <div class="flex-1 min-w-[200px]">
-                        <h3 class="category-title mb-3">Software Development</h3>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach ($data as $dat)
-                                @if (in_array($dat['name'], [
-                                    'Introduction to Programming', 'Software Engineering', 'Web Development', 'Mobile App Development',
-                                    'Game Development', 'Embedded Systems', 'Smart Devices and Sensors', 'Cloud Application Development',
-                                    'Cloud Computing', 'Cloud Storage and Virtualization', 'Distributed Systems', 'Operating Systems',
-                                    'Computer Networks', 'Advanced Networking', 'Digital Logic Design', 'Computer Graphics', 'Cloud Infrastructure'
-                                ]))
-                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                    
-                    <!-- Frameworks Category -->
-                    <div class="flex-1 min-w-[200px]">
-                        <h3 class="category-title mb-3">Data, AI & Analytics</h3>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach ($data as $dat)
-                                @if (in_array($dat['name'], [
-                                    'Data Structures and Algorithms', 'Database Systems', 'Advanced Database Systems', 'Data Analytics', 'Advanced Data Analytics',
-                                    'Data Science', 'Data Mining', 'Big Data', 'Machine Learning', 'Advanced Machine Learning',
-                                    'Artificial Intelligence', 'Advanced Artificial Intelligence', 'Artificial Neural Networks',
-                                    'Computer Vision', 'Natural Language Processing', 'Business Intelligence', 'Data Warehousing'
-                                ]))
-                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                    
-                    <!-- Course Subjects Category -->
-                    <div class="flex-1 min-w-[200px]">
-                        <h3 class="category-title mb-3">Security</h3>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach ($data as $dat)
-                                @if (in_array($dat['name'], [
-                                    'Cybersecurity', 'Ethical Hacking', 'Cryptography', 'Digital Forensics', 'Web Security', 'AI Ethics',
-                                    'Blockchain Technology', 'Quantum Computing', 'Virtual Reality', 'Smart Cities', 'Internet of Things (IoT)',
-                                    'Computational Biology', 'Robotics'
-                                ]))
-                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                    
-                    <!-- Others Category -->
-                    <div class="flex-1 min-w-[200px]">
-                        <h3 class="category-title mb-3">Others</h3>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach ($data as $dat)
-                                @if (!in_array($dat['name'], [
-                                    'Introduction to Programming', 'Software Engineering', 'Web Development', 'Mobile App Development',
-                                    'Game Development', 'Embedded Systems', 'Smart Devices and Sensors', 'Cloud Application Development',
-                                    'Cloud Computing', 'Cloud Storage and Virtualization', 'Distributed Systems', 'Operating Systems',
-                                    'Computer Networks', 'Advanced Networking', 'Digital Logic Design', 'Computer Graphics', 'Cloud Infrastructure',
+                    @php
+                        $selectedTagIdsOnLoad = [];
+                        if (
+                            $isEditMode &&
+                            isset($questionToEdit['group_question']) &&
+                            is_array($questionToEdit['group_question'])
+                        ) {
+                            foreach ($questionToEdit['group_question'] as $group) {
+                                if (isset($group['subject']) && isset($group['subject']['id'])) {
+                                    $selectedTagIdsOnLoad[] = $group['subject']['id'];
+                                }
+                            }
+                        }
+                    @endphp
 
-                                    'Data Structures and Algorithms', 'Database Systems', 'Advanced Database Systems', 'Data Analytics', 'Advanced Data Analytics',
-                                    'Data Science', 'Data Mining', 'Big Data', 'Machine Learning', 'Advanced Machine Learning',
-                                    'Artificial Intelligence', 'Advanced Artificial Intelligence', 'Artificial Neural Networks',
-                                    'Computer Vision', 'Natural Language Processing', 'Business Intelligence', 'Data Warehousing',
+                    @foreach (['Software Development', 'Data, AI & Analytics', 'Security', 'Others'] as $categoryName)
+                        <div class="flex-1 min-w-[200px]">
+                            <h3 class="category-title mb-3">{{ $categoryName }}</h3>
+                            <div class="flex flex-wrap gap-2">
+                                {{-- Loop through $allTags which is passed from controller --}}
+                                @if (isset($allTags) && is_array($allTags))
+                                    @foreach ($allTags as $tag)
+                                        @php
+                                            $isInCategory = false;
+                                            if (
+                                                $categoryName === 'Software Development' &&
+                                                in_array($tag['name'], ['Introduction to Programming' /* ... */])
+                                            ) {
+                                                $isInCategory = true;
+                                            } elseif (
+                                                $categoryName === 'Data, AI & Analytics' &&
+                                                in_array($tag['name'], ['Data Structures and Algorithms' /* ... */])
+                                            ) {
+                                                $isInCategory = true;
+                                            } elseif (
+                                                $categoryName === 'Security' &&
+                                                in_array($tag['name'], ['Cybersecurity' /* ... */])
+                                            ) {
+                                                $isInCategory = true;
+                                            } elseif (
+                                                $categoryName === 'Others' &&
+                                                !in_array($tag['name'], [
+                                                    /* all other named tags */
+                                                ])
+                                            ) {
+                                                $isInCategory = true;
+                                            }
+                                        @endphp
 
-                                    'Cybersecurity', 'Ethical Hacking', 'Cryptography', 'Digital Forensics', 'Web Security', 'AI Ethics',
-                                    'Blockchain Technology', 'Quantum Computing', 'Virtual Reality', 'Smart Cities', 'Internet of Things (IoT)',
-                                    'Computational Biology', 'Robotics'
-                                ]))
-
-                                    <a id="{{ $dat['name'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                        @if ($isInCategory)
+                                            <a href="#" id="tag-btn-{{ $tag['id'] }}"
+                                                data-tag-id="{{ $tag['id'] }}"
+                                                class="tag-button {{ in_array($tag['id'], $selectedTagIdsOnLoad) ? 'tab-active' : 'tab-inactive' }} py-2 px-4">
+                                                {{ $tag['name'] }}
+                                            </a>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <p class="text-xs text-red-500">Error: Tags not available.</p>
                                 @endif
-                            @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 
-            <!-- Submit Button Section -->
             <div class="text-center">
-                <button type="submit" id="submit-btn" class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
-                    <i class="fa-solid fa-paper-plane"></i> Publish Question
+                <button type="submit" id="submit-btn"
+                    class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
+                    <i class="fa-solid {{ $isEditMode ? 'fa-save' : 'fa-paper-plane' }}"></i> {{ $submitButtonText }}
                 </button>
             </div>
         </form>
@@ -405,159 +416,255 @@
 
 @section('script')
     <script>
-        let selectedTags = [];
+        const IS_EDIT_MODE = {{ isset($questionToEdit) && $questionToEdit !== null ? 'true' : 'false' }};
+        const QUESTION_TO_EDIT = @json($questionToEdit ?? null);
+        const ALL_TAGS_FROM_PHP = @json($allTags ?? []);
+        const CSRF_TOKEN = "{{ csrf_token() }}";
 
-        document.querySelectorAll('.tab-inactive').forEach((button) => {
-            button.addEventListener('click', function() {
-                const tagName = this.id;
+        const FORM_ACTION_URL = IS_EDIT_MODE ?
+            "{{ route('question.saveEdit', ['id' => $questionToEdit['id'] ?? 'ERROR_NO_ID_FOR_ROUTE']) }}" :
+            "{{ route('addQuestion') }}";
 
-                if (selectedTags.includes(tagName)) { // ga jadi pick tag
-                    selectedTags = selectedTags.filter(tag => tag !== tagName);
-                    this.className = 'tab-inactive py-2 px-4';
+        let selectedTagIds = [];
+        let imageFile = null;
 
-                } else { // pick tag
-                    selectedTags.push(tagName);
-                    this.className = 'tab-active py-2 px-4';
+        document.addEventListener('DOMContentLoaded', function() {
+            if (IS_EDIT_MODE && QUESTION_TO_EDIT) {
+                document.getElementById('title').value = QUESTION_TO_EDIT.title || '';
+                document.getElementById('question').value = QUESTION_TO_EDIT.question || '';
+
+                if (QUESTION_TO_EDIT.group_question && Array.isArray(QUESTION_TO_EDIT.group_question)) {
+                    QUESTION_TO_EDIT.group_question.forEach(group => {
+                        if (group.subject && group.subject.id) {
+                            const tagId = group.subject.id;
+                            if (!selectedTagIds.includes(tagId)) {
+                                selectedTagIds.push(tagId);
+                            }
+                            const tagButton = document.getElementById(`tag-btn-${tagId}`);
+                            if (tagButton) {
+                                tagButton.classList.remove('tab-inactive');
+                                tagButton.classList.add('tab-active');
+                            }
+                        }
+                    });
                 }
+            }
+
+            document.querySelectorAll('.tag-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tagId = this.dataset.tagId;
+
+                    if (selectedTagIds.includes(tagId)) {
+                        selectedTagIds = selectedTagIds.filter(id => id !== tagId);
+                        this.classList.remove('tab-active');
+                        this.classList.add('tab-inactive');
+                    } else {
+                        selectedTagIds.push(tagId);
+                        this.classList.remove('tab-inactive');
+                        this.classList.add('tab-active');
+                    }
+                });
             });
-        });
 
-        let imageFile = null; // Store the single image file
-
-        // Image upload and preview
-        document.getElementById("upload-image-btn").addEventListener("click", function() {
-            let fileInput = document.createElement("input");
-            fileInput.type = "file";
-            fileInput.accept = "image/*";
-            fileInput.addEventListener("change", function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        // Remove any existing preview
-                        const imagePreviewContainer = document.getElementById("image-preview");
-                        imagePreviewContainer.innerHTML = ""; // Clear previous image
-
-                        // Create a new image preview item
-                        const imagePreviewContainerNew = document.createElement("div");
-                        imagePreviewContainerNew.classList.add("image-preview-item");
-
-                        const image = document.createElement("img");
-                        image.src = e.target.result;
-                        imagePreviewContainerNew.appendChild(image);
-
-                        // Create a delete button for this image
-                        const deleteBtn = document.createElement("button");
-                        deleteBtn.textContent = "X";
-                        deleteBtn.classList.add("delete-btn");
-                        deleteBtn.addEventListener("click", function() {
-                            imagePreviewContainerNew.remove();
-                            imageFile = null; // Reset the imageFile variable
-                        });
-
-                        imagePreviewContainerNew.appendChild(deleteBtn);
-
-                        // Append the preview item to the preview container
-                        imagePreviewContainer.appendChild(imagePreviewContainerNew);
-
-                        // Store the file
+            document.getElementById("upload-image-btn").addEventListener("click", function() {
+                let fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.name = "image";
+                fileInput.accept = "image/*";
+                fileInput.onchange = event => {
+                    const file = event.target.files[0];
+                    if (file) {
                         imageFile = file;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-            fileInput.click(); // Trigger the file input click event
-        });
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imagePreviewContainer = document.getElementById("image-preview");
+                            const oldNewPreview = imagePreviewContainer.querySelector(
+                                '.new-image-preview-item');
+                            if (oldNewPreview) oldNewPreview.remove();
 
-        // Form submission
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("submit-btn").addEventListener("click", function(e) {
+                            const existingImageDiv = imagePreviewContainer.querySelector(
+                                '.existing-image');
+                            if (existingImageDiv) {
+                                existingImageDiv.style.display = 'none';
+                            }
+
+                            const newPreviewDiv = document.createElement("div");
+                            newPreviewDiv.className = "image-preview-item new-image-preview-item";
+                            const img = document.createElement("img");
+                            img.src = e.target.result;
+                            img.style.maxWidth = '100px';
+                            img.style.maxHeight = '100px';
+                            const deleteBtn = document.createElement("button");
+                            deleteBtn.type = "button";
+                            deleteBtn.textContent = "X";
+                            deleteBtn.className = "delete-btn";
+                            deleteBtn.onclick = () => {
+                                newPreviewDiv.remove();
+                                imageFile = null;
+                                if (existingImageDiv) {
+                                    existingImageDiv.style.display =
+                                    'flex';
+                                    const removeFlagInput = document.getElementById(
+                                        'remove_existing_image_input');
+                                    if (removeFlagInput) removeFlagInput.remove();
+                                }
+                            };
+                            newPreviewDiv.appendChild(img);
+                            newPreviewDiv.appendChild(deleteBtn);
+                            imagePreviewContainer.appendChild(newPreviewDiv);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
+                fileInput.click();
+            });
+
+            const deleteExistingImageBtn = document.querySelector('.delete-existing-image-btn');
+            if (deleteExistingImageBtn) {
+                deleteExistingImageBtn.addEventListener('click', function() {
+                    const existingImageDiv = this.closest('.existing-image');
+                    if (existingImageDiv) {
+                        existingImageDiv.remove();
+                    }
+                    if (!document.getElementById('remove_existing_image_input')) {
+                        const form = document.getElementById('post-form');
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'remove_existing_image';
+                        hiddenInput.value = '1';
+                        hiddenInput.id = 'remove_existing_image_input';
+                        form.appendChild(hiddenInput);
+                    }
+                    imageFile = null;
+                    const newImagePreview = document.querySelector('.new-image-preview-item');
+                    if (newImagePreview) newImagePreview.remove();
+                });
+            }
+
+            const form = document.getElementById('post-form');
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                const question = document.getElementById("question").value;
-                const title = document.getElementById("title").value;
+                const title = document.getElementById("title").value.trim();
+                const questionText = document.getElementById("question").value.trim();
 
-                // Validate input
-                if (question === '' && title === '') {
+                if (title === '') {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Question must be filled out!'
+                        text: 'Title must be filled out!'
+                    });
+                    return;
+                }
+                if (questionText === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Question details must be filled out!'
+                    });
+                    return;
+                }
+                if (selectedTagIds.length === 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Please select at least one tag!'
                     });
                     return;
                 }
 
-                //CEK APA SAJA TAGS yang ada
-                let tags = <?php echo json_encode($data); ?>;
-
-                selectedTags = selectedTags.map(tagName => {
-                    const matchingTag = tags.find(tag => tag.name === tagName);
-                    return matchingTag ? matchingTag.id :
-                        tagName;
-                });
-
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: 'Once submitted, you cannot undo this action!',
+                    text: `Once ${IS_EDIT_MODE ? 'updated' : 'submitted'}, this action might not be easily undone!`,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, Submit!',
+                    confirmButtonText: `Yes, ${IS_EDIT_MODE ? 'Update' : 'Submit'}!`,
                     cancelButtonText: 'No, Cancel'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         Swal.fire({
-                            title: "Submitting...",
-                            text: "Please wait while we submit your post.",
+                            title: IS_EDIT_MODE ? "Updating..." : "Submitting...",
+                            text: "Please wait...",
                             allowOutsideClick: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
+                            didOpen: () => Swal.showLoading()
                         });
 
                         let formData = new FormData();
                         formData.append("title", title);
-                        formData.append("question", question);
+                        formData.append("question", questionText);
 
-                        selectedTags.forEach(tagId => {
+                        selectedTagIds.forEach(tagId => {
                             formData.append("subject_id[]", tagId);
                         });
 
                         if (imageFile) {
                             formData.append("image", imageFile);
+                        } else if (IS_EDIT_MODE && document.getElementById(
+                                'remove_existing_image_input')) {
+                            formData.append("remove_existing_image", "1");
                         }
-                        fetch("{{ route('addQuestion') }}", {
+                        const headers = {
+                            "X-CSRF-TOKEN": CSRF_TOKEN,
+                            "Accept": "application/json",
+                        };
+
+                        fetch(FORM_ACTION_URL, {
                                 method: "POST",
-                                headers: {
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                },
+                                headers: headers,
                                 body: formData
                             })
-                            .then(response => response.json())
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(errData => {
+                                        throw {
+                                            status: response.status,
+                                            data: errData
+                                        };
+                                    });
+                                }
+                                return response.json();
+                            })
                             .then(res => {
                                 Swal.close();
-
-                                if (res.success) {
+                                if (res.success || (res.data && res.data.id)) {
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Success!',
-                                        text: 'Your post has been successfully submitted!'
+                                        text: res.message ||
+                                            `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
                                     }).then(() => {
-                                        window.location.href = "{{ route('askPage') }}";
+                                        if (res.data && res.data.id) {
+                                            window.location.href =
+                                            `/ask/${res.data.id}`;
+                                        } else {
+                                            window.location.href =
+                                                "{{ route('askPage') }}";
+                                        }
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error!',
-                                        text: res.message
+                                        text: res.message ||
+                                            'An unexpected error occurred from the server.'
                                     });
                                 }
                             })
                             .catch(err => {
                                 console.error('Fetch Error:', err);
+                                Swal.close();
+                                let errorMessage =
+                                'There was an error processing your request.';
+                                if (err.data && err.data.message) {
+                                    errorMessage = err.data.message;
+                                } else if (err.message) {
+                                    errorMessage = err.message;
+                                }
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Error',
-                                    text: 'There was an error while submitting your post.'
+                                    title: 'Submission Error',
+                                    text: errorMessage
                                 });
                             });
                     }

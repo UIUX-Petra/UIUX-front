@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
 
 class QuestionController extends Controller
 {
@@ -98,36 +99,35 @@ class QuestionController extends Controller
     public function getAllQuestionsByPopularity(Request $request)
     {
         $api_base_url = env('API_URL');
-        // Pastikan ini adalah endpoint yang benar yang mengarah ke method getQuestionPaginated di API Anda
         $api_url = $api_base_url . '/questions-paginated';
 
         $page = $request->input('page', 1);
         $per_page_from_request = $request->input('per_page', 10);
-
-        // Ambil parameter sorting dan filtering dari request frontend
         $sortBy = $request->input('sort_by', 'latest');
         $filterTag = $request->input('filter_tag', null);
+        $searchTerm = $request->input('search_term', null);
 
-        // Siapkan query parameter untuk dikirim ke API
         $queryParams = [
             'page' => $page,
             'per_page' => $per_page_from_request,
-            'email' => session('email'),
-            'sort_by' => $sortBy,     // Teruskan parameter sort_by ke API
-            'filter_tag' => $filterTag, // Teruskan parameter filter_tag ke API
+            'email' => session('email'), // Pastikan session 'email' ada dan valid
+            'sort_by' => $sortBy,
         ];
 
-        if (empty($queryParams['filter_tag'])) { // empty() akan menangani null, "", 0, "0", false
-            unset($queryParams['filter_tag']);
+        if (!empty($filterTag)) {
+            $queryParams['filter_tag'] = $filterTag;
+        }
+        if (!empty($searchTerm)) {
+            $queryParams['search_term'] = $searchTerm;
         }
 
-        Log::info("Requesting API: {$api_url} with params: " . json_encode($queryParams)); // Logging untuk debug
+        Log::info("QuestionController: Requesting API: {$api_url} with params: " . json_encode($queryParams));
 
-        $response = Http::withToken(session('token'))->get($api_url, $queryParams);
+        $response = Http::withToken(session('token'))->get($api_url, $queryParams); // Pastikan session 'token' ada
 
         if ($response->failed()) {
-            Log::error("API request to {$api_url} with params " . json_encode($queryParams) . " failed: " . $response->status() . " - " . $response->body());
-            return $this->emptyPaginator($request, $per_page_from_request, $page);
+            Log::error("QuestionController: API request failed: {$response->status()} - {$response->body()}", $queryParams);
+            return $this->emptyPaginator($request, $per_page_from_request, $page, $queryParams);
         }
 
         $apiResponseData = $response->json();
@@ -140,46 +140,30 @@ class QuestionController extends Controller
             !isset($apiResponseData['data']['per_page']) ||
             !isset($apiResponseData['data']['current_page'])
         ) {
-            Log::error("API request to {$api_url} did not return a successful and valid paginated structure: " . $response->body());
-            return $this->emptyPaginator($request, $per_page_from_request, $page);
+            Log::error("QuestionController: Invalid API response structure: " . $response->body(), $queryParams);
+            return $this->emptyPaginator($request, $per_page_from_request, $page, $queryParams);
         }
 
-        $paginatedApiResponse = $apiResponseData['data'];
-        $items = $paginatedApiResponse['data']; // Data ini sudah di-filter dan di-sort oleh API
-        $total = $paginatedApiResponse['total']; // Total ini sekarang akurat dari API
-        $perPage = $paginatedApiResponse['per_page'];
-        $currentPage = $paginatedApiResponse['current_page'];
+        $paginatedData = $apiResponseData['data'];
+        $items = $paginatedData['data'];
+        $total = (int) $paginatedData['total'];
+        $perPage = (int) $paginatedData['per_page'];
+        $currentPage = (int) $paginatedData['current_page'];
 
-        // Tidak perlu lagi sorting atau filtering $items di sini
-
-        $paginator = new LengthAwarePaginator(
+        return new LengthAwarePaginator(
             $items,
             $total,
             $perPage,
             $currentPage,
-            [
-                'path' => $request->url(), // URL saat ini (tanpa query string)
-                'query' => $request->query(), // Semua parameter query saat ini untuk pagination links
-            ]
+            ['path' => $request->url(), 'query' => $request->query()]
         );
-
-        // Jika Anda merender view dari controller ini:
-        // return view('questions.index', ['questions' => $paginator]);
-        // Untuk file blade `page question` Anda:
-        // Anda perlu meneruskan $questions ke view.
-        // Jika fungsi ini dipanggil dari route yang merender blade:
-        // return view('nama_view_anda', ['questions' => $paginator]);
-        return $paginator; // Jika ini adalah service atau dipanggil oleh controller lain
     }
 
-    /**
-     * Helper function to return an empty paginator.
-     */
-    private function emptyPaginator(Request $request, int $perPage, int $currentPage)
+    private function emptyPaginator(Request $request, int $perPage, int $currentPage, array $query = [])
     {
         return new LengthAwarePaginator([], 0, $perPage, $currentPage, [
             'path' => $request->url(),
-            'query' => $request->query(),
+            'query' => $query,
         ]);
     }
 
@@ -205,13 +189,13 @@ class QuestionController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string',
             'question' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',  // 5042 KB = 5 MB
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',
         ]);
 
         // Get question data
         $title = $request->input('title');
         $question = $request->input('question');
-        $image = $request->file('image');  // Expecting a single image file
+        $image = $request->file('image');
 
         $api_url = env('API_URL') . '/questions';
 
@@ -228,7 +212,6 @@ class QuestionController extends Controller
             $extension = $image->getClientOriginalExtension();
             $customFileName = "q_" . session('email') . "_" . $timestamp . "." . $extension;
 
-            // Store the image in the public storage folder
             $path = $image->storeAs("uploads/questions/", $customFileName, 'public');
             $data['image'] = $path;
 
@@ -255,6 +238,72 @@ class QuestionController extends Controller
         }
     }
 
+    public function saveEditedQuestion(Request $request, $questionId)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'question' => 'required|string',
+            'subject_id' => 'sometimes|array',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5042',
+            'remove_existing_image' => 'nullable|in:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Invalid form data.', 'errors' => $validator->errors()], 422);
+        }
+
+        $apiPayload = [
+            'title' => $request->input('title'),
+            'question' => $request->input('question'),
+        ];
+
+        if ($request->has('subject_id')) {
+            $apiPayload['subject_id'] = $request->input('subject_id');
+        }
+
+        if ($request->hasFile('image')) {
+            $imageFile = $request->file('image');
+            $timestamp = date('Y-m-d_H-i-s');
+            $extension = $imageFile->getClientOriginalExtension();
+            $userIdentifier = str_replace(['@', '.'], ['_', '_'], session('email'));
+            $customFileName = "q_" . $userIdentifier . "_" . $timestamp . "." . $extension;
+
+            $path = $imageFile->storeAs("uploads/questions", $customFileName, 'public');
+            $apiPayload['image'] = $path;
+            Log::info("WEB saveEditedQuestion: New image stored at final location: " . $path);
+        }
+        if ($request->has('remove_existing_image') && $request->input('remove_existing_image') == '1') {
+            $apiPayload['remove_existing_image_flag'] = true;
+            Log::info("WEB saveEditedQuestion: Flag set to remove existing image.");
+        }
+
+        $apiUrlForUpdate = env('API_URL') . "/questions/{$questionId}/updatePartial";
+
+        Log::info("WEB saveEditedQuestion: Sending data to API: ", $apiPayload);
+
+        try {
+            $response = Http::withToken(session('token'))
+                ->post($apiUrlForUpdate, $apiPayload);
+
+            Log::info("WEB saveEditedQuestion: API Update Response Status: " . $response->status());
+            Log::info("WEB saveEditedQuestion: API Update Response Body: " . $response->body());
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Question update request processed!',
+                    'data' => $responseData['data'] ?? null
+                ]);
+            } else {
+                $errorMessage = $response->json()['message'] ?? 'Failed to process question update via API.';
+                return response()->json(['success' => false, 'message' => $errorMessage, 'api_errors' => $response->json()['errors'] ?? null], $response->status());
+            }
+        } catch (\Exception $e) {
+            Log::error("WEB saveEditedQuestion: Error calling update API: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error during API request from web handler.'], 500);
+        }
+    }
     public function submitQuestionComment(Request $request, $questionId)
     {
         $request->validate([
@@ -290,7 +339,7 @@ class QuestionController extends Controller
                 'comment' => $comment->comment,
                 'timestamp' => $comment->created_at,
             ];
-            return response()->json(['success' => true, 'message' => 'Comment is submitted successfully!', 'comment'=>$formattedComment]);
+            return response()->json(['success' => true, 'message' => 'Comment is submitted successfully!', 'comment' => $formattedComment]);
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
             return response()->json(['success' => false, 'message' => $errorMessage]);
