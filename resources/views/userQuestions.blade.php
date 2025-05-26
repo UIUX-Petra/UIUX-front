@@ -61,9 +61,15 @@
         @endif
 
         <div class="mt-10 text-center">
+            @if(session('email') != $user['email'])
              <a href="{{ route('viewUser', ['email' => $user['email']]) }}">
              Back
             </a>
+            @else
+            <a href="{{ route('seeProfile') }}">
+             Back
+            </a>
+            @endif
         </div>
     </div>
 @endsection
