@@ -54,7 +54,8 @@ class AuthController extends Controller
             session([
                 'email' => $storedUser['email'],
                 'name' => $storedUser['name'],
-                'token' => $storedUser['token']
+                'token' => $storedUser['token'],
+                'user_id' => $storedUser['id'],
             ]);
 
             // Dump and die to inspect session data
@@ -155,6 +156,7 @@ class AuthController extends Controller
             'email' => $storedUser['email'],
             'name' => $storedUser['name'],
             'token' => $storedUser['token'],
+            'user_id' => $storedUser['id'],
             'reputation' => $storedUser['reputation']
         ]);
         $url = session('url');
