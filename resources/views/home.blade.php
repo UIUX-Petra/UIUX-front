@@ -522,25 +522,17 @@
             const questionsContainer = document.getElementById('questions-container');
             if (questionsContainer) {
                 questionsContainer.addEventListener('click', function(event) {
-                    console.log("----- Klik Terdeteksi -----");
-                    console.log("Target Asli (event.target):", event.target);
                     let target = event.target;
-                    console.log("Target Setelah Diproses (seharusnya <a>):", target);
-                    if (target) console.log("ClassList Target Setelah Diproses:", target
-                        .classList);
-
                     const url = target ? target.getAttribute('href') :
                         null;
                     console.log("URL yang Ditemukan:", url);
 
                     if (url && url !== '#') {
-                        console.log("Kondisi URL terpenuhi. Mencegah default untuk URL:", url);
                         event.preventDefault();
                         loadQuestions(url);
                     } else {
                         console.log("Kondisi URL TIDAK terpenuhi. Navigasi default akan terjadi.");
                     }
-                    console.log("----- Akhir Deteksi Klik -----");
                 });
             }
         });
@@ -633,7 +625,6 @@
                 })
                 .then(data => {
                     console.log("Data received from AJAX:", data);
-
 
                     if (data.error) {
                         throw new Error(data.message || 'An error occurred while fetching data from the server.');
@@ -824,6 +815,9 @@
             let loadingToast = Toastify({
                 text: "Unsaving...",
                 duration: -1,
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -842,6 +836,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -861,6 +858,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }
@@ -876,7 +876,9 @@
             let loadingToast = Toastify({
                 text: "Saving...",
                 duration: -1,
-                /* ...sisanya... */
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -895,6 +897,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -917,6 +922,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }
