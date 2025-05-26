@@ -443,7 +443,7 @@
             </div>
 
             {{-- Wrapper untuk pagination (diisi oleh AJAX) --}}
-            <div class="mt-8 pagination-links">
+            <div id="pagination-container" class="mt-8 pagination-links">
                 @if ($questions->hasPages())
                     {{ $questions->links() }}
                 @endif
@@ -519,7 +519,7 @@
                 attributes: true
             });
 
-            const questionsContainer = document.getElementById('questions-container');
+            const questionsContainer = document.getElementById('pagination-container');
             if (questionsContainer) {
                 questionsContainer.addEventListener('click', function(event) {
                     let target = event.target;
@@ -598,8 +598,6 @@
         }
 
         function loadQuestions(url) {
-            console.log("loadQuestions called for URL:", url);
-
             showSkeletonPlaceholder();
 
             fetch(url, {
@@ -729,9 +727,8 @@
                 "{{ asset('assets/p2p logo - white.svg') }}";
         }
 
-        // Pastikan theme toggle di mobile juga memanggil fungsi yang benar
         const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        if (mobileThemeToggle && typeof toggleTheme === 'function') { // Asumsi `toggleTheme` adalah fungsi global Anda
+        if (mobileThemeToggle && typeof toggleTheme === 'function') {
             mobileThemeToggle.addEventListener('click', toggleTheme);
         }
 
@@ -778,16 +775,14 @@
             const saveButtons = document.querySelectorAll('.save-question-btn');
             saveButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
-                newButton.removeAttribute('onclick'); // <--- PENTING: Hapus atribut onclick dari kloningan
+                newButton.removeAttribute('onclick');
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // Tentukan aksi berdasarkan kondisi tombol saat ini (misalnya, kelas ikonnya)
                     const icon = this.querySelector('i');
-                    // Periksa apakah ikon saat ini adalah ikon "tersimpan" (solid bookmark)
                     if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
                             'fa-bookmark')) {
                         unsaveQuestion(this);
