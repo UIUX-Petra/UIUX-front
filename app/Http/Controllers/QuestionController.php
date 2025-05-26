@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
 
 class QuestionController extends Controller
 {
@@ -188,13 +189,13 @@ class QuestionController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string',
             'question' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',  // 5042 KB = 5 MB
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',
         ]);
 
         // Get question data
         $title = $request->input('title');
         $question = $request->input('question');
-        $image = $request->file('image');  // Expecting a single image file
+        $image = $request->file('image');
 
         $api_url = env('API_URL') . '/questions';
 
@@ -211,7 +212,6 @@ class QuestionController extends Controller
             $extension = $image->getClientOriginalExtension();
             $customFileName = "q_" . session('email') . "_" . $timestamp . "." . $extension;
 
-            // Store the image in the public storage folder
             $path = $image->storeAs("uploads/questions/", $customFileName, 'public');
             $data['image'] = $path;
 
@@ -238,6 +238,72 @@ class QuestionController extends Controller
         }
     }
 
+    public function saveEditedQuestion(Request $request, $questionId)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'question' => 'required|string',
+            'subject_id' => 'sometimes|array',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5042',
+            'remove_existing_image' => 'nullable|in:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Invalid form data.', 'errors' => $validator->errors()], 422);
+        }
+
+        $apiPayload = [
+            'title' => $request->input('title'),
+            'question' => $request->input('question'),
+        ];
+
+        if ($request->has('subject_id')) {
+            $apiPayload['subject_id'] = $request->input('subject_id');
+        }
+
+        if ($request->hasFile('image')) {
+            $imageFile = $request->file('image');
+            $timestamp = date('Y-m-d_H-i-s');
+            $extension = $imageFile->getClientOriginalExtension();
+            $userIdentifier = str_replace(['@', '.'], ['_', '_'], session('email'));
+            $customFileName = "q_" . $userIdentifier . "_" . $timestamp . "." . $extension;
+
+            $path = $imageFile->storeAs("uploads/questions", $customFileName, 'public');
+            $apiPayload['image'] = $path;
+            Log::info("WEB saveEditedQuestion: New image stored at final location: " . $path);
+        }
+        if ($request->has('remove_existing_image') && $request->input('remove_existing_image') == '1') {
+            $apiPayload['remove_existing_image_flag'] = true;
+            Log::info("WEB saveEditedQuestion: Flag set to remove existing image.");
+        }
+
+        $apiUrlForUpdate = env('API_URL') . "/questions/{$questionId}/updatePartial";
+
+        Log::info("WEB saveEditedQuestion: Sending data to API: ", $apiPayload);
+
+        try {
+            $response = Http::withToken(session('token'))
+                ->post($apiUrlForUpdate, $apiPayload);
+
+            Log::info("WEB saveEditedQuestion: API Update Response Status: " . $response->status());
+            Log::info("WEB saveEditedQuestion: API Update Response Body: " . $response->body());
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Question update request processed!',
+                    'data' => $responseData['data'] ?? null
+                ]);
+            } else {
+                $errorMessage = $response->json()['message'] ?? 'Failed to process question update via API.';
+                return response()->json(['success' => false, 'message' => $errorMessage, 'api_errors' => $response->json()['errors'] ?? null], $response->status());
+            }
+        } catch (\Exception $e) {
+            Log::error("WEB saveEditedQuestion: Error calling update API: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error during API request from web handler.'], 500);
+        }
+    }
     public function submitQuestionComment(Request $request, $questionId)
     {
         $request->validate([
@@ -273,7 +339,7 @@ class QuestionController extends Controller
                 'comment' => $comment->comment,
                 'timestamp' => $comment->created_at,
             ];
-            return response()->json(['success' => true, 'message' => 'Comment is submitted successfully!', 'comment'=>$formattedComment]);
+            return response()->json(['success' => true, 'message' => 'Comment is submitted successfully!', 'comment' => $formattedComment]);
         } else {
             $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
             return response()->json(['success' => false, 'message' => $errorMessage]);
