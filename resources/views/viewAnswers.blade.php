@@ -75,7 +75,9 @@
 @endsection
 @section('content')
     @include('partials.nav')
-
+    @php
+        $isQuestionOwner = $question['user']['email'] === session('email');
+    @endphp
     <!-- Main content container -->
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Question Title Section - Moved outside the card to make it more pronounced -->
@@ -293,6 +295,9 @@
             @if ($question['answer'])
                 <div id="answerList" class="space-y-6">
                     @foreach ($question['answer'] as $ans)
+                        @php
+                            $isVerified = (int) $ans['verified'] === 1;
+                        @endphp
                         <div
                             class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
                             <div class="interaction-section flex flex-col items-center mr-6">
@@ -309,10 +314,6 @@
                                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                                 </button>
 
-                                @php
-                                    $isQuestionOwner = $question['user']['email'] === session('email');
-                                    $isVerified = (int) $ans['verified'] === 1;
-                                @endphp
                                 <div id="answer-verify-block-{{ $ans['id'] }}"
                                     class="mt-4 flex flex-col items-center">
                                     @if ($isQuestionOwner)
@@ -577,11 +578,11 @@
                                  class="max-w-lg max-h-96 object-contain rounded-lg border">
                          </div>` : '';
 
-                                const bestAnswerBadge = isFirstAnswer ?
-                                    `<div class="mt-4 flex flex-col items-center">
-                            <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
-                            <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
-                         </div>` : '';
+                        //         const bestAnswerBadge = isFirstAnswer ?
+                        //             `<div class="mt-4 flex flex-col items-center">
+                        //     <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
+                        //     <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
+                        //  </div>` : '';
 
                                 const htmlContent = `
                         <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start ${isFirstAnswer ? 'verified-answer' : ''}">
