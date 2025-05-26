@@ -179,17 +179,18 @@
                     </div>
 
                     <!-- Actions -->
-                    <button id="followBtn" onclick="follow(`{{ $userViewed['email'] }}`)"
-                        class="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5f83c8] transition">
-                        @if ($userRelation == 0)
-                            Follow
-                        @elseif($userRelation == 1)
-                            Following
-                        @else
-                            Follow Back
-                        @endif
-                    </button>
-
+                    @if (!$isOwnProfile)
+                        <button id="followBtn" onclick="follow(`{{ $userViewed['email'] }}`)"
+                            class="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5f83c8] transition">
+                            @if ($userRelation == 0)
+                                Follow
+                            @elseif($userRelation == 1 || $userRelation == 3)
+                                Following
+                            @elseif($userRelation == 2)
+                                Follow Back
+                            @endif
+                        </button>
+                    @endif
                 </div>
             </div>
 
@@ -443,6 +444,10 @@
         });
 
         function follow(email) {
+            const btn = document.getElementById('followBtn');
+            let temp = btn.textContent;
+
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`
             fetch("{{ route('nembakFollow') }}", {
                 method: 'POST',
                 headers: {
@@ -454,16 +459,16 @@
                 })
             }).then(response => response.json()).then(res => {
                 if (res.success) {
-                    const btn = document.getElementById('followBtn');
                     if (res.data.userRelation == 0) {
                         btn.innerHTML = `Follow`;
-                    } else if (res.data.userRelation == 1) {
+                    } else if (res.data.userRelation == 1 || res.data.userRelation == 3) {
                         btn.innerHTML = `Following`;
-                    } else {
+                    } else if(res.data.userRelation == 2){
                         btn.innerHTML = `Follow Back`;
                     }
                     document.getElementById('followers_count').textContent = res.data.countFollowers;
                 } else {
+                    btn.innerHTML = temp;
                     Toastify({
                         text: "Something went wrong",
                         duration: 3000,

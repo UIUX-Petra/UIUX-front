@@ -65,6 +65,9 @@ class MainController extends Controller
     $data['title'] = 'PROFILE | ' . $userViewed['user']['username'];
     $data['userViewed'] = $userViewed['user'];
 
+    $emailSession = session('email');
+    $data['isOwnProfile'] = $email === $emailSession ? true : false;
+
     $data['userRelation'] = 0; // tak ada relasi (asing bjir)
     foreach ($userViewed['user']['followers'] as $follower) {
       if ($follower['id'] == $currUser['id']) {

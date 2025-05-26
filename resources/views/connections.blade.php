@@ -36,7 +36,7 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(56,163,165,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(56, 163, 165, 0.1) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -56,8 +56,13 @@
         }
 
         @keyframes avatarGlow {
-            0% { opacity: 0.5; }
-            100% { opacity: 0.8; }
+            0% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 0.8;
+            }
         }
 
         /* Tab System */
@@ -119,6 +124,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -175,7 +181,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transform: translateX(-100%);
             transition: transform 0.6s;
         }
@@ -309,16 +315,16 @@
             .connections-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .profile-header-card {
                 padding: 20px;
             }
-            
+
             .tab-navigation {
                 flex-direction: column;
                 gap: 8px;
             }
-            
+
             .connection-stats {
                 flex-wrap: wrap;
                 gap: 12px;
@@ -327,8 +333,13 @@
 
         /* Loading States */
         @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
         }
 
         .skeleton {
@@ -349,7 +360,7 @@
             right: 10%;
             width: 100px;
             height: 100px;
-            background: radial-gradient(circle, rgba(56,163,165,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(56, 163, 165, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             animation: float 6s ease-in-out infinite;
         }
@@ -359,14 +370,21 @@
             left: 5%;
             width: 150px;
             height: 150px;
-            background: radial-gradient(circle, rgba(128,237,153,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(128, 237, 153, 0.08) 0%, transparent 70%);
             border-radius: 50%;
             animation: float 8s ease-in-out infinite reverse;
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
         }
     </style>
 @endsection
@@ -388,13 +406,13 @@
                         src="{{ $profileUser['image'] ? asset('storage/' . $profileUser['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($profileUser['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                         alt="{{ $profileUser['username'] ?? 'User' }}'s avatar">
                 </div>
-                
+
                 <div class="flex-1 text-center lg:text-left relative z-10">
                     <h1 class="text-3xl lg:text-4xl font-bold text-[var(--text-primary)] mb-2">
                         {{ $profileUser['username'] ?? 'User Profile' }}
                     </h1>
                     <p class="text-[var(--text-secondary)] text-lg mb-2">{{ $profileUser['email'] ?? '' }}</p>
-                    
+
                     @if ($profileUser['biodata'])
                         <p class="text-[var(--text-muted)] mb-4 max-w-2xl">{{ $profileUser['biodata'] }}</p>
                     @endif
@@ -453,14 +471,14 @@
 
         {{-- Navigasi Tab --}}
         <div class="tab-navigation flex mb-8">
-            <button class="tab-button {{ $activeTab === 'followers' ? 'active' : '' }}"
-                data-tab-target="#followersContent" data-tab-name="followers">
+            <button class="tab-button {{ $activeTab === 'followers' ? 'active' : '' }}" data-tab-target="#followersContent"
+                data-tab-name="followers">
                 <i class="fas fa-users mr-2"></i>
                 Followers
                 <span class="ml-2 px-2 py-1 bg-black/10 rounded-full text-xs">{{ $followersList->count() }}</span>
             </button>
-            <button class="tab-button {{ $activeTab === 'following' ? 'active' : '' }}"
-                data-tab-target="#followingContent" data-tab-name="following">
+            <button class="tab-button {{ $activeTab === 'following' ? 'active' : '' }}" data-tab-target="#followingContent"
+                data-tab-name="following">
                 <i class="fas fa-user-friends mr-2"></i>
                 Following
                 <span class="ml-2 px-2 py-1 bg-black/10 rounded-full text-xs">{{ $followingList->count() }}</span>
@@ -475,7 +493,8 @@
                     <h2 class="text-2xl font-bold text-[var(--text-primary)]">
                         {{ $profileUser['username'] ?? 'This user' }}'s Followers
                     </h2>
-                    <p class="text-[var(--text-secondary)] mt-2">People who follow {{ $profileUser['username'] ?? 'this user' }}</p>
+                    <p class="text-[var(--text-secondary)] mt-2">People who follow
+                        {{ $profileUser['username'] ?? 'this user' }}</p>
                 </div>
 
                 @if ($followersList->isNotEmpty())
@@ -495,7 +514,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-3">No Followers Yet</h3>
                         <p class="text-[var(--text-muted)] max-w-md mx-auto">
-                            {{ $profileUser['username'] ?? 'This user' }} doesn't have any followers yet. 
+                            {{ $profileUser['username'] ?? 'This user' }} doesn't have any followers yet.
                             Be the first to follow and connect!
                         </p>
                     </div>
@@ -508,7 +527,8 @@
                     <h2 class="text-2xl font-bold text-[var(--text-primary)]">
                         {{ $profileUser['username'] ?? 'This user' }} is Following
                     </h2>
-                    <p class="text-[var(--text-secondary)] mt-2">People that {{ $profileUser['username'] ?? 'this user' }} follows</p>
+                    <p class="text-[var(--text-secondary)] mt-2">People that {{ $profileUser['username'] ?? 'this user' }}
+                        follows</p>
                 </div>
 
                 @if ($followingList->isNotEmpty())
@@ -528,7 +548,7 @@
                         </div>
                         <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-3">Not Following Anyone</h3>
                         <p class="text-[var(--text-muted)] max-w-md mx-auto">
-                            {{ $profileUser['username'] ?? 'This user' }} isn't following anyone yet. 
+                            {{ $profileUser['username'] ?? 'This user' }} isn't following anyone yet.
                             Discover and connect with other users to build your network!
                         </p>
                     </div>
@@ -610,7 +630,8 @@
                     tabToActivate = currentHash;
                 }
 
-                const targetTabElement = document.querySelector(`.tab-button[data-tab-name="${tabToActivate}"]`);
+                const targetTabElement = document.querySelector(
+                    `.tab-button[data-tab-name="${tabToActivate}"]`);
                 if (targetTabElement) {
                     updateURLAndActivateTab(tabToActivate);
                 } else {
@@ -628,11 +649,11 @@
                 actionButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
 
                 try {
-                    const response = await fetch("{{ route('user.toggleFollow') }}", {
+                    const response = await fetch("{{ route('nembakFollow') }}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
                         },
                         body: JSON.stringify({
                             email: targetUserEmail
@@ -641,30 +662,245 @@
 
                     const data = await response.json();
 
-                    if (data.ok && data.data) {
-                        const newStatus = data.data.status;
-                        const isMutual = data.data.is_mutual;
+                    console.log(data);
+
+                    if (data.success && data.data) {
+                        const newStatus = data.data.userRelation == 1 || data.data.userRelation == 3 ?
+                            'following' : (data.data.userRelation == 2 ? 'follows_you' : 'follow');
+
+                        const isMutual = data.data.userRelation == 3 ? true : false;
+
                         let newButtonText = '<i class="fas fa-user-plus mr-2"></i>Follow';
                         const baseClasses = 'follow-btn';
                         const actionClass = actionButton.classList.contains('action-follow-profile') ?
-                            'action-follow-profile' : (actionButton.classList.contains('action-follow-list') ? 'action-follow-list' : '');
+                            'action-follow-profile' : (actionButton.classList.contains(
+                                'action-follow-list') ? 'action-follow-list' : '');
                         let statusClass = 'btn-follow';
 
-                        if (newStatus === 'following') {
+                        const emailUrl = window.location.pathname.split('/')[
+                            2]; // atau pakai data.data.targetEmail
+                        const dataUserEmail = actionButton.getAttribute('data-user-email'); //target email
+                        const loggedInemail = @json($loggedInUser['email'] ?? '');
+                        const loggedInUsername = @json($loggedInUser['username'] ?? '');
+
+                        let connectionsGrid = document.querySelector('.connections-grid');
+                        const emptyState = document.querySelector('.empty-state');
+                        const userListItem = document.querySelector('.user-list-item');
+
+                        if (loggedInemail === emailUrl) { //own Profile ubah following saja
+                            let followingsCountOnNavTab = document.querySelectorAll(
+                                '.tab-navigation .tab-button')[1].querySelector('span');
+                            let followingsCountOnStat = document.querySelectorAll(
+                                '.connection-stats .stat-item')[1].querySelector('span');
+
+                            followingsCountOnNavTab.textContent = data.data.myFollow;
+                            followingsCountOnStat.textContent = data.data.myFollow;
+
+                            let followingList = document.querySelector('#followingContent');
+                            let followingConnections = followingList.querySelector('.connections-grid');
+                            let followingEmpty = followingList.querySelector('.empty-state');
+
+                            if (newStatus === 'follow' || newStatus === 'follows_you') {
+                                newButtonText = 'Follow';
+                                statusClass = 'text-xs sm:text-sm btn-follow';
+                            } else if (newStatus === 'unfollow') {
+                                newButtonText = 'Unfollow';
+                                statusClass = 'text-xs sm:text-sm btn-unfollow';
+                            } else if (newStatus === 'followBack') {
+                                newButtonText = 'Follow Back';
+                                statusClass = 'text-xs sm:text-sm btn-follow-back';
+                            }
+
+                            // Handle adding user to following list when following someone new
+                            if (newStatus === 'following') {
+                                // Create connections grid if it doesn't exist (from empty state)
+                                if (followingEmpty && !followingConnections) {
+                                    followingEmpty.remove();
+
+                                    followContainer = document.createElement('div');
+                                    followContainer.className = 'connections-grid';
+
+                                    followingList.appendChild(followContainer);
+                                    followingConnections = followContainer;
+                                }
+
+                                // Add user to following list if connections grid exists and user not already there
+                                if (followingConnections) {
+                                    const existingUser = Array.from(followingConnections.querySelectorAll(
+                                            '.user-list-item'))
+                                        .find(item => {
+                                            const userEmailElement = item.querySelector('p');
+                                            return userEmailElement && userEmailElement.textContent
+                                                .toLowerCase().includes(targetUserEmail.toLowerCase());
+                                        });
+
+                                    if (!existingUser) {
+                                        const followingHTML = `
+<div class="user-list-item p-3 sm:p-4 rounded-lg flex items-center justify-between shadow">
+    <div class="flex items-center">
+        <a href="http://localhost:8001/viewUser/${data.data.targetEmail}">
+            <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full mr-3 sm:mr-4 object-cover" src="https://ui-avatars.com/api/?name=${data.data.targetUsername}&amp;background=random&amp;color=fff&amp;size=64" alt="${data.data.targetUsername}'s avatar">
+        </a>
+        <div>
+            <a href="http://localhost:8001/viewUser/${data.data.targetEmail}" class="font-semibold text-[var(--text-primary-dark)] hover:underline text-sm sm:text-base">
+                ${data.data.targetUsername}
+            </a>
+            <p class="text-xs sm:text-sm text-[var(--text-muted-dark)]">${data.data.targetEmail}</p>
+        </div>
+    </div>
+
+    <div class="ml-auto">
+        <button class="follow-btn action-follow-list" data-user-email="${data.data.targetEmail}">
+            Unfollow
+        </button>
+    </div>
+</div>
+                `;
+                                        followingConnections.insertAdjacentHTML('beforeend', followingHTML);
+                                        const newButton = followingConnections.querySelector(
+                                            `.follow-btn[data-user-email="${data.data.targetEmail}"]`);
+                                        if (newButton) {
+                                            newButton.addEventListener('click', function() {
+                                                handleFollowAction(this.getAttribute(
+                                                    'data-user-email'), this);
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (dataUserEmail != emailUrl) {
+                            newButtonText = 'Follow';
+                            statusClass = 'text-xs sm:text-sm btn-follow';
+                        } else { // khusus user yang dilihat di url (user yang dilihat detailnya)
+                            let followersCountOnNavTab = document.querySelector(
+                                '.tab-navigation .tab-button span');
+                            let followersCountOnStat = document.querySelector(
+                                '.connection-stats .stat-item span');
+
+                            followersCountOnNavTab.textContent = data.data.countFollowers;
+                            followersCountOnStat.textContent = data.data.countFollowers;
+
+                            if (newStatus === 'following') {
+                                if (!connectionsGrid && emptyState) {
+                                    emptyState.remove();
+
+                                    const gridContainer = document.createElement('div');
+                                    gridContainer.className = 'connections-grid';
+
+                                    const parentContainer = emptyState.parentNode || document.querySelector(
+                                        '.tab-content');
+                                    if (parentContainer) {
+                                        parentContainer.appendChild(gridContainer);
+                                    }
+
+                                    connectionsGrid = gridContainer;
+                                }
+                            } else if (newStatus === 'follow' || newStatus === 'follows_you') {
+                                const remainingItems = document.querySelectorAll('.user-list-item');
+
+                                if (remainingItems.length <= 1 && connectionsGrid) {
+                                    connectionsGrid.remove();
+
+                                    const emptyStateHTML = `
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-3">No Followers Yet</h3>
+                                <p class="text-[var(--text-muted)] max-w-md mx-auto">
+                                    This user doesn't have any followers yet.
+                                    Be the first to follow and connect!
+                                </p>
+                            </div>
+                        `;
+
+                                    const parentContainer = connectionsGrid.parentNode || document
+                                        .querySelector('.tab-content');
+                                    if (parentContainer) {
+                                        parentContainer.insertAdjacentHTML('beforeend', emptyStateHTML);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (newStatus === 'following') { // aku follow dia
                             newButtonText = '<i class="fas fa-user-check mr-2"></i>Following';
                             statusClass = 'btn-unfollow';
+
+                            if (dataUserEmail != emailUrl) {
+                                newButtonText = 'Unfollow';
+                                statusClass = 'text-xs sm:text-sm btn-unfollow';
+                            } else {
+
+                                if (connectionsGrid) {
+                                    const userHTML = `
+                            <div class="user-list-item p-3 sm:p-4 rounded-lg flex items-center justify-between shadow"> 
+                                <div class="flex items-center">
+                                    <a href="http://localhost:8001/viewUser/${loggedInemail}">
+                                        <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full mr-3 sm:mr-4 object-cover" src="https://ui-avatars.com/api/?name=${encodeURIComponent(loggedInUsername)}&background=random&color=fff&size=64" alt="${loggedInUsername}'s avatar">
+                                    </a>
+                                    <div>
+                                        <a href="http://localhost:8001/viewUser/${loggedInemail}" class="font-semibold text-[var(--text-primary-dark)] hover:underline text-sm sm:text-base">
+                                            ${loggedInUsername}
+                                        </a>
+                                        <p class="text-xs sm:text-sm text-[var(--text-muted-dark)]">${loggedInemail}</p>
+                                        <span class="text-xs text-blue-500 dark:text-blue-400">(This is you)</span>
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+                                </div>
+                            </div>
+                        `;
+                                    connectionsGrid.insertAdjacentHTML('beforeend', userHTML);
+                                }
+                            }
+
                             if (isMutual) {
                                 newButtonText += ' <span class="status-badge">Mutual</span>';
                             }
-                        } else if (newStatus === 'follows_you') {
-                            newButtonText = '<i class="fas fa-user-plus mr-2"></i>Follow Back';
-                            statusClass = 'btn-follow-back';
+
+                        } else if (newStatus === 'follows_you') { //dia follow aku, but aku tidak
+                            newButtonText = 'Follow Back';
+                            statusClass = 'btn-follow-back text-xs sm:text-sm';
+
+                            if (dataUserEmail == emailUrl) {
+                                newButtonText = '<i class="fas fa-user-plus mr-2"></i>Follow Back';
+                                statusClass = 'btn-follow-back';
+                                const matchText = loggedInemail;
+                                const target = Array.from(document.querySelectorAll('.user-list-item'))
+                                    .find(p => p.textContent.toLowerCase().includes(matchText
+                                        .toLowerCase()));
+
+                                if (target) {
+                                    target.remove();
+                                }
+                            }
+
+                        } else if (newStatus === 'follow') { //dia tidak follow aku, dan aku tidak
+                            newButtonText = 'Follow';
+                            statusClass = 'btn-follow text-xs sm:text-sm';
+
+                            if (dataUserEmail == emailUrl) {
+                                newButtonText = '<i class="fas fa-user-plus mr-2"></i>Follow';
+                                statusClass = 'btn-follow';
+                                const matchText = loggedInemail;
+                                const target = Array.from(document.querySelectorAll('.user-list-item'))
+                                    .find(p => p.textContent.toLowerCase().includes(matchText
+                                        .toLowerCase()));
+
+                                if (target) {
+                                    target.remove();
+                                }
+                            }
                         }
 
                         document.querySelectorAll(`.follow-btn[data-user-email="${targetUserEmail}"]`)
                             .forEach(btn => {
                                 btn.innerHTML = newButtonText;
-                                btn.className = `${baseClasses} ${actionClass} ${statusClass}`.replace(/\s+/g, ' ').trim();
+                                btn.className = `${baseClasses} ${actionClass} ${statusClass}`.replace(
+                                    /\s+/g, ' ').trim();
                             });
 
                     } else {
@@ -682,12 +918,12 @@
 
             document.querySelectorAll('.action-follow-profile, .action-follow-list').forEach(button => {
                 button.addEventListener('click', function() {
-                    const userEmail = this.getAttribute('data-user-email');
-                    if (userEmail && this.classList.contains('follow-btn')) {
-                        handleFollowAction(userEmail, this);
+                    const userEmail = button.getAttribute('data-user-email');
+                    if (userEmail && button.classList.contains('follow-btn')) {
+                        handleFollowAction(userEmail, button);
                     }
                 });
             });
         });
     </script>
-@endsection 
+@endsection
