@@ -271,6 +271,7 @@
             --accent-primary: #7494ec;
             --accent-secondary: #19b675;
             --accent-tertiary: #ffd249;
+            --accent-neg: #cf2c5a;
 
             /* Border colors */
             --border-color: rgba(9, 15, 56, 0.604);
@@ -305,6 +306,7 @@
             --accent-primary: #5477c8;
             --accent-secondary: #10b981;
             --accent-tertiary: #f4ab24;
+            --accent-neg: #ee1150;
 
             /* Border colors */
             --border-color: rgba(90, 198, 198, 0.612);
