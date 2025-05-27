@@ -128,7 +128,7 @@
         /* User List Items */
         .connections-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
 
@@ -158,11 +158,10 @@
             background: var(--bg-card-hover);
         }
 
-        /* Follow Buttons */
         .follow-btn {
             padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.875rem;
+            border-radius: 5px;
+            font-size: 0.5rem;
             font-weight: 600;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid transparent;
@@ -186,31 +185,32 @@
 
         .btn-follow {
             background: linear-gradient(135deg, #38A3A5, #80ED99);
-            color: #000;
+            color: var(--bg-primary);
             font-weight: 700;
         }
 
         .btn-follow:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px);f
             box-shadow: 0 8px 20px rgba(56, 163, 165, 0.4);
         }
 
         .btn-unfollow {
-            background: var(--bg-secondary);
+            background: var(--bg-light);
             color: var(--text-primary);
             border-color: var(--border-color);
         }
 
         .btn-unfollow:hover {
-            background: var(--bg-hover);
+            background: var(--accent-tertiary);
+            color: var(--text-dark);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         .btn-follow-back {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            font-weight: 700;
+            background: var(--text-highlight);
+            color: var(--bg-primary);
+            font-weight: 600;
         }
 
         .btn-follow-back:hover {
@@ -293,15 +293,43 @@
             border-radius: 20px;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(56,163,165,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
         }
 
         .stat-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(56, 163, 165, 0.2);
+            border-color: var(--accent-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .stat-item:hover::before {
+            transform: translateX(100%);
+        }
+
+        .stat-item:active {
+            transform: translateY(0px) scale(0.98);
         }
 
         .stat-icon {
             color: var(--accent-primary);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover .stat-icon {
+            color: #38A3A5;
+            transform: scale(1.1);
         }
 
         /* Mobile Responsiveness */
@@ -337,7 +365,6 @@
             animation: shimmer 2s infinite linear;
         }
 
-        /* Decorative Elements */
         .floating-decoration {
             position: fixed;
             pointer-events: none;
@@ -373,12 +400,7 @@
 
 @section('content')
     @include('partials.nav', ['loggedInUser' => $loggedInUser])
-
-    <!-- Floating Decorations -->
-    <div class="floating-decoration decoration-1"></div>
-    <div class="floating-decoration decoration-2"></div>
-
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-6xl">
+    <div class="container items-start justify-start  px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
 
         {{-- Header Profil Pengguna --}}
         <div class="profile-header-card rounded-2xl p-6 mb-8 shadow-lg">
@@ -399,19 +421,19 @@
                         <p class="text-[var(--text-muted)] mb-4 max-w-2xl">{{ $profileUser['biodata'] }}</p>
                     @endif
 
-                    <!-- Connection Stats -->
+                    {{-- <!-- Connection Stats - Now Clickable -->
                     <div class="connection-stats justify-center lg:justify-start">
-                        <div class="stat-item">
+                        <div class="stat-item stat-clickable" data-stat-target="followers" title="View Followers">
                             <i class="fas fa-users stat-icon"></i>
                             <span class="font-semibold">{{ $followersList->count() }}</span>
                             <span class="text-sm text-[var(--text-secondary)]">Followers</span>
                         </div>
-                        <div class="stat-item">
+                        <div class="stat-item stat-clickable" data-stat-target="following" title="View Following">
                             <i class="fas fa-user-friends stat-icon"></i>
                             <span class="font-semibold">{{ $followingList->count() }}</span>
                             <span class="text-sm text-[var(--text-secondary)]">Following</span>
                         </div>
-                    </div>
+                    </div> --}}
 
                     @if ($loggedInUser && !$isOwnProfile)
                         @php
@@ -544,6 +566,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
+            // const statItems = document.querySelectorAll('.stat-clickable');
 
             function updateURLAndActivateTab(tabName) {
                 const currentUrl = new URL(window.location.href);
@@ -567,6 +590,7 @@
                 });
             }
 
+            // Handle tab button clicks
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.getAttribute('data-tab-name');
@@ -575,6 +599,25 @@
                     }
                 });
             });
+
+            // Handle stat item clicks - NEW FUNCTIONALITY
+            // statItems.forEach(statItem => {
+            //     statItem.addEventListener('click', () => {
+            //         const targetTab = statItem.getAttribute('data-stat-target');
+            //         if (targetTab) {
+            //             updateURLAndActivateTab(targetTab);
+                        
+            //             // Smooth scroll to tab navigation
+            //             const tabNavigation = document.querySelector('.tab-navigation');
+            //             if (tabNavigation) {
+            //                 tabNavigation.scrollIntoView({ 
+            //                     behavior: 'smooth', 
+            //                     block: 'start' 
+            //                 });
+            //             }
+            //         }
+            //     });
+            // });
 
             // Initialize tab based on URL
             const currentUrlParams = new URLSearchParams(window.location.search);
@@ -690,4 +733,4 @@
             });
         });
     </script>
-@endsection 
+@endsection

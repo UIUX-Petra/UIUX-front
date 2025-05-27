@@ -243,18 +243,21 @@
     <style>
         :root {
             --transition-speed: 0.3s;
-             --text-tag: rgba(56, 163, 165, 1);
         }
 
         .dark-mode {
             /* Background colors */
+            --bg-a: rgba(5, 13, 36, 1);
+            --bg-b: rgba(16, 26, 61, 1);
+            --bg-c: rgba(43, 88, 120, 1);
             --bg-primary: #1C2245;
             --bg-secondary: #232753;
             --bg-tertiary: #32386E;
             --bg-shadow: #32386E;
-            --bg-light: #383d66;
+            --bg-light: #494e73;
             --bg-card: #1c2246;
             --bg-card-hover: #232753;
+            --bg-input: #0e1337;
 
             /* Text colors */
             --text-primary: #ffffff;
@@ -262,7 +265,8 @@
             --text-muted: #929fd3;
             --text-highlight: #80ED99;            
             --text-dark: #101838;
-            
+            --text-tag: #ffffff;
+        
             /* Accent colors */
             --accent-primary: #7494ec;
             --accent-secondary: #19b675;
@@ -279,13 +283,15 @@
 
         .light-mode {
             /* Background colors */
+            --bg-c: rgb(193, 231, 236);
             --bg-primary: #f3f6fb;
             --bg-secondary: #fff;
             --bg-tertiary: #fff;
             --bg-shadow: #cdd4e7;
-            --bg-light: #cfd5e8;
+            --bg-light: #e0e2ea;
             --bg-card: #f6f7ff;
             --bg-card-hover: #EDF2FB;
+            --bg-input:#ffffff;
 
             /* Text colors */
             --text-primary: #12192c;
@@ -293,6 +299,7 @@
             --text-muted: #1a2e5c;
             --text-dark: #101838;
             --text-highlight: #298b8d;
+            --text-tag: #2e406b;
             
             /* Accent colors */
             --accent-primary: #5477c8;
@@ -310,7 +317,7 @@
         /* Apply theme variables to elements */
         body {
             background: var(--bg-primary);
-            background: linear-gradient(0deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-c) 100%);
             color: var(--text-primary);
             transition: background var(--transition-speed), color var(--transition-speed);
         }

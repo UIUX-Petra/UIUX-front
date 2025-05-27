@@ -158,7 +158,7 @@
     @include('utils.background3')
 
     <div
-        class="text-[var(--text-primary)] min-h-screen p-4 sm:p-6 lg:p-8 max-w-[68rem] justify-start items-start profile-container">
+        class="!bg-transparent text-[var(--text-primary)] min-h-screen p-4 sm:p-6 lg:p-8 max-w-[68rem] justify-start items-start profile-container">
         <!-- Main Content -->
         <div class="w-full rounded-xl shadow-lg overflow-hidden profile-card">
             <div class="bg-gradient-to-r from-[#38A3A5] to-[#80ED99] h-32 sm:h-48 relative">
@@ -181,7 +181,7 @@
                     <!-- Actions -->
                     @if (session('email') != $userViewed['email'])
                         <button id="followBtn" onclick="follow(`{{ $userViewed['email'] }}`)"
-                            class="px-4 py-2 bg-[#7494ec] text-white rounded-lg hover:bg-[#5f83c8] transition">
+                            class="px-4 py-2 bg-[var(--accent-tertiary)] font-semibold text-[var(--bg-primary)] rounded-lg hover:scale-105 transition">
 
                             @if ($userRelation == 0 && session('email'))
                                 Follow
@@ -259,10 +259,10 @@
                             <span class="font-bold text-[var(--text-primary)]">{{ $userViewed['answers_count'] }}</span>
                         </div>
                         <div class="clickable-stat flex justify-between items-center">
-                            <a href="{{ route('user.questions.list', ['id' => $userViewed['id']]) }}">
-                                <span class="text-[var(--text-secondary)]">Questions</span>
+                            <a href="{{ route('user.questions.list', ['id' => $userViewed['id']]) }}" class="text-link">
+                                <span>Questions</span>
                             </a>
-                            <span class="font-bold text-[var(--text-primary)]">{{ $userViewed['questions_count'] }}</span>
+                            <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
                         </div>
                     </div>
                 </div>

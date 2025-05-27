@@ -170,7 +170,7 @@
 
         .submit-button {
             background: linear-gradient(to right, #38A3A5, #80ED99);
-            color: white;
+            color: black;
             border: none;
             border-radius: 0.5rem;
             font-weight: 600;
@@ -241,7 +241,7 @@
         $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
     @endphp
 
-    <div class="max-w-5xl mx-auto justify-start items-start px-4 py-8">
+    <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
         <div class="flex items-center gap-4">
             <div class="page-title-icon flex items-center justify-center">
