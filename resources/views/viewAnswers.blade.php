@@ -543,7 +543,8 @@
 
                     const questionId = @json($question['id']);
 
-                    fetch(`/submitAnswer/${questionId}`, {
+                    fetch(`{{ route('submitAnswer', ['questionId' => 'aaa']) }}`.replace('aaa',
+                            questionId), {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': "{{ csrf_token() }}",
@@ -554,8 +555,8 @@
                         .then(data => {
                             submitButton.innerHTML = originalButtonText;
                             submitButton.disabled = false;
-                            
-                            
+
+
                             if (data.success) {
                                 // Clear form
                                 textArea.value = '';
@@ -578,11 +579,11 @@
                                  class="max-w-lg max-h-96 object-contain rounded-lg border">
                          </div>` : '';
 
-                        //         const bestAnswerBadge = isFirstAnswer ?
-                        //             `<div class="mt-4 flex flex-col items-center">
-                        //     <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
-                        //     <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
-                        //  </div>` : '';
+                                //         const bestAnswerBadge = isFirstAnswer ?
+                                //             `<div class="mt-4 flex flex-col items-center">
+                            //     <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
+                            //     <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
+                            //  </div>` : '';
 
                                 const htmlContent = `
                         <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start ${isFirstAnswer ? 'verified-answer' : ''}">
@@ -747,7 +748,8 @@
                         formData.append('comment', commentText);
                         formData.append('answer_id', answerId);
 
-                        fetch(`/submit/question/comment/${answerId}`, {
+                        fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`.replace('aaa',
+                                answerId), {
                                 method: 'POST',
                                 headers: {
                                     'X-CSRF-TOKEN': "{{ csrf_token() }}",
@@ -885,7 +887,8 @@
                     formData.append('question_id', questionId);
 
                     // Send comment data to the server
-                    fetch(`/submit/question/comment/${questionId}`, {
+                    fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`.replace('aaa',
+                            questionId), {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': "{{ csrf_token() }}",
@@ -1004,13 +1007,15 @@
                         formData.append('comment', commentText);
                         formData.append('answer_id', answerId);
 
-                        fetch(`/submit/question/comment/${answerId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                                },
-                                body: formData,
-                            })
+                        fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`
+                                .replace('aaa',
+                                    answerId), {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                    },
+                                    body: formData,
+                                })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
@@ -1271,12 +1276,13 @@
                         Swal.showLoading();
                     }
                 });
-                fetch(`/question/vote`, {
+                fetch(`{{ route('question.vote') }}`, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': "{{ csrf_token() }}",
                         },
                         body: formData,
+
                     })
                     .then(response => response.json())
                     .then(data => {
@@ -1330,7 +1336,7 @@
                     Swal.showLoading();
                 }
             });
-            fetch(`/answer/vote`, {
+            fetch(`{{ route('answer.vote') }}`, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': "{{ csrf_token() }}",
