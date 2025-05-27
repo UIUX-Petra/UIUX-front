@@ -256,9 +256,9 @@
         }
 
         /* .tag-filter-select:hover {
-                border-color: #f59e0b;
-                color: #f59e0b;
-            } */
+                                border-color: #f59e0b;
+                                color: #f59e0b;
+                            } */
 
         .tag-filter-select:focus {
             border-color: #f59e0b;
@@ -340,11 +340,11 @@
     <div class="max-w-5xl justify-start items-start px-8 mt-6 mb-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             {{-- Search Bar --}}
-            <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
+            {{-- <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="questionSearchInput" type="text" placeholder="Search questions by title..."
                     value="{{ $initialSearchTerm ?? '' }}">
-            </div>
+            </div> --}}
 
             {{-- Sort & Tag Filters --}}
             <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
@@ -426,8 +426,7 @@
         </div>
     </div> --}}
 
-    <!-- Main content area with questions list and sidebar -->
-    <div class="max-w-5xl justify-start items-start px-8">
+    <div class="max-w-7xl justify-start items-start px-8">
         <div class="flex flex-col md:flex-row gap-6">
             <div class="w-full md:w-3/4 bg-transparent rounded-lg" id="questions-list-ajax-container">
                 @include('partials.questions_list_content', [
@@ -440,7 +439,6 @@
                 </div>
             </div>
 
-            <!-- Sidebar with Ask Question Card -->
             <div class="md:w-1/4 w-full">
                 <div class="sticky top-24">
                     <div
@@ -495,7 +493,7 @@
 
 
 @section('script')
-    @include('utils.trie')
+    {{-- @include('utils.trie') --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             initSaveButtons();
@@ -712,7 +710,6 @@
                 fetchQuestions(currentPage, false);
             });
 
-            // Event listener untuk clear filter link di partial
             questionsListContainer.addEventListener('click', function(event) {
                 if (event.target.matches('a.filter-clear-link')) {
                     event.preventDefault();
@@ -728,15 +725,12 @@
                 }
             });
 
-            // Show skeleton loading animation
             function showLoadingState() {
                 const questionContainer = document.querySelector('.questions-list');
                 if (!questionContainer) return;
 
-                // Save current content
                 questionContainer.dataset.originalContent = questionContainer.innerHTML;
 
-                // Clear and add skeletons
                 questionContainer.innerHTML = '';
                 for (let i = 0; i < 3; i++) {
                     const skeletonCard = document.createElement('div');
@@ -757,7 +751,6 @@
                 }
             }
 
-            // Remove skeleton loading animation
             function removeLoadingState() {
                 const questionContainer = document.querySelector('.questions-list');
                 if (!questionContainer || !questionContainer.dataset.originalContent) return;
@@ -766,10 +759,8 @@
                 updateIconColors();
             }
 
-            // Initialize
             updateIconColors();
 
-            // Watch for theme changes
             const themeObserver = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.attributeName === 'class') {
@@ -782,7 +773,6 @@
                 attributes: true
             });
 
-            // Add hover effects to stats cards
             const communityCards = document.querySelectorAll('.grid > div');
             if (communityCards) {
                 communityCards.forEach(card => {
@@ -803,16 +793,14 @@
             const saveButtons = document.querySelectorAll('.save-question-btn');
             saveButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
-                newButton.removeAttribute('onclick'); // <--- PENTING: Hapus atribut onclick dari kloningan
+                newButton.removeAttribute('onclick'); 
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // Tentukan aksi berdasarkan kondisi tombol saat ini (misalnya, kelas ikonnya)
                     const icon = this.querySelector('i');
-                    // Periksa apakah ikon saat ini adalah ikon "tersimpan" (solid bookmark)
                     if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
                             'fa-bookmark')) {
                         unsaveQuestion(this);
@@ -840,6 +828,9 @@
             let loadingToast = Toastify({
                 text: "Unsaving...",
                 duration: -1,
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -858,13 +849,15 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
                     btn.innerHTML =
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
-                    // btn.setAttribute("onclick", "saveQuestion(this)");
                     btn.setAttribute("title", "Save Question");
                 } else {
                     Toastify({
@@ -877,6 +870,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }
@@ -892,7 +888,9 @@
             let loadingToast = Toastify({
                 text: "Saving...",
                 duration: -1,
-                /* ...sisanya... */
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -911,13 +909,15 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
                     btn.innerHTML =
                         `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
-                    // btn.setAttribute("onclick", "unsaveQuestion(this)");
                     btn.setAttribute("title", "Unsave Question");
                     updateSavedIcons();
                     btn.classList.add('saved-animation');
@@ -933,6 +933,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }

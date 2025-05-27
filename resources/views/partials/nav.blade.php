@@ -369,7 +369,7 @@
                     id="mobile-user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="sr-only">Open user menu</span>
                     <img class="size-8 rounded-full p-0.5 border border-[var(--accent-tertiary)]"
-                        src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/150' }}"
+                        src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                         alt="User avatar">
                 </button>
 
@@ -385,7 +385,10 @@
             <input type="text" placeholder="Search..."
                 class="search-input w-full px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
         </div>
-
+        <a href="{{ route('askPage') }}"
+            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+            <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
+        </a>
         <a href="{{ route('home') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('home') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-house mr-3"></i> Home
@@ -403,10 +406,7 @@
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-users mr-3"></i> Informates
         </a>
-        <a href="{{ route('askPage') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
-        </a>
+
         <a href="{{ route('user.leaderboard') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-trophy mr-3"></i> Leaderboard
@@ -611,7 +611,7 @@
 
                 const response = await fetch(
                     `${API_BASE_URL}/search?q=${encodeURIComponent(query)}&context=all&limit=5`
-                    ); 
+                );
                 if (!response.ok) {
                     console.error('API search error:', response.status, await response.text());
                     if (suggestionsContainer) suggestionsContainer.innerHTML =
@@ -654,7 +654,7 @@
                     title.className =
                         'text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold';
                     title.textContent = categoryKey.charAt(0).toUpperCase() + categoryKey.slice(
-                    1);
+                        1);
                     sectionDiv.appendChild(title);
 
                     const ul = document.createElement('ul');
@@ -723,7 +723,7 @@
             function performFullSearch(query) {
                 if (query) {
                     window.location.href =
-                    `/search-results?q=${encodeURIComponent(query)}`;
+                        `/search-results?q=${encodeURIComponent(query)}`;
                 }
             }
 

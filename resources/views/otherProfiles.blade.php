@@ -251,16 +251,19 @@
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
                             <span class="text-[var(--text-secondary)]">Reputation</span>
-                            <span class="font-bold text-[var(--text-primary)]"> {{ $userViewed['reputation'] }}</span>
+                            <span class="font-bold text-[var(--text-primary)]">{{ $userViewed['reputation'] }}</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-[var(--text-secondary)]">Answers</span>
-                            <span class="font-bold text-[var(--text-primary)]">{{ $userViewed['answers_count'] }}</span>
+                        <div class="clickable-stat flex justify-between items-center font-bold">
+                            <a href="{{ route('user.answers.index', ['userId' => $userViewed['id']]) }}" class="text-link">
+                                <span>Answers</span>
+                            </a>
+                            <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['answers_count'] }}</span>
                         </div>
-                        <div class="clickable-stat flex justify-between items-center">
+                        <div class="clickable-stat flex justify-between items-center font-bold">
                             <a href="{{ route('user.questions.list', ['id' => $userViewed['id']]) }}" class="text-link">
                                 <span>Questions</span>
                             </a>
+                            <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
                             <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
                         </div>
                     </div>
