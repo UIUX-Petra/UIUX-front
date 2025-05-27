@@ -65,7 +65,7 @@
                             @endif
                         @endif
                     </div>
-                </div>
+                @endforeach
             </div>
         @else
             <div id="no-questions-message" class="bg-white shadow-md rounded-lg p-6 text-center">

@@ -1,3 +1,4 @@
+{{-- @dd($questionToEdit ?? null) --}}
 @extends('layout')
 
 @section('style')
@@ -354,6 +355,7 @@
                 opacity: 0;
                 transform: scale(0.8) translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -452,12 +454,7 @@
                             class="image-upload-button w-[200px] flex items-center gap-2 py-2 px-4">
                             <i class="fa-solid fa-image"></i> Add Image
                         </button>
-                    </div>
-                    <div class="p-4 bg-[var(--bg-secondary)]">
-                        <textarea id="question" name="question" rows="8"
-                            class="block w-full px-0 text-[var(--text-primary)] placeholder-[var(--text-muted)] bg-transparent border-0 focus:ring-0"
-                            placeholder="Describe your question in detail..." required>{{ old('question', $isEditMode ? $questionToEdit['question'] ?? '' : '') }}</textarea>
-                        <div id="image-preview" class="flex flex-wrap gap-4 mt-4 p-2">
+                        <div id="image-preview" class="flex flex-wrap gap-4 p-2">
                             @if ($isEditMode && !empty($questionToEdit['image']))
                                 <div class="image-preview-item existing-image max-w-[150px]">
                                     <img src="{{ asset('storage/' . $questionToEdit['image']) }}"
@@ -471,7 +468,7 @@
                     </div>
                     <div class="p-4 bg-[var(--bg-secondary)]">
                         <textarea id="question" name="question" rows="8"
-                            class="block w-full px-0 text-[var(--text-primary)] bg-transparent border-0 focus:ring-0"
+                            class="block w-full px-0 text-[var(--text-primary)] placeholder-[var(--text-muted)] bg-transparent border-0 focus:ring-0"
                             placeholder="Describe your question in detail..." required>{{ old('question', $isEditMode ? $questionToEdit['question'] ?? '' : '') }}</textarea>
                     </div>
                 </div>
@@ -483,57 +480,64 @@
                     <i class="fa-solid fa-tags section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Tags</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to help others find your question</p>
-                
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to help others find your question
+                </p>
+
                 <!-- Selected Tags Display -->
                 <div class="mb-4">
-                    <div id="selected-tags-display" class="flex flex-wrap gap-2 min-h-[40px] p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg relative items-end">
+                    <div id="selected-tags-display"
+                        class="flex flex-wrap gap-2 min-h-[40px] p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg relative items-end">
                         <div id="selected-tags-container" class="flex flex-wrap gap-2 flex-1">
                             <!-- Selected tags will appear here -->
                         </div>
-                        
+
                         <!-- Add Tags Button (Plus Icon) inside the input box -->
-                        <button type="button" id="open-tags-modal" class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
+                        <button type="button" id="open-tags-modal"
+                            class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
                             <i class="fa-solid fa-plus text-sm"></i>
                         </button>
                     </div>
-                    
+
                     <!-- Count Badge and Clear All outside the input box -->
                     <div class="flex items-center justify-between mt-2 mr-1 ml-0.5">
-                        <span id="selected-count-badge" class="text-xs bg-[var(--accent-tertiary)] text-[var(--text-dark)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
-                        <button type="button" id="clear-all-tags" class="font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] underline transition-colors text-md">
+                        <span id="selected-count-badge"
+                            class="text-xs bg-[var(--accent-tertiary)] text-[var(--text-dark)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
+                        <button type="button" id="clear-all-tags"
+                            class="font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] underline transition-colors text-md">
                             Clear All
                         </button>
                     </div>
                 </div>
             </div>
 
-                <!-- Hidden input for form submission -->
-                <select id="tags-multiselect" name="subject_id[]" multiple class="hidden">
-                    @if (isset($allTags) && is_array($allTags))
-                        @php
-                            $sortedTags = collect($allTags)->sortBy('name')->values()->all();
-                        @endphp
-                        @foreach ($sortedTags as $tag)
-                            <option value="{{ $tag['id'] }}" 
-                                    {{ in_array($tag['id'], $selectedTagIdsOnLoad ?? []) ? 'selected' : '' }}>
-                                {{ $tag['name'] }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
-            </div>
+            <!-- Hidden input for form submission -->
+            <select id="tags-multiselect" name="subject_id[]" multiple class="hidden">
+                @if (isset($allTags) && is_array($allTags))
+                    @php
+                        $sortedTags = collect($allTags)->sortBy('name')->values()->all();
+                    @endphp
+                    @foreach ($sortedTags as $tag)
+                        <option value="{{ $tag['id'] }}"
+                            {{ in_array($tag['id'], $selectedTagIdsOnLoad ?? []) ? 'selected' : '' }}>
+                            {{ $tag['name'] }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
 
             <!-- Tags Modal -->
-            <div id="tags-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+            <div id="tags-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
                 <div class="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
                         <div>
                             <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Tags</h3>
-                            <p class="text-sm text-[var(--text-secondary)] mt-1">Choose tags that best describe your question</p>
+                            <p class="text-sm text-[var(--text-secondary)] mt-1">Choose tags that best describe your
+                                question</p>
                         </div>
-                        <button type="button" id="close-tags-modal" class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
+                        <button type="button" id="close-tags-modal"
+                            class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
                             <i class="fa-solid fa-times text-xl text-[var(--text-secondary)]"></i>
                         </button>
                     </div>
@@ -543,12 +547,11 @@
                         <!-- Search Bar -->
                         <div class="p-6 pb-4 border-b border-[var(--border-color)]">
                             <div class="relative">
-                                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]"></i>
-                                <input type="text" 
-                                    id="tags-search-input" 
-                                    class="w-full pl-10 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent-tertiary)] focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-opacity-20 transition-all" 
-                                    placeholder="Search tags..."
-                                    autocomplete="off">
+                                <i
+                                    class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]"></i>
+                                <input type="text" id="tags-search-input"
+                                    class="w-full pl-10 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent-tertiary)] focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-opacity-20 transition-all"
+                                    placeholder="Search tags..." autocomplete="off">
                             </div>
                             <div class="flex items-center justify-between mt-3 text-sm text-[var(--text-secondary)]">
                                 <span>
@@ -580,10 +583,12 @@
                                 <span id="selected-count-footer">0</span> tags selected
                             </div>
                             <div class="flex gap-3">
-                                <button type="button" id="cancel-tags-modal" class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                                <button type="button" id="cancel-tags-modal"
+                                    class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
                                     Cancel
                                 </button>
-                                <button type="button" id="confirm-tags-modal" class="px-6 py-2 bg-[var(--accent-secondary)] text-white rounded-lg hover:opacity-90 transition-opacity">
+                                <button type="button" id="confirm-tags-modal"
+                                    class="px-6 py-2 bg-[var(--accent-secondary)] text-white rounded-lg hover:opacity-90 transition-opacity">
                                     Done
                                 </button>
                             </div>
@@ -684,19 +689,19 @@
 
             function renderTagsGrid() {
                 tagsGrid.innerHTML = '';
-                
+
                 if (filteredTags.length === 0) {
                     noTagsFound.classList.remove('hidden');
                     showingCount.textContent = '0';
                     return;
                 }
-                
+
                 noTagsFound.classList.add('hidden');
                 showingCount.textContent = filteredTags.length;
 
                 filteredTags.forEach(tag => {
                     const isSelected = tempSelectedTagIds.includes(tag.id.toString());
-                    
+
                     const tagItem = document.createElement('div');
                     tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
                     tagItem.innerHTML = `
@@ -706,7 +711,7 @@
                             <div class="tag-count">${tag.questions || 0} questions</div>
                         </div>
                     `;
-                    
+
                     tagItem.addEventListener('click', () => toggleTempTag(tag.id.toString()));
                     tagsGrid.appendChild(tagItem);
                 });
@@ -718,7 +723,7 @@
                 } else {
                     tempSelectedTagIds.push(tagId);
                 }
-                
+
                 renderTagsGrid();
                 updateModalCounts();
             }
@@ -761,7 +766,7 @@
                 if (term === '') {
                     filteredTags = [...allTags];
                 } else {
-                    filteredTags = allTags.filter(tag => 
+                    filteredTags = allTags.filter(tag =>
                         tag.name.toLowerCase().includes(term)
                     );
                 }
@@ -819,10 +824,12 @@
                         const reader = new FileReader();
                         reader.onload = function(e) {
                             const imagePreviewContainer = document.getElementById("image-preview");
-                            const oldNewPreview = imagePreviewContainer.querySelector('.new-image-preview-item');
+                            const oldNewPreview = imagePreviewContainer.querySelector(
+                                '.new-image-preview-item');
                             if (oldNewPreview) oldNewPreview.remove();
 
-                            const existingImageDiv = imagePreviewContainer.querySelector('.existing-image');
+                            const existingImageDiv = imagePreviewContainer.querySelector(
+                                '.existing-image');
                             if (existingImageDiv) {
                                 existingImageDiv.style.display = 'none';
                             }
@@ -841,7 +848,8 @@
                                 imageFile = null;
                                 if (existingImageDiv) {
                                     existingImageDiv.style.display = 'flex';
-                                    const removeFlagInput = document.getElementById('remove_existing_image_input');
+                                    const removeFlagInput = document.getElementById(
+                                        'remove_existing_image_input');
                                     if (removeFlagInput) removeFlagInput.remove();
                                 }
                             };
@@ -937,7 +945,8 @@
 
                         if (imageFile) {
                             formData.append("image", imageFile);
-                        } else if (IS_EDIT_MODE && document.getElementById('remove_existing_image_input')) {
+                        } else if (IS_EDIT_MODE && document.getElementById(
+                                'remove_existing_image_input')) {
                             formData.append("remove_existing_image", "1");
                         }
 
@@ -968,26 +977,35 @@
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Success!',
-                                        text: res.message || `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
+                                        text: res.message ||
+                                            `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
                                     }).then(() => {
-                                        if (res.data && res.data.id) {
-                                            window.location.href = `/ask/${res.data.id}`;
+                                        if (IS_EDIT_MODE) {
+                                            // Redirect to user.questions.list for the user who owns the question
+                                            // You need to ensure questionToEdit.user.id is available
+                                            // If questionToEdit.user is not directly available, you might need to pass it from the backend
+                                            window.location.href =
+                                                `/user/${QUESTION_TO_EDIT.user.id}/questions`;
                                         } else {
-                                            window.location.href = "{{ route('askPage') }}";
+                                            // Redirect to home page for new questions
+                                            window.location.href =
+                                                "{{ route('home') }}";
                                         }
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error!',
-                                        text: res.message || 'An unexpected error occurred from the server.'
+                                        text: res.message ||
+                                            'An unexpected error occurred from the server.'
                                     });
                                 }
                             })
                             .catch(err => {
                                 console.error('Fetch Error:', err);
                                 Swal.close();
-                                let errorMessage = 'There was an error processing your request.';
+                                let errorMessage =
+                                    'There was an error processing your request.';
                                 if (err.data && err.data.message) {
                                     errorMessage = err.data.message;
                                 } else if (err.message) {
