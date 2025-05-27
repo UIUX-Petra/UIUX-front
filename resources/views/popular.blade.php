@@ -426,7 +426,6 @@
         </div>
     </div>
 
-    <!-- Main content area with questions list and sidebar -->
     <div class="max-w-7xl justify-start items-start px-8">
         <div class="flex flex-col md:flex-row gap-6">
             <div class="w-full md:w-3/4 bg-transparent rounded-lg" id="questions-list-ajax-container">
@@ -440,7 +439,6 @@
                 </div>
             </div>
 
-            <!-- Sidebar with Ask Question Card -->
             <div class="md:w-1/4 w-full">
                 <div class="sticky top-24">
                     <div
@@ -495,7 +493,7 @@
 
 
 @section('script')
-    @include('utils.trie')
+    {{-- @include('utils.trie') --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             initSaveButtons();
@@ -712,7 +710,6 @@
                 fetchQuestions(currentPage, false);
             });
 
-            // Event listener untuk clear filter link di partial
             questionsListContainer.addEventListener('click', function(event) {
                 if (event.target.matches('a.filter-clear-link')) {
                     event.preventDefault();
@@ -728,15 +725,12 @@
                 }
             });
 
-            // Show skeleton loading animation
             function showLoadingState() {
                 const questionContainer = document.querySelector('.questions-list');
                 if (!questionContainer) return;
 
-                // Save current content
                 questionContainer.dataset.originalContent = questionContainer.innerHTML;
 
-                // Clear and add skeletons
                 questionContainer.innerHTML = '';
                 for (let i = 0; i < 3; i++) {
                     const skeletonCard = document.createElement('div');
@@ -757,7 +751,6 @@
                 }
             }
 
-            // Remove skeleton loading animation
             function removeLoadingState() {
                 const questionContainer = document.querySelector('.questions-list');
                 if (!questionContainer || !questionContainer.dataset.originalContent) return;
@@ -766,10 +759,8 @@
                 updateIconColors();
             }
 
-            // Initialize
             updateIconColors();
 
-            // Watch for theme changes
             const themeObserver = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (mutation.attributeName === 'class') {
@@ -782,7 +773,6 @@
                 attributes: true
             });
 
-            // Add hover effects to stats cards
             const communityCards = document.querySelectorAll('.grid > div');
             if (communityCards) {
                 communityCards.forEach(card => {
@@ -803,16 +793,14 @@
             const saveButtons = document.querySelectorAll('.save-question-btn');
             saveButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
-                newButton.removeAttribute('onclick'); // <--- PENTING: Hapus atribut onclick dari kloningan
+                newButton.removeAttribute('onclick'); 
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // Tentukan aksi berdasarkan kondisi tombol saat ini (misalnya, kelas ikonnya)
                     const icon = this.querySelector('i');
-                    // Periksa apakah ikon saat ini adalah ikon "tersimpan" (solid bookmark)
                     if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
                             'fa-bookmark')) {
                         unsaveQuestion(this);
@@ -870,7 +858,6 @@
                     }).showToast();
                     btn.innerHTML =
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
-                    // btn.setAttribute("onclick", "saveQuestion(this)");
                     btn.setAttribute("title", "Save Question");
                 } else {
                     Toastify({
@@ -931,7 +918,6 @@
                     }).showToast();
                     btn.innerHTML =
                         `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
-                    // btn.setAttribute("onclick", "unsaveQuestion(this)");
                     btn.setAttribute("title", "Unsave Question");
                     updateSavedIcons();
                     btn.classList.add('saved-animation');
