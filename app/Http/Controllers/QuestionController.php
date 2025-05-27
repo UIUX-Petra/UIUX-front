@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -387,7 +388,6 @@ class QuestionController extends Controller
             ]);
         }
     }
-
     public function unsaveQuestion(Request $request)
     {
         $api_url = env('API_URL') . '/unsaveQuestion/' . session('email') . '/' . $request->question_id;
@@ -404,6 +404,126 @@ class QuestionController extends Controller
                 'success' => $response->json()['success'],
                 'message' => $errorMessage,
             ]);
+        }
+    }
+    public function showEditQuestionPage($id)
+    {
+        // 1. Ambil data pertanyaan dari API
+        $api_url = env('API_URL') . '/questions/' . $id . '/view';
+        $response = Http::withToken(session('token'))->post($api_url, ['email' => session('email')]); // Kirim email untuk otorisasi
+        $questionData = $response->json();
+
+        if ($response->failed() || !isset($questionData['success']) || !$questionData['success']) {
+            $errorMessage = $questionData['message'] ?? 'Failed to load question for editing.';
+            Log::error("Failed to load question for edit: " . $errorMessage . " for ID: " . $id);
+            return redirect()->back()->with('Error', $errorMessage);
+        }
+
+        $question = (object) $questionData['data']; // Ubah array menjadi object agar bisa diakses seperti $question->title
+
+        // Pastikan hanya pemilik pertanyaan yang bisa mengakses halaman edit
+        // Cek `is_owner` yang dikirim dari API
+        if (!($question->is_owner ?? false)) {
+            return redirect()->back()->with('Error', 'You are not authorized to edit this question.');
+        }
+
+        // 2. Ambil semua tags (subjects) untuk ditampilkan di form
+        $tags_api_url = env('API_URL') . '/subjects'; // Asumsi ada endpoint untuk mengambil semua tags
+        $tags_response = Http::withToken(session('token'))->get($tags_api_url);
+        $tagsData = $tags_response->json();
+
+        if ($tags_response->failed() || !isset($tagsData['success']) || !$tagsData['success']) {
+            $errorMessage = $tagsData['message'] ?? 'Failed to load tags.';
+            Log::error("Failed to load tags for edit page: " . $errorMessage);
+            return redirect()->back()->with('Error', $errorMessage);
+        }
+
+        $data = $tagsData['data']; // Ini adalah array tags yang akan diteruskan ke view
+
+        return view('editQuestion', compact('question', 'data'));
+    }
+
+    public function updateQuestion(Request $request, $id)
+    {
+        // Validasi input dari form edit
+        $validatedData = $request->validate([
+            'title' => 'required|string',
+            'question' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042', // Ukuran dan format gambar
+            'subject_id' => 'required|array', // Pastikan subject_id adalah array
+            'subject_id.*' => 'integer', // Setiap elemen di subject_id harus integer
+            'email' => 'required|email', // Tambahkan validasi email
+            'deleted_image' => 'nullable|boolean', // Flag untuk menandakan penghapusan gambar
+        ]);
+
+        $api_url = env('API_URL') . '/questions/' . $id;
+
+        $data = [
+            'title' => $request->input('title'),
+            'question' => $request->input('question'),
+            'subject_id' => $request->input('subject_id'), // Pastikan ini array
+            'email' => $request->input('email'), // Pastikan email user yang login dikirim
+        ];
+
+        // Buat request builder dengan token
+        $requestBuilder = Http::withToken(session('token'));
+
+        // Handle image: check if new image is uploaded or old image is deleted
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $timestamp = date('Y-m-d_H-i-s');
+            $emailCleaned = str_replace(['@', '.'], '_', session('email'));
+            $customFileName = "q_" . $emailCleaned . "_" . $timestamp . "." . $image->getClientOriginalExtension();
+
+            // Attach new image
+            $requestBuilder->attach('image', file_get_contents($image->getRealPath()), $customFileName);
+            Log::info("Attaching new image for update: " . $customFileName);
+        } elseif ($request->input('deleted_image')) {
+            // If deleted_image flag is true and no new image is uploaded, send empty 'image' field to API
+            // This signals the API to delete the existing image
+            $data['image'] = '';
+            Log::info("Signaling API to delete existing image for question ID: " . $id);
+        }
+        // If no new image and deleted_image is false, do nothing to the 'image' field,
+        // which means the existing image will be kept by the API.
+
+        try {
+            $response = $requestBuilder->put($api_url, $data); // Menggunakan method PUT untuk update
+
+            Log::info("API Response Status for updateQuestion: " . $response->status());
+            Log::info("API Response Body for updateQuestion: " . $response->body());
+
+            if ($response->successful()) {
+                return response()->json(['success' => true, 'message' => 'Question updated successfully!']);
+            } else {
+                $errorMessage = $response->json()['message'] ?? 'Failed to update question.';
+                return response()->json(['success' => false, 'message' => $errorMessage], $response->status());
+            }
+        } catch (\Exception $e) {
+            Log::error("Error updating question {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error during API request: ' . $e->getMessage()], 500);
+        }
+    }
+    public function deleteQuestion(Request $request, $id)
+    {
+        $api_url = env('API_URL') . '/questions/' . $id;
+
+        try {
+            $response = Http::withToken(session('token'))
+                ->delete($api_url, ['email' => session('email')]); // Kirim email untuk otorisasi
+
+            Log::info("API Response Status for deleteQuestion: " . $response->status());
+            Log::info("API Response Body for deleteQuestion: " . $response->body());
+
+            if ($response->successful()) {
+                return response()->json(['success' => true, 'message' => 'Question deleted successfully!']);
+            } else {
+                $errorMessage = $response->json()['message'] ?? 'Failed to delete question.';
+                return response()->json(['success' => false, 'message' => $errorMessage], $response->status());
+            }
+        } catch (\Exception $e) {
+            Log::error("Error deleting question {$id}: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error during API request: ' . $e->getMessage()], 500);
         }
     }
 }

@@ -63,10 +63,14 @@ Route::middleware(['isLogin'])->group(function () {
     Route::post('/saveQuestion', [QuestionController::class, 'saveQuestion'])->name('saveQuestion');
     Route::post('/unsaveQuestion', [QuestionController::class, 'unsaveQuestion'])->name('unsaveQuestion');
 
+
+    Route::get('/questions/{id}/edit', [QuestionController::class, 'showEditQuestionPage'])->name('editQuestionPage');
+    Route::post('/questions/{id}', [QuestionController::class, 'updateQuestion'])->name('updateQuestion');
+    Route::post('/questions/{id}/delete', [QuestionController::class, 'deleteQuestion'])->name('deleteQuestion');
+
     Route::get('/user/{userId}/answers', [AnswerController::class, 'viewUserAnswers'])->name('user.answers.index');
     Route::get('/answers/{answerId}/edit', [AnswerController::class, 'editAnswerForm'])->name('user.answers.edit');
     Route::post('/answers/{answerId}/update', [AnswerController::class, 'updateAnswer'])->name('user.answers.update');
-    // Route::delete('/answers/{answerId}', [AnswerController::class, 'deleteAnswer'])->name('answer.delete');
-
-    Route::post('/user/history/{searchedId}',[UserController::class, 'addHistory'])->name('nembakHistory');
+    Route::delete('/answers/{answerId}', [AnswerController::class, 'deleteAnswer'])->name('answer.delete');
+    Route::post('/user/history/{searchedId}', [UserController::class, 'addHistory'])->name('nembakHistory');
 });

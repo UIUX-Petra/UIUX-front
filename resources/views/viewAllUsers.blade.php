@@ -160,11 +160,11 @@
         <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start justify-start mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <!-- Search Bar -->
-                <div class="search-bar flex items-center px-4 py-3 shadow-sm w-full md:w-auto md:flex-1 max-w-md">
+                {{-- <div class="search-bar flex items-center px-4 py-3 shadow-sm w-full md:w-auto md:flex-1 max-w-md">
                     <i class="fa-solid fa-magnifying-glass text-[var(--text-secondary)] mr-3"></i>
                     <input id="searchInput" type="text" placeholder="Search users..."
                         class="w-full outline-none" oninput="searchInput()">
-                </div>
+                </div> --}}
 
                 <!-- Tabs -->
                 <div class="flex flex-wrap gap-3">
@@ -263,25 +263,25 @@
         </div>
     </div>
 
-    @include('utils.trie')
+    {{-- @include('utils.trie') --}}
 
     <script>
-    let searchSwitch = 1; // Switch search based on selected tab
+    // let searchSwitch = 1; // Switch search based on selected tab
 
     // Data dari PHP (Laravel)
-    let byReputation = <?php echo json_encode($order_by_reputation ?? []); ?>;
-    let byNewest = <?php echo json_encode($order_by_newest ?? []); ?>;
-    let byVote = <?php echo json_encode($order_by_vote ?? []); ?>;
+    // let byReputation = <?php echo json_encode($order_by_reputation ?? []); ?>;
+    // let byNewest = <?php echo json_encode($order_by_newest ?? []); ?>;
+    // let byVote = <?php echo json_encode($order_by_vote ?? []); ?>;
 
     // Inisialisasi Trie untuk setiap kategori
-    const reputationTrie = new Trie(); // Asumsikan Trie sudah didefinisikan
-    byReputation.forEach(user => reputationTrie.insert(user.username.toLowerCase()));
+    // const reputationTrie = new Trie(); // Asumsikan Trie sudah didefinisikan
+    // byReputation.forEach(user => reputationTrie.insert(user.username.toLowerCase()));
 
-    const newestUserTrie = new Trie();
-    byNewest.forEach(user => newestUserTrie.insert(user.username.toLowerCase()));
+    // const newestUserTrie = new Trie();
+    // byNewest.forEach(user => newestUserTrie.insert(user.username.toLowerCase()));
 
-    const voterTrie = new Trie();
-    byVote.forEach(user => voterTrie.insert(user.username.toLowerCase()));
+    // const voterTrie = new Trie();
+    // byVote.forEach(user => voterTrie.insert(user.username.toLowerCase()));
 
     /**
      * Membuat HTML untuk satu kartu pengguna.
@@ -290,97 +290,97 @@
      * @param {string} tabType - Tipe tab ('reputation', 'newest', 'voter').
      * @returns {string} HTML string untuk kartu pengguna.
      */
-    function createUserCardHTML(user, baseUrl, tabType) {
-        let detailHTML = '';
-        let fallbackImageBgColor = '2196F3'; // Default untuk reputasi
-        let badges = ['php', 'java']; // Default badges
+    // function createUserCardHTML(user, baseUrl, tabType) {
+    //     let detailHTML = '';
+    //     let fallbackImageBgColor = '2196F3'; // Default untuk reputasi
+    //     let badges = ['php', 'java']; // Default badges
 
-        if (tabType === 'reputation') {
-            detailHTML = `
-                <p class="text-sm flex items-center gap-1 mt-1">
-                    <i class="fa-solid fa-star text-yellow-500"></i>
-                    <span class="text-[var(--text-secondary)]">${user.reputation || 0}</span>
-                </p>`;
-        } else if (tabType === 'newest') {
-            fallbackImageBgColor = '2196F3'; 
-            detailHTML = `
-                <p class="text-sm flex items-center gap-1 mt-1">
-                    <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
-                       <span class="text-[var(--primary)]">Since ${user.created_at}</span>
-                </p>`;
-        } else if (tabType === 'voter') {
-            fallbackImageBgColor = '2196F3'; 
-            badges = ['react', 'vue']; // Badge berbeda untuk voter
-            detailHTML = `
-                <p class="text-sm flex items-center gap-1 mt-1">
-                    <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
-                    <span class="text-[var(--text-secondary)]">${user.vote_count || 0}</span>
-                </p>`;
-        }
+    //     if (tabType === 'reputation') {
+    //         detailHTML = `
+    //             <p class="text-sm flex items-center gap-1 mt-1">
+    //                 <i class="fa-solid fa-star text-yellow-500"></i>
+    //                 <span class="text-[var(--text-secondary)]">${user.reputation || 0}</span>
+    //             </p>`;
+    //     } else if (tabType === 'newest') {
+    //         fallbackImageBgColor = '2196F3'; 
+    //         detailHTML = `
+    //             <p class="text-sm flex items-center gap-1 mt-1">
+    //                 <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
+    //                    <span class="text-[var(--primary)]">Since ${user.created_at}</span>
+    //             </p>`;
+    //     } else if (tabType === 'voter') {
+    //         fallbackImageBgColor = '2196F3'; 
+    //         badges = ['react', 'vue']; // Badge berbeda untuk voter
+    //         detailHTML = `
+    //             <p class="text-sm flex items-center gap-1 mt-1">
+    //                 <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
+    //                 <span class="text-[var(--text-secondary)]">${user.vote_count || 0}</span>
+    //             </p>`;
+    //     }
 
-        const imageUrl = user.image
-            ? `storage/${user.image}`
-            : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}&background=${fallbackImageBgColor}&color=fff&size=128`;
+    //     const imageUrl = user.image
+    //         ? `storage/${user.image}`
+    //         : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}&background=${fallbackImageBgColor}&color=fff&size=128`;
 
-        const badgeHTML = badges.map(badge => `<span class="badge">${badge}</span>`).join('');
+    //     const badgeHTML = badges.map(badge => `<span class="badge">${badge}</span>`).join('');
 
-        return `
-            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                <img src="${imageUrl}"
-                     alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                <div class="flex-1">
-                    <h3 class="font-semibold text-lg">
-                        <a href="${baseUrl.replace(':email', user.email)}"
-                           class="hover:underline text-[var(--text-primary)]">${user.username}</a>
-                    </h3>
-                    ${detailHTML}
-                    <div class="flex flex-wrap gap-1 mt-2">
-                        ${badgeHTML}
-                    </div>
-                </div>
-            </div>`;
-    }
+    //     return `
+    //         <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
+    //             <img src="${imageUrl}"
+    //                  alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
+    //             <div class="flex-1">
+    //                 <h3 class="font-semibold text-lg">
+    //                     <a href="${baseUrl.replace(':email', user.email)}"
+    //                        class="hover:underline text-[var(--text-primary)]">${user.username}</a>
+    //                 </h3>
+    //                 ${detailHTML}
+    //                 <div class="flex flex-wrap gap-1 mt-2">
+    //                     ${badgeHTML}
+    //                 </div>
+    //             </div>
+    //         </div>`;
+    // }
 
     /**
      * Melakukan pencarian dan memperbarui tampilan daftar pengguna.
      */
-    function searchInput() {
-        const input = document.getElementById('searchInput').value.toLowerCase();
-        const baseUrl = "{{ route('viewUser', ['email' => ':email']) }}";
+    // function searchInput() {
+    //     const input = document.getElementById('searchInput').value.toLowerCase();
+    //     const baseUrl = "{{ route('viewUser', ['email' => ':email']) }}";
 
-        let usersToDisplay = [];
-        let resultsDivId = '';
-        let tabType = '';
+    //     let usersToDisplay = [];
+    //     let resultsDivId = '';
+    //     let tabType = '';
 
-        if (searchSwitch === 1) {
-            resultsDivId = 'reputationResult';
-            tabType = 'reputation';
-            usersToDisplay = input.length > 0
-                ? byReputation.filter(user => reputationTrie.search(input).includes(user.username.toLowerCase()))
-                : byReputation;
-        } else if (searchSwitch === 2) {
-            resultsDivId = 'newestResult';
-            tabType = 'newest';
-            usersToDisplay = input.length > 0
-                ? byNewest.filter(user => newestUserTrie.search(input).includes(user.username.toLowerCase()))
-                : byNewest;
-        } else if (searchSwitch === 3) {
-            resultsDivId = 'voterResult';
-            tabType = 'voter';
-            usersToDisplay = input.length > 0
-                ? byVote.filter(user => voterTrie.search(input).includes(user.username.toLowerCase()))
-                : byVote;
-        }
+    //     if (searchSwitch === 1) {
+    //         resultsDivId = 'reputationResult';
+    //         tabType = 'reputation';
+    //         usersToDisplay = input.length > 0
+    //             ? byReputation.filter(user => reputationTrie.search(input).includes(user.username.toLowerCase()))
+    //             : byReputation;
+    //     } else if (searchSwitch === 2) {
+    //         resultsDivId = 'newestResult';
+    //         tabType = 'newest';
+    //         usersToDisplay = input.length > 0
+    //             ? byNewest.filter(user => newestUserTrie.search(input).includes(user.username.toLowerCase()))
+    //             : byNewest;
+    //     } else if (searchSwitch === 3) {
+    //         resultsDivId = 'voterResult';
+    //         tabType = 'voter';
+    //         usersToDisplay = input.length > 0
+    //             ? byVote.filter(user => voterTrie.search(input).includes(user.username.toLowerCase()))
+    //             : byVote;
+    //     }
 
-        const resultsDiv = document.getElementById(resultsDivId);
-        if (resultsDiv) {
-            if (usersToDisplay.length > 0) {
-                resultsDiv.innerHTML = usersToDisplay.map(user => createUserCardHTML(user, baseUrl, tabType)).join('');
-            } else {
-                resultsDiv.innerHTML = '<p class="p-4 text-center text-[var(--text-secondary)]">No users found.</p>';
-            }
-        }
-    }
+    //     const resultsDiv = document.getElementById(resultsDivId);
+    //     if (resultsDiv) {
+    //         if (usersToDisplay.length > 0) {
+    //             resultsDiv.innerHTML = usersToDisplay.map(user => createUserCardHTML(user, baseUrl, tabType)).join('');
+    //         } else {
+    //             resultsDiv.innerHTML = '<p class="p-4 text-center text-[var(--text-secondary)]">No users found.</p>';
+    //         }
+    //     }
+    // }
 
     /**
      * Menampilkan tab yang dipilih dan menyembunyikan yang lain.
@@ -410,20 +410,15 @@
             }
         });
         
-        // Tombol aktif diasumsikan memiliki ID 'tab-' + ID konten tab.
-        // Misalnya, jika tabId (konten) adalah 'reputations', ID tombolnya adalah 'tab-reputations'.
         const activeTabButton = document.getElementById('tab-' + tabId); 
         if (activeTabButton) {
             activeTabButton.className = 'tab-active';
         }
         
-        searchInput(); // Muat ulang hasil untuk tab yang aktif
+        // searchInput(); 
     }
 
-    // Panggil showTab untuk tab default saat halaman dimuat
     document.addEventListener('DOMContentLoaded', () => {
-        // Ganti 'reputations' dengan ID KONTEN tab default Anda jika berbeda.
-        // Ini akan secara otomatis mengaktifkan tombol dengan ID 'tab-reputations'.
         showTab('reputations'); 
     });
 </script>

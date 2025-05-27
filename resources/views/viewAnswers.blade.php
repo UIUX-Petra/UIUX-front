@@ -143,7 +143,7 @@
 
                 <div class="prose max-w-none text-[var(--text-primary)]">
                     <p class="text-md md:text-lg text-[var(--text-primary)]">
-                        {{ $question['question'] }}
+                        {!! nl2br(e($question['question'])) !!}
                     </p>
 
                     @if ($question['image'])
@@ -155,12 +155,13 @@
                 </div>
 
                 <div class="mt-6 flex justify-between items-center">
-                    <div class="flex items-center text-sm text-[var(--text-muted)]">
-                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User"
-                            class="w-6 h-6 rounded-full mr-2">
-                        <span>Asked by {{ $question['user']['username'] }}</span>
-                    </div>
-
+                    <a href="{{ route('viewUser', ['email' => $question['user']['email']]) }}">
+                        <div class="flex items-center text-sm text-[var(--text-muted)]">
+                            <img src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                alt="User avatar" class="w-6 h-6 rounded-full mr-2">
+                            <span>Asked by {{ $question['user']['username'] }}</span>
+                        </div>
+                    </a>
                     <button id="comment-count"
                         class="flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                         <i class="fa-solid fa-comment-dots mr-2"></i>
@@ -225,10 +226,12 @@
                                 </div> --}}
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
-                                    <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                        <span>Posted by {{ $comm['username'] }} -
-                                            {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
-                                    </div>
+                                    <a href="{{ route('viewUser', ['email' => $comm['email']]) }}" class="hover:underline">
+                                        <div class="mt-2 text-xs text-[var(--text-muted)]">
+                                            <span>Posted by {{ $comm['username'] }} -
+                                                {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
                         @endforeach
@@ -342,7 +345,7 @@
 
                             <div class="flex flex-col flex-grow">
                                 <div class="prose max-w-none text-[var(--text-primary)]">
-                                    <p>{{ $ans['answer'] }}</p>
+                                    <p class="">{!! nl2br(e($ans['answer'])) !!}</p>
                                 </div>
 
                                 @if ($ans['image'])
@@ -353,12 +356,14 @@
                                 @endif
 
                                 <div class="mt-4 flex justify-between items-center">
-                                    <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User"
-                                            class="w-6 h-6 rounded-full mr-2">
-                                        <span>Answered by {{ $ans['username'] }} -
-                                            {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
-                                    </div>
+                                    <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
+                                        <div class="flex items-center text-sm text-[var(--text-muted)]">
+                                            <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                alt="User avatar" class="w-6 h-6 rounded-full mr-2">
+                                            <span class="hover:underline">Answered by {{ $ans['username'] }} -
+                                                {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                        </div>
+                                    </a>
 
                                     <button
                                         class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
@@ -391,6 +396,7 @@
                                             @foreach ($ans['comments'] as $comment)
                                                 <div
                                                     class="answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]">
+                                                    <a href="{{ route('viewUser', ['email' => $comment['user_email']]) }}">
                                                     <div class="flex items-start">
                                                         <img src="https://ui-avatars.com/api/?name={{ urlencode($comment['username']) }}&background=random"
                                                             alt="{{ $comment['username'] }}"
@@ -399,7 +405,7 @@
                                                         <div class="flex-grow">
                                                             <div class="flex items-center mb-1">
                                                                 <span
-                                                                    class="text-sm font-medium text-[var(--text-primary)]">
+                                                                    class="hover:underline text-sm font-medium text-[var(--text-primary)]">
                                                                     {{ $comment['username'] }}
                                                                 </span>
                                                                 <span class="text-xs text-[var(--text-muted)] ml-2">
@@ -412,6 +418,7 @@
                                                             </p>
                                                         </div>
                                                     </div>
+                                                    </a>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -578,6 +585,8 @@
                         .then(data => {
                             submitButton.innerHTML = originalButtonText;
                             submitButton.disabled = false;
+
+
 
 
                             if (data.success) {

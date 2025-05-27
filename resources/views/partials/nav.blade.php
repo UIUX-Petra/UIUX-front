@@ -384,7 +384,7 @@
                     id="mobile-user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="sr-only">Open user menu</span>
                     <img class="size-8 rounded-full p-0.5 border border-[var(--accent-tertiary)]"
-                        src="{{ $image ? asset('storage/' . $image) : 'https://via.placeholder.com/150' }}"
+                        src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                         alt="User avatar">
                 </button>
 
@@ -405,7 +405,10 @@
                 {{-- Content will be populated by JS --}}
             </div>
         </div>
-
+        <a href="{{ route('askPage') }}"
+            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+            <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
+        </a>
         <a href="{{ route('home') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('home') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-house mr-3"></i> Home
@@ -423,10 +426,7 @@
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-users mr-3"></i> Informates
         </a>
-        <a href="{{ route('askPage') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
-        </a>
+
         <a href="{{ route('user.leaderboard') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-trophy mr-3"></i> Leaderboard

@@ -6,9 +6,11 @@
     @include('utils.background3')
         <style>
         /* Core styling variables that match the homepage */
-        :root {
+         :root {
             --text-link: #38A3A5;
             --text-link-hover: #80ED99;
+            --profile-accent: #38A3A5;
+            --profile-accent-hover: #80ED99;
         }
 
         /* Profile specific styles */

@@ -10,7 +10,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .answer-card::before {
             content: '';
             position: absolute;
@@ -22,34 +22,34 @@
             transform: scaleX(0);
             transition: transform 0.3s ease;
         }
-        
+
         .answer-card:hover::before {
             transform: scaleX(1);
         }
-        
+
         .answer-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             border-color: rgba(56, 163, 165, 0.3);
         }
-        
+
         .answer-content {
             position: relative;
         }
-        
+
         .answer-content img {
             max-width: 100%;
             height: auto;
             border-radius: 12px;
             margin: 1rem 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
-        
+
         .answer-content img:hover {
             transform: scale(1.02);
         }
-        
+
         .stats-badge {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
@@ -61,13 +61,13 @@
             align-items: center;
             gap: 0.375rem;
         }
-        
+
         .action-button {
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
         }
-        
+
         .action-button::before {
             content: '';
             position: absolute;
@@ -75,14 +75,14 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
-        
+
         .action-button:hover::before {
             left: 100%;
         }
-        
+
         .question-link {
             background: rgba(56, 163, 165, 0.1);
             color: var(--text-highlight);
@@ -93,64 +93,83 @@
             transition: all 0.3s ease;
             border: 1px solid rgba(56, 163, 165, 0.2);
         }
-        
+
         .question-link:hover {
             background: rgba(56, 163, 165, 0.2);
             transform: scale(1.05);
             text-decoration: none;
         }
-        
+
         .header-gradient {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .fade-in {
             animation: fadeInUp 0.6s ease forwards;
             opacity: 0;
             transform: translateY(30px);
         }
-        
-        .fade-in:nth-child(1) { animation-delay: 0.1s; }
-        .fade-in:nth-child(2) { animation-delay: 0.2s; }
-        .fade-in:nth-child(3) { animation-delay: 0.3s; }
-        .fade-in:nth-child(4) { animation-delay: 0.4s; }
-        .fade-in:nth-child(5) { animation-delay: 0.5s; }
-        
+
+        .fade-in:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .fade-in:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .fade-in:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .fade-in:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .fade-in:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
         @keyframes fadeInUp {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         .loading-skeleton {
             background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
         }
-        
+
         @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
-        
+
         .no-answers-illustration {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .floating-action {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
             z-index: 50;
         }
-        
+
         .floating-button {
             background: var(--button-primary);
             color: var(--button-text);
@@ -165,12 +184,12 @@
             border: none;
             cursor: pointer;
         }
-        
+
         .floating-button:hover {
             transform: translateY(-4px) scale(1.1);
             box-shadow: 0 12px 40px rgba(56, 163, 165, 0.4);
         }
-        
+
         .search-filter-bar {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -179,7 +198,7 @@
             margin-bottom: 2rem;
             backdrop-filter: blur(10px);
         }
-        
+
         .search-input {
             background: var(--bg-primary);
             border: 1px solid var(--border-color);
@@ -189,13 +208,13 @@
             width: 100%;
             transition: all 0.3s ease;
         }
-        
+
         .search-input:focus {
             outline: none;
             border-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(56, 163, 165, 0.1);
         }
-        
+
         .filter-button {
             background: var(--bg-primary);
             border: 1px solid var(--border-color);
@@ -205,14 +224,14 @@
             transition: all 0.3s ease;
             cursor: pointer;
         }
-        
+
         .filter-button:hover,
         .filter-button.active {
             background: var(--button-primary);
             color: var(--button-text);
             border-color: transparent;
         }
-        
+
         .answer-meta {
             display: flex;
             align-items: center;
@@ -220,7 +239,7 @@
             flex-wrap: wrap;
             margin-bottom: 1rem;
         }
-        
+
         .meta-item {
             display: flex;
             align-items: center;
@@ -228,7 +247,7 @@
             color: var(--text-muted);
             font-size: 0.875rem;
         }
-        
+
         .vote-indicator {
             background: var(--bg-primary);
             border: 1px solid var(--border-color);
@@ -239,28 +258,28 @@
             gap: 0.5rem;
             font-weight: 600;
         }
-        
+
         .vote-indicator.positive {
             color: var(--accent-secondary);
             border-color: var(--accent-secondary);
         }
-        
+
         .vote-indicator.negative {
             color: #ef4444;
             border-color: #ef4444;
         }
-        
+
         @media (max-width: 768px) {
             .floating-action {
                 bottom: 1rem;
                 right: 1rem;
             }
-            
+
             .floating-button {
                 width: 50px;
                 height: 50px;
             }
-            
+
             .search-filter-bar {
                 padding: 1rem;
             }
@@ -273,50 +292,64 @@
     @include('utils.background')
 
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-[var(--text-primary)]">
-        
+
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8" data-aos="fade-down">
             <div class="flex items-center space-x-4 mb-4 sm:mb-0">
                 @if (isset($user) && $user)
-                <div class="relative">
-                    <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
-                         src="{{ $user->image ? asset('storage/' . $user->image) : 'https://ui-avatars.com/api/?name=' . urlencode($user->username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                         alt="{{ $user->username ?? 'User' }}'s avatar">
-                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--accent-secondary)] rounded-full flex items-center justify-center">
-                        <i class="fas fa-comments text-white text-xs"></i>
+                    <div class="relative">
+                        <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
+                            src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                            alt="{{ $user['username'] ?? 'User' }}'s avatar">
+                        <div
+                            class="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--accent-secondary)] rounded-full flex items-center justify-center">
+                            <i class="fas fa-comments text-white text-xs"></i>
+                        </div>
                     </div>
-                </div>
                 @endif
                 <div>
-                    <h1 class="text-4xl font-bold header-gradient mb-2">
-                        My Answers
-                    </h1>
-                    <p class="text-[var(--text-muted)]">
-                        Manage and track your contributions
-                    </p>
+                    @if (session('email') === $user['email'])
+                        <h1 class="text-4xl font-bold header-gradient mb-2">
+                            My Answers
+                        </h1>
+                        <p class="text-[var(--text-muted)]">
+                            Manage and track your answers
+                        </p>
+                    @else
+                        <h1 class="text-4xl font-bold header-gradient mb-2">
+                            {{ $user['username'] }}'s Answers
+                        </h1>
+                        <p class="text-[var(--text-muted)]">
+                            Track {{ $user['username'] }}'s answers
+                        </p>
+                    @endif
+
                 </div>
             </div>
         </div>
-        
+
         @if (session('success'))
-            <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg mb-6 shadow-lg" data-aos="fade-in">
+            <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg mb-6 shadow-lg"
+                data-aos="fade-in">
                 <div class="flex items-center">
                     <i class="fas fa-check-circle mr-3 text-xl"></i>
                     <span class="font-medium">{{ session('success') }}</span>
                 </div>
             </div>
         @endif
-        
+
         @if (session('error'))
-            <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-lg mb-6 shadow-lg" data-aos="fade-in">
+            <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-lg mb-6 shadow-lg"
+                data-aos="fade-in">
                 <div class="flex items-center">
                     <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
                     <span class="font-medium">{{ session('error') }}</span>
                 </div>
             </div>
         @endif
-        
+
         @if (isset($apiError))
-            <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black p-4 rounded-lg mb-6 shadow-lg" data-aos="fade-in">
+            <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black p-4 rounded-lg mb-6 shadow-lg"
+                data-aos="fade-in">
                 <div class="flex items-center">
                     <i class="fas fa-exclamation-triangle mr-3 text-xl"></i>
                     <span class="font-medium">{{ $apiError }}</span>
@@ -329,12 +362,10 @@
             <div class="space-y-8" id="answers-container">
                 @foreach ($answers as $index => $answer)
                     <div id="answer-item-{{ $answer['id'] }}"
-                         class="answer-card shadow-xl rounded-2xl p-8 transition-all duration-500 fade-in"
-                         data-answer-date="{{ $answer['created_at'] }}"
-                         data-answer-votes="{{ $answer['vote'] ?? 0 }}"
-                         data-aos="fade-up"
-                         data-aos-delay="{{ $index * 100 }}">
-                        
+                        class="answer-card shadow-xl rounded-2xl p-8 transition-all duration-500 fade-in"
+                        data-answer-date="{{ $answer['created_at'] }}" data-answer-votes="{{ $answer['vote'] ?? 0 }}"
+                        data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+
                         <!-- Answer Header -->
                         <div class="answer-meta">
                             <div class="meta-item">
@@ -345,11 +376,11 @@
                                 <i class="fas fa-clock"></i>
                                 <span>{{ \Carbon\Carbon::parse($answer['created_at'])->format('H:i') }}</span>
                             </div>
-                            @if(isset($answer['question']) && $answer['question'])
+                            @if (isset($answer['question']) && $answer['question'])
                                 <div class="meta-item">
                                     <i class="fas fa-question-circle"></i>
-                                    <a href="{{ route('user.viewQuestions', ['questionId' => $answer['question']['id']]) }}" 
-                                       class="question-link">
+                                    <a href="{{ route('user.viewQuestions', ['questionId' => $answer['question']['id']]) }}"
+                                        class="question-link">
                                         {{ Str::limit($answer['question']['title'] ?? 'Question', 40) }}
                                     </a>
                                 </div>
@@ -364,35 +395,37 @@
                         <!-- Answer Image -->
                         @if (!empty($answer['image']))
                             <div class="mb-6">
-                                <img src="{{ asset('storage/' . $answer['image']) }}" 
-                                     alt="Answer image" 
-                                     class="rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
-                                     onclick="openImageModal(this.src)">
+                                <img src="{{ asset('storage/' . $answer['image']) }}" alt="Answer image"
+                                    class="rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                                    onclick="openImageModal(this.src)">
                             </div>
                         @endif
 
                         <!-- Answer Footer -->
                         <div class="flex justify-between items-center pt-6 border-t border-[var(--border-color)]">
                             <div class="flex items-center gap-4">
-                                <div class="vote-indicator {{ ($answer['vote'] ?? 0) > 0 ? 'positive' : (($answer['vote'] ?? 0) < 0 ? 'negative' : '') }}">
+                                <div
+                                    class="vote-indicator {{ ($answer['vote'] ?? 0) > 0 ? 'positive' : (($answer['vote'] ?? 0) < 0 ? 'negative' : '') }}">
                                     <i class="fas fa-heart"></i>
                                     <span>{{ $answer['vote'] ?? 0 }} votes</span>
                                 </div>
                             </div>
 
                             <!-- Action Buttons -->
-                            @if (isset($answer['user_id']) && ($answer['votes_count'] ?? 0) == 0)
-                                <div class="flex space-x-3">
-                                    <a href="{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}"
-                                       class="action-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
-                                        <i class="fas fa-edit mr-2"></i>Edit
-                                    </a>
-                                    <button
-                                        class="delete-answer-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
-                                        data-answer-id="{{ $answer['id'] }}">
-                                        <i class="fas fa-trash-alt mr-2"></i>Delete
-                                    </button>
-                                </div>
+                            @if (session('email') === $loggedInUser['email'])
+                                @if (isset($answer['user_id']) && ($answer['votes_count'] ?? 0) == 0)
+                                    <div class="flex space-x-3">
+                                        <a href="{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}"
+                                            class="action-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                                            <i class="fas fa-edit mr-2"></i>Edit
+                                        </a>
+                                        <button
+                                            class="delete-answer-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                                            data-answer-id="{{ $answer['id'] }}">
+                                            <i class="fas fa-trash-alt mr-2"></i>Delete
+                                        </button>
+                                    </div>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -410,8 +443,8 @@
                     <p class="text-[var(--text-muted)] text-lg mb-8">
                         Start contributing to the community by answering questions. Your knowledge can help others!
                     </p>
-                    <a href="{{ route('home') }}" 
-                       class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                    <a href="{{ route('home') }}"
+                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
                         <i class="fas fa-search mr-2"></i>
                         Browse Questions
                     </a>
@@ -421,11 +454,23 @@
 
         <!-- Back to Profile Link -->
         <div class="mt-16 text-center" data-aos="fade-up">
-            <a href="{{ route('seeProfile') }}" 
-               class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                <i class="fas fa-arrow-left mr-2"></i>
-                Back to My Profile
-            </a>
+            @if (session('email') === $user['email'])
+                <div class="mt-16 text-center" data-aos="fade-up">
+                    <a href="{{ route('seeProfile') }}"
+                        class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to My Profile
+                    </a>
+                </div>
+            @else
+                <div class="mt-16 text-center" data-aos="fade-up">
+                    <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
+                        class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to {{ $user['username'] }}'s Profile
+                    </a>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -433,8 +478,8 @@
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
         <div class="relative max-w-4xl max-h-full">
             <img id="modalImage" src="" alt="Full size image" class="max-w-full max-h-full rounded-lg">
-            <button onclick="closeImageModal()" 
-                    class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full hover:bg-opacity-30 transition-all">
+            <button onclick="closeImageModal()"
+                class="absolute top-4 right-4 bg-white bg-opacity-20 text-white p-2 rounded-full hover:bg-opacity-30 transition-all">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -461,7 +506,7 @@
                 searchInput.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase();
                     const answerCards = document.querySelectorAll('[id^="answer-item-"]');
-                    
+
                     answerCards.forEach(card => {
                         const content = card.textContent.toLowerCase();
                         if (content.includes(searchTerm)) {
@@ -481,13 +526,13 @@
                     // Update active button
                     filterButtons.forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
-                    
+
                     const filter = this.dataset.filter;
                     const answerCards = document.querySelectorAll('[id^="answer-item-"]');
-                    
+
                     answerCards.forEach((card, index) => {
                         let show = true;
-                        
+
                         if (filter === 'recent') {
                             const date = new Date(card.dataset.answerDate);
                             const now = new Date();
@@ -497,11 +542,12 @@
                             const votes = parseInt(card.dataset.answerVotes) || 0;
                             show = votes > 0;
                         }
-                        
+
                         if (show) {
                             card.style.display = 'block';
                             setTimeout(() => {
-                                card.style.animation = 'fadeInUp 0.5s ease forwards';
+                                card.style.animation =
+                                    'fadeInUp 0.5s ease forwards';
                             }, index * 100);
                         } else {
                             card.style.display = 'none';
@@ -535,7 +581,8 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Show loading state
-                            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Deleting...';
+                            this.innerHTML =
+                                '<i class="fas fa-spinner fa-spin mr-2"></i>Deleting...';
                             this.disabled = true;
 
                             const headers = {
@@ -545,68 +592,77 @@
                             };
 
                             fetch(`${API_BASE_URL}answers/${answerId}`, {
-                                method: 'DELETE',
-                                headers: headers
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    return response.json().then(err => { throw err; });
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.success) {
+                                    method: 'DELETE',
+                                    headers: headers
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw err;
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            title: 'Deleted!',
+                                            text: data.message ||
+                                                'Your answer has been deleted successfully.',
+                                            icon: 'success',
+                                            background: 'var(--bg-card)',
+                                            color: 'var(--text-primary)',
+                                            confirmButtonColor: 'var(--accent-secondary)',
+                                            customClass: {
+                                                popup: 'rounded-2xl',
+                                                confirmButton: 'rounded-xl px-6 py-3'
+                                            }
+                                        });
+
+                                        // Animate removal
+                                        if (answerItemElement) {
+                                            answerItemElement.style.animation =
+                                                'fadeOutUp 0.5s ease forwards';
+                                            setTimeout(() => {
+                                                answerItemElement.remove();
+                                                checkEmptyState();
+                                            }, 500);
+                                        }
+                                    } else {
+                                        throw new Error(data.message ||
+                                            'Could not delete the answer.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error details:', error);
+                                    let errorMessage =
+                                        'An error occurred while deleting the answer.';
+                                    if (error && error.message) {
+                                        errorMessage = error.message;
+                                    } else if (error && typeof error === 'object' &&
+                                        error.errors) {
+                                        errorMessage = Object.values(error.errors)
+                                            .flat().join(' ');
+                                    }
+
                                     Swal.fire({
-                                        title: 'Deleted!',
-                                        text: data.message || 'Your answer has been deleted successfully.',
-                                        icon: 'success',
+                                        title: 'Error!',
+                                        text: errorMessage,
+                                        icon: 'error',
                                         background: 'var(--bg-card)',
                                         color: 'var(--text-primary)',
-                                        confirmButtonColor: 'var(--accent-secondary)',
+                                        confirmButtonColor: '#ef4444',
                                         customClass: {
                                             popup: 'rounded-2xl',
                                             confirmButton: 'rounded-xl px-6 py-3'
                                         }
                                     });
-                                    
-                                    // Animate removal
-                                    if (answerItemElement) {
-                                        answerItemElement.style.animation = 'fadeOutUp 0.5s ease forwards';
-                                        setTimeout(() => {
-                                            answerItemElement.remove();
-                                            checkEmptyState();
-                                        }, 500);
-                                    }
-                                } else {
-                                    throw new Error(data.message || 'Could not delete the answer.');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error details:', error);
-                                let errorMessage = 'An error occurred while deleting the answer.';
-                                if (error && error.message) {
-                                    errorMessage = error.message;
-                                } else if (error && typeof error === 'object' && error.errors) {
-                                    errorMessage = Object.values(error.errors).flat().join(' ');
-                                }
-                                
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: errorMessage,
-                                    icon: 'error',
-                                    background: 'var(--bg-card)',
-                                    color: 'var(--text-primary)',
-                                    confirmButtonColor: '#ef4444',
-                                    customClass: {
-                                        popup: 'rounded-2xl',
-                                        confirmButton: 'rounded-xl px-6 py-3'
-                                    }
+
+                                    // Reset button state
+                                    this.innerHTML =
+                                        '<i class="fas fa-trash-alt mr-2"></i>Delete';
+                                    this.disabled = false;
                                 });
-                                
-                                // Reset button state
-                                this.innerHTML = '<i class="fas fa-trash-alt mr-2"></i>Delete';
-                                this.disabled = false;
-                            });
                         }
                     });
                 });
@@ -638,7 +694,7 @@
                         </div>
                     `;
                     answersContainer.innerHTML = emptyState;
-                    
+
                     // Hide search bar
                     const searchBar = document.querySelector('.search-filter-bar');
                     if (searchBar) {
@@ -792,8 +848,8 @@
         `;
         document.head.appendChild(style);
 
-    
-        
+
+
 
         // Add intersection observer for better performance
         const observerOptions = {
@@ -831,7 +887,7 @@
         function handleSwipe() {
             const swipeThreshold = 50;
             const diff = touchStartY - touchEndY;
-            
+
             if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0) {
                     // Swipe up - could trigger some action
@@ -849,7 +905,7 @@
             button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>${text}`;
             button.disabled = true;
             button.classList.add('btn-loading');
-            
+
             return () => {
                 button.innerHTML = originalText;
                 button.disabled = false;
@@ -860,15 +916,16 @@
         // Enhanced error handling
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
-            toast.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white transition-all transform translate-x-full`;
-            
+            toast.className =
+                `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white transition-all transform translate-x-full`;
+
             const bgColors = {
                 success: 'bg-green-500',
                 error: 'bg-red-500',
                 warning: 'bg-yellow-500',
                 info: 'bg-blue-500'
             };
-            
+
             toast.classList.add(bgColors[type] || bgColors.info);
             toast.innerHTML = `
                 <div class="flex items-center">
@@ -879,14 +936,14 @@
                     </button>
                 </div>
             `;
-            
+
             document.body.appendChild(toast);
-            
+
             // Animate in
             setTimeout(() => {
                 toast.classList.remove('translate-x-full');
             }, 100);
-            
+
             // Auto remove after 5 seconds
             setTimeout(() => {
                 toast.classList.add('translate-x-full');
@@ -898,17 +955,18 @@
         document.querySelectorAll('.answer-card').forEach(card => {
             card.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
-                
+
                 // Remove existing context menus
                 document.querySelectorAll('.context-menu').forEach(menu => menu.remove());
-                
+
                 const contextMenu = document.createElement('div');
-                contextMenu.className = 'context-menu fixed bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-2';
+                contextMenu.className =
+                    'context-menu fixed bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-2';
                 contextMenu.style.left = e.pageX + 'px';
                 contextMenu.style.top = e.pageY + 'px';
-                
+
                 const answerId = card.id.replace('answer-item-', '');
-                
+
                 contextMenu.innerHTML = `
                     <button onclick="copyAnswerLink('${answerId}')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm">
                         <i class="fas fa-link mr-2"></i>Copy Link
@@ -921,9 +979,9 @@
                         <i class="fas fa-flag mr-2"></i>Report
                     </button>
                 `;
-                
+
                 document.body.appendChild(contextMenu);
-                
+
                 // Position menu if it goes off screen
                 const rect = contextMenu.getBoundingClientRect();
                 if (rect.right > window.innerWidth) {
@@ -932,7 +990,7 @@
                 if (rect.bottom > window.innerHeight) {
                     contextMenu.style.top = (e.pageY - rect.height) + 'px';
                 }
-                
+
                 // Close menu on click outside
                 setTimeout(() => {
                     document.addEventListener('click', function closeMenu() {
@@ -990,7 +1048,7 @@
         function printAnswers() {
             const printWindow = window.open('', '_blank');
             const answersHTML = document.getElementById('answers-container').innerHTML;
-            
+
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
@@ -1012,7 +1070,7 @@
                 </body>
                 </html>
             `);
-            
+
             printWindow.document.close();
             printWindow.print();
         }
@@ -1026,15 +1084,17 @@
                     votes: card.dataset.answerVotes
                 };
             });
-            
+
             const dataStr = JSON.stringify(answers, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
+            const dataBlob = new Blob([dataStr], {
+                type: 'application/json'
+            });
+
             const link = document.createElement('a');
             link.href = URL.createObjectURL(dataBlob);
             link.download = 'my-answers.json';
             link.click();
-            
+
             showToast('Answers exported successfully!', 'success');
         }
     </script>
