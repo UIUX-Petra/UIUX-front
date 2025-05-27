@@ -1,6 +1,8 @@
 @extends('layout')
 @section('head')
     <meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
+@section('content')
     <style>
         .hover\:shadow-glow:hover {
             box-shadow: 0 0 10px rgba(255, 223, 0, 0.6), 0 0 20px rgba(255, 223, 0, 0.4);
@@ -72,8 +74,7 @@
             border-left: 4px solid #23BF7F;
         }
     </style>
-@endsection
-@section('content')
+
     @include('partials.nav')
     @php
         $isQuestionOwner = $question['user']['email'] === session('email');
@@ -117,13 +118,6 @@
                     class="mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down">
                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                 </button>
-
-                <div class="flex flex-col items-center mt-4">
-                    <i class="text-md text-[var(--accent-tertiary)] fa-solid fa-eye"></i>
-                    <small class="text-[var(--text-secondary)] text-xs mt-1">
-                        {{ $question['view'] }}
-                    </small>
-                </div>
 
                 <div class="flex flex-col items-center mt-4" id="reply-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
@@ -261,14 +255,14 @@
                 </div>
 
                 <textarea id="answer-textArea"
-                    class="w-full bg-[var(--bg-input)] rounded-lg p-4 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-2 focus:outline-yellow-400 min-h-[150px]"
+                    class="w-full bg-[var(--bg-input)] rounded-lg p-4 text-[var(--text-primary)] placeholder-[var(--text-muted)]  min-h-[150px]"
                     placeholder="Write your detailed answer here..."></textarea>
 
-                <div class="flex justify-between items-center mt-4">
-                    <label
-                        class="flex items-center px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all hover:bg-opacity-90 cursor-pointer">
-                        <i class="fa-solid fa-file-upload mr-2"></i>
-                        Upload Images
+                <div class="flex justify-end items-center space-x-2  mt-4">
+                    <label tabindex="0"
+                        class="flex items-center px-4 py-3 bg-[var(--accent-tertiary)] text-black rounded-lg transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                        <i class="fa-solid fa-file-upload"></i>
+                        {{-- Upload Images --}}
                         <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
                     </label>
 
@@ -607,12 +601,6 @@
                                  class="max-w-lg max-h-96 object-contain rounded-lg border">
                          </div>` : '';
 
-                                //         const bestAnswerBadge = isFirstAnswer ?
-                                //             `<div class="mt-4 flex flex-col items-center">
-                            //     <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
-                            //     <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
-                            //  </div>` : '';
-
                                 const verifyBlockForNewAnswer = generateVerifyBlockHtml(data.answer.id,
                                     jsIsQuestionOwner);
 
@@ -697,10 +685,9 @@
                                 let replies = document.querySelector('#reply-count small')
                                 let answerCountAtas = document.querySelector('#answerCountAtas span')
                                 let count = parseInt(replies.textContent.trim(), 10) + 1;
-
                                 replies.textContent = count;
                                 answerCountAtas.textContent = count;
-
+                                console.log('aman bgt bung 1');
                             } else {
                                 Swal.fire({
                                     icon: 'error',

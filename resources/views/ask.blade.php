@@ -170,7 +170,7 @@
 
         .submit-button {
             background: linear-gradient(to right, #38A3A5, #80ED99);
-            color: white;
+            color: black;
             border: none;
             border-radius: 0.5rem;
             font-weight: 600;
@@ -217,6 +217,154 @@
         .tips-list i {
             color: var(--text-dark);
         }
+
+        .tag-item-modal {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: var(--bg-secondary);
+        }
+
+        .tag-item-modal:hover {
+            border-color: var(--accent-tertiary);
+            background-color: var(--bg-card);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-item-modal.selected {
+            background: linear-gradient(to right, rgba(56, 163, 165, 0.1), rgba(128, 237, 153, 0.1));
+            border-color: var(--accent-secondary);
+            color: var(--accent-tertiary);
+        }
+
+        .tag-item-modal.selected:hover {
+            background: linear-gradient(to right, rgba(56, 163, 165, 0.15), rgba(128, 237, 153, 0.15));
+        }
+
+        .tag-checkbox-modal {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .tag-checkbox-modal.checked {
+            background: linear-gradient(to right, #38A3A5, #80ED99);
+            border-color: var(--accent-secondary);
+        }
+
+        .tag-checkbox-modal.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .selected-tag-badge-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: tagAppear 0.2s ease-out;
+        }
+
+        .selected-tag-badge-new .remove-tag {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+
+        .selected-tag-badge-new .remove-tag:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tag-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tag-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .tag-count {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Modal animations */
+        #tags-modal {
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        #tags-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #tags-modal .bg-\[var\(--bg-card\)\] {
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        #tags-modal.show .bg-\[var\(--bg-card\)\] {
+            transform: scale(1);
+        }
+
+        /* Custom scrollbar for tags grid */
+        #tags-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #tags-grid::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #38A3A5, #80ED99);
+            border-radius: 10px;
+        }
+
+        #tags-grid::-webkit-scrollbar-track {
+            background-color: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        @keyframes tagAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
     </style>
 @endsection
 @section('content')
@@ -241,7 +389,7 @@
         $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
     @endphp
 
-    <div class="max-w-5xl mx-auto justify-start items-start px-4 py-8">
+    <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
         <div class="flex items-center gap-4">
             <div class="page-title-icon flex items-center justify-center">
@@ -313,7 +461,7 @@
                     </div>
                     <div class="p-4 bg-[var(--bg-secondary)]">
                         <textarea id="question" name="question" rows="8"
-                            class="block w-full px-0 text-[var(--text-primary)] bg-transparent border-0 focus:ring-0"
+                            class="block w-full px-0 text-[var(--text-primary)] placeholder-[var(--text-muted)] bg-transparent border-0 focus:ring-0"
                             placeholder="Describe your question in detail..." required>{{ old('question', $isEditMode ? $questionToEdit['question'] ?? '' : '') }}</textarea>
                         <div id="image-preview" class="flex flex-wrap gap-4 mt-4 p-2">
                             @if ($isEditMode && !empty($questionToEdit['image']))
@@ -336,71 +484,112 @@
                     <i class="fa-solid fa-tags section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Tags</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags</p>
-                <div class="flex flex-wrap gap-6 mb-6">
-                    @php
-                        $selectedTagIdsOnLoad = [];
-                        if (
-                            $isEditMode &&
-                            isset($questionToEdit['group_question']) &&
-                            is_array($questionToEdit['group_question'])
-                        ) {
-                            foreach ($questionToEdit['group_question'] as $group) {
-                                if (isset($group['subject']) && isset($group['subject']['id'])) {
-                                    $selectedTagIdsOnLoad[] = $group['subject']['id'];
-                                }
-                            }
-                        }
-                    @endphp
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to help others find your question</p>
+                
+                <!-- Selected Tags Display -->
+                <div class="mb-4">
+                    <div id="selected-tags-display" class="flex flex-wrap gap-2 min-h-[40px] p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg relative items-end">
+                        <div id="selected-tags-container" class="flex flex-wrap gap-2 flex-1">
+                            <!-- Selected tags will appear here -->
+                        </div>
+                        
+                        <!-- Add Tags Button (Plus Icon) inside the input box -->
+                        <button type="button" id="open-tags-modal" class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
+                            <i class="fa-solid fa-plus text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Count Badge and Clear All outside the input box -->
+                    <div class="flex items-center justify-between mt-2 mr-1 ml-0.5">
+                        <span id="selected-count-badge" class="text-xs bg-[var(--accent-tertiary)] text-[var(--text-dark)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
+                        <button type="button" id="clear-all-tags" class="font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] underline transition-colors text-md">
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                    @foreach (['Software Development', 'Data, AI & Analytics', 'Security', 'Others'] as $categoryName)
-                        <div class="flex-1 min-w-[200px]">
-                            <h3 class="category-title mb-3">{{ $categoryName }}</h3>
-                            <div class="flex flex-wrap gap-2">
-                                {{-- Loop through $allTags which is passed from controller --}}
-                                @if (isset($allTags) && is_array($allTags))
-                                    @foreach ($allTags as $tag)
-                                        @php
-                                            $isInCategory = false;
-                                            if (
-                                                $categoryName === 'Software Development' &&
-                                                in_array($tag['name'], ['Introduction to Programming' /* ... */])
-                                            ) {
-                                                $isInCategory = true;
-                                            } elseif (
-                                                $categoryName === 'Data, AI & Analytics' &&
-                                                in_array($tag['name'], ['Data Structures and Algorithms' /* ... */])
-                                            ) {
-                                                $isInCategory = true;
-                                            } elseif (
-                                                $categoryName === 'Security' &&
-                                                in_array($tag['name'], ['Cybersecurity' /* ... */])
-                                            ) {
-                                                $isInCategory = true;
-                                            } elseif (
-                                                $categoryName === 'Others' &&
-                                                !in_array($tag['name'], [
-                                                    /* all other named tags */
-                                                ])
-                                            ) {
-                                                $isInCategory = true;
-                                            }
-                                        @endphp
+                <!-- Hidden input for form submission -->
+                <select id="tags-multiselect" name="subject_id[]" multiple class="hidden">
+                    @if (isset($allTags) && is_array($allTags))
+                        @php
+                            $sortedTags = collect($allTags)->sortBy('name')->values()->all();
+                        @endphp
+                        @foreach ($sortedTags as $tag)
+                            <option value="{{ $tag['id'] }}" 
+                                    {{ in_array($tag['id'], $selectedTagIdsOnLoad ?? []) ? 'selected' : '' }}>
+                                {{ $tag['name'] }}
+                            </option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
 
-                                        @if ($isInCategory)
-                                            <a href="#" id="tag-btn-{{ $tag['id'] }}"
-                                                data-tag-id="{{ $tag['id'] }}"
-                                                class="tag-button {{ in_array($tag['id'], $selectedTagIdsOnLoad) ? 'tab-active' : 'tab-inactive' }} py-2 px-4">
-                                                {{ $tag['name'] }}
-                                            </a>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    <p class="text-xs text-red-500">Error: Tags not available.</p>
-                                @endif
+            <!-- Tags Modal -->
+            <div id="tags-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+                <div class="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
+                        <div>
+                            <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Tags</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mt-1">Choose tags that best describe your question</p>
+                        </div>
+                        <button type="button" id="close-tags-modal" class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
+                            <i class="fa-solid fa-times text-xl text-[var(--text-secondary)]"></i>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="flex-1 flex flex-col min-h-0">
+                        <!-- Search Bar -->
+                        <div class="p-6 pb-4 border-b border-[var(--border-color)]">
+                            <div class="relative">
+                                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]"></i>
+                                <input type="text" 
+                                    id="tags-search-input" 
+                                    class="w-full pl-10 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent-tertiary)] focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-opacity-20 transition-all" 
+                                    placeholder="Search tags..."
+                                    autocomplete="off">
+                            </div>
+                            <div class="flex items-center justify-between mt-3 text-sm text-[var(--text-secondary)]">
+                                <span>
+                                    <span id="showing-count">0</span> tags available
+                                </span>
+                                <span>
+                                    <span id="selected-count-modal">0</span> selected
+                                </span>
                             </div>
                         </div>
-                    @endforeach
+
+                        <!-- Tags Grid -->
+                        <div class="flex-1 overflow-y-auto p-6">
+                            <div id="tags-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <!-- Tags will be populated here -->
+                            </div>
+                            <div id="no-tags-found" class="text-center py-12 hidden">
+                                <i class="fa-solid fa-search text-4xl text-[var(--text-secondary)] opacity-50 mb-4"></i>
+                                <p class="text-[var(--text-secondary)] text-lg">No tags found</p>
+                                <p class="text-[var(--text-secondary)] text-sm mt-1">Try a different search term</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="p-6 border-t border-[var(--border-color)] bg-[var(--bg-secondary)] rounded-b-xl">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-[var(--text-secondary)]">
+                                <span id="selected-count-footer">0</span> tags selected
+                            </div>
+                            <div class="flex gap-3">
+                                <button type="button" id="cancel-tags-modal" class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="button" id="confirm-tags-modal" class="px-6 py-2 bg-[var(--accent-secondary)] text-white rounded-lg hover:opacity-90 transition-opacity">
+                                    Done
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -429,44 +618,196 @@
         let imageFile = null;
 
         document.addEventListener('DOMContentLoaded', function() {
-            if (IS_EDIT_MODE && QUESTION_TO_EDIT) {
-                document.getElementById('title').value = QUESTION_TO_EDIT.title || '';
-                document.getElementById('question').value = QUESTION_TO_EDIT.question || '';
+            let selectedTagIds = [];
+            let tempSelectedTagIds = []; // For modal state
+            let allTags = ALL_TAGS_FROM_PHP || [];
+            let filteredTags = [...allTags];
 
-                if (QUESTION_TO_EDIT.group_question && Array.isArray(QUESTION_TO_EDIT.group_question)) {
-                    QUESTION_TO_EDIT.group_question.forEach(group => {
-                        if (group.subject && group.subject.id) {
-                            const tagId = group.subject.id;
-                            if (!selectedTagIds.includes(tagId)) {
-                                selectedTagIds.push(tagId);
-                            }
-                            const tagButton = document.getElementById(`tag-btn-${tagId}`);
-                            if (tagButton) {
-                                tagButton.classList.remove('tab-inactive');
-                                tagButton.classList.add('tab-active');
-                            }
+            // DOM elements
+            const openModalBtn = document.getElementById('open-tags-modal');
+            const closeModalBtn = document.getElementById('close-tags-modal');
+            const cancelModalBtn = document.getElementById('cancel-tags-modal');
+            const confirmModalBtn = document.getElementById('confirm-tags-modal');
+            const modal = document.getElementById('tags-modal');
+            const searchInput = document.getElementById('tags-search-input');
+            const tagsGrid = document.getElementById('tags-grid');
+            const selectedTagsContainer = document.getElementById('selected-tags-container');
+            const selectedCountBadge = document.getElementById('selected-count-badge');
+            const selectedCountModal = document.getElementById('selected-count-modal');
+            const selectedCountFooter = document.getElementById('selected-count-footer');
+            const showingCount = document.getElementById('showing-count');
+            const noTagsFound = document.getElementById('no-tags-found');
+            const clearAllBtn = document.getElementById('clear-all-tags');
+            const hiddenSelect = document.getElementById('tags-multiselect');
+
+            // Initialize from edit mode if applicable
+            if (IS_EDIT_MODE && QUESTION_TO_EDIT && QUESTION_TO_EDIT.group_question) {
+                QUESTION_TO_EDIT.group_question.forEach(group => {
+                    if (group.subject && group.subject.id) {
+                        const tagId = group.subject.id.toString();
+                        if (!selectedTagIds.includes(tagId)) {
+                            selectedTagIds.push(tagId);
                         }
-                    });
-                }
-            }
-
-            document.querySelectorAll('.tag-button').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const tagId = this.dataset.tagId;
-
-                    if (selectedTagIds.includes(tagId)) {
-                        selectedTagIds = selectedTagIds.filter(id => id !== tagId);
-                        this.classList.remove('tab-active');
-                        this.classList.add('tab-inactive');
-                    } else {
-                        selectedTagIds.push(tagId);
-                        this.classList.remove('tab-inactive');
-                        this.classList.add('tab-active');
                     }
                 });
+            }
+
+            function openModal() {
+                tempSelectedTagIds = [...selectedTagIds];
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.add('show');
+                    searchInput.focus();
+                }, 10);
+                renderTagsGrid();
+                updateModalCounts();
+            }
+
+            function closeModal() {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    searchInput.value = '';
+                    filteredTags = [...allTags];
+                }, 200);
+            }
+
+            function confirmSelection() {
+                selectedTagIds = [...tempSelectedTagIds];
+                updateMainUI();
+                closeModal();
+            }
+
+            function cancelSelection() {
+                tempSelectedTagIds = [...selectedTagIds];
+                closeModal();
+            }
+
+            function renderTagsGrid() {
+                tagsGrid.innerHTML = '';
+                
+                if (filteredTags.length === 0) {
+                    noTagsFound.classList.remove('hidden');
+                    showingCount.textContent = '0';
+                    return;
+                }
+                
+                noTagsFound.classList.add('hidden');
+                showingCount.textContent = filteredTags.length;
+
+                filteredTags.forEach(tag => {
+                    const isSelected = tempSelectedTagIds.includes(tag.id.toString());
+                    
+                    const tagItem = document.createElement('div');
+                    tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
+                    tagItem.innerHTML = `
+                        <div class="tag-checkbox-modal ${isSelected ? 'checked' : ''}"></div>
+                        <div class="tag-info">
+                            <div class="tag-name">${tag.name}</div>
+                            <div class="tag-count">${tag.questions || 0} questions</div>
+                        </div>
+                    `;
+                    
+                    tagItem.addEventListener('click', () => toggleTempTag(tag.id.toString()));
+                    tagsGrid.appendChild(tagItem);
+                });
+            }
+
+            function toggleTempTag(tagId) {
+                if (tempSelectedTagIds.includes(tagId)) {
+                    tempSelectedTagIds = tempSelectedTagIds.filter(id => id !== tagId);
+                } else {
+                    tempSelectedTagIds.push(tagId);
+                }
+                
+                renderTagsGrid();
+                updateModalCounts();
+            }
+
+            function updateModalCounts() {
+                selectedCountModal.textContent = tempSelectedTagIds.length;
+                selectedCountFooter.textContent = tempSelectedTagIds.length;
+            }
+
+            function updateMainUI() {
+                selectedTagsContainer.innerHTML = '';
+                selectedTagIds.forEach(tagId => {
+                    const tag = allTags.find(t => t.id.toString() === tagId);
+                    if (tag) {
+                        const badge = document.createElement('span');
+                        badge.className = 'selected-tag-badge-new';
+                        badge.innerHTML = `
+                            <span>${tag.name}</span>
+                            <button type="button" class="remove-tag" onclick="removeTag('${tagId}')">
+                                ×
+                            </button>
+                        `;
+                        selectedTagsContainer.appendChild(badge);
+                    }
+                });
+
+                selectedCountBadge.textContent = selectedTagIds.length;
+
+                Array.from(hiddenSelect.options).forEach(option => {
+                    option.selected = selectedTagIds.includes(option.value);
+                });
+
+                // openModalBtn.innerHTML = selectedTagIds.length > 0 
+                //     ? '<i class="fa-solid fa-edit"></i><span>Edit Tags</span>'
+                //     : '<i class="fa-solid fa-plus"></i><span>Add Tags</span>';
+            }
+
+            function filterTags(searchTerm) {
+                const term = searchTerm.toLowerCase().trim();
+                if (term === '') {
+                    filteredTags = [...allTags];
+                } else {
+                    filteredTags = allTags.filter(tag => 
+                        tag.name.toLowerCase().includes(term)
+                    );
+                }
+                renderTagsGrid();
+            }
+
+            // Global function for removing tags (called from badge buttons)
+            window.removeTag = function(tagId) {
+                selectedTagIds = selectedTagIds.filter(id => id !== tagId);
+                updateMainUI();
+            };
+
+            // Event listeners
+            openModalBtn.addEventListener('click', openModal);
+            closeModalBtn.addEventListener('click', closeModal);
+            cancelModalBtn.addEventListener('click', cancelSelection);
+            confirmModalBtn.addEventListener('click', confirmSelection);
+
+            searchInput.addEventListener('input', (e) => {
+                filterTags(e.target.value);
             });
 
+            clearAllBtn.addEventListener('click', () => {
+                selectedTagIds = [];
+                updateMainUI();
+            });
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    cancelSelection();
+                }
+            });
+
+            // ESC key to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    cancelSelection();
+                }
+            });
+
+            // Initialize UI
+            updateMainUI();
+
+            // Image upload functionality (unchanged)
             document.getElementById("upload-image-btn").addEventListener("click", function() {
                 let fileInput = document.createElement("input");
                 fileInput.type = "file";
@@ -479,12 +820,10 @@
                         const reader = new FileReader();
                         reader.onload = function(e) {
                             const imagePreviewContainer = document.getElementById("image-preview");
-                            const oldNewPreview = imagePreviewContainer.querySelector(
-                                '.new-image-preview-item');
+                            const oldNewPreview = imagePreviewContainer.querySelector('.new-image-preview-item');
                             if (oldNewPreview) oldNewPreview.remove();
 
-                            const existingImageDiv = imagePreviewContainer.querySelector(
-                                '.existing-image');
+                            const existingImageDiv = imagePreviewContainer.querySelector('.existing-image');
                             if (existingImageDiv) {
                                 existingImageDiv.style.display = 'none';
                             }
@@ -503,10 +842,8 @@
                                 newPreviewDiv.remove();
                                 imageFile = null;
                                 if (existingImageDiv) {
-                                    existingImageDiv.style.display =
-                                    'flex';
-                                    const removeFlagInput = document.getElementById(
-                                        'remove_existing_image_input');
+                                    existingImageDiv.style.display = 'flex';
+                                    const removeFlagInput = document.getElementById('remove_existing_image_input');
                                     if (removeFlagInput) removeFlagInput.remove();
                                 }
                             };
@@ -520,6 +857,7 @@
                 fileInput.click();
             });
 
+            // Delete existing image functionality (unchanged)
             const deleteExistingImageBtn = document.querySelector('.delete-existing-image-btn');
             if (deleteExistingImageBtn) {
                 deleteExistingImageBtn.addEventListener('click', function() {
@@ -542,6 +880,7 @@
                 });
             }
 
+            // Form submission (updated to work with multiselect)
             const form = document.getElementById('post-form');
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -600,10 +939,10 @@
 
                         if (imageFile) {
                             formData.append("image", imageFile);
-                        } else if (IS_EDIT_MODE && document.getElementById(
-                                'remove_existing_image_input')) {
+                        } else if (IS_EDIT_MODE && document.getElementById('remove_existing_image_input')) {
                             formData.append("remove_existing_image", "1");
                         }
+
                         const headers = {
                             "X-CSRF-TOKEN": CSRF_TOKEN,
                             "Accept": "application/json",
@@ -631,31 +970,26 @@
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Success!',
-                                        text: res.message ||
-                                            `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
+                                        text: res.message || `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
                                     }).then(() => {
                                         if (res.data && res.data.id) {
-                                            window.location.href =
-                                            `/ask/${res.data.id}`;
+                                            window.location.href = `/ask/${res.data.id}`;
                                         } else {
-                                            window.location.href =
-                                                "{{ route('askPage') }}";
+                                            window.location.href = "{{ route('askPage') }}";
                                         }
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error!',
-                                        text: res.message ||
-                                            'An unexpected error occurred from the server.'
+                                        text: res.message || 'An unexpected error occurred from the server.'
                                     });
                                 }
                             })
                             .catch(err => {
                                 console.error('Fetch Error:', err);
                                 Swal.close();
-                                let errorMessage =
-                                'There was an error processing your request.';
+                                let errorMessage = 'There was an error processing your request.';
                                 if (err.data && err.data.message) {
                                     errorMessage = err.data.message;
                                 } else if (err.message) {
