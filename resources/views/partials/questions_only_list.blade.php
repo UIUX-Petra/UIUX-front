@@ -1,7 +1,7 @@
 {{-- resources/views/partials/questions_only_list.blade.php --}}
 
 @forelse ($questions as $question)
-    <div class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
+    <div class="question-card border-solid border-white rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
         <div class="absolute inset-0 bg-pattern opacity-5"></div> {{-- Asumsi class .bg-pattern ada di CSS global Anda --}}
 
         {{-- Tombol Save/Unsave --}}
@@ -49,7 +49,7 @@
                 @if(isset($question['group_question']) && is_array($question['group_question']))
                     @foreach ($question['group_question'] as $tag)
                         @if(isset($tag['subject']['name']))
-                           <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"><span class="hover:border-white hover:border-2 text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)]">
+                           <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"><span class="hover:border-[var(--accent-secondary)] font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                 {{ $tag['subject']['name'] }}
                             </span></a> 
                         @endif

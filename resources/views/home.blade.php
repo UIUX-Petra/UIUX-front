@@ -1,13 +1,6 @@
 @extends('layout')
 @section('content')
     <style>
-        .welcome {
-            /* color: var(--text-primary); */
-            background: -webkit-linear-gradient(#eee, #333);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
         .main-content {
             background-color: var(--bg-secondary);
         }
@@ -38,13 +31,6 @@
 
         .interaction-icons span {
             color: var(--text-secondary);
-        }
-
-
-        .welcome-container {
-            background-color: var(--bg-card);
-            border-radius: 1rem;
-            transition: background-color var(--transition-speed);
         }
 
         .ask-question-card {
@@ -88,7 +74,6 @@
 
         .light-mode {
             --bg-tag: rgba(56, 163, 165, 0.2);
-            --text-tag: rgba(56, 163, 165, 1);
             --bg-accent-subtle: rgba(128, 237, 153, 0.15);
         }
 
@@ -261,7 +246,6 @@
         .skeleton-tags-area .tag-line {
             height: 1.25rem;
             width: 4.5rem;
-            border-radius: 9999px;
         }
 
         /* Styling untuk pagination (sesuaikan jika menggunakan Tailwind atau Bootstrap) */
@@ -391,32 +375,23 @@
         class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.2)] to-[rgba(128,237,153,0.2)] blur-2xl">
     </div>
     <div
-        class="w-full bg-transparent rounded-lg p-6 px-8 max-w-8xl mx-auto my-6 flex flex-col md:flex-row md:items-center md:space-x-6 welcome-container backdrop-blur-sm relative overflow-hidden">
-        {{-- <!-- Decorative element -->
-        <div class="text-5xl hidden md:flex z-10">
-            <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo"
-                class="h-12 lg:h-14 w-auto theme-logo">
-        </div> --}}
-
+        class="bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start items-start my-6 flex flex-col md:flex-row md:items-center md:space-x-6 backdrop-blur-sm relative overflow-hidden">
         <div class="flex flex-col pl-3 z-10">
             @if (session()->has('email'))
-                <h1 class="cal-sans-regular welcome lg:text-4xl text-2xl mb-2 font-bold">
-                    Welcome, {{ $username }}!
-                </h1>
+                <div class="mb-4">
+                    <div class="cal-sans-regular text-xl lg:text-2xl text-[var(--text-secondary)] mb-1 tracking-wide">
+                        Welcome,
+                    </div>
+                    <h1 class="cal-sans-regular text-4xl lg:text-6xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
+                        {{ $username }}!
+                    </h1>
+                </div>
                 <p class="text-[var(--text-muted)] text-lg pl-0.5 leading-relaxed max-w-xl">
-                    Ask questions, share answers, and learn together with fellow Petranesian Informates.
+                    <span class="font-semibold text-[#3cac9d]">Ask questions</span>. 
+                    <span class="font-semibold text-[#57CC99]">share answers</span>, 
+                    <span class="font-semibold text-[#6bce82]">learn together</span>, with 
+                    fellow <span class="font-bold">Petranesian Informates</span>!
                 </p>
-                <!-- Stats summary -->
-                {{-- <div class="flex space-x-6 mt-4 text-sm">
-                    <div class="flex items-center">
-                        <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
-                        <span>23 Questions</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fa-solid fa-comment mr-2 text-[var(--accent-secondary)]"></i>
-                        <span>42 Answers</span>
-                    </div>
-                </div> --}}
             @endif
             <a href="{{ route('askPage') }}"
                 class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} md:hidden flex mt-5 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium text-[0.85rem] p-2.5 rounded-lg items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
@@ -426,8 +401,7 @@
     </div>
 
 
-    <h3 class="cal-sans-regular lg:text-xl text-lg pl-12 mt-10 mb-4">Newest Questions</h3>
-
+    <h3 class="cal-sans-regular lg:text-2xl text-lg pl-12 mt-10 mb-4">Newest Questions</h3>
     <!-- Questions and Ask Question Section -->
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
         <div id="questions-container"

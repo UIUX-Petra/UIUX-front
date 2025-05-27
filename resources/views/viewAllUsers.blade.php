@@ -2,22 +2,6 @@
 @section('content')
 
 <style>
-    .titleGradient {
-            background: linear-gradient(90deg, #633F92, #7494ec, #5500a4);
-            background-size: 200%;
-            font-weight: 700;
-            -webkit-text-fill-color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: gradientShift 8s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .tab-active {
             background-color: var(--accent-tertiary);
             color: var(--text-dark);
@@ -121,11 +105,28 @@
         }
 </style>
 @include('partials.nav')
-    <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start justify-start my-6 welcome-container">
-        <h1 class="cal-sans-regular lg:text-3xl text-2xl mb-2 welcome">Informates</h1>
-        <p class="text-[var(--text-secondary)] text-md pl-0.5 font-regular">
-            Connect with fellow students from Informatics, Business Information Systems, and Data Science & Analytics at Petra Christian University.
-        </p>
+    <div class="relative bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start items-start mt-4 mb-2">
+        <div class="flex flex-col space-y-6">
+            <div class="flex flex-col space-y-4">
+                <div class="flex items-center space-x-3">
+                    {{-- <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center">
+                        <i class="fa-solid fa-users text-white text-xl"></i>
+                    </div> --}}
+                    <div>
+                        <h1 class="cal-sans-regular text-4xl lg:text-5xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
+                            Informates
+                        </h1>
+                        <div class="h-1 w-24 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div>
+                    </div>
+                </div>
+                <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl">
+                    Connect with fellow students from <span class="font-semibold text-[#6bce82]">Informatics</span>, 
+                    <span class="font-semibold text-[#57CC99]">Business Information Systems</span>, and 
+                    <span class="font-semibold text-[#38A3A5]">Data Science & Analytics</span> at 
+                    <span class="font-bold">Petra Christian University</span>.
+                </p>
+            </div>
+        </div>
     </div>
 
     {{-- <div class="max-w-5xl items-start justify-start px-6">
