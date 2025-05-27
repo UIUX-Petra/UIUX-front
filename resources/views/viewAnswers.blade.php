@@ -554,8 +554,8 @@
                         .then(data => {
                             submitButton.innerHTML = originalButtonText;
                             submitButton.disabled = false;
-
-
+                            
+                            
                             if (data.success) {
                                 // Clear form
                                 textArea.value = '';
@@ -596,7 +596,6 @@
                                         data-answer-id="${data.answer.id}">
                                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                                 </button>
-                                ${bestAnswerBadge}
                             </div>
 
                             <div class="flex flex-col flex-grow">

@@ -235,9 +235,11 @@
                             <span class="text-[var(--text-secondary)]">Reputation</span>
                             <span class="font-bold text-[var(--text-primary)]"> {{ $currUser['reputation'] }}</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-[var(--text-secondary)]">Answers</span>
-                            <span class="font-bold text-[var(--text-primary)]">{{ $currUser['answers_count'] }}</span>
+                        <div class="clickable-stat flex justify-between items-center font-bold">
+                            <a href="{{ route('user.answers.index', ['userId' => $currUser['id']]) }}" class="text-link">
+                                <span>Answers</span>
+                            </a>
+                            <span class="font-bold text-[var(--text-highlight)]">{{ $currUser['answers_count'] }}</span>
                         </div>
                         <div class="clickable-stat flex justify-between items-center font-bold">
                             <a href="{{ route('user.questions.list', ['id' => $currUser['id']]) }}" class="text-link">
