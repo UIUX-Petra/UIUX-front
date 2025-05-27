@@ -298,8 +298,7 @@
                         @php
                             $isVerified = (int) $ans['verified'] === 1;
                         @endphp
-                        <div
-                            class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start {{ $loop->first ? 'verified-answer' : '' }}">
+                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start">
                             <div class="interaction-section flex flex-col items-center mr-6">
                                 <button
                                     class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
@@ -505,11 +504,41 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const jsIsQuestionOwner = @json($isQuestionOwner);
             let currentAnswerCount = @json(count($question['answer'] ?? []));
 
             const submitButton = document.getElementById("submitAnswer-btn");
             const textArea = document.getElementById('answer-textArea');
             const fileInput = document.getElementById("question-img");
+
+            function generateVerifyBlockHtml(answerId, isQuestionOwnerLocal) {
+                const isVerifiedForNewAnswer = false;
+                const verifiedStatusForNewAnswer = 0;
+                let verifyHtml = '';
+
+                if (isQuestionOwnerLocal) {
+                    verifyHtml = `
+                <div id="answer-verify-block-${answerId}" class="mt-4 flex flex-col items-center">
+                    <i id="verify-icon-${answerId}"
+                        class="fa-regular fa-check-circle text-[#23BF7F] text-lg cursor-pointer verify-toggle-button"
+                        data-answer-id="${answerId}"
+                        data-current-verified="${verifiedStatusForNewAnswer}">
+                    </i>
+                    <span id="verify-text-${answerId}" class="text-xs text-[#23BF7F] mt-1">
+                        Verify Answer
+                    </span>
+                    <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                        data-answer-id="${answerId}"
+                        data-current-verified="${verifiedStatusForNewAnswer}" style="cursor:pointer;">
+                        (Click icon or text to verify)
+                    </span>
+                </div>
+            `;
+                } else {
+                    verifyHtml = '';
+                }
+                return verifyHtml;
+            }
 
             if (submitButton && textArea) {
                 submitButton.addEventListener('click', (event) => {
@@ -569,7 +598,6 @@
                                 }
 
                                 currentAnswerCount++;
-                                const isFirstAnswer = currentAnswerCount === 1;
 
                                 const timeAgo = formatTimeAgo(new Date(data.answer.timestamp));
 
@@ -585,8 +613,11 @@
                             //     <span class="text-xs text-[#23BF7F] mt-1">Best Answer</span>
                             //  </div>` : '';
 
+                                const verifyBlockForNewAnswer = generateVerifyBlockHtml(data.answer.id,
+                                    jsIsQuestionOwner);
+
                                 const htmlContent = `
-                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start ${isFirstAnswer ? 'verified-answer' : ''}">
+                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start">
                             <div class="interaction-section flex flex-col items-center mr-6">
                                 <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="${data.answer.id}">
@@ -597,6 +628,7 @@
                                         data-answer-id="${data.answer.id}">
                                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                                 </button>
+                                ${verifyBlockForNewAnswer}
                             </div>
 
                             <div class="flex flex-col flex-grow">
@@ -693,6 +725,7 @@
         });
 
         function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
