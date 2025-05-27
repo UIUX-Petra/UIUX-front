@@ -51,7 +51,7 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail($request->session()->get('email'));
     $viewData['image'] = $currUser['image'] ?? null;
     $viewData['username'] = $currUser['username'] ?? null;
-    $allTags = $this->tagController->getTagOnly();
+    $allTags = $this->tagController->getAllTags();
     $viewData['allTags'] = $allTags;
     $viewData['questionToEdit'] = null;
     if ($questionId !== null) {
