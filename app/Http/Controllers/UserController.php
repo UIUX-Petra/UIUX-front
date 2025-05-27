@@ -451,4 +451,18 @@ class UserController extends Controller
         $data['title'] = 'Saved Questions';
         return $data;
     }
+    public function addHistory($searchedId)
+    {
+        $email = session('email');
+        $api_url = env('API_URL') . '/history';
+        $data = ['email' => $email, 'searchedId' => $searchedId];
+
+        $response = Http::withToken(session('token'))->get($api_url, $data);
+        Log::info('dwaaaaaaaaaaaaaa'.$response);
+        if ($response->successful()) {
+            $responseData = $response->json();
+        } else {
+            Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
+        }
+    }
 }
