@@ -1,6 +1,44 @@
 @extends('layout')
 
 @section('content')
+    <style>
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 20px 20px;
+        }
+
+        .question-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            transition: box-shadow 0.2s, background-color 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            background-color: var(--bg-card-hover);
+        }
+
+        .action-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+    </style>
     @include('partials.nav')
     @include('utils.background')
 
@@ -12,9 +50,19 @@
                 alt="{{ $user['username'] }}'s avatar">
             <h1 class="text-3xl font-bold text-white">
                 @if (session('email') === $user['email'])
-                    My Questions
+                    <h1 class="text-4xl font-bold header-gradient mb-2">
+                        My Questions
+                    </h1>
+                    <p class="text-[var(--text-muted)]">
+                        Manage and track your questions
+                    </p>
                 @else
-                    {{ $user['username'] }}'s Questions
+                    <h1 class="text-4xl font-bold header-gradient mb-2">
+                        {{ $user['username'] }}'s Questions
+                    </h1>
+                    <p class="text-[var(--text-muted)]">
+                        Track {{ $user['username'] }}'s questions
+                    </p>
                 @endif
             </h1>
         </div>
@@ -22,78 +70,122 @@
 
 
         @if (!empty($user['question']) && count($user['question']) > 0)
-            <div class="space-y-6" id="questions-container">
-                @foreach ($user['question'] as $question)
-                    <div id="question-item-{{ $question['id'] }}"
-                        class="bg-white shadow-xl rounded-lg p-6 hover:shadow-2xl transition-shadow duration-300 flex justify-between items-start">
-                        <div>
-                            <h2 class="text-xl font-semibold text-[#7494ec] mb-2">
-                                <a href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}"
-                                    class="hover:underline">
-                                    {{ $question['title'] ?? 'No Title Provided' }}
-                                </a>
-                            </h2>
+            @foreach ($user['question'] as $question)
+                <div id="question-item-{{ $question['id'] }}"
+                    class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden">
+                    <div class="absolute inset-0 bg-pattern opacity-5"></div>
+                    {{-- Kolom Stats --}}
+                    @if (session('email') === $user['email'])
+                        <div
+                            class="flex flex-col items-end justify-start mr-4 pt-1 space-y-12 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
+                        @else
+                            <div
+                                class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
+                    @endif
 
-                            @if (isset($question['question_content']) && is_string($question['question_content']))
-                                <p class="text-gray-700 mb-3">{{ Str::limit($question['question_content'], 200) }}</p>
-                            @elseif (isset($question['question']) && is_string($question['question']))
-                                <p class="text-gray-700 mb-3">{{ Str::limit($question['question'], 200) }}</p>
-                            @endif
+                    <div class="stats-item flex flex-row items-center space-x-2">
+                        <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
+                        <i class="text-sm fa-regular fa-thumbs-up"></i>
+                    </div>
+                    <div class="stats-item flex flex-row items-center space-x-2">
+                        <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
+                        <i class="text-sm fa-solid fa-eye"></i>
+                    </div>
+                    <div class="stats-item flex flex-row items-center space-x-2">
+                        <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
+                        <i class="text-sm fa-regular fa-comment"></i>
+                    </div>
+                </div>
 
-                            <div class="text-sm text-gray-500">
-                                @if (isset($question['created_at']))
-                                    <span>Posted on:
-                                        {{ \Carbon\Carbon::parse($question['created_at'])->format('M d, Y') }}</span>
+                {{-- Konten Pertanyaan Utama --}}
+                <div class="flex-1 pt-0 mr-4 z-10">
+                    <h2
+                        class="text-xl font-medium text-[var(--text-highlight)] question-title cursor-pointer transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
+                        <a
+                            href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">{{ $question['title'] ?? 'Untitled Question' }}</a>
+                    </h2>
+                    @if (isset($question['question_content']) && is_string($question['question_content']))
+                        <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
+                            {{ Str::limit($question['question_content'], 200) }}</p>
+                    @elseif (isset($question['question']) && is_string($question['question']))
+                        <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
+                            {{ Str::limit($question['question'], 200) }}</p>
+                    @endif
+                    <div class="flex mt-2 flex-wrap gap-1">
+                        @if (isset($question['group_question']) && is_array($question['group_question']))
+                            @foreach ($question['group_question'] as $tag)
+                                @if (isset($tag['subject']['name']))
+                                    <a
+                                        href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"><span
+                                            class="hover:border-white hover:border-2 text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                            {{ $tag['subject']['name'] }}
+                                        </span></a>
                                 @endif
-                            </div>
-                        </div>
-
-                        @if (session('email') === ($user['email'] ?? null))
-                            @if (empty($question['answer']) && (isset($question['vote']) && $question['vote'] === 0))
-                                <div class="flex space-x-2 text-sm">
-                                    <button
-                                        class="edit-question-button text-blue-600 hover:text-blue-800 font-medium py-1 px-3 rounded"
-                                        data-question-id="{{ $question['id'] }}">
-                                        <i class="fas fa-edit mr-1"></i>Edit
-                                    </button>
-                                    <button
-                                        class="delete-question-button text-red-600 hover:text-red-800 font-medium py-1 px-3 rounded"
-                                        data-question-id="{{ $question['id'] }}">
-                                        <i class="fas fa-trash-alt mr-1"></i>Delete
-                                    </button>
-                                </div>
-                            @endif
+                            @endforeach
                         @endif
                     </div>
-                @endforeach
+                    <div class="mt-4 text-sm text-gray-500">
+                        @if (isset($question['created_at']))
+                            <span>Posted on:
+                                {{ \Carbon\Carbon::parse($question['created_at'])->format('M d, Y') }}</span>
+                        @endif
+                    </div>
+
+
+
+
+                    @if (session('email') === ($user['email'] ?? null))
+                        @if (empty($question['answer']) && (isset($question['vote']) && $question['vote'] === 0))
+                            <div class="flex space-x-3 justify-end">
+                                <button data-question-id="{{ $question['id'] }}"
+                                    class="edit-question-button action-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+
+                                    <i class="fas fa-edit mr-2"></i>Edit
+                                </button>
+                                <button
+                                    class="delete-question-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                                    data-question-id="{{ $question['id'] }}">
+                                    <i class="fas fa-trash-alt mr-2"></i>Delete
+                                </button>
+                            </div>
+                        @endif
+                    @endif
+                </div>
+    </div>
+    @endforeach
+@else
+    <div id="no-questions-message" class="bg-white shadow-md rounded-lg p-6 text-center">
+        <p class="text-gray-600 text-lg">
+            @if (session('email') === $user['email'])
+                You have
+            @else
+                {{ $user['username'] }} has
+            @endif
+            not posted any questions yet.
+        </p>
+    </div>
+    @endif
+
+    <div class="mt-10 text-center">
+        @if (session('email') === $user['email'])
+            <div class="mt-16 text-center" data-aos="fade-up">
+                <a href="{{ route('seeProfile') }}"
+                    class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to My Profile
+                </a>
             </div>
         @else
-            <div id="no-questions-message" class="bg-white shadow-md rounded-lg p-6 text-center">
-                <p class="text-gray-600 text-lg">
-                    @if (session('email') === $user['email'])
-                        You have
-                    @else
-                        {{ $user['username'] }} has
-                    @endif
-                    not posted any questions yet.
-                </p>
-            </div>
-        @endif
-
-        <div class="mt-10 text-center">
-            @if (session('email') === $user['email'])
-                <a href="{{ route('seeProfile') }}" class="text-blue-500 hover:text-blue-700 hover:underline">
-                    ← Back to My Profile
-                </a>
-            @else
+            <div class="mt-16 text-center" data-aos="fade-up">
                 <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                    class="text-blue-500 hover:text-blue-700 hover:underline">
+                    class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                    <i class="fas fa-arrow-left mr-2"></i>
                     ← Back to {{ $user['username'] }}'s Profile
                 </a>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
-
+    </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 @endsection
@@ -104,6 +196,12 @@
             const API_BASE_URL = (("{{ env('API_URL') }}" || window.location.origin) + '/').replace(/\/+$/, '/');
             const API_TOKEN = "{{ session('token') ?? '' }}";
             const CSRF_TOKEN = "{{ csrf_token() }}";
+
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
 
             document.querySelectorAll('.edit-question-button').forEach(button => {
                 button.addEventListener('click', function() {
