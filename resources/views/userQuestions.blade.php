@@ -49,7 +49,7 @@
                         </div>
 
                         @if (session('email') === ($user['email'] ?? null))
-                            @if (empty($question['answer']) && ($question['votes_count'] ?? 0) == 0)
+                            @if (empty($question['answer']) && (isset($question['vote']) && $question['vote'] < 10))
                                 <div class="flex space-x-2 text-sm">
                                     <button
                                         class="edit-question-button text-blue-600 hover:text-blue-800 font-medium py-1 px-3 rounded"
