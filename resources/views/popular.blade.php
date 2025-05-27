@@ -256,9 +256,9 @@
         }
 
         /* .tag-filter-select:hover {
-                border-color: #f59e0b;
-                color: #f59e0b;
-            } */
+                                border-color: #f59e0b;
+                                color: #f59e0b;
+                            } */
 
         .tag-filter-select:focus {
             border-color: #f59e0b;
@@ -840,6 +840,9 @@
             let loadingToast = Toastify({
                 text: "Unsaving...",
                 duration: -1,
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -858,6 +861,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -877,6 +883,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }
@@ -892,7 +901,9 @@
             let loadingToast = Toastify({
                 text: "Saving...",
                 duration: -1,
-                /* ...sisanya... */
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -911,6 +922,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -933,6 +947,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }
