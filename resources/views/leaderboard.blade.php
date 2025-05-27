@@ -181,7 +181,7 @@
                     bestUserName.textContent = 'Loading...';
                     revealCard.style.backgroundImage = 'url("{{ asset('assets/loading.png') }}")';
 
-                    fetch(`/getTagLeaderboard/${tagId}`)
+                    fetch(`{{ route('tag.leaderboard',['id'=>'aaa']) }}`.replace('aaa', tagId))
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error('Network response was not ok');
