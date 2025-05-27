@@ -547,17 +547,17 @@
             });
         }
 
-        const themeObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.attributeName === 'class') {
-                    updateThemeIcons();
-                }
-            });
-        });
+        // const themeObserver = new MutationObserver(function(mutations) {
+        //     mutations.forEach(function(mutation) {
+        //         if (mutation.attributeName === 'class') {
+        //             updateThemeIcons();
+        //         }
+        //     });
+        // });
 
-        themeObserver.observe(document.documentElement, {
-            attributes: true
-        });
+        // themeObserver.observe(document.documentElement, {
+        //     attributes: true
+        // });
 
         // if (mobileThemeToggle) {
         //     mobileThemeToggle.addEventListener('click', function() {
