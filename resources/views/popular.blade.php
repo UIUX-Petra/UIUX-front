@@ -340,11 +340,11 @@
     <div class="max-w-7xl mx-auto px-8 mt-6 mb-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             {{-- Search Bar --}}
-            <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
+            {{-- <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="questionSearchInput" type="text" placeholder="Search questions by title..."
                     value="{{ $initialSearchTerm ?? '' }}">
-            </div>
+            </div> --}}
 
             {{-- Sort & Tag Filters --}}
             <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
