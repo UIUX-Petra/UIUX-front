@@ -71,5 +71,5 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/user/{userId}/answers', [AnswerController::class, 'viewUserAnswers'])->name('user.answers.index');
     Route::get('/answers/{answerId}/edit', [AnswerController::class, 'editAnswerForm'])->name('user.answers.edit');
     Route::post('/answers/{answerId}/update', [AnswerController::class, 'updateAnswer'])->name('user.answers.update');
-    // Route::delete('/answers/{answerId}', [AnswerController::class, 'deleteAnswer'])->name('answer.delete');
+    Route::delete('/answers/{answerId}', [AnswerController::class, 'deleteAnswer'])->name('answer.delete');
 });
