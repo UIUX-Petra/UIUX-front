@@ -38,17 +38,26 @@
         .action-button:hover::before {
             left: 100%;
         }
+
+        .header-gradient {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
     </style>
     @include('partials.nav')
     @include('utils.background')
 
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <div class="flex space-x-3 text-white items-center">
-            <img class="size-10 rounded-full"
+        <div class="flex space-x-5 text-white">
+
+            <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
                 src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                 alt="{{ $user['username'] }}'s avatar">
-            <h1 class="text-3xl font-bold text-white">
+            <div class="flex flex-col">
+
                 @if (session('email') === $user['email'])
                     <h1 class="text-4xl font-bold header-gradient mb-2">
                         My Questions
@@ -60,11 +69,12 @@
                     <h1 class="text-4xl font-bold header-gradient mb-2">
                         {{ $user['username'] }}'s Questions
                     </h1>
+
                     <p class="text-[var(--text-muted)]">
                         Track {{ $user['username'] }}'s questions
                     </p>
                 @endif
-            </h1>
+            </div>
         </div>
         <hr class="my-6 border-gray-700">
 
