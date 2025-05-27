@@ -468,10 +468,6 @@
         <div class="mb-8 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Main Navigation</h3>
             <nav class="flex flex-col space-y-1">
-                <a href="{{ route('askPage') }}"
-                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-                    <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
-                </a>
                 <a href="{{ route('home') }}"
                     class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
@@ -505,6 +501,14 @@
                     <i class="fa-solid fa-trophy mr-3 w-5 text-center"></i> Leaderboard
                 </a>
             </nav>
+        </div>
+
+        <div class="mb-8 nav-section pb-6">
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Actions</h3>
+            <a href="{{ route('askPage') }}"
+                class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+                <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
+            </a>
         </div>
     </div>
 </div>

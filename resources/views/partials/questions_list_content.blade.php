@@ -80,7 +80,7 @@
                     @if(isset($question['group_question']) && is_array($question['group_question']))
                         @foreach ($question['group_question'] as $tagItem)
                             @if(isset($tagItem['subject']) && isset($tagItem['subject']['name']))
-                             <a href="{{ route('popular', ['filter_tag' => $tagItem['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"><span class="hover:border-white hover:border-2 text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)]">
+                             <a href="{{ route('popular', ['filter_tag' => $tagItem['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"><span class="hover:border-[var(--accent-secondary)] font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                 {{ $tagItem['subject']['name'] }}
                             </span></a>  
                             @endif

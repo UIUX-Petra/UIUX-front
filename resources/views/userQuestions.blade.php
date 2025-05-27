@@ -115,7 +115,8 @@
             document.querySelectorAll('.delete-question-button').forEach(button => {
                 button.addEventListener('click', function() {
                     const questionId = this.dataset.questionId;
-                    const questionItemElement = document.getElementById(`question-item-${questionId}`);
+                    const questionItemElement = document.getElementById(
+                        `question-item-${questionId}`);
 
                     Swal.fire({
                         title: 'Are you sure?',
@@ -151,18 +152,22 @@
                                     if (data.success || data.status === 'success') {
                                         Swal.fire(
                                             'Deleted!',
-                                            data.message || 'Your question has been deleted.',
+                                            data.message ||
+                                            'Your question has been deleted.',
                                             'success'
                                         );
                                         if (questionItemElement) {
                                             questionItemElement.remove();
                                         }
-                                        const questionsContainer = document.getElementById('questions-container');
-                                        const noQuestionsMessage = document.getElementById('no-questions-message');
+                                        const questionsContainer = document
+                                            .getElementById('questions-container');
+                                        const noQuestionsMessage = document
+                                            .getElementById('no-questions-message');
                                         if (questionsContainer && noQuestionsMessage &&
                                             questionsContainer.children.length === 0) {
                                             noQuestionsMessage.style.display = 'block';
-                                            if (questionsContainer.parentElement.contains(noQuestionsMessage)) {
+                                            if (questionsContainer.parentElement
+                                                .contains(noQuestionsMessage)) {
                                                 // If it was previously hidden, make sure it's visible
                                             } else {
                                                 // If it was removed, you might need to re-add or just unhide
@@ -172,18 +177,23 @@
                                     } else {
                                         Swal.fire(
                                             'Error!',
-                                            data.message || 'Could not delete the question.',
+                                            data.message ||
+                                            'Could not delete the question.',
                                             'error'
                                         );
                                     }
                                 })
                                 .catch(error => {
                                     console.error('Error details:', error);
-                                    let errorMessage = 'An error occurred while deleting the question.';
+                                    let errorMessage =
+                                        'An error occurred while deleting the question.';
                                     if (error && error.message) {
                                         errorMessage = error.message;
-                                    } else if (typeof error === 'object' && error !== null && error.toString && error.toString().includes('Failed to fetch')) {
-                                        errorMessage = 'Network error or API is unreachable. Please check your connection and the API URL.';
+                                    } else if (typeof error === 'object' && error !==
+                                        null && error.toString && error.toString()
+                                        .includes('Failed to fetch')) {
+                                        errorMessage =
+                                            'Network error or API is unreachable. Please check your connection and the API URL.';
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }

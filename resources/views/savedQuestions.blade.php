@@ -31,17 +31,9 @@
         </script>
     @endif
     <div
-        class="w-full bg-transparent rounded-lg p-6 px-8 max-w-7xl mx-auto mt-6 mb-6 flex items-center space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
-        <!-- Decorative fire elements -->
-        <div
-            class="absolute -right-20 -bottom-28 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(245,158,11,0.15)] to-[rgba(250,204,21,0.15)] blur-2xl">
-        </div>
-        <div
-            class="absolute -left-10 -top-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(245,158,11,0.1)] to-[rgba(250,204,21,0.1)] blur-xl">
-        </div>
-
-        <div class="text-4xl relative p-3 rounded-full bg-[rgba(245,158,11,0.15)] z-10">
-            <i class="fa-solid fa-bookmark text-[#80ED99]"></i>
+        class="w-full bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start mt-6 mb-6 flex items-start space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
+        <div class="text-3xl relative p-4 rounded-full bg-[var(--bg-primary)] z-10">
+            <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
         </div>
 
         <div class="flex flex-col z-10">
@@ -76,17 +68,17 @@
 
                             <div class="stats-item flex flex-row items-center space-x-2">
                                 <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
-                                <i class="text-sm fa-regular fa-thumbs-up"></i>
+                                <i class="text-sm text-[var(--accent-secondary)] fa-regular fa-thumbs-up"></i>
                             </div>
 
                             <div class="stats-item flex flex-row items-center space-x-2">
                                 <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
-                                <i class="text-sm fa-solid fa-eye"></i>
+                                <i class="text-sm text-[var(--accent-tertiary)] fa-solid fa-eye"></i>
                             </div>
 
                             <div class="stats-item flex flex-row items-center space-x-2">
                                 <span class="text-sm font-medium">{{ $question['comment_count'] ?? 0 }}</span>
-                                <i class="text-sm fa-regular fa-comment"></i>
+                                <i class="text-sm text-[var(accent-primary)] fa-regular fa-comment"></i>
                             </div>
                         </div>
 
@@ -109,7 +101,7 @@
                                     @foreach ($question['group_question'] as $tag)
                                         <a
                                             href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"><span
-                                                class="hover:border-white hover:border-2 text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                                class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                                 {{ $tag['subject']['name'] }}
                                             </span></a>
                                     @endforeach

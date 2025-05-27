@@ -314,7 +314,7 @@
 
     <!-- Header Section -->
     <div
-        class="w-full bg-transparent rounded-lg p-6 px-8 max-w-7xl mx-auto mt-6 mb-6 flex items-center space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
+        class=" bg-transparent rounded-lg p-6 px-8 max-w-5xl mt-6 mb-6 flex justify-start items-start space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
         <!-- Decorative fire elements -->
         <div
             class="absolute -right-20 -bottom-28 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(245,158,11,0.15)] to-[rgba(250,204,21,0.15)] blur-2xl">
@@ -337,7 +337,7 @@
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-8 mt-6 mb-8">
+    <div class="max-w-5xl justify-start items-start px-8 mt-6 mb-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             {{-- Search Bar --}}
             <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
@@ -377,8 +377,8 @@
             </div>
         </div>
     </div>
-
-    <div class="max-w-7xl mx-auto px-8 mb-8">
+{{-- 
+    <div class="max-w-5xl mx-auto px-8 mb-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div
                 class="bg-[var(--bg-card)] rounded-lg p-5 text-center border border-[var(--border-color)] hover:border-[#f59e0b] transition-all duration-200">
@@ -424,10 +424,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Main content area with questions list and sidebar -->
-    <div class="max-w-7xl justify-start items-start px-8">
+    <div class="max-w-5xl justify-start items-start px-8">
         <div class="flex flex-col md:flex-row gap-6">
             <div class="w-full md:w-3/4 bg-transparent rounded-lg" id="questions-list-ajax-container">
                 @include('partials.questions_list_content', [
