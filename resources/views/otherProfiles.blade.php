@@ -264,7 +264,6 @@
                                 <span>Questions</span>
                             </a>
                             <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
-                            <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
                         </div>
                     </div>
                 </div>
