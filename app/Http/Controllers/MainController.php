@@ -51,7 +51,7 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail($request->session()->get('email'));
     $viewData['image'] = $currUser['image'] ?? null;
     $viewData['username'] = $currUser['username'] ?? null;
-    $allTags = $this->tagController->getTagOnly();
+    $allTags = $this->tagController->getAllTags();
     $viewData['allTags'] = $allTags;
     $viewData['questionToEdit'] = null;
     if ($questionId !== null) {
@@ -303,6 +303,9 @@ class MainController extends Controller
     $data['username'] = $currUser['username'];
     $data['image'] = $currUser['image'];
     $data['recommended'] = $user['recommended'];
+
+    // $result = $this->userController->getDetailedSearchHistory($currUser['id']);
+    // $data['search_history'] = $currUser['search_history'];
     return view('viewAllUsers', $data);
   }
 

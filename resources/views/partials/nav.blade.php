@@ -126,6 +126,21 @@
         transition: all 0.3s ease;
     }
 
+    /* Mobile search container styling */
+    .search-container2 {
+        position: relative;
+    }
+
+    .search-input2 {
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-card);
+        transition: all 0.3s ease;
+    }
+
+    .search-input2:focus {
+        box-shadow: 0 0 0 2px var(--accent-tertiary);
+    }
+
     /* Mobile menu styling */
     .mobile-menu {
         transition: transform 0.3s ease, opacity 0.3s ease;
@@ -381,9 +396,14 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu"
         class="mobile-menu hidden flex-col gap-1 p-4 md:hidden bg-[var(--bg-secondary)] text-[var(--text-primary)] w-full border-t border-[var(--border-color)]">
-        <div class="px-2 pb-3">
-            <input type="text" placeholder="Search..."
-                class="search-input w-full px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
+        <div class="px-2 pb-3 search-container2">
+            <input id="searchInput2" type="text" placeholder="Search..."
+                class="search-input2 w-full px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
+            <!-- Mobile Search Results Container -->
+            <div id="searchResultsDropdownContainer2"
+                class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
+                {{-- Content will be populated by JS --}}
+            </div>
         </div>
         <a href="{{ route('askPage') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
@@ -588,7 +608,12 @@
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
         const searchContainer = searchInput ? searchInput.closest('.search-container') : null;
+
+        const searchInput2 = document.getElementById('searchInput2');
+        const searchContainer2 = searchInput2 ? searchInput2.closest('.search-container2') : null;
+
         const suggestionsContainer = document.getElementById('searchResultsDropdownContainer');
+        const suggestionsContainer2 = document.getElementById('searchResultsDropdownContainer2');
 
         let debounceTimer;
         const API_BASE_URL = "{{ env('API_URL', 'http://default-api-url.com/api') }}";
@@ -677,14 +702,42 @@
                         }
 
                         li.innerHTML =
-                            `<a href="${item.url}" class="block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
+                            `<a data-id="${item.id}" data-type="${item.type}" href="${item.url}" class="suggestedItems block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
                         ul.appendChild(li);
                     });
                     sectionDiv.appendChild(ul);
                     suggestionsContainer.appendChild(sectionDiv);
+                    // console.log(items);
                 }
+                
             });
 
+            document.querySelectorAll('.suggestedItems').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const href = this.href;
+                    const searchedId = this.dataset.id;
+                    const searchedType = this.dataset.type;
+
+                    fetch(`{{ route('nembakHistory', ['searchedId' => 'aaa']) }}`.replace(
+                        'aaa',
+                        searchedId), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        },
+                        body: JSON.stringify({
+                            type: searchedType,
+                        })
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 100); // 100ms cukup, fetch sudah terkirim
+                });
+            });
 
             if (hasContent) {
                 suggestionsContainer.classList.remove('hidden');
@@ -747,6 +800,149 @@
             if (!searchContainer) console.error(
                 "Search container .search-container not found for #searchInput.");
             if (!suggestionsContainer) console.error(
+                "Suggestions container #searchResultsDropdownContainer not found.");
+        }
+
+
+        async function fetchSearchSuggestions2(query) {
+            if (query.length < 1) {
+                if (suggestionsContainer2) {
+                    suggestionsContainer2.innerHTML = '';
+                    suggestionsContainer2.classList.add('hidden');
+                }
+                return null;
+            }
+
+            try {
+                if (suggestionsContainer2) {
+                    suggestionsContainer2.innerHTML =
+                        '<div class="p-2 text-sm text-[var(--text-muted)]">Searching...</div>';
+                    suggestionsContainer2.classList.remove('hidden');
+                }
+
+                const response = await fetch(
+                    `${API_BASE_URL}/search?q=${encodeURIComponent(query)}&context=all&limit=5`
+                );
+                if (!response.ok) {
+                    console.error('API search error:', response.status, await response.text());
+                    if (suggestionsContainer2) suggestionsContainer2.innerHTML =
+                        '<div class="p-2 text-sm text-red-500">Error fetching results.</div>';
+                    return null;
+                }
+                const result = await response.json();
+                return (result.success && result.data) ? result.data : null;
+            } catch (error) {
+                console.error('Failed to fetch search suggestions:', error);
+                if (suggestionsContainer2) suggestionsContainer2.innerHTML =
+                    '<div class="p-2 text-sm text-red-500">Search request failed.</div>';
+                return null;
+            }
+        }
+
+        function displaySuggestions2(categorizedResults) {
+            if (!suggestionsContainer2) return;
+            suggestionsContainer2.innerHTML = '';
+
+            if (!categorizedResults || Object.keys(categorizedResults).length === 0) {
+                suggestionsContainer2.innerHTML =
+                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
+                suggestionsContainer2.classList.remove('hidden');
+                return;
+            }
+
+            let hasContent = false;
+            const categoryOrder = ['questions', 'subjects', 'users'];
+
+            categoryOrder.forEach(categoryKey => {
+                if (categorizedResults[categoryKey] && categorizedResults[categoryKey].length > 0) {
+                    hasContent = true;
+                    const items = categorizedResults[categoryKey];
+
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'mb-2';
+
+                    const title = document.createElement('h4');
+                    title.className =
+                        'text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold';
+                    title.textContent = categoryKey.charAt(0).toUpperCase() + categoryKey.slice(
+                        1);
+                    sectionDiv.appendChild(title);
+
+                    const ul = document.createElement('ul');
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        let displayText = '';
+                        if (item.type === 'question') {
+                            displayText = item.title;
+                            if (item.author_username) displayText +=
+                                ` (by ${item.author_username})`;
+                        } else if (item.type === 'subject') {
+                            displayText = item.name;
+                        } else if (item.type === 'user') {
+                            displayText = item.username;
+                            if (item.name && item.name !== item.username) displayText +=
+                                ` (${item.name})`;
+                        } else {
+                            displayText = item.title || item.name || item.username ||
+                                'Unknown item';
+                        }
+
+                        li.innerHTML =
+                            `<a href="${item.url}" class="block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
+                        ul.appendChild(li);
+                    });
+                    sectionDiv.appendChild(ul);
+                    suggestionsContainer2.appendChild(sectionDiv);
+                }
+            });
+
+
+            if (hasContent) {
+                suggestionsContainer2.classList.remove('hidden');
+            } else {
+                suggestionsContainer2.innerHTML =
+                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
+                suggestionsContainer2.classList.remove('hidden');
+            }
+        }
+
+        if (searchInput2 && searchContainer2 && suggestionsContainer2) {
+            searchInput2.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.trim();
+                clearTimeout(debounceTimer);
+
+                if (searchTerm.length === 0) {
+                    suggestionsContainer2.innerHTML = '';
+                    suggestionsContainer2.classList.add('hidden');
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetchSearchSuggestions2(searchTerm).then(apiResults => {
+                        displaySuggestions2(apiResults);
+                    });
+                }, 300);
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!searchContainer2.contains(event.target)) {
+                    suggestionsContainer2.classList.add('hidden');
+                }
+            });
+
+            searchInput2.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    performFullSearch(searchInput2.value.trim());
+                    suggestionsContainer2.classList.add('hidden');
+                }
+            });
+
+        } else {
+            if (!searchInput2) console.error("Search input #searchInput not found.");
+            if (!searchContainer2) console.error(
+                "Search container .search-container not found for #searchInput.");
+            if (!suggestionsContainer2) console.error(
                 "Suggestions container #searchResultsDropdownContainer not found.");
         }
     });
