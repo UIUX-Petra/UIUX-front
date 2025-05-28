@@ -493,7 +493,7 @@
 
 
 @section('script')
-    {{-- @include('utils.trie') --}}
+    @include('utils.trie')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             initSaveButtons();
@@ -661,6 +661,8 @@
             initializePaginationLinks();
 
             sortByButtons.forEach(button => {
+                console.log('click');
+                
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     const newSortBy = this.dataset.sortby;
