@@ -303,6 +303,9 @@ class MainController extends Controller
     $data['username'] = $currUser['username'];
     $data['image'] = $currUser['image'];
     $data['recommended'] = $user['recommended'];
+
+    $result = $this->userController->getDetailedSearchHistory($currUser['id']);
+    // $data['search_history'] = $currUser['search_history'];
     return view('viewAllUsers', $data);
   }
 

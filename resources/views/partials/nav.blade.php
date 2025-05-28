@@ -702,12 +702,14 @@
                         }
 
                         li.innerHTML =
-                            `<a data-id="${item.id}" href="${item.url}" class="suggestedItems block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
+                            `<a data-id="${item.id}" data-type="${item.type}" href="${item.url}" class="suggestedItems block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
                         ul.appendChild(li);
                     });
                     sectionDiv.appendChild(ul);
                     suggestionsContainer.appendChild(sectionDiv);
+                    // console.log(items);
                 }
+                
             });
 
             document.querySelectorAll('.suggestedItems').forEach(link => {
@@ -716,16 +718,19 @@
 
                     const href = this.href;
                     const searchedId = this.dataset.id;
+                    const searchedType = this.dataset.type;
 
                     fetch(`{{ route('nembakHistory', ['searchedId' => 'aaa']) }}`.replace(
                         'aaa',
                         searchedId), {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                            'Content-Type': 'application/json',
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
                         },
-                        // body: JSON.stringify({
-                        // })
+                        body: JSON.stringify({
+                            type: searchedType,
+                        })
                     });
 
                     setTimeout(() => {
