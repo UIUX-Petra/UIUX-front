@@ -129,9 +129,15 @@ class MainController extends Controller
   {
     $data['user'] = $this->userController->showUserQuestionsPage($email);
     // dd($data['user']);
-    $image = $data['user']['image'];
+
     $data['username'] = $data['user']['username'];
-    $data['image'] = $image;
+    $data['image'] = $data['user']['image'];
+    if (session('email') != $email) {
+      $currUser = $this->userController->getBasicUserByEmail(session('email'));
+      $data['viewer'] = $currUser;
+      $data['username'] = $currUser['username'];
+      $data['image'] = $currUser['image'];
+    }
     $data['title'] = 'User Questions';
     return view('userQuestions', $data);
   }

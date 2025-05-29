@@ -48,7 +48,7 @@ class QuestionController extends Controller
     public function getAllQuestions(Request $request)
     {
         $api_base_url = env('API_URL');
-        $api_url = $api_base_url . '/questions-paginated';
+        $api_url = $api_base_url . '/questions-paginated-home';
         $page = $request->input('page', 1);
         $per_page_from_request = $request->input('per_page', 10);
 
@@ -59,7 +59,7 @@ class QuestionController extends Controller
         ]);
 
         if ($response->failed()) {
-            Log::error("API request to /questions-paginated failed: " . $response->body());
+            Log::error("API request to /questions-paginated-home failed: " . $response->body());
 
             return new LengthAwarePaginator([], 0, $per_page_from_request, $page, [
                 'path' => $request->url(),

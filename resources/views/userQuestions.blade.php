@@ -190,7 +190,7 @@
                 <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
                     class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
                     <i class="fas fa-arrow-left mr-2"></i>
-                    ← Back to {{ $user['username'] }}'s Profile
+                    Back to {{ $user['username'] }}'s Profile
                 </a>
             </div>
         @endif
