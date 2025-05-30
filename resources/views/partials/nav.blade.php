@@ -304,15 +304,75 @@
         <div class="hidden md:flex items-center gap-4 ml-auto">
             <!-- Search Input -->
             <div class="search-container flex items-center relative">
-                <input id="searchInput" type="text" placeholder="Search anything..."
+                <input autocomplete="off" id="searchInput" type="text" placeholder="Search anything..."
                     class="search-input placeholder-[var(--text-secondary)] xl:w-[56rem] w-[23rem] !bg-[var(--bg-tertiary)] px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
                 <button type="button" id="searchButton"
                     class="search-button text-[var(--text-dark)] bg-[var(--accent-tertiary)] hover:bg-[var(--accent-primary)] px-4 py-2 -ml-10 rounded-r-lg focus:outline-none transition-all duration-300">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
+
+                <!-- History Dropdown Container -->
+                <div id="searchHistoryDropdownContainer"
+                    class="absolute top-full left-0 w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 shadow-lg max-h-80 overflow-y-auto p-2">
+
+                    <!-- History Header -->
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border-color)]">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-[var(--text-muted)] text-xs"></i>
+                            <h3 class="text-sm font-medium text-[var(--text-primary)]">Recent Searches</h3>
+                        </div>
+                        {{-- <span class="text-xs text-[var(--text-muted)] bg-[var(--bg-tertiary)] px-2 py-1 rounded-full">History</span> --}}
+                    </div>
+
+                    @foreach ($histories as $history => $historyItems)
+                        <div class="mb-3">
+                            <h4
+                                class="text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold flex items-center gap-2">
+                                @if ($history == 'user')
+                                    <i class="fa-solid fa-user text-blue-400"></i>
+                                @elseif($history == 'question')
+                                    <i class="fa-solid fa-question-circle text-green-400"></i>
+                                @else
+                                    <i class="fa-solid fa-folder text-yellow-400"></i>
+                                @endif
+                                {{ strtoupper($history) }}S
+                            </h4>
+                            @foreach ($historyItems as $username => $historyItem)
+                                <ul>
+                                    <li>
+                                        <a data-id="{{ $history == 'user' ? $historyItem['email'] : $historyItem['id'] }}"
+                                            data-type="{{ $history }}"
+                                            href="{{ $history == 'user' ? '/viewUser/' . $historyItem['email'] : ($history == 'question' ? '/viewAnswers/' . $historyItem['id'] : 'aa') }}"
+                                            class="suggestedItems block px-3 py-2 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm transition-colors duration-200 border-l-2 border-transparent hover:border-[var(--accent-tertiary)]">
+                                            <div class="flex items-center gap-2">
+                                                @if ($history == 'user')
+                                                    <i class="fa-solid fa-user-circle text-blue-400"></i>
+                                                @elseif($history == 'question')
+                                                    <i class="fa-solid fa-comment-question text-green-400"></i>
+                                                @endif
+                                                <span>{{ $history == 'user' ? $username : ($history == 'question' ? $historyItem['title'] . ' (by ' . $username . ')' : 'aa') }}</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            @endforeach
+                        </div>
+                    @endforeach
+
+                    <!-- Clear History Option -->
+                    <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
+                        <button
+                            class="text-xs text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center gap-1 px-2 py-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                            Clear History
+                        </button>
+                    </div>
+                </div>
+
+
                 <div id="searchResultsDropdownContainer"
                     class="absolute top-full left-0 w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
-                    {{-- Content will be populated by JS --}}
+
                 </div>
             </div>
 
@@ -518,11 +578,13 @@
         const hamburger = document.querySelector('.hamburger');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            mobileMenu.classList.toggle('hidden');
-            mobileMenu.classList.toggle('visible');
-        });
+        if (hamburger && mobileMenu) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('visible');
+            });
+        }
 
         const userMenuButton = document.getElementById('user-menu-button');
         const userMenu = document.getElementById('user-menu');
@@ -563,7 +625,7 @@
         }
 
         const mobileUserMenuButton = document.getElementById('mobile-user-menu-button');
-        if (mobileUserMenuButton) {
+        if (mobileUserMenuButton && mobileMenu && hamburger) {
             mobileUserMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
                 mobileMenu.classList.toggle('visible');
@@ -571,26 +633,7 @@
             });
         }
 
-        // const themeObserver = new MutationObserver(function(mutations) {
-        //     mutations.forEach(function(mutation) {
-        //         if (mutation.attributeName === 'class') {
-        //             updateThemeIcons();
-        //         }
-        //     });
-        // });
-
-        // themeObserver.observe(document.documentElement, {
-        //     attributes: true
-        // });
-
-        // if (mobileThemeToggle) {
-        //     mobileThemeToggle.addEventListener('click', function() {
-        //         if (typeof toggleTheme === 'function') {
-        //             toggleTheme();
-        //         }
-        //     });
-        // }
-
+        // Navigation links animation
         const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             const icon = link.querySelector('i');
@@ -605,345 +648,370 @@
             }
         });
 
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const searchContainer = searchInput ? searchInput.closest('.search-container') : null;
 
-        const searchInput2 = document.getElementById('searchInput2');
-        const searchContainer2 = searchInput2 ? searchInput2.closest('.search-container2') : null;
+        class SearchComponent {
+            constructor(config) {
+                this.inputId = config.inputId;
+                this.containerId = config.containerId;
+                this.resultsId = config.resultsId;
+                this.historyId = config.historyId;
+                this.buttonId = config.buttonId;
+                this.trackHistory = config.trackHistory || false;
 
-        const suggestionsContainer = document.getElementById('searchResultsDropdownContainer');
-        const suggestionsContainer2 = document.getElementById('searchResultsDropdownContainer2');
+                this.input = document.getElementById(this.inputId);
+                this.container = this.input ? this.input.closest(`.${this.containerId}`) : null;
+                this.resultsContainer = document.getElementById(this.resultsId);
+                this.historyContainer = document.getElementById(this.historyId);
+                this.button = document.getElementById(this.buttonId);
 
-        let debounceTimer;
-        const API_BASE_URL = "{{ env('API_URL', 'http://default-api-url.com/api') }}";
+                this.debounceTimer = null;
+                this.API_BASE_URL = "{{ env('API_URL', 'http://default-api-url.com/api') }}";
 
-        async function fetchSearchSuggestions(query) {
-            if (query.length < 1) {
-                if (suggestionsContainer) {
-                    suggestionsContainer.innerHTML = '';
-                    suggestionsContainer.classList.add('hidden');
-                }
-                return null;
+                this.init();
             }
 
-            try {
-                if (suggestionsContainer) {
-                    suggestionsContainer.innerHTML =
-                        '<div class="p-2 text-sm text-[var(--text-muted)]">Searching...</div>';
-                    suggestionsContainer.classList.remove('hidden');
-                }
-
-                const response = await fetch(
-                    `${API_BASE_URL}/search?q=${encodeURIComponent(query)}&context=all&limit=5`
-                );
-                if (!response.ok) {
-                    console.error('API search error:', response.status, await response.text());
-                    if (suggestionsContainer) suggestionsContainer.innerHTML =
-                        '<div class="p-2 text-sm text-red-500">Error fetching results.</div>';
-                    return null;
-                }
-                const result = await response.json();
-                return (result.success && result.data) ? result.data : null;
-            } catch (error) {
-                console.error('Failed to fetch search suggestions:', error);
-                if (suggestionsContainer) suggestionsContainer.innerHTML =
-                    '<div class="p-2 text-sm text-red-500">Search request failed.</div>';
-                return null;
-            }
-        }
-
-        function displaySuggestions(categorizedResults) {
-            if (!suggestionsContainer) return;
-            suggestionsContainer.innerHTML = '';
-
-            if (!categorizedResults || Object.keys(categorizedResults).length === 0) {
-                suggestionsContainer.innerHTML =
-                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
-                suggestionsContainer.classList.remove('hidden');
-                return;
-            }
-
-            let hasContent = false;
-            const categoryOrder = ['questions', 'subjects', 'users'];
-
-            categoryOrder.forEach(categoryKey => {
-                if (categorizedResults[categoryKey] && categorizedResults[categoryKey].length > 0) {
-                    hasContent = true;
-                    const items = categorizedResults[categoryKey];
-
-                    const sectionDiv = document.createElement('div');
-                    sectionDiv.className = 'mb-2';
-
-                    const title = document.createElement('h4');
-                    title.className =
-                        'text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold';
-                    title.textContent = categoryKey.charAt(0).toUpperCase() + categoryKey.slice(
-                        1);
-                    sectionDiv.appendChild(title);
-
-                    const ul = document.createElement('ul');
-                    items.forEach(item => {
-                        const li = document.createElement('li');
-                        let displayText = '';
-                        if (item.type === 'question') {
-                            displayText = item.title;
-                            if (item.author_username) displayText +=
-                                ` (by ${item.author_username})`;
-                        } else if (item.type === 'subject') {
-                            displayText = item.name;
-                        } else if (item.type === 'user') {
-                            displayText = item.username;
-                            if (item.name && item.name !== item.username) displayText +=
-                                ` (${item.name})`;
-                        } else {
-                            displayText = item.title || item.name || item.username ||
-                                'Unknown item';
-                        }
-
-                        li.innerHTML =
-                            `<a data-id="${item.id}" data-type="${item.type}" href="${item.url}" class="suggestedItems block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
-                        ul.appendChild(li);
-                    });
-                    sectionDiv.appendChild(ul);
-                    suggestionsContainer.appendChild(sectionDiv);
-                    // console.log(items);
-                }
-                
-            });
-
-            document.querySelectorAll('.suggestedItems').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    const href = this.href;
-                    const searchedId = this.dataset.id;
-                    const searchedType = this.dataset.type;
-
-                    fetch(`{{ route('nembakHistory', ['searchedId' => 'aaa']) }}`.replace(
-                        'aaa',
-                        searchedId), {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        },
-                        body: JSON.stringify({
-                            type: searchedType,
-                        })
-                    });
-
-                    setTimeout(() => {
-                        window.location.href = href;
-                    }, 100); // 100ms cukup, fetch sudah terkirim
-                });
-            });
-
-            if (hasContent) {
-                suggestionsContainer.classList.remove('hidden');
-            } else {
-                suggestionsContainer.innerHTML =
-                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
-                suggestionsContainer.classList.remove('hidden');
-            }
-        }
-
-
-        if (searchInput && searchContainer && suggestionsContainer) {
-            searchInput.addEventListener('input', function(e) {
-                const searchTerm = e.target.value.trim();
-                clearTimeout(debounceTimer);
-
-                if (searchTerm.length === 0) {
-                    suggestionsContainer.innerHTML = '';
-                    suggestionsContainer.classList.add('hidden');
+            init() {
+                if (!this.input || !this.container || !this.resultsContainer) {
+                    console.error(`Search component initialization failed for ${this.inputId}`);
                     return;
                 }
 
-                debounceTimer = setTimeout(() => {
-                    fetchSearchSuggestions(searchTerm).then(apiResults => {
-                        displaySuggestions(apiResults);
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Focus event - show history if available and input is empty
+                this.input.addEventListener('focus', () => {
+                    if (this.input.value.trim() === '' && this.historyContainer) {
+                        this.toggleContainers(true);
+                    }
+                });
+
+                // Input event - handle search
+                this.input.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.trim();
+                    clearTimeout(this.debounceTimer);
+
+                    if (searchTerm.length === 0) {
+                        if (this.historyContainer) {
+                            this.toggleContainers(true);
+                        } else {
+                            this.hideResults();
+                        }
+                        return;
+                    }
+
+                    // Hide history and show search results
+                    if (this.historyContainer) {
+                        this.toggleContainers(false);
+                    }
+
+                    this.debounceTimer = setTimeout(() => {
+                        this.fetchSearchSuggestions(searchTerm).then(apiResults => {
+                            this.displaySuggestions(apiResults);
+                        });
+                    }, 300);
+                });
+
+                // Enter key - perform full search
+                this.input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.performFullSearch(this.input.value.trim());
+                        this.hideAllContainers();
+                    }
+                });
+
+                // Search button click
+                if (this.button) {
+                    this.button.addEventListener('click', () => {
+                        this.performFullSearch(this.input.value.trim());
+                        this.hideAllContainers();
                     });
-                }, 300);
-            });
-
-            document.addEventListener('click', function(event) {
-                if (!searchContainer.contains(event.target)) {
-                    suggestionsContainer.classList.add('hidden');
                 }
-            });
 
-            function performFullSearch(query) {
+                // Click outside to hide
+                document.addEventListener('click', (event) => {
+                    if (!this.container.contains(event.target)) {
+                        this.hideAllContainers();
+                    }
+                });
+            }
+
+            toggleContainers(showHistory = true) {
+                if (!this.historyContainer || !this.resultsContainer) return;
+
+                if (showHistory) {
+                    this.historyContainer.classList.remove('hidden');
+                    this.resultsContainer.classList.add('hidden');
+                } else {
+                    this.historyContainer.classList.add('hidden');
+                    this.resultsContainer.classList.remove('hidden');
+                }
+            }
+
+            hideResults() {
+                if (this.resultsContainer) {
+                    this.resultsContainer.innerHTML = '';
+                    this.resultsContainer.classList.add('hidden');
+                }
+            }
+
+            hideAllContainers() {
+                if (this.historyContainer) {
+                    this.historyContainer.classList.add('hidden');
+                }
+                if (this.resultsContainer) {
+                    this.resultsContainer.classList.add('hidden');
+                }
+            }
+
+            async fetchSearchSuggestions(query) {
+                if (query.length < 1) {
+                    this.hideResults();
+                    return null;
+                }
+
+                try {
+                    if (this.resultsContainer) {
+                        this.resultsContainer.innerHTML = `
+                        <div class="flex items-center gap-2 p-3 text-sm text-[var(--text-muted)]">
+                            <i class="fa-solid fa-spinner fa-spin text-[var(--accent-primary)]"></i>
+                            <span>Searching for "${query}"...</span>
+                        </div>
+                    `;
+                        this.resultsContainer.classList.remove('hidden');
+                    }
+
+                    const response = await fetch(
+                        `${this.API_BASE_URL}/search?q=${encodeURIComponent(query)}&context=all&limit=5`
+                    );
+
+                    if (!response.ok) {
+                        console.error('API search error:', response.status, await response.text());
+                        if (this.resultsContainer) {
+                            this.resultsContainer.innerHTML = `
+                            <div class="flex items-center gap-2 p-3 text-sm text-red-500">
+                                <i class="fa-solid fa-exclamation-triangle"></i>
+                                <span>Error fetching results.</span>
+                            </div>
+                        `;
+                        }
+                        return null;
+                    }
+
+                    const result = await response.json();
+                    return (result.success && result.data) ? result.data : null;
+                } catch (error) {
+                    console.error('Failed to fetch search suggestions:', error);
+                    if (this.resultsContainer) {
+                        this.resultsContainer.innerHTML = `
+                        <div class="flex items-center gap-2 p-3 text-sm text-red-500">
+                            <i class="fa-solid fa-wifi-slash"></i>
+                            <span>Search request failed.</span>
+                        </div>
+                    `;
+                    }
+                    return null;
+                }
+            }
+
+            displaySuggestions(categorizedResults) {
+                if (!this.resultsContainer) return;
+
+                // Clear and add header for search results
+                this.resultsContainer.innerHTML = `
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border-color)]">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass text-[var(--accent-primary)] text-xs"></i>
+                        <h3 class="text-sm font-medium text-[var(--text-primary)]">Search Results</h3>
+                    </div>
+                </div>
+            `;
+
+                if (!categorizedResults || Object.keys(categorizedResults).length === 0) {
+                    const noResultsDiv = document.createElement('div');
+                    noResultsDiv.className = 'flex flex-col items-center gap-2 p-6 text-center';
+                    noResultsDiv.innerHTML = `
+                    <i class="fa-solid fa-search text-3xl text-[var(--text-muted)] opacity-50"></i>
+                    <p class="text-sm text-[var(--text-muted)]">No matches found.</p>
+                    <p class="text-xs text-[var(--text-muted)]">Try different keywords or check spelling</p>
+                `;
+                    this.resultsContainer.appendChild(noResultsDiv);
+                    return;
+                }
+
+                let hasContent = false;
+                const categoryOrder = ['questions', 'subjects', 'users'];
+                const categoryIcons = {
+                    'questions': 'fa-comment-question',
+                    'subjects': 'fa-folder',
+                    'users': 'fa-user'
+                };
+                const categoryColors = {
+                    'questions': 'text-green-400',
+                    'subjects': 'text-yellow-400',
+                    'users': 'text-blue-400'
+                };
+
+                categoryOrder.forEach(categoryKey => {
+                    if (categorizedResults[categoryKey] && categorizedResults[categoryKey].length >
+                        0) {
+                        hasContent = true;
+                        const items = categorizedResults[categoryKey];
+
+                        const sectionDiv = document.createElement('div');
+                        sectionDiv.className = 'mb-3';
+
+                        const title = document.createElement('h4');
+                        title.className =
+                            'text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold flex items-center gap-2';
+                        title.innerHTML = `
+                        <i class="fa-solid ${categoryIcons[categoryKey]} ${categoryColors[categoryKey]}"></i>
+                        ${categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1)}
+                    `;
+                        sectionDiv.appendChild(title);
+
+                        const ul = document.createElement('ul');
+                        items.forEach(item => {
+                            const li = document.createElement('li');
+                            let displayText = this.getDisplayText(item);
+
+                            li.innerHTML = `
+                            <a data-id="${item.id}" 
+                               data-type="${item.type}" 
+                               href="${item.url}" 
+                               class="suggestedItems block px-3 py-2 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm transition-colors duration-200 border-l-2 border-transparent hover:border-[var(--accent-primary)]">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid ${categoryIcons[categoryKey]} ${categoryColors[categoryKey]}"></i>
+                                    <span>${displayText}</span>
+                                </div>
+                            </a>
+                        `;
+                            ul.appendChild(li);
+                        });
+
+                        sectionDiv.appendChild(ul);
+                        this.resultsContainer.appendChild(sectionDiv);
+                    }
+                });
+
+                // Add click handlers for suggestions
+                this.addSuggestionClickHandlers();
+
+                if (!hasContent) {
+                    const noResultsDiv = document.createElement('div');
+                    noResultsDiv.className = 'flex flex-col items-center gap-2 p-6 text-center';
+                    noResultsDiv.innerHTML = `
+                    <i class="fa-solid fa-search text-3xl text-[var(--text-muted)] opacity-50"></i>
+                    <p class="text-sm text-[var(--text-muted)]">No matches found.</p>
+                `;
+                    this.resultsContainer.appendChild(noResultsDiv);
+                }
+            }
+
+            getDisplayText(item) {
+                let displayText = '';
+                if (item.type === 'question') {
+                    displayText = item.title;
+                    if (item.author_username) displayText += ` (by ${item.author_username})`;
+                } else if (item.type === 'subject') {
+                    displayText = item.name;
+                } else if (item.type === 'user') {
+                    displayText = item.username;
+                    if (item.name && item.name !== item.username) displayText += ` (${item.name})`;
+                } else {
+                    displayText = item.title || item.name || item.username || 'Unknown item';
+                }
+                return displayText;
+            }
+
+            addSuggestionClickHandlers() {
+                // Only add handlers for items in this specific container
+                const suggestions = this.resultsContainer.querySelectorAll('.suggestedItems');
+
+                suggestions.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const href = link.href;
+                        const searchedId = link.dataset.id;
+                        const searchedType = link.dataset.type;
+
+                        // Track history if enabled (desktop version)
+                        if (this.trackHistory) {
+                            fetch(`{{ route('nembakHistory', ['searchedId' => 'aaa']) }}`
+                                .replace('aaa', searchedId), {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                    },
+                                    body: JSON.stringify({
+                                        type: searchedType,
+                                    })
+                                });
+                        }
+
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 100);
+                    });
+                });
+            }
+
+            performFullSearch(query) {
                 if (query) {
-                    window.location.href =
-                        `/search-results?q=${encodeURIComponent(query)}`;
+                    window.location.href = `/search-results?q=${encodeURIComponent(query)}`;
                 }
             }
+        }
 
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    performFullSearch(searchInput.value.trim());
-                    suggestionsContainer.classList.add('hidden');
-                }
-            });
+        // Initialize desktop search component
+        const desktopSearch = new SearchComponent({
+            inputId: 'searchInput',
+            containerId: 'search-container',
+            resultsId: 'searchResultsDropdownContainer',
+            historyId: 'searchHistoryDropdownContainer',
+            buttonId: 'searchButton',
+            trackHistory: true // Desktop version tracks history
+        });
 
-            if (searchButton) {
-                searchButton.addEventListener('click', function() {
-                    performFullSearch(searchInput.value.trim());
-                    suggestionsContainer.classList.add('hidden');
+        // Initialize mobile search component
+        const mobileSearch = new SearchComponent({
+            inputId: 'searchInput2',
+            containerId: 'search-container2',
+            resultsId: 'searchResultsDropdownContainer2',
+            historyId: null, // Mobile version doesn't have history
+            buttonId: null, // Mobile version doesn't have search button
+            trackHistory: false
+        });
+
+        // Add existing history click handlers for desktop
+        const existingHistoryItems = document.querySelectorAll(
+            '#searchHistoryDropdownContainer .suggestedItems');
+        existingHistoryItems.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.href;
+                const searchedId = this.dataset.id;
+                const searchedType = this.dataset.type;
+
+                fetch(`{{ route('nembakHistory', ['searchedId' => 'aaa']) }}`.replace('aaa',
+                    searchedId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    },
+                    body: JSON.stringify({
+                        type: searchedType,
+                    })
                 });
-            }
 
-        } else {
-            if (!searchInput) console.error("Search input #searchInput not found.");
-            if (!searchContainer) console.error(
-                "Search container .search-container not found for #searchInput.");
-            if (!suggestionsContainer) console.error(
-                "Suggestions container #searchResultsDropdownContainer not found.");
-        }
-
-
-        async function fetchSearchSuggestions2(query) {
-            if (query.length < 1) {
-                if (suggestionsContainer2) {
-                    suggestionsContainer2.innerHTML = '';
-                    suggestionsContainer2.classList.add('hidden');
-                }
-                return null;
-            }
-
-            try {
-                if (suggestionsContainer2) {
-                    suggestionsContainer2.innerHTML =
-                        '<div class="p-2 text-sm text-[var(--text-muted)]">Searching...</div>';
-                    suggestionsContainer2.classList.remove('hidden');
-                }
-
-                const response = await fetch(
-                    `${API_BASE_URL}/search?q=${encodeURIComponent(query)}&context=all&limit=5`
-                );
-                if (!response.ok) {
-                    console.error('API search error:', response.status, await response.text());
-                    if (suggestionsContainer2) suggestionsContainer2.innerHTML =
-                        '<div class="p-2 text-sm text-red-500">Error fetching results.</div>';
-                    return null;
-                }
-                const result = await response.json();
-                return (result.success && result.data) ? result.data : null;
-            } catch (error) {
-                console.error('Failed to fetch search suggestions:', error);
-                if (suggestionsContainer2) suggestionsContainer2.innerHTML =
-                    '<div class="p-2 text-sm text-red-500">Search request failed.</div>';
-                return null;
-            }
-        }
-
-        function displaySuggestions2(categorizedResults) {
-            if (!suggestionsContainer2) return;
-            suggestionsContainer2.innerHTML = '';
-
-            if (!categorizedResults || Object.keys(categorizedResults).length === 0) {
-                suggestionsContainer2.innerHTML =
-                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
-                suggestionsContainer2.classList.remove('hidden');
-                return;
-            }
-
-            let hasContent = false;
-            const categoryOrder = ['questions', 'subjects', 'users'];
-
-            categoryOrder.forEach(categoryKey => {
-                if (categorizedResults[categoryKey] && categorizedResults[categoryKey].length > 0) {
-                    hasContent = true;
-                    const items = categorizedResults[categoryKey];
-
-                    const sectionDiv = document.createElement('div');
-                    sectionDiv.className = 'mb-2';
-
-                    const title = document.createElement('h4');
-                    title.className =
-                        'text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold';
-                    title.textContent = categoryKey.charAt(0).toUpperCase() + categoryKey.slice(
-                        1);
-                    sectionDiv.appendChild(title);
-
-                    const ul = document.createElement('ul');
-                    items.forEach(item => {
-                        const li = document.createElement('li');
-                        let displayText = '';
-                        if (item.type === 'question') {
-                            displayText = item.title;
-                            if (item.author_username) displayText +=
-                                ` (by ${item.author_username})`;
-                        } else if (item.type === 'subject') {
-                            displayText = item.name;
-                        } else if (item.type === 'user') {
-                            displayText = item.username;
-                            if (item.name && item.name !== item.username) displayText +=
-                                ` (${item.name})`;
-                        } else {
-                            displayText = item.title || item.name || item.username ||
-                                'Unknown item';
-                        }
-
-                        li.innerHTML =
-                            `<a href="${item.url}" class="block px-3 py-1.5 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm">${displayText}</a>`;
-                        ul.appendChild(li);
-                    });
-                    sectionDiv.appendChild(ul);
-                    suggestionsContainer2.appendChild(sectionDiv);
-                }
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 100);
             });
-
-
-            if (hasContent) {
-                suggestionsContainer2.classList.remove('hidden');
-            } else {
-                suggestionsContainer2.innerHTML =
-                    '<div class="p-2 text-sm text-[var(--text-muted)]">No matches found.</div>';
-                suggestionsContainer2.classList.remove('hidden');
-            }
-        }
-
-        if (searchInput2 && searchContainer2 && suggestionsContainer2) {
-            searchInput2.addEventListener('input', function(e) {
-                const searchTerm = e.target.value.trim();
-                clearTimeout(debounceTimer);
-
-                if (searchTerm.length === 0) {
-                    suggestionsContainer2.innerHTML = '';
-                    suggestionsContainer2.classList.add('hidden');
-                    return;
-                }
-
-                debounceTimer = setTimeout(() => {
-                    fetchSearchSuggestions2(searchTerm).then(apiResults => {
-                        displaySuggestions2(apiResults);
-                    });
-                }, 300);
-            });
-
-            document.addEventListener('click', function(event) {
-                if (!searchContainer2.contains(event.target)) {
-                    suggestionsContainer2.classList.add('hidden');
-                }
-            });
-
-            searchInput2.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    performFullSearch(searchInput2.value.trim());
-                    suggestionsContainer2.classList.add('hidden');
-                }
-            });
-
-        } else {
-            if (!searchInput2) console.error("Search input #searchInput not found.");
-            if (!searchContainer2) console.error(
-                "Search container .search-container not found for #searchInput.");
-            if (!suggestionsContainer2) console.error(
-                "Suggestions container #searchResultsDropdownContainer not found.");
-        }
+        });
     });
 </script>
