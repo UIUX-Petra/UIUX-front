@@ -95,6 +95,29 @@ class UserController extends Controller
         }
 
         $responseData = json_decode($response->body(), true);
+
+        $groupedHistories = [];
+
+        if (isset($responseData['data']['histories']) && is_array($responseData['data']['histories'])) {
+            $histories = array_slice(array_reverse($responseData['data']['histories']), 0, 5);
+
+            foreach ($histories as $historyItem) {
+                $type = $historyItem['searched_type'] ?? null;
+                $id = $historyItem['searched_id'] ?? null;
+                $username = $historyItem['searched']['username']
+                    ?? ($historyItem['searched']['user']['username'] ?? null);
+
+                $title = $historyItem['searched']['title']
+                    ?? ($historyItem['searched']['name'] ?? null);
+
+                $email = $historyItem['searched']['email'] ?? null;
+
+                if ($type && $id && $username) {
+                    $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $email];
+                }
+            }
+        }
+        $responseData['data']['histories'] = $groupedHistories;
         return $responseData['data'];
     }
     public function getUserByEmail($email)
@@ -183,6 +206,28 @@ class UserController extends Controller
                 $topSubjectsData = $subjectCount;
             }
 
+            $groupedHistories = [];
+
+            if (isset($originalUserData['histories']) && is_array($originalUserData['histories'])) {
+                $histories = array_slice(array_reverse($originalUserData['histories']), 0, 5);
+
+                foreach ($histories as $historyItem) {
+                    $type = $historyItem['searched_type'] ?? null;
+                    $id = $historyItem['searched_id'] ?? null;
+                    $username = $historyItem['searched']['username']
+                        ?? ($historyItem['searched']['user']['username'] ?? null);
+
+                    $title = $historyItem['searched']['title']
+                        ?? ($historyItem['searched']['name'] ?? null);
+
+                    $email = $historyItem['searched']['email'] ?? null;
+
+                    if ($type && $id && $username) {
+                        $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $email];
+                    }
+                }
+            }
+            // dd($groupedHistories);
             return [
                 'id' => $originalUserData['id'] ?? null,
                 'username' => $originalUserData['username'] ?? null,
@@ -199,6 +244,7 @@ class UserController extends Controller
                 'answers_count' => $answerCount,
                 'followers_count' => $followerCount,
                 'followings_count' => $followingCount,
+                'histories' => $groupedHistories,
             ];
         } else {
             Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", (array)$responseData);
@@ -449,6 +495,8 @@ class UserController extends Controller
         $data['username'] = $user['username'];
         $data['image'] = $user['image'];
         $data['title'] = 'Saved Questions';
+        $data['histories'] = $user['histories'];
+
         return $data;
     }
 
@@ -465,18 +513,5 @@ class UserController extends Controller
         } else {
             Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
         }
-    }
-    public function getDetailedSearchHistory($id)
-    {
-        $api_url = env('API_URL') . '/getDetailedSearchHistory';
-
-        $response = Http::withToken(session('token'))->get($api_url, $id);
-        if ($response->successful()) {
-            $responseData = $response->json();
-        } else {
-            Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
-        }
-
-        return $responseData;
     }
 }
