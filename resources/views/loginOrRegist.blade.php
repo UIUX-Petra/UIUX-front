@@ -387,18 +387,18 @@
                                 <small class="error-message"></small>
                             </div>
 
-                            <div class="input-box relative w-full mb-4"> 
+                            <div class="input-box relative w-full mb-4">
                                 <input type="password" aria-label="Password" placeholder="Password" required id="password"
                                     name="password" minlength="8"
                                     class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                 <i
                                     class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
-                                <small class="error-message"></small> 
+                                <small class="error-message"></small>
 
                                 {{-- Tooltip --}}
                                 <div id="passwordStrengthContainer"
                                     class="absolute top-full left-0 right-0 mt-1 p-3 bg-white border border-gray-300 rounded-md shadow-lg z-20 hidden">
-                                
+
                                     <div id="passwordStrengthBar"
                                         class="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-1">
                                         <div id="passwordStrengthFill"
@@ -624,12 +624,12 @@
                 if (!lengthMet) {
                     levelIndex = Math.min(levelIndex, 0);
                     if (metCriteriaCount > 0 && password.length > 0) levelIndex =
-                    0; 
+                        0;
                 }
-                if (password.length === 0) { 
-                    levelIndex = -1; 
+                if (password.length === 0) {
+                    levelIndex = -1;
                 } else if (metCriteriaCount === 0 && password.length > 0) {
-                    levelIndex = 0; 
+                    levelIndex = 0;
                 }
 
 
@@ -686,16 +686,16 @@
                             if (document.activeElement !== this) {
                                 strengthContainer.classList.add('hidden');
                             }
-                        }, 150); 
+                        }, 150);
                     }
                 });
             }
 
             function clearAllFormErrors() {
                 document.querySelectorAll('.input-box input').forEach(input => clearError(input));
-                resetPasswordStrengthUI(); 
+                resetPasswordStrengthUI();
                 if (strengthContainer && document.activeElement !== passwordInputForStrength) {
-                    strengthContainer.classList.add('hidden'); 
+                    strengthContainer.classList.add('hidden');
                 }
             }
 
@@ -779,7 +779,7 @@
                         showError(passwordInputForStrength, 'Password is required.');
                         isValid = false;
                         if (strengthContainer) strengthContainer.classList.add(
-                        'hidden'); 
+                            'hidden');
                     } else {
                         let passwordIssues = [];
                         if (!passwordCriteria.find(c => c.id === 'length')?.regex.test(currentPassword))
@@ -805,10 +805,10 @@
                             showError(passwordInputForStrength, errorMsg);
                             isValid = false;
                             if (strengthContainer) strengthContainer.classList.remove(
-                            'hidden'); 
+                                'hidden');
                         } else {
-                            clearError(passwordInputForStrength); 
-                            
+                            clearError(passwordInputForStrength);
+
                         }
                     }
 
@@ -843,7 +843,7 @@
                     try {
                         const username = usernameInput.value.trim();
                         const email = emailInput.value.trim();
-                        const password = currentPassword; // Use currentPassword
+                        const password = currentPassword;
 
                         const response = await fetch("{{ route('submitRegister') }}", {
                             method: 'POST',
@@ -861,22 +861,18 @@
 
                         const data = await response.json();
                         Swal.close();
+                        console.log(response, data);
 
-                        if (response.ok && data.ok) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Account Created!',
-                                text: data.message || 'Your account has been created successfully!',
-                                confirmButtonColor: '#3085d6',
-                            }).then(() => {
-                                if (container) container.classList.remove('active');
-                                submitRegisterForm.reset();
-                                resetPasswordStrengthUI(); 
-                                if (strengthContainer) strengthContainer.classList.add(
-                                'hidden'); 
-                                submitRegisterForm.querySelectorAll('.input-box input').forEach(input =>
-                                    clearError(input));
-                            });
+                        if (response.ok && data.success) {
+                            if (container) container.classList.remove('active');
+                            submitRegisterForm.reset();
+                            resetPasswordStrengthUI();
+                            if (strengthContainer) strengthContainer.classList.add(
+                                'hidden');
+                            submitRegisterForm.querySelectorAll('.input-box input').forEach(input =>
+                                clearError(input));
+                            window.location.href = '{{ route('verification.notice') }}' + '?email=' +
+                                encodeURIComponent(email);
                         } else {
                             let errorMessage = data.message || 'Registration failed.';
                             if (data.errors) {
@@ -928,12 +924,12 @@
                         else clearError(this);
                     } else if (this.id === 'password') {
                         if (!this.value && document.activeElement !==
-                            this) { 
+                            this) {
                             showError(this, 'Password is required.');
                         } else if (this.value && this.value.length < 8 && document.activeElement !== this) {
                             showError(this, 'Password must be at least 8 characters.');
                         } else if (this.classList.contains('input-error') && this.value.length >=
-                            8) { 
+                            8) {
                             clearError(this);
                         }
                         if (confirmPasswordInput && confirmPasswordInput.value && this.value !==
@@ -956,12 +952,13 @@
                         if (this.id === 'password') {
                             let passwordStillHasIssues = false;
                             if (!this.value) passwordStillHasIssues =
-                            true; 
+                                true;
                             else if (this.value.length < 8) passwordStillHasIssues =
-                            true;
+                                true;
 
                             if (!
-                                passwordStillHasIssues) { // Example: clear "too short" if it becomes long enough
+                                passwordStillHasIssues
+                                ) { // Example: clear "too short" if it becomes long enough
                                 const errorMsgElement = this.closest('.input-box').querySelector(
                                     '.error-message');
                                 if (errorMsgElement && (errorMsgElement.textContent.includes('8 characters') ||
@@ -977,13 +974,13 @@
             });
 
             document.addEventListener('DOMContentLoaded', function() {
-                const mainContainer = document.querySelector('.container.form-container'); 
+                const mainContainer = document.querySelector('.container.form-container');
                 if (mainContainer) mainContainer.classList.add('animate-fadeIn');
 
                 // Initial state for password strength tooltip if password field exists
                 if (passwordInputForStrength && strengthContainer) {
-                    resetPasswordStrengthUI(); 
-                    strengthContainer.classList.add('hidden'); 
+                    resetPasswordStrengthUI();
+                    strengthContainer.classList.add('hidden');
                 }
             });
 

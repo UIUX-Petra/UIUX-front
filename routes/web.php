@@ -18,6 +18,8 @@ Route::post('/manualLogin', [AuthController::class, 'manualLogin'])->name('manua
 Route::post('/submitRegister', [AuthController::class, 'submitRegister'])->name('submitRegister');
 Route::get('/email/verify', [AuthController::class, 'verifyEmail'])->name('email.verify');
 Route::post('/email/resend', [AuthController::class, 'resendVerificationEmail'])->name('verification.resend');
+Route::get('/auth/verify-notice', [AuthController::class, 'showVerificationNotice'])->name('verification.notice');
+Route::get('/handle-pending-verification', [AuthController::class, 'handlePendingVerification'])->name('verify.pending');
 
 Route::get('/auth', [AuthController::class, 'googleAuth'])->name('auth');
 Route::get('/process/login', [AuthController::class, 'processLogin'])->name('processLogin');
