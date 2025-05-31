@@ -355,7 +355,6 @@ class MainController extends Controller
   public function savedQuestion()
   {
     $data = $this->userController->getSavedQuestion();
-    // dd($data);
     return view('savedQuestions', $data);
   }
 }

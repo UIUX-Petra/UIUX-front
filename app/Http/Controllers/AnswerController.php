@@ -159,6 +159,7 @@ class AnswerController extends Controller
             'answers' => $answersPaginator,
             'loggedInUser' => $loggedInUserArray,
             'apiError' => $apiError,
+            'histories' => $loggedInUserArray['histories'],
             'image' => $loggedInUserArray['image'] ?? null,
         ]);
     }
