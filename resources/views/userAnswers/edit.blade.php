@@ -267,7 +267,7 @@
                     Cancel
                 </a>
                 <button type="submit" id="submit-edit-answer-btn" class="submit-button">
-                    <i class="fas fa-save" style="margin-right: 0.5rem;"></i>Save Changes
+                    <i class="fas fa-save" style="margin-right: 0.5rem;"></i>Update Answer
                 </button>
             </div>
         </form>
@@ -376,8 +376,8 @@
                     }
 
                     Swal.fire({
-                        title: 'Confirm Update',
-                        text: 'Are you sure you want to save these changes?',
+                        title: 'Update Answer?',
+                        text: 'Once updated, your current answer will be changed',
                         icon: 'question',
                         showCancelButton: true,
                         confirmButtonColor: 'var(--accent-primary)',

@@ -907,9 +907,9 @@
                 }
 
                 Swal.fire({
-                    title: 'Are you sure?',
+                    title: `${IS_EDIT_MODE ? 'Update your old question' : 'Submit a new question'}`,
                     text: `Once ${IS_EDIT_MODE ? 'updated' : 'submitted'}, this action might not be easily undone!`,
-                    icon: 'warning',
+                    icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: `Yes, ${IS_EDIT_MODE ? 'Update' : 'Submit'}!`,
                     cancelButtonText: 'No, Cancel'

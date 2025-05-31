@@ -294,38 +294,63 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-[var(--text-primary)]">
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8" data-aos="fade-down">
-            <div class="flex items-center space-x-4 mb-4 sm:mb-0">
-                @if (isset($user) && $user)
-                    <div class="relative">
-                        <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
-                            src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                            alt="{{ $user['username'] ?? 'User' }}'s avatar">
-                        <div
-                            class="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--accent-secondary)] rounded-full flex items-center justify-center">
-                            <i class="fas fa-comments text-white text-xs"></i>
+            <div class="flex-col md:flex-row flex w-full justify-between items-center">
+                <div class="flex items-center space-x-4 mb-4 sm:mb-0">
+                    @if (isset($user) && $user)
+                        <div class="relative">
+                            <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
+                                src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                alt="{{ $user['username'] ?? 'User' }}'s avatar">
+                            <div
+                                class="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--accent-secondary)] rounded-full flex items-center justify-center">
+                                <i class="fas fa-comments text-white text-xs"></i>
+                            </div>
                         </div>
-                    </div>
-                @endif
-                <div>
-                    @if (session('email') === $user['email'])
-                        <h1 class="text-4xl font-bold header-gradient mb-2">
-                            My Answers
-                        </h1>
-                        <p class="text-[var(--text-muted)]">
-                            Manage and track your answers
-                        </p>
-                    @else
-                        <h1 class="text-4xl font-bold header-gradient mb-2">
-                            {{ $user['username'] }}'s Answers
-                        </h1>
-                        <p class="text-[var(--text-muted)]">
-                            Track {{ $user['username'] }}'s answers
-                        </p>
                     @endif
+                    <div>
+                        @if (session('email') === $user['email'])
+                            <h1 class="text-4xl font-bold header-gradient mb-2">
+                                My Answers
+                            </h1>
+                            <p class="text-[var(--text-muted)]">
+                                Manage and track your answers
+                            </p>
+                        @else
+                            <h1 class="text-4xl font-bold header-gradient mb-2">
+                                {{ $user['username'] }}'s Answers
+                            </h1>
+                            <p class="text-[var(--text-muted)]">
+                                Track {{ $user['username'] }}'s answers
+                            </p>
+                        @endif
 
+                    </div>
                 </div>
+                <!-- Back to Profile Link -->
+                <div class="" data-aos="fade-up">
+                    @if (session('email') === $user['email'])
+                        <div class="" data-aos="fade-up">
+                            <a href="{{ route('seeProfile') }}"
+                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Back to My Profile
+                            </a>
+                        </div>
+                    @else
+                        <div class="" data-aos="fade-up">
+                            <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
+                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Back to {{ $user['username'] }}'s Profile
+                            </a>
+                        </div>
+                    @endif
+                </div>
+
             </div>
         </div>
+        <hr class="my-6 border-gray-700">
+
 
         @if (session('success'))
             <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg mb-6 shadow-lg"
@@ -425,6 +450,26 @@
                                             <i class="fas fa-trash-alt mr-2"></i>Delete
                                         </button>
                                     </div>
+                                @else
+                                    @php
+                                        $tooltipMessage = '';
+                                        if ($answer['votes_count'] !== 0) {
+                                            $tooltipMessage = 'Your answer has been voted.';
+                                        } 
+                                    @endphp
+                                    <div class="flex space-x-3 z-[1000]" title="{{ $tooltipMessage }}">
+                                        <button
+                                            class="disabled:opacity-50 inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg"
+                                            onclick="window.location.href='{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}'"
+                                            disabled>
+                                            <i class="fas fa-edit mr-2"></i>Edit
+                                        </button>
+                                        <button
+                                            class="disabled:opacity-50 delete-answer-button inline-flex items-center px-4 py-2 bg-red-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg"
+                                            data-answer-id="{{ $answer['id'] }}" disabled>
+                                            <i class="fas fa-trash-alt mr-2"></i>Delete
+                                        </button>
+                                    </div>
                                 @endif
                             @endif
                         </div>
@@ -452,26 +497,7 @@
             </div>
         @endif
 
-        <!-- Back to Profile Link -->
-        <div class="mt-16 text-center" data-aos="fade-up">
-            @if (session('email') === $user['email'])
-                <div class="mt-16 text-center" data-aos="fade-up">
-                    <a href="{{ route('seeProfile') }}"
-                        class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        Back to My Profile
-                    </a>
-                </div>
-            @else
-                <div class="mt-16 text-center" data-aos="fade-up">
-                    <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                        class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        Back to {{ $user['username'] }}'s Profile
-                    </a>
-                </div>
-            @endif
-        </div>
+
     </div>
 
     <!-- Image Modal -->

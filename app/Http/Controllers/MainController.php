@@ -42,6 +42,7 @@ class MainController extends Controller
     }
     $data['questions'] = $questions;
     $data['user'] = $user;
+    // dd($data);
     return view('home', $data);
   }
 

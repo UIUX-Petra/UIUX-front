@@ -56,25 +56,49 @@
             <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
                 src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                 alt="{{ $user['username'] }}'s avatar">
-            <div class="flex flex-col">
+            <div class="flex-col md:flex-row flex w-full justify-between items-center">
+                <div class="flex flex-col">
 
-                @if (session('email') === $user['email'])
-                    <h1 class="text-4xl font-bold header-gradient mb-2">
-                        My Questions
-                    </h1>
-                    <p class="text-[var(--text-muted)]">
-                        Manage and track your questions
-                    </p>
-                @else
-                    <h1 class="text-4xl font-bold header-gradient mb-2">
-                        {{ $user['username'] }}'s Questions
-                    </h1>
+                    @if (session('email') === $user['email'])
+                        <h1 class="text-4xl font-bold header-gradient mb-2">
+                            My Questions
+                        </h1>
+                        <p class="text-[var(--text-muted)]">
+                            Manage and track your questions
+                        </p>
+                    @else
+                        <h1 class="text-4xl font-bold header-gradient mb-2">
+                            {{ $user['username'] }}'s Questions
+                        </h1>
 
-                    <p class="text-[var(--text-muted)]">
-                        Track {{ $user['username'] }}'s questions
-                    </p>
-                @endif
+                        <p class="text-[var(--text-muted)]">
+                            Track {{ $user['username'] }}'s questions
+                        </p>
+                    @endif
+
+                </div>
+
+                <div class="mt-4">
+                    @if (session('email') === $user['email'])
+                        <div class="text-center" data-aos="fade-up">
+                            <a href="{{ route('seeProfile') }}"
+                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Back to My Profile
+                            </a>
+                        </div>
+                    @else
+                        <div class="text-center" data-aos="fade-up">
+                            <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
+                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Back to {{ $user['username'] }}'s Profile
+                            </a>
+                        </div>
+                    @endif
+                </div>
             </div>
+
         </div>
         <hr class="my-6 border-gray-700">
 
@@ -102,8 +126,8 @@
                         <i class="text-sm fa-solid fa-eye"></i>
                     </div>
                     <div class="stats-item flex flex-row items-center space-x-2">
-                        <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
-                        <i class="text-sm fa-regular fa-comment"></i>
+                        <span class="text-sm font-medium">{{ count($question['answer']) ?? 0 }}</span>
+                        <i class="text-sm fa-solid fa-reply"></i>
                     </div>
                 </div>
 
@@ -158,6 +182,35 @@
                                     <i class="fas fa-trash-alt mr-2"></i>Delete
                                 </button>
                             </div>
+                        @else
+                            {{-- Tombol Dinonaktifkan dengan Tooltip Kondisional --}}
+                            @php
+                                $tooltipMessage = '';
+                                if (!empty($question['answer']) && $question['vote'] !== 0) {
+                                    $tooltipMessage = 'Your question has been answered and voted.';
+                                } elseif (isset($question['vote']) && $question['vote'] !== 0) {
+                                    // Kondisi ini akan dievaluasi jika jawaban kosong TAPI sudah ada vote.
+                                    $tooltipMessage = 'Your question has been voted.';
+                                } else {
+                                    $tooltipMessage = 'Your question has been answered';
+                                }
+                                // Anda bisa menambahkan logika lain di sini jika kedua kondisi (answered dan voted)
+                                // perlu menghasilkan pesan yang berbeda atau gabungan.
+                                // Saat ini, "answered" akan lebih diprioritaskan jika keduanya true.
+                            @endphp
+                            <div class="flex space-x-3 justify-end" title="{{ $tooltipMessage }}">
+                                <button data-question-id="{{ $question['id'] }}"
+                                    class="disabled:opacity-50  edit-question-button inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg"
+                                    disabled > {{-- Tambahkan atribut title di sini --}}
+                                    <i class="fas fa-edit mr-2"></i>Edit
+                                </button>
+                                <button
+                                    class="disabled:opacity-50  delete-question-button inline-flex items-center px-4 py-2 bg-red-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg"
+                                    data-question-id="{{ $question['id'] }}" disabled>
+                                    {{-- Tambahkan atribut title di sini --}}
+                                    <i class="fas fa-trash-alt mr-2"></i>Delete
+                                </button>
+                            </div>
                         @endif
                     @endif
                 </div>
@@ -176,25 +229,7 @@
     </div>
     @endif
 
-    <div class="mt-10 text-center">
-        @if (session('email') === $user['email'])
-            <div class="mt-16 text-center" data-aos="fade-up">
-                <a href="{{ route('seeProfile') }}"
-                    class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Back to My Profile
-                </a>
-            </div>
-        @else
-            <div class="mt-16 text-center" data-aos="fade-up">
-                <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                    class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Back to {{ $user['username'] }}'s Profile
-                </a>
-            </div>
-        @endif
-    </div>
+
     </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -227,13 +262,21 @@
                         `question-item-${questionId}`);
 
                     Swal.fire({
-                        title: 'Are you sure?',
-                        text: "You won't be able to revert this!",
+                        title: 'Delete Answer?',
+                        text: "This action cannot be undone. Your answer will be permanently deleted.",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Yes, delete it!'
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel',
+                        background: 'var(--bg-card)',
+                        color: 'var(--text-primary)',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            confirmButton: 'rounded-xl px-6 py-3',
+                            cancelButton: 'rounded-xl px-6 py-3'
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             const headers = {

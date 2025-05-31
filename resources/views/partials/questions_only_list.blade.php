@@ -32,8 +32,8 @@
                 <i class="text-sm fa-solid fa-eye"></i>
             </div>
             <div class="stats-item flex flex-row items-center space-x-2">
-                <span class="text-sm font-medium">{{ $question['comments_count'] ?? 0 }}</span>
-                <i class="text-sm fa-regular fa-comment"></i>
+                <span class="text-sm font-medium">{{ count($question['answer']) ?? 0 }}</span>
+                <i class="text-sm fa-solid fa-reply"></i>
             </div>
         </div>
 
