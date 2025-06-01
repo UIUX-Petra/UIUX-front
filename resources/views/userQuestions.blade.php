@@ -292,6 +292,7 @@
                     if (container) {
                         container.innerHTML = emptyStateHTML;
                     }
+                     location.reload();
                 }
             }
             document.querySelectorAll('.delete-question-button').forEach(button => {
@@ -346,12 +347,12 @@
                                             'Your question has been deleted.',
                                             'success'
                                         );
-                                        if (questionItemElement) {  
+                                        if (questionItemElement) {
                                             questionItemElement.style.animation =
                                                 'fadeOutUp 0.5s ease forwards';
                                             setTimeout(() => {
                                                 questionItemElement.remove();
-                                                checkEmptyQuestionState()
+                                                checkEmptyQuestionState();
                                             }, 500);
                                         }
                                         const questionsContainer = document
@@ -405,8 +406,8 @@
 
 
 
-           const style = document.createElement('style');
-        style.textContent = `
+            const style = document.createElement('style');
+            style.textContent = `
             @keyframes fadeOutUp {
                 to {
                     opacity: 0;
@@ -510,7 +511,7 @@
                 opacity: 1;
             }
         `;
-        document.head.appendChild(style);
+            document.head.appendChild(style);
         });
     </script>
 @endsection
