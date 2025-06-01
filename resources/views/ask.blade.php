@@ -966,9 +966,9 @@
                                         text: res.message || `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
                                     }).then(() => {
                                         if (res.data && res.data.id) {
-                                            window.location.href = "{{ route('askPage', ['questionId'=>'id']) }}".replace('id',res.data.id);
+                                            window.location.href = "{{ route('user.questions.list', ['id'=>'id']) }}".replace('id',QUESTION_TO_EDIT.user.id);
                                         } else {
-                                            window.location.href = "{{ route('askPage') }}";
+                                            window.location.href = "{{ route('home') }}";
                                         }
                                     });
                                 } else {
