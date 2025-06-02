@@ -27,6 +27,7 @@ class MainController extends Controller
     $user = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $user['image'] ?? null;
     $data['username'] = $user['username'] ?? 'Guest';
+    $data['id'] = $user['id'];
     $data['title'] = 'Home';
     $questions = $this->questionController->getAllQuestions($request);
 
@@ -43,6 +44,7 @@ class MainController extends Controller
     $data['questions'] = $questions;
     $data['user'] = $user;
     $data['histories'] = $user['histories'];
+    // dd($data);
     return view('home', $data);
   }
 
@@ -52,6 +54,8 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail($request->session()->get('email'));
     $viewData['image'] = $currUser['image'] ?? null;
     $viewData['username'] = $currUser['username'] ?? null;
+    $viewData['id'] = $currUser['id'];
+
     $allTags = $this->tagController->getAllTags();
     $viewData['allTags'] = $allTags;
     $viewData['questionToEdit'] = null;
@@ -79,6 +83,7 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail($email);
     $data['currUser'] = $currUser;
     $data['username'] = $currUser['username'];
+    $data['id'] = $currUser['id'];
     // dd($data);
     $data['image'] = $currUser['image'];
     $data['histories'] = $currUser['histories'];
@@ -91,6 +96,7 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['username'] = $currUser['username'];
     $data['image'] = $currUser['image'];
+    $data['id'] = $currUser['id'];
     $data['title'] = 'PROFILE | ' . $userViewed['user']['username'];
     $data['userViewed'] = $userViewed['user'];
 
@@ -128,24 +134,28 @@ class MainController extends Controller
     $data['username'] = $currUser['username'];
     $data['user'] = $currUser;
     $data['image'] = $currUser['image'];
+    $data['id'] = $currUser['id'];
 
     $data['histories'] = $currUser['histories'];
     return view('editProfile', $data);
   }
-  public function userQuestions($email)
+  public function userQuestions($id)
   {
-    $data['user'] = $this->userController->showUserQuestionsPage($email);
-
+    $data['user'] = $this->userController->showUserQuestionsPage($id);
+    // dd($data['user']);
     $data['username'] = $data['user']['username'];
     $data['image'] = $data['user']['image'];
-    if (session('email') != $email) {
+    $data['id'] = $data['user']['id'];
+    $data['title'] = htmlspecialchars($data['user']['username'] ?? 'User') . "'s Questions";
+    if (session('email') != $data['user']['email']) {
       $currUser = $this->userController->getBasicUserByEmail(session('email'));
       $data['viewer'] = $currUser;
       $data['username'] = $currUser['username'];
       $data['image'] = $currUser['image'];
+      $data['id'] = $currUser['id'];
+      $data['title'] = htmlspecialchars($currUser['username'] ?? 'User') . "'s Questions";
     }
-    $data['title'] = 'User Questions';
-    $data['histories'] = $currUser['histories'];
+    $data['histories'] = $data['user']['histories'];
     return view('userQuestions', $data);
   }
 
@@ -210,6 +220,7 @@ class MainController extends Controller
 
     $data = [
       'title' => ($profileUser['username'] ?? 'User') . ($initialTabType === 'followers' ? ' - Followers' : ' - Following'),
+      'id' => $profileUser['id'],
       'username' => $profileUser['username'],
       'image' => $profileUser['image'],
       'profileUser' => $profileUser,
@@ -251,6 +262,7 @@ class MainController extends Controller
     // Untuk Initial Page Load (Non-AJAX)
     $data = [
       'username' => $user['username'],
+      'id' => $user['id'],
       'image' => $user['image'],
       'title' => 'Popular Questions',
       'questions' => $questionsPaginator,
@@ -275,6 +287,7 @@ class MainController extends Controller
     $data['title'] = 'View Answers';
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
+    $data['id'] = $currUser['id'];
     // dd($data);
     Log::info($data['question']);
 
@@ -318,6 +331,7 @@ class MainController extends Controller
     $data['order_by_newest'] = $usersByNewest;
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['username'] = $currUser['username'];
+    $data['id'] = $currUser['id'];
     $data['image'] = $currUser['image'];
     $data['recommended'] = $user['recommended'];
 
@@ -332,6 +346,7 @@ class MainController extends Controller
     $data['title'] = 'View Tags';
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['username'] = $currUser['username'];
+    $data['id'] = $currUser['id'];
     $data['image'] = $currUser['image'];
     // dd($data);
     $data['histories'] = $currUser['histories'];
@@ -346,6 +361,7 @@ class MainController extends Controller
     $data['mostViewed'] = $this->userController->getMostViewedUser();
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['username'] = $currUser['username'];
+    $data['id'] = $currUser['id'];
     $data['image'] = $currUser['image'];
     $data['histories'] = $currUser['histories'];
 

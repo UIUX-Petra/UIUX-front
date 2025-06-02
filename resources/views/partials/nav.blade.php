@@ -274,6 +274,27 @@
     .nav-link:hover .nav-badge {
         transform: translateY(-50%) scale(1.1);
     }
+
+
+    .contributions-section label {
+        font-weight: bold;
+        display: block;
+    }
+
+    .contributions-section select {
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        width: 100%;
+    }
+
+    #selected-contribution-content {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        min-height: 50px;
+    }
 </style>
 
 <!-- Navbar -->
@@ -307,7 +328,7 @@
                 <input autocomplete="off" id="searchInput" type="text" placeholder="Search anything..."
                     class="search-input placeholder-[var(--text-secondary)] xl:w-[56rem] w-[23rem] !bg-[var(--bg-tertiary)] px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
                 <button type="button" id="searchButton"
-                    class="search-button text-[var(--text-dark)] bg-[var(--accent-tertiary)] hover:bg-[var(--accent-primary)] px-4 py-2 -ml-10 rounded-r-lg focus:outline-none transition-all duration-300">
+                    class="search-button text-[var(--text-dark)] bg-gradient-to-r from-[#38A3A5] to-[#80ED99] hover:bg-gradient-to-r hover:from-[#80ED99] hover:to-[#38A3A5]  px-4 py-2 -ml-10 rounded-r-lg focus:outline-none transition-all duration-300">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
 
@@ -379,7 +400,7 @@
             <!-- Theme Toggle with subtle animation -->
             <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle p-2 rounded-full"
                 aria-label="Toggle theme">
-                <i id="theme-toggle-icon" class="fa-solid fa-sun"></i>
+                <i id="theme-toggle-icon" class="fa-solid fa-sun text-[var(--accent-tertiary)]"></i>
             </button>
 
             @if (!session()->has('email'))
@@ -459,14 +480,21 @@
         <div class="px-2 pb-3 search-container2">
             <input id="searchInput2" type="text" placeholder="Search..."
                 class="search-input2 w-full px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
-            <!-- Mobile Search Results Container -->
             <div id="searchResultsDropdownContainer2"
                 class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
-                {{-- Content will be populated by JS --}}
             </div>
         </div>
+        <div class="contributions-section mb-1">
+            <select id="my-contributions-dropdown-mobile" name="contributions"
+                class="w-full text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] appearance-none py-2.5 px-3">
+                <option value="" class="text-[var(--text-muted)]">My Contributions</option>
+                <option value="questions">Questions</option>
+                <option value="answers">Answers</option>
+                <option value="saves_general">Saves</option>
+            </select>
+        </div>
         <a href="{{ route('askPage') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+            class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
         </a>
         <a href="{{ route('home') }}"
@@ -528,24 +556,34 @@
         <div class="mb-8 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Main Navigation</h3>
             <nav class="flex flex-col space-y-1">
-                <a href="{{ route('home') }}"
-                    class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                    <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
-                </a>
-                <a href="{{ route('popular') }}"
-                    class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                    <i class="fa-solid fa-fire mr-3 w-5 text-center"></i> Popular
-                    <span class="nav-badge">Hot</span>
-                </a>
-                <a href="{{ route('viewAllTags') }}"
-                    class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                    <i class="fa-solid fa-tags mr-3 w-5 text-center"></i> Subjects
-                </a>
-                <a href="{{ route('savedQuestions') }}"
+                <nav class="flex flex-col space-y-1">
+                    <div class="contributions-section mb-1">
+                        <select id="my-contributions-dropdown-desktop" name="contributions"
+                            class="w-full text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] appearance-none py-2.5 px-3">
+                            <option value="" class="text-[var(--text-muted)]">My Contributions</option>
+                            <option value="questions">Questions</option>
+                            <option value="answers">Answers</option>
+                            <option value="saves_general">Saves</option>
+                        </select>
+                    </div>
+                    <a href="{{ route('home') }}"
+                        class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
+                    </a>
+                    <a href="{{ route('popular') }}"
+                        class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        <i class="fa-solid fa-fire mr-3 w-5 text-center"></i> Popular
+                        <span class="nav-badge">Hot</span>
+                    </a>
+                    <a href="{{ route('viewAllTags') }}"
+                        class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        <i class="fa-solid fa-tags mr-3 w-5 text-center"></i> Subjects
+                    </a>
+                    {{-- <a href="{{ route('savedQuestions') }}"
                     class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
-                </a>
-            </nav>
+                </a> --}}
+                </nav>
         </div>
 
         <!-- Community Section -->
@@ -566,7 +604,7 @@
         <div class="mb-8 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Actions</h3>
             <a href="{{ route('askPage') }}"
-                class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+                class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
                 <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
             </a>
         </div>
@@ -575,6 +613,75 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        initializePageFunctions();
+        const contributionsDropdown = document.getElementById('my-contributions-dropdown');
+        const userId = {!! isset($id) && $id ? json_encode($id) : "'null'" !!};
+
+        function getContributionTypeFromUrl() {
+               const path = window.location.pathname;
+          if (userId && userId !== 'null') {
+              const cleanUserId = userId.replace(/"/g, '');
+              if (path.includes(`/user/${cleanUserId}/questions`)) return 'questions';
+              if (path.includes(`/user/${cleanUserId}/answers`)) return 'answers';
+          }
+          const savedQuestionsPath = "{{ route('savedQuestions') }}";
+          if (path.includes(savedQuestionsPath) && savedQuestionsPath !== "{{ url('/') }}") return 'saves_general';
+          return '';
+      }
+
+      function setupContributionsDropdown(dropdownElement) {
+          if (!dropdownElement) {
+              // console.log('Dropdown element not found:', dropdownElement); // Untuk debugging jika salah satu tidak ada
+              return;
+          }
+
+          const currentType = getContributionTypeFromUrl();
+          if (currentType) {
+              const optionExists = dropdownElement.querySelector(`option[value="${currentType}"]`);
+              if (optionExists) {
+                  dropdownElement.value = currentType;
+              } else {
+                  dropdownElement.value = "";
+              }
+          } else {
+              dropdownElement.value = "";
+          }
+
+          dropdownElement.addEventListener('change', function() {
+              const selectedValue = this.value;
+              let targetUrl = null;
+              const cleanUserId = userId ? userId.replace(/"/g, '') : null;
+
+              if (selectedValue === "questions") {
+                  if (cleanUserId && cleanUserId !== 'null') {
+                      targetUrl = `/user/${cleanUserId}/questions`;
+                  } else {
+                      console.error("User ID tidak tersedia untuk 'My Questions'.");
+                  }
+              } else if (selectedValue === "answers") {
+                  if (cleanUserId && cleanUserId !== 'null') {
+                      targetUrl = `/user/${cleanUserId}/answers`;
+                  } else {
+                      console.error("User ID tidak tersedia untuk 'My Answers'.");
+                  }
+              } else if (selectedValue === "saves_general") {
+                  targetUrl = "{{ route('savedQuestions') }}";
+              }
+
+              if (targetUrl) {
+                  window.location.href = targetUrl;
+              }
+          });
+          // console.log('Setup complete for:', dropdownElement.id); // Debugging
+      }
+
+      // Inisialisasi untuk kedua dropdown
+      const desktopDropdown = document.getElementById('my-contributions-dropdown-desktop');
+      const mobileDropdown = document.getElementById('my-contributions-dropdown-mobile');
+
+      setupContributionsDropdown(desktopDropdown);
+      setupContributionsDropdown(mobileDropdown);
+
         const hamburger = document.querySelector('.hamburger');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -1013,5 +1120,66 @@
                 }, 100);
             });
         });
+
+        const themeObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    updateThemeIcons();
+                    updateIconColors();
+                    // updateSavedIcons();
+                }
+            });
+        });
+        themeObserver.observe(document.documentElement, {
+            attributes: true
+        });
+         function initializePageFunctions() {
+            updateThemeIcons();
+            updateIconColors();
+            // lazyLoadImages();
+            // initSmoothScroll();
+            // initSaveButtons();
+            // updateSavedIcons();
+        }
+
+        function updateThemeIcons() {
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            const themeToggleIcon = document.getElementById('theme-toggle-icon');
+            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
+            const themeLogoToggle = document.getElementById('theme-logo');
+
+            if (themeToggleIcon) themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' :
+                'fa-solid fa-sun';
+            if (mobileThemeToggleIcon) mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' :
+                'fa-solid fa-sun';
+            if (themeLogoToggle) themeLogoToggle.src = isLightMode ? "{{ asset('assets/p2p logo.svg') }}" :
+                "{{ asset('assets/p2p logo - white.svg') }}";
+        }
+
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+        if (mobileThemeToggle && typeof toggleTheme === 'function') {
+            mobileThemeToggle.addEventListener('click', toggleTheme);
+        }
+
+        function updateIconColors() {
+            const statsItems = document.querySelectorAll('.stats-item');
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            if (statsItems) {
+                statsItems.forEach((item, index) => {
+                    const icon = item.querySelector('i');
+                    if (!icon) return;
+                    if (index % 3 === 0) {
+                        icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
+                    } else if (index % 3 === 1) {
+                        icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
+                    } else {
+                        icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
+                    }
+                });
+            }
+        }
+
+
+
     });
 </script>
