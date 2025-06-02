@@ -75,4 +75,5 @@ Route::middleware(['isLogin'])->group(function () {
     Route::post('/answers/{answerId}/update', [AnswerController::class, 'updateAnswer'])->name('user.answers.update');
     Route::delete('/answers/{answerId}', [AnswerController::class, 'deleteAnswer'])->name('answer.delete');
     Route::post('/user/history/{searchedId}', [UserController::class, 'addHistory'])->name('nembakHistory');
+    Route::post('/history/delete', [UserController::class, 'deleteHistory'])->name('deleteHistory');
 });

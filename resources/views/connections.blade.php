@@ -781,11 +781,11 @@
                                         const followingHTML = `
 <div class="user-list-item p-3 sm:p-4 rounded-lg flex items-center justify-between shadow">
     <div class="flex items-center">
-        <a href="http://localhost:8001/viewUser/${data.data.targetEmail}">
+        <a href="http://localhost:8000/viewUser/${data.data.targetEmail}">
             <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full mr-3 sm:mr-4 object-cover" src="https://ui-avatars.com/api/?name=${data.data.targetUsername}&amp;background=random&amp;color=fff&amp;size=64" alt="${data.data.targetUsername}'s avatar">
         </a>
         <div>
-            <a href="http://localhost:8001/viewUser/${data.data.targetEmail}" class="font-semibold text-[var(--text-primary-dark)] hover:underline text-sm sm:text-base">
+            <a href="http://localhost:8000/viewUser/${data.data.targetEmail}" class="font-semibold text-[var(--text-primary-dark)] hover:underline text-sm sm:text-base">
                 ${data.data.targetUsername}
             </a>
             <p class="text-xs sm:text-sm text-[var(--text-muted-dark)]">${data.data.targetEmail}</p>
@@ -881,11 +881,11 @@
                                     const userHTML = `
                             <div class="user-list-item p-3 sm:p-4 rounded-lg flex items-center justify-between shadow"> 
                                 <div class="flex items-center">
-                                    <a href="http://localhost:8001/viewUser/${loggedInemail}">
+                                    <a href="http://localhost:8000/viewUser/${loggedInemail}">
                                         <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full mr-3 sm:mr-4 object-cover" src="https://ui-avatars.com/api/?name=${encodeURIComponent(loggedInUsername)}&background=random&color=fff&size=64" alt="${loggedInUsername}'s avatar">
                                     </a>
                                     <div>
-                                        <a href="http://localhost:8001/viewUser/${loggedInemail}" class="font-semibold text-[var(--text-primary-dark)] hover:underline text-sm sm:text-base">
+                                        <a href="http://localhost:8000/viewUser/${loggedInemail}" class="font-semibold text-[var(--text-primary-dark)] hover:underline text-sm sm:text-base">
                                             ${loggedInUsername}
                                         </a>
                                         <p class="text-xs sm:text-sm text-[var(--text-muted-dark)]">${loggedInemail}</p>

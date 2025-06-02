@@ -113,7 +113,7 @@ class UserController extends Controller
                 $email = $historyItem['searched']['email'] ?? null;
 
                 if ($type && $id && $username) {
-                    $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $email];
+                    $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $email, 'historyId' => $historyItem['id']];
                 }
             }
         }
@@ -223,7 +223,7 @@ class UserController extends Controller
                     $email = $historyItem['searched']['email'] ?? null;
 
                     if ($type && $id && $username) {
-                        $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $email];
+                        $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $email, 'historyId' => $historyItem['id']];
                     }
                 }
             }
@@ -513,5 +513,18 @@ class UserController extends Controller
         } else {
             Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
         }
+    }
+    public function deleteHistory(Request $request)
+    {
+        $api_url = env('API_URL') . '/histories/' . $request->id;
+
+        $response = Http::withToken(session('token'))->delete($api_url);
+
+        if ($response->successful()) {
+        } else {
+            Log::error('Failed to Delete History. API Response: ' . $response->body());
+        }
+        $responseData = $response->json();
+        return $responseData;
     }
 }

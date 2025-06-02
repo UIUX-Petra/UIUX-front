@@ -122,8 +122,52 @@
         box-shadow: 0 0 0 2px var(--accent-tertiary);
     }
 
+    .search-input.active {
+        box-shadow: 0 0 0 2px var(--accent-tertiary);
+    }
+
     .search-button {
         transition: all 0.3s ease;
+    }
+
+    /* Search dropdown styling */
+    .search-dropdown {
+        transition: all 0.3s ease;
+        transform-origin: top;
+        max-height: 0;
+        overflow: hidden;
+    }
+
+    .search-dropdown.active {
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
+    /* History item with delete button */
+    .history-item {
+        position: relative;
+        group: hover;
+    }
+
+    .history-item:hover .delete-btn {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .delete-btn {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.2s ease;
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%) scale(0.8);
+        z-index: 10;
+    }
+
+    .delete-btn:hover {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
     }
 
     /* Mobile search container styling */
@@ -274,6 +318,107 @@
     .nav-link:hover .nav-badge {
         transform: translateY(-50%) scale(1.1);
     }
+
+    #searchHistoryDropdownContainer {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+
+    #searchHistoryDropdownContainer.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .history-delete-btn {
+        opacity: 1;
+        transition: all 0.2s ease;
+        color: var(--text-muted);
+        padding: 4px;
+        border-radius: 4px;
+        margin-left: auto;
+        transform: scale(1.5);
+    }
+
+    .history-delete-btn:hover {
+        background-color: var(--bg-tertiary);
+        color: #ef4444;
+        transform: scale(1.7);
+    }
+
+    .suggestedItems:hover .history-delete-btn {
+        opacity: 1;
+    }
+
+    .dropdown-focused {
+        background-color: var(--bg-tertiary) !important;
+        border-left-color: var(--accent-primary) !important;
+    }
+
+    /* Ensure mobile history container is initially hidden */
+    #searchHistoryDropdownContainer2 {
+        display: none;
+    }
+
+    #searchHistoryDropdownContainer2.active {
+        display: block;
+    }
+
+    /* Smooth transitions for dropdown focus states */
+    .suggestedItems {
+        transition: all 0.2s ease;
+    }
+
+    .suggestedItems:focus-within,
+    .suggestedItems.dropdown-focused {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--accent-primary);
+    }
+
+    /* Keyboard focus styling */
+    .keyboard-focused {
+        background-color: var(--bg-tertiary) !important;
+        border-left-color: var(--accent-primary) !important;
+        outline: 2px solid var(--accent-primary);
+        outline-offset: -2px;
+    }
+
+    /* Smooth transitions untuk dropdown */
+    #searchHistoryDropdownContainer,
+    #searchHistoryDropdownContainer2,
+    #searchResultsDropdownContainer,
+    #searchResultsDropdownContainer2 {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    #searchHistoryDropdownContainer.active,
+    #searchHistoryDropdownContainer2.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    #searchHistoryDropdownContainer:not(.active),
+    #searchHistoryDropdownContainer2:not(.active) {
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+    }
+
+    /* Focus states untuk better accessibility */
+    .suggestedItems:focus {
+        outline: 2px solid var(--accent-primary);
+        outline-offset: -2px;
+    }
+
+    /* Hover states yang lebih smooth */
+    .suggestedItems:hover,
+    .suggestedItems:focus {
+        background-color: var(--bg-tertiary);
+        border-left-color: var(--accent-primary);
+        transition: all 0.2s ease;
+    }
 </style>
 
 <!-- Navbar -->
@@ -340,33 +485,41 @@
                             @foreach ($historyItems as $username => $historyItem)
                                 <ul>
                                     <li>
-                                        <a data-id="{{ $history == 'user' ? $historyItem['email'] : $historyItem['id'] }}"
-                                            data-type="{{ $history }}"
-                                            href="{{ $history == 'user' ? '/viewUser/' . $historyItem['email'] : ($history == 'question' ? '/viewAnswers/' . $historyItem['id'] : 'aa') }}"
-                                            class="suggestedItems block px-3 py-2 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm transition-colors duration-200 border-l-2 border-transparent hover:border-[var(--accent-tertiary)]">
-                                            <div class="flex items-center gap-2">
+                                        <div
+                                            class="suggestedItems flex items-center px-3 py-2 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm transition-colors duration-200 border-l-2 border-transparent hover:border-[var(--accent-tertiary)]">
+                                            <a data-id="{{ $history == 'user' ? $historyItem['email'] : $historyItem['id'] }}"
+                                                data-type="{{ $history }}"
+                                                href="{{ $history == 'user' ? '/viewUser/' . $historyItem['email'] : ($history == 'question' ? '/viewAnswers/' . $historyItem['id'] : 'aa') }}"
+                                                class="flex items-center gap-2 flex-1">
                                                 @if ($history == 'user')
                                                     <i class="fa-solid fa-user-circle text-blue-400"></i>
                                                 @elseif($history == 'question')
                                                     <i class="fa-solid fa-comment-question text-green-400"></i>
                                                 @endif
                                                 <span>{{ $history == 'user' ? $username : ($history == 'question' ? $historyItem['title'] . ' (by ' . $username . ')' : 'aa') }}</span>
-                                            </div>
-                                        </a>
+                                            </a>
+                                            <button class="history-delete-btn"
+                                                data-history="{{ $historyItem['historyId'] }}"
+                                                data-id="{{ $history == 'user' ? $historyItem['email'] : $historyItem['id'] }}"
+                                                data-type="{{ $history }}" title="Remove from history">
+                                                <i class="fa-solid fa-times text-xs"></i>
+                                            </button>
+                                        </div>
                                     </li>
                                 </ul>
                             @endforeach
                         </div>
                     @endforeach
 
-                    <!-- Clear History Option -->
-                    <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
+                    <!-- Clear History Option ??? -->
+                    {{-- <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
                         <button
                             class="text-xs text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center gap-1 px-2 py-1">
                             <i class="fa-solid fa-trash-can"></i>
                             Clear History
                         </button>
-                    </div>
+                    </div> --}} 
+
                 </div>
 
 
@@ -440,7 +593,8 @@
         @else
             <!-- Mobile User Menu -->
             <div class="md:hidden relative">
-                <button type="button" class="relative flex rounded-full bg-[var(--bg-card)] text-sm focus:outline-none"
+                <button type="button"
+                    class="relative flex rounded-full bg-[var(--bg-card)] text-sm focus:outline-none"
                     id="mobile-user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="sr-only">Open user menu</span>
                     <img class="size-8 rounded-full p-0.5 border border-[var(--accent-tertiary)]"
@@ -456,15 +610,83 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu"
         class="mobile-menu hidden flex-col gap-1 p-4 md:hidden bg-[var(--bg-secondary)] text-[var(--text-primary)] w-full border-t border-[var(--border-color)]">
+
         <div class="px-2 pb-3 search-container2">
-            <input id="searchInput2" type="text" placeholder="Search..."
+            <input id="searchInput2" type="text" placeholder="Search..." autocomplete="off"
                 class="search-input2 w-full px-4 py-2 rounded-lg text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] text-sm">
+
+            <div id="searchHistoryDropdownContainer2"
+                class="absolute top-full left-0 w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 shadow-lg max-h-80 overflow-y-auto p-2">
+
+                <!-- History Header -->
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border-color)]">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-[var(--text-muted)] text-xs"></i>
+                        <h3 class="text-sm font-medium text-[var(--text-primary)]">Recent Searches</h3>
+                    </div>
+                    {{-- <span class="text-xs text-[var(--text-muted)] bg-[var(--bg-tertiary)] px-2 py-1 rounded-full">History</span> --}}
+                </div>
+
+                @foreach ($histories as $history => $historyItems)
+                    <div class="mb-3">
+                        <h4
+                            class="text-xs uppercase text-[var(--text-muted)] px-2 py-1 font-semibold flex items-center gap-2">
+                            @if ($history == 'user')
+                                <i class="fa-solid fa-user text-blue-400"></i>
+                            @elseif($history == 'question')
+                                <i class="fa-solid fa-question-circle text-green-400"></i>
+                            @else
+                                <i class="fa-solid fa-folder text-yellow-400"></i>
+                            @endif
+                            {{ strtoupper($history) }}S
+                        </h4>
+                        @foreach ($historyItems as $username => $historyItem)
+                            <ul>
+                                <li>
+                                    <div
+                                        class="suggestedItems flex items-center px-3 py-2 hover:bg-[var(--bg-tertiary)] rounded-md text-[var(--text-primary)] text-sm transition-colors duration-200 border-l-2 border-transparent hover:border-[var(--accent-tertiary)]">
+                                        <a data-id="{{ $history == 'user' ? $historyItem['email'] : $historyItem['id'] }}"
+                                            data-type="{{ $history }}"
+                                            href="{{ $history == 'user' ? '/viewUser/' . $historyItem['email'] : ($history == 'question' ? '/viewAnswers/' . $historyItem['id'] : 'aa') }}"
+                                            class="flex items-center gap-2 flex-1">
+                                            @if ($history == 'user')
+                                                <i class="fa-solid fa-user-circle text-blue-400"></i>
+                                            @elseif($history == 'question')
+                                                <i class="fa-solid fa-comment-question text-green-400"></i>
+                                            @endif
+                                            <span>{{ $history == 'user' ? $username : ($history == 'question' ? $historyItem['title'] . ' (by ' . $username . ')' : 'aa') }}</span>
+                                        </a>
+                                        <button class="history-delete-btn"
+                                            data-history="{{ $historyItem['historyId'] }}"
+                                            data-id="{{ $history == 'user' ? $historyItem['email'] : $historyItem['id'] }}"
+                                            data-type="{{ $history }}" title="Remove from history">
+                                            <i class="fa-solid fa-times text-xs"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
+                        @endforeach
+                    </div>
+                @endforeach
+
+                <!-- Clear History Option ??? -->
+                {{-- <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
+                    <button
+                        class="text-xs text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center gap-1 px-2 py-1">
+                        <i class="fa-solid fa-trash-can"></i>
+                        Clear History
+                    </button>
+                </div> --}}
+
+            </div>
+
             <!-- Mobile Search Results Container -->
             <div id="searchResultsDropdownContainer2"
                 class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
                 {{-- Content will be populated by JS --}}
             </div>
         </div>
+
         <a href="{{ route('askPage') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
@@ -657,11 +879,14 @@
                 this.historyId = config.historyId;
                 this.buttonId = config.buttonId;
                 this.trackHistory = config.trackHistory || false;
+                this.isHistoryVisible = false;
 
                 this.input = document.getElementById(this.inputId);
                 this.container = this.input ? this.input.closest(`.${this.containerId}`) : null;
                 this.resultsContainer = document.getElementById(this.resultsId);
                 this.historyContainer = document.getElementById(this.historyId);
+
+                this.removeBtn = this.historyContainer.closest('.history-delete-btn');
                 this.button = document.getElementById(this.buttonId);
 
                 this.debounceTimer = null;
@@ -677,13 +902,14 @@
                 }
 
                 this.setupEventListeners();
+                this.makeAccessible();
             }
 
             setupEventListeners() {
-                // Focus event - show history if available and input is empty
+                // Focus event - toggle history visibility
                 this.input.addEventListener('focus', () => {
                     if (this.input.value.trim() === '' && this.historyContainer) {
-                        this.toggleContainers(true);
+                        this.showHistory();
                     }
                 });
 
@@ -694,7 +920,7 @@
 
                     if (searchTerm.length === 0) {
                         if (this.historyContainer) {
-                            this.toggleContainers(true);
+                            this.showHistory();
                         } else {
                             this.hideResults();
                         }
@@ -703,7 +929,7 @@
 
                     // Hide history and show search results
                     if (this.historyContainer) {
-                        this.toggleContainers(false);
+                        this.hideHistory();
                     }
 
                     this.debounceTimer = setTimeout(() => {
@@ -732,8 +958,154 @@
 
                 // Click outside to hide
                 document.addEventListener('click', (event) => {
-                    if (!this.container.contains(event.target)) {
+                    // Cek apakah click terjadi di luar semua komponen search
+                    const isOutsideContainer = !this.container.contains(event.target);
+                    const isOutsideResults = !this.resultsContainer || !this.resultsContainer
+                        .contains(event.target);
+                    const isOutsideHistory = !this.historyContainer || !this.historyContainer
+                        .contains(event.target);
+
+                    if (isOutsideContainer && isOutsideResults && isOutsideHistory) {
                         this.hideAllContainers();
+                    }
+                });
+
+                this.handleKeyboardNavigation();
+            }
+            showHistory() {
+                if (this.historyContainer) {
+                    this.historyContainer.classList.add('active');
+                    this.isHistoryVisible = true;
+                    if (this.resultsContainer) {
+                        this.resultsContainer.classList.add('hidden');
+                    }
+
+                    // Pastikan history container bisa menerima focus untuk keyboard navigation
+                    if (!this.historyContainer.hasAttribute('tabindex')) {
+                        this.historyContainer.setAttribute('tabindex', '-1');
+                    }
+                }
+            }
+            hideHistory() {
+                if (this.historyContainer) {
+                    this.historyContainer.classList.remove('active');
+                    this.isHistoryVisible = false;
+                }
+            }
+            makeAccessible() {
+                if (this.input) {
+                    this.input.setAttribute('aria-expanded', 'false');
+                    this.input.setAttribute('aria-haspopup', 'listbox');
+                    this.input.setAttribute('role', 'combobox');
+                }
+
+                if (this.resultsContainer) {
+                    this.resultsContainer.setAttribute('role', 'listbox');
+                    this.resultsContainer.setAttribute('aria-label', 'Search suggestions');
+                }
+
+                if (this.historyContainer) {
+                    this.historyContainer.setAttribute('role', 'listbox');
+                    this.historyContainer.setAttribute('aria-label', 'Search history');
+                }
+            }
+            handleArrowKeys() {
+                this.input.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+
+                        const activeContainer = this.isHistoryVisible ? this.historyContainer : this
+                            .resultsContainer;
+                        if (!activeContainer || activeContainer.classList.contains('hidden'))
+                            return;
+
+                        const items = activeContainer.querySelectorAll('.suggestedItems');
+                        if (items.length === 0) return;
+
+                        const currentFocus = activeContainer.querySelector(
+                                '.suggestedItems:focus') ||
+                            activeContainer.querySelector('.suggestedItems.keyboard-focused');
+
+                        let nextIndex = 0;
+
+                        if (currentFocus) {
+                            const currentIndex = Array.from(items).indexOf(currentFocus);
+                            if (e.key === 'ArrowDown') {
+                                nextIndex = (currentIndex + 1) % items.length;
+                            } else {
+                                nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+                            }
+
+                            // Remove previous focus styling
+                            currentFocus.classList.remove('keyboard-focused');
+                        }
+
+                        // Add focus styling to next item
+                        items[nextIndex].classList.add('keyboard-focused');
+                        items[nextIndex].focus();
+                    }
+
+                    if (e.key === 'Enter') {
+                        const focusedItem = (this.isHistoryVisible ? this.historyContainer : this
+                                .resultsContainer)
+                            ?.querySelector(
+                                '.suggestedItems:focus, .suggestedItems.keyboard-focused');
+
+                        if (focusedItem) {
+                            e.preventDefault();
+                            focusedItem.click();
+                        }
+                    }
+                });
+            }
+            handleKeyboardNavigation() {
+                // Track focus state untuk container
+                let containerHasFocus = false;
+
+                // Monitor semua elemen dalam container untuk focus/blur
+                const focusableElements = this.container.querySelectorAll('input, button, a, [tabindex]');
+
+                focusableElements.forEach(element => {
+                    element.addEventListener('focus', () => {
+                        containerHasFocus = true;
+                    });
+
+                    // element.addEventListener('blur', (e) => {
+                    //     setTimeout(() => {
+                    //         const activeElement = document.activeElement;
+                    //         const isStillInContainer = this.container.contains(
+                    //             activeElement);
+
+                    //         if (!isStillInContainer) {
+                    //             containerHasFocus = false;
+                    //             this.hideAllContainers();
+                    //         }
+                    //     }, 100);
+                    // });
+                });
+
+                // Handle keyboard events
+                document.addEventListener('keydown', (e) => {
+                    // ESC key untuk menutup dropdown
+                    if (e.key === 'Escape') {
+                        this.hideAllContainers();
+                        this.input.blur();
+                    }
+
+                    // Tab key navigation
+                    if (e.key === 'Tab') {
+                        setTimeout(() => {
+                            const activeElement = document.activeElement;
+                            const isInContainer = this.container.contains(activeElement) ||
+                                (this.resultsContainer && this.resultsContainer.contains(
+                                    activeElement)) ||
+                                (this.historyContainer && this.historyContainer.contains(
+                                    activeElement));
+
+                            if (!isInContainer) {
+                                this.hideAllContainers();
+                            }
+                        }, 10);
                     }
                 });
             }
@@ -742,10 +1114,9 @@
                 if (!this.historyContainer || !this.resultsContainer) return;
 
                 if (showHistory) {
-                    this.historyContainer.classList.remove('hidden');
-                    this.resultsContainer.classList.add('hidden');
+                    this.showHistory();
                 } else {
-                    this.historyContainer.classList.add('hidden');
+                    this.hideHistory();
                     this.resultsContainer.classList.remove('hidden');
                 }
             }
@@ -758,12 +1129,12 @@
             }
 
             hideAllContainers() {
-                if (this.historyContainer) {
-                    this.historyContainer.classList.add('hidden');
-                }
+                this.hideHistory();
                 if (this.resultsContainer) {
                     this.resultsContainer.classList.add('hidden');
                 }
+                // Reset input focus state jika diperlukan
+                this.isHistoryVisible = false;
             }
 
             async fetchSearchSuggestions(query) {
@@ -981,37 +1352,154 @@
             inputId: 'searchInput2',
             containerId: 'search-container2',
             resultsId: 'searchResultsDropdownContainer2',
-            historyId: null, // Mobile version doesn't have history
-            buttonId: null, // Mobile version doesn't have search button
-            trackHistory: false
+            historyId: 'searchHistoryDropdownContainer2',
+            buttonId: 'searchButton2', 
+            trackHistory: true 
         });
 
         // Add existing history click handlers for desktop
         const existingHistoryItems = document.querySelectorAll(
             '#searchHistoryDropdownContainer .suggestedItems');
-        existingHistoryItems.forEach(link => {
+        existingHistoryItems.forEach(links => {
+            let link = links.querySelector('a');
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                const href = this.href;
-                const searchedId = this.dataset.id;
-                const searchedType = this.dataset.type;
+                const href = link.href;
+                const searchedId = link.dataset.id;
+                const searchedType = link.dataset.type;
 
-                fetch(`{{ route('nembakHistory', ['searchedId' => 'aaa']) }}`.replace('aaa',
-                    searchedId), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    },
-                    body: JSON.stringify({
-                        type: searchedType,
-                    })
-                });
+                // fetch(`{{ route('nembakHistory', ['searchedId' => 'aaa']) }}`.replace('aaa',
+                //     searchedId), {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                //     },
+                //     body: JSON.stringify({
+                //         type: searchedType,
+                //     })
+                // });
 
+                // TAMBAHKAN ROUTE UNTUK UPDATE UPDATED_AT HISTORY ID, atau mau tetep nambah history ya meskipun content e sama ???
                 setTimeout(() => {
                     window.location.href = href;
                 }, 100);
             });
         });
+
+
+        let delBtns = document.querySelectorAll('.history-delete-btn');
+
+        delBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const historyId = btn.dataset.history;
+
+                // Elemen UL utama
+                const ulH = btn.parentElement.parentElement.parentElement;
+                ulH.classList.add('hidden');
+
+                const ulParentContainer = ulH.parentElement;
+                const ulHasSibling = Array.from(ulParentContainer.children)
+                    .filter(child => !child.classList.contains(
+                        'hidden'))
+                    .length > 1;
+
+                if (!ulHasSibling) {
+                    ulParentContainer.classList.add('hidden');
+                }
+
+                // Temukan semua tombol dengan data-history yang sama (perangkat lain)
+                const otherDeviceBtns = document.querySelectorAll(
+                    `.history-delete-btn[data-history="${historyId}"]`);
+
+                otherDeviceBtns.forEach(otherBtn => {
+                    if (otherBtn !== btn) {
+                        const otherUl = otherBtn.parentElement.parentElement
+                            .parentElement;
+                        otherUl.classList.add('hidden');
+
+                        const otherUlParent = otherUl.parentElement;
+                        const otherHasSibling = Array.from(otherUlParent.children)
+                            .filter(child => !child.classList.contains(
+                                'hidden'))
+                            .length > 1;
+
+                        if (!otherHasSibling) {
+                            otherUlParent.classList.add('hidden');
+                        }
+                    }
+                });
+
+                // Kirim permintaan hapus ke server
+                const formDel = new FormData();
+                formDel.append('id', historyId);
+
+                fetch(`{{ route('deleteHistory') }}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        },
+                        body: formDel,
+                    })
+                    .then(response => response.json())
+                    .then(res => {
+                        Swal.close();
+
+                        if (res.success) {
+                            ulH.remove();
+
+                            if (!ulHasSibling) {
+                                ulParentContainer.remove();
+                            }
+
+                            otherDeviceBtns.forEach(otherBtn => {
+                                if (otherBtn !== btn) {
+                                    const otherUl = otherBtn.parentElement
+                                        .parentElement.parentElement;
+                                    const otherParent = otherUl.parentElement;
+
+                                    const otherHasSibling = otherParent.children
+                                        .length > 1;
+
+                                    if (!otherHasSibling) {
+                                        otherParent.classList.add('hidden');
+                                    }
+                                }
+                            });
+                        } else {
+                            ulH.classList.remove('hidden');
+                            ulParentContainer.classList.remove('hidden');
+
+                            Toastify({
+                                text: `Failed to remove this Search History.`,
+                                duration: 7000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
+                        }
+                    })
+                    .catch(() => {
+                        ulH.classList.remove('hidden');
+                        ulParentContainer.classList.remove('hidden');
+
+                        Toastify({
+                            text: `Network error while deleting history.`,
+                            duration: 7000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            style: {
+                                background: "#e67e22"
+                            }
+                        }).showToast();
+                    });
+            });
+        });
+
+
     });
 </script>
