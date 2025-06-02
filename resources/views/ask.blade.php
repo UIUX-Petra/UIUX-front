@@ -37,16 +37,15 @@
 
         .input-field {
             width: 100%;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
+            border-radius: 0.5rem !important;
+            border: 1px solid var(--border-color) !important;
+            background-color: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .input-field:focus {
-            border-color: var(--accent-tertiary);
             box-shadow: 0 0 0 2px rgba(99, 63, 146, 0.2);
             outline: none;
         }
@@ -97,8 +96,7 @@
 
         .image-preview-item {
             position: relative;
-            width: 150px;
-            height: 150px;
+            max-width: 150px;
             border-radius: 0.5rem;
             overflow: hidden;
             border: 1px solid var(--border-color);
@@ -106,29 +104,25 @@
 
         .image-preview img {
             width: 100%;
-            height: 100%;
             object-fit: cover;
         }
 
         .delete-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            width: 24px;
-            height: 24px;
+            width: 100%;
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
+            padding-right: 0.5rem !important;
+            padding-left: 0.5rem !important;
             background-color: rgba(255, 0, 0, 0.7);
             color: white;
             border: none;
-            border-radius: 50%;
             cursor: pointer;
             padding: 0;
-            font-size: 12px;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .delete-btn:hover {
-            background-color: rgba(255, 0, 0, 0.9);
-            transform: scale(1.1);
+            background-color: rgba(138, 0, 0, 0.9);
         }
 
         .tag-section {
@@ -453,9 +447,9 @@
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details</p>
                 <div id="editor" class="w-full">
-                    <div class="toolbar flex items-center gap-4 p-3">
+                    <div class="toolbar flex flex-col justify-center gap-4 p-3">
                         <button type="button" id="upload-image-btn"
-                            class="image-upload-button flex items-center gap-2 py-2 px-4">
+                            class="image-upload-button w-[200px] flex items-center gap-2 py-2 px-4">
                             <i class="fa-solid fa-image"></i> Add Image
                         </button>
                     </div>
@@ -465,11 +459,11 @@
                             placeholder="Describe your question in detail..." required>{{ old('question', $isEditMode ? $questionToEdit['question'] ?? '' : '') }}</textarea>
                         <div id="image-preview" class="flex flex-wrap gap-4 mt-4 p-2">
                             @if ($isEditMode && !empty($questionToEdit['image']))
-                                <div class="image-preview-item existing-image">
+                                <div class="image-preview-item existing-image max-w-[150px]">
                                     <img src="{{ asset('storage/' . $questionToEdit['image']) }}"
-                                        alt="Current question image" style="max-width: 100px; max-height: 100px;">
-                                    <button type="button" class="delete-existing-image-btn"
-                                        data-image-filename="{{ $questionToEdit['image'] }}">X</button>
+                                        alt="Current question image">
+                                    <button type="button" class="delete-btn delete-existing-image-btn"
+                                        data-image-filename="{{ $questionToEdit['image'] }}">Delete</button>
                                     {{-- <input type="hidden" name="existing_image_filename" value="{{ $questionToEdit['image'] }}"> --}}
                                 </div>
                             @endif
@@ -832,11 +826,10 @@
                             newPreviewDiv.className = "image-preview-item new-image-preview-item";
                             const img = document.createElement("img");
                             img.src = e.target.result;
-                            img.style.maxWidth = '100px';
-                            img.style.maxHeight = '100px';
+                            img.style.maxWidth = '150px';
                             const deleteBtn = document.createElement("button");
                             deleteBtn.type = "button";
-                            deleteBtn.textContent = "X";
+                            deleteBtn.textContent = "Delete";
                             deleteBtn.className = "delete-btn";
                             deleteBtn.onclick = () => {
                                 newPreviewDiv.remove();
@@ -914,9 +907,9 @@
                 }
 
                 Swal.fire({
-                    title: 'Are you sure?',
+                    title: `${IS_EDIT_MODE ? 'Update your old question' : 'Submit a new question'}`,
                     text: `Once ${IS_EDIT_MODE ? 'updated' : 'submitted'}, this action might not be easily undone!`,
-                    icon: 'warning',
+                    icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: `Yes, ${IS_EDIT_MODE ? 'Update' : 'Submit'}!`,
                     cancelButtonText: 'No, Cancel'
@@ -973,9 +966,9 @@
                                         text: res.message || `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
                                     }).then(() => {
                                         if (res.data && res.data.id) {
-                                            window.location.href = `/ask/${res.data.id}`;
+                                            window.location.href = "{{ route('user.questions.list', ['id'=>'id']) }}".replace('id',QUESTION_TO_EDIT.user.id);
                                         } else {
-                                            window.location.href = "{{ route('askPage') }}";
+                                            window.location.href = "{{ route('home') }}";
                                         }
                                     });
                                 } else {

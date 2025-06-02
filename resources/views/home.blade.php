@@ -402,17 +402,9 @@
     <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
         <div id="questions-container"
             class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
-            {{-- Loading Overlay --}}
-            {{-- <div class="loading-overlay">
-                <div class="loader"></div>
-            </div> --}}
-
-            {{-- Wrapper untuk daftar pertanyaan (diisi oleh skeleton atau konten AJAX) --}}
             <div id="questions-list-wrapper" class="bg-transparent rounded-lg">
                 @include('partials.questions_only_list', ['questions' => $questions])
             </div>
-
-            {{-- Wrapper untuk pagination (diisi oleh AJAX) --}}
             <div id="pagination-container" class="mt-8 pagination-links">
                 @if ($questions->hasPages())
                     {{ $questions->links() }}

@@ -256,9 +256,9 @@
         }
 
         /* .tag-filter-select:hover {
-                border-color: #f59e0b;
-                color: #f59e0b;
-            } */
+                                border-color: #f59e0b;
+                                color: #f59e0b;
+                            } */
 
         .tag-filter-select:focus {
             border-color: #f59e0b;
@@ -340,11 +340,11 @@
     <div class="max-w-5xl justify-start items-start px-8 mt-6 mb-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             {{-- Search Bar --}}
-            <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
+            {{-- <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="questionSearchInput" type="text" placeholder="Search questions by title..."
                     value="{{ $initialSearchTerm ?? '' }}">
-            </div>
+            </div> --}}
 
             {{-- Sort & Tag Filters --}}
             <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
@@ -426,8 +426,7 @@
         </div>
     </div> --}}
 
-    <!-- Main content area with questions list and sidebar -->
-    <div class="max-w-5xl justify-start items-start px-8">
+    <div class="max-w-7xl justify-start items-start px-8">
         <div class="flex flex-col md:flex-row gap-6">
             <div class="w-full md:w-3/4 bg-transparent rounded-lg" id="questions-list-ajax-container">
                 @include('partials.questions_list_content', [
@@ -440,7 +439,6 @@
                 </div>
             </div>
 
-            <!-- Sidebar with Ask Question Card -->
             <div class="md:w-1/4 w-full">
                 <div class="sticky top-24">
                     <div
@@ -802,7 +800,6 @@
                 fetchQuestions(currentPage, false); // `false` because URL is already updated by browser
             });
 
-            // Event listener untuk clear filter link di partial
             questionsListContainer.addEventListener('click', function(event) {
             // ... (your existing filter clear logic - no change needed here)
                 if (event.target.matches('a.filter-clear-link')) {
@@ -825,7 +822,6 @@
             // const themeObserver = new MutationObserver ... // This is defined earlier
             // themeObserver.observe(document.documentElement, { attributes: true }); // Also defined earlier
 
-            // Add hover effects to stats cards
             const communityCards = document.querySelectorAll('.grid > div');
             if (communityCards) {
             // ... (your existing community card hover logic - no change needed here)
@@ -852,14 +848,13 @@
                 if (button.dataset.saveBtnInitialized === 'true') return;
 
                 const newButton = button.cloneNode(true);
-                newButton.removeAttribute('onclick'); // <--- PENTING: Hapus atribut onclick dari kloningan
+                newButton.removeAttribute('onclick'); 
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation(); // Crucial to prevent card click
 
-                    // Tentukan aksi berdasarkan kondisi tombol saat ini (misalnya, kelas ikonnya)
                     const icon = this.querySelector('i');
                     if (icon && icon.classList.contains('fa-solid') && icon.classList.contains('fa-bookmark')) {
                         unsaveQuestion(this);

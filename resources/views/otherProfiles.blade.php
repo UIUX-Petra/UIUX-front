@@ -179,28 +179,27 @@
                     </div>
 
                     <!-- Actions -->
-                    @if (session('email') != $userViewed['email'])
+                    @if (!$isOwnProfile)
                         <button id="followBtn" onclick="follow(`{{ $userViewed['email'] }}`)"
                             class="px-4 py-2 bg-[var(--accent-tertiary)] font-semibold text-[var(--bg-primary)] rounded-lg hover:scale-105 transition">
 
                             @if ($userRelation == 0 && session('email'))
                                 Follow
-                            @elseif($userRelation == 1)
+                            @elseif($userRelation == 1 || $userRelation == 3)
                                 Following
-                            @else
+                            @elseif($userRelation == 2)
                                 Follow Back
                             @endif
                         </button>
                     @else
-                         <div class="flex space-x-4">
-                        <a href="{{ route('editProfile') }}"
-                            class="px-4 py-2 btn-primary text-white rounded-lg flex items-center">
-                            <i class="fa-solid fa-user-pen mr-2"></i>
-                            Edit Profile
-                        </a>
-                    </div>
+                        <div class="flex space-x-4">
+                            <a href="{{ route('editProfile') }}"
+                                class="px-4 py-2 btn-primary text-white rounded-lg flex items-center">
+                                <i class="fa-solid fa-user-pen mr-2"></i>
+                                Edit Profile
+                            </a>
+                        </div>
                     @endif
-
                 </div>
             </div>
 
@@ -252,13 +251,15 @@
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
                             <span class="text-[var(--text-secondary)]">Reputation</span>
-                            <span class="font-bold text-[var(--text-primary)]"> {{ $userViewed['reputation'] }}</span>
+                            <span class="font-bold text-[var(--text-primary)]">{{ $userViewed['reputation'] }}</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-[var(--text-secondary)]">Answers</span>
-                            <span class="font-bold text-[var(--text-primary)]">{{ $userViewed['answers_count'] }}</span>
+                        <div class="clickable-stat flex justify-between items-center font-bold">
+                            <a href="{{ route('user.answers.index', ['userId' => $userViewed['id']]) }}" class="text-link">
+                                <span>Answers</span>
+                            </a>
+                            <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['answers_count'] }}</span>
                         </div>
-                        <div class="clickable-stat flex justify-between items-center">
+                        <div class="clickable-stat flex justify-between items-center font-bold">
                             <a href="{{ route('user.questions.list', ['id' => $userViewed['id']]) }}" class="text-link">
                                 <span>Questions</span>
                             </a>
@@ -454,6 +455,10 @@
         });
 
         function follow(email) {
+            const btn = document.getElementById('followBtn');
+            let temp = btn.textContent;
+
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Loading...`
             fetch("{{ route('nembakFollow') }}", {
                 method: 'POST',
                 headers: {
@@ -465,16 +470,16 @@
                 })
             }).then(response => response.json()).then(res => {
                 if (res.success) {
-                    const btn = document.getElementById('followBtn');
                     if (res.data.userRelation == 0) {
                         btn.innerHTML = `Follow`;
-                    } else if (res.data.userRelation == 1) {
+                    } else if (res.data.userRelation == 1 || res.data.userRelation == 3) {
                         btn.innerHTML = `Following`;
-                    } else {
+                    } else if (res.data.userRelation == 2) {
                         btn.innerHTML = `Follow Back`;
                     }
                     document.getElementById('followers_count').textContent = res.data.countFollowers;
                 } else {
+                    btn.innerHTML = temp;
                     Toastify({
                         text: "Something went wrong",
                         duration: 3000,

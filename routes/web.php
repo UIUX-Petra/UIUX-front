@@ -18,6 +18,8 @@ Route::post('/manualLogin', [AuthController::class, 'manualLogin'])->name('manua
 Route::post('/submitRegister', [AuthController::class, 'submitRegister'])->name('submitRegister');
 Route::get('/email/verify', [AuthController::class, 'verifyEmail'])->name('email.verify');
 Route::post('/email/resend', [AuthController::class, 'resendVerificationEmail'])->name('verification.resend');
+Route::get('/auth/verify-notice', [AuthController::class, 'showVerificationNotice'])->name('verification.notice');
+Route::get('/handle-pending-verification', [AuthController::class, 'handlePendingVerification'])->name('verify.pending');
 
 Route::get('/auth', [AuthController::class, 'googleAuth'])->name('auth');
 Route::get('/process/login', [AuthController::class, 'processLogin'])->name('processLogin');
@@ -62,4 +64,15 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/getSavedQuestion', [MainController::class, 'savedQuestion'])->name('savedQuestions');
     Route::post('/saveQuestion', [QuestionController::class, 'saveQuestion'])->name('saveQuestion');
     Route::post('/unsaveQuestion', [QuestionController::class, 'unsaveQuestion'])->name('unsaveQuestion');
+
+
+    Route::get('/questions/{id}/edit', [QuestionController::class, 'showEditQuestionPage'])->name('editQuestionPage');
+    Route::post('/questions/{id}', [QuestionController::class, 'updateQuestion'])->name('updateQuestion');
+    Route::post('/questions/{id}/delete', [QuestionController::class, 'deleteQuestion'])->name('deleteQuestion');
+
+    Route::get('/user/{userId}/answers', [AnswerController::class, 'viewUserAnswers'])->name('user.answers.index');
+    Route::get('/answers/{answerId}/edit', [AnswerController::class, 'editAnswerForm'])->name('user.answers.edit');
+    Route::post('/answers/{answerId}/update', [AnswerController::class, 'updateAnswer'])->name('user.answers.update');
+    Route::delete('/answers/{answerId}', [AnswerController::class, 'deleteAnswer'])->name('answer.delete');
+    Route::post('/user/history/{searchedId}', [UserController::class, 'addHistory'])->name('nembakHistory');
 });
