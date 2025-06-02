@@ -393,10 +393,6 @@
                     fellow <span class="font-bold">Petranesian Informates</span>!
                 </p>
             @endif
-            <a href="{{ route('askPage') }}"
-                class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} md:hidden flex mt-5 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium text-[0.85rem] p-2.5 rounded-lg items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
-                <i class="fa-solid fa-question-circle mr-2"></i> Ask a Question
-            </a>
         </div>
     </div>
 
@@ -517,7 +513,54 @@
             lazyLoadImages();
             initSmoothScroll();
             initSaveButtons();
+            initClickableQuestionCards();
+            initTagToggles(); 
             updateSavedIcons();
+        }
+
+        function initClickableQuestionCards() {
+            document.querySelectorAll('.question-card').forEach(card => {
+                if (card.dataset.clickableInitialized === 'true') return;
+
+                card.addEventListener('click', function(event) {
+                    if (event.target.closest('.save-question-btn') ||
+                        event.target.closest('.question-tag-link') ||
+                        event.target.closest('.more-tags-button')) {
+                        return;
+                    }
+
+                    const url = this.dataset.url;
+                    if (url) {
+                        window.location.href = url;
+                    }
+                });
+                card.dataset.clickableInitialized = 'true';
+            });
+        }
+
+        function initTagToggles() {
+            document.querySelectorAll('.more-tags-button').forEach(button => {
+                if (button.dataset.toggleInitialized === 'true') return;
+
+                button.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Important: Prevent card click event
+
+                    const questionId = this.dataset.questionId;
+                    const extraTags = document.querySelectorAll(`.extra-tag-${questionId}`);
+                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains('hidden');
+
+                    extraTags.forEach(tag => {
+                        tag.classList.toggle('hidden', !isCurrentlyHidden);
+                    });
+
+                    if (isCurrentlyHidden) {
+                        this.textContent = 'show less';
+                    } else {
+                        this.textContent = this.dataset.initialText; 
+                    }
+                });
+                button.dataset.toggleInitialized = 'true';
+            });
         }
 
         function showLoadingIndicator() {
