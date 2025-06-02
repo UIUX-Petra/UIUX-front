@@ -32,7 +32,7 @@ class AuthController extends Controller
             $email = strtolower($googleUser->getEmail());
             $name = $googleUser->getName();
 
-            if (!str_ends_with($email, '@john.petra.ac.id')) {
+            if (!preg_match('/@(john|peter)\.petra\.ac\.id$/', $email)) {
                 return redirect()->route('loginOrRegist')->with('Error', 'Please use your Petra Christian University email to log in!');
             }
 

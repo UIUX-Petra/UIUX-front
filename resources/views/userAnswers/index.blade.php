@@ -437,7 +437,7 @@
                             </div>
 
                             <!-- Action Buttons -->
-                            @if (session('email') === $loggedInUser['email'])
+                            @if (session('email') === ($user['email'] ?? null))
                                 @if (isset($answer['user_id']) && ($answer['votes_count'] ?? 0) == 0)
                                     <div class="flex space-x-3">
                                         <a href="{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}"
