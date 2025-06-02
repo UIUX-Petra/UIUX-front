@@ -305,7 +305,7 @@
                         class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST" novalidate>
                             @csrf
-                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Sign in
+                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Login
                             </h1>
 
                             <div class="input-box relative w-full mb-5">
@@ -328,7 +328,7 @@
 
                             <button type="submit"
                                 class="form-btn w-full bg-gradient-to-r from-[#10b981] to-[#1ceaa5] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
-                                Sign In
+                                Login
                             </button>
 
                             <div class="relative text-center my-5">
@@ -356,7 +356,7 @@
                                             d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
                                             fill="#EB4335" />
                                     </svg>
-                                </span> Petra Email Login
+                                </span> Petra Email
                             </button>
                         </form>
                     </div>
@@ -451,8 +451,7 @@
                                         -
                                     </span> peer?</span><br>Join and explore our community today!</p>
                             <button
-                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Get
-                                Started</button>
+                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-xl">Make an account</button>
                         </div>
                         <div
                             class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
@@ -462,7 +461,7 @@
                             </div>
                             <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Already have an account?</h1>
                             <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Already part of our
-                                community? Sign in to continue your learning journey.</p>
+                                community? Login to continue your learning journey.</p>
                             <button
                                 class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Sign
                                 In</button>
