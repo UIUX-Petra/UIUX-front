@@ -442,15 +442,15 @@
                                     <p id="passwordStrengthText" class="text-xs font-medium text-gray-500 mb-1 text-right">
                                     </p>
                                     <ul id="passwordRequirements" class="text-xs text-gray-500 space-y-0.5">
-                                        <li data-requirement="length"><i class="fas fa-times text-red-500 mr-1"></i> At
+                                        <li data-requirement="length"><i class="fas fa-times text-red-500 mx-1"></i> At
                                             least 8 characters</li>
-                                        <li data-requirement="uppercase"><i class="fas fa-times text-red-500 mr-1"></i> An
+                                        <li data-requirement="uppercase"><i class="fas fa-times text-red-500 mx-1"></i> An
                                             uppercase letter</li>
-                                        <li data-requirement="lowercase"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                        <li data-requirement="lowercase"><i class="fas fa-times text-red-500 mx-1"></i> A
                                             lowercase letter</li>
-                                        <li data-requirement="number"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                        <li data-requirement="number"><i class="fas fa-times text-red-500 mx-1"></i> A
                                             number</li>
-                                        <li data-requirement="special"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                        <li data-requirement="special"><i class="fas fa-times text-red-500 mx-1"></i> A
                                             special character (e.g., !@#$%^&*)</li>
                                     </ul>
                                 </div>
