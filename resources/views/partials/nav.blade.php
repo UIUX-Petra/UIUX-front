@@ -593,6 +593,24 @@
                                 role="menuitem">
                                 <i class="fa-solid fa-gear mr-2"></i> Settings
                             </a>
+
+                             @if(session()->has('email'))
+                                @php
+                                    $currentUser = app('App\Http\Controllers\UserController')->getUserByEmail(session('email'));
+                                @endphp
+                                <div class="border-t border-[var(--border-color)] my-1"></div>
+                                <a href="{{ route('user.questions.list', ['id' => $currentUser['id'] ?? 0]) }}"
+                                    class="user-menu-item text-[var(--text-primary)] hover:text-[var(--accent-tertiary)] hover:bg-[var(--bg-card-hover)] block px-4 py-2 text-sm"
+                                    role="menuitem">
+                                    <i class="fa-solid fa-circle-question mr-2"></i> My Questions
+                                </a>
+                                <a href="{{ route('user.answers.index', ['userId' => $currentUser['id'] ?? 0]) }}"
+                                    class="user-menu-item text-[var(--text-primary)] hover:text-[var(--accent-tertiary)] hover:bg-[var(--bg-card-hover)] block px-4 py-2 text-sm"
+                                    role="menuitem">
+                                    <i class="fa-solid fa-comments mr-2"></i> My Answers
+                                </a>
+                                <div class="border-t border-[var(--border-color)] my-1"></div>
+                            @endif
                             <a href="{{ route('logout') }}"
                                 class="user-menu-item text-[var(--text-primary)] hover:text-red-400 hover:bg-[var(--bg-card-hover)] block px-4 py-2 text-sm"
                                 role="menuitem">
@@ -826,7 +844,7 @@
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Actions</h3>
             <a href="{{ route('askPage') }}"
                 class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-                <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
+                <i class="fa-solid fa-plus mr-3"></i> Ask a Question
             </a>
         </div>
     </div>
