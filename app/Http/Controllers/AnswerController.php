@@ -155,6 +155,7 @@ class AnswerController extends Controller
         return view('userAnswers.index', [
             'title' => htmlspecialchars($viewedUser['username'] ?? 'User') . "'s Answers",
             'username' => $loggedInUserArray['username'],
+            'id' => $loggedInUserArray['id'],
             'user' => $viewedUser,
             'answers' => $answersPaginator,
             'loggedInUser' => $loggedInUserArray,

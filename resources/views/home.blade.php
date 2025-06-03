@@ -470,20 +470,9 @@
 @section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            initializePageFunctions();
+            initializePageFunctions2();
 
-            const themeObserver = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.attributeName === 'class') {
-                        updateThemeIcons();
-                        updateIconColors();
-                        updateSavedIcons();
-                    }
-                });
-            });
-            themeObserver.observe(document.documentElement, {
-                attributes: true
-            });
+           
 
             const questionsContainer = document.getElementById('pagination-container');
             if (questionsContainer) {
@@ -503,9 +492,9 @@
             }
         });
 
-        function initializePageFunctions() {
-            updateThemeIcons();
-            updateIconColors();
+        function initializePageFunctions2() {
+            // updateThemeIcons();
+            // updateIconColors();
             lazyLoadImages();
             initSmoothScroll();
             initSaveButtons();
@@ -662,42 +651,15 @@
                 });
         }
 
-        function updateIconColors() {
-            const statsItems = document.querySelectorAll('.stats-item');
+       
+        function updateSavedIcons() {
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
             const isLightMode = document.documentElement.classList.contains('light-mode');
-            if (statsItems) {
-                statsItems.forEach((item, index) => {
-                    const icon = item.querySelector('i');
-                    if (!icon) return;
-                    if (index % 3 === 0) {
-                        icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
-                    } else if (index % 3 === 1) {
-                        icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
-                    } else {
-                        icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
-                    }
-                });
-            }
+            savedIcons.forEach(icon => {
+                icon.style.color = isLightMode ? 'var(--accent-secondary)' :
+                    'var(--accent-secondary)';
+            });
         }
-
-        function updateThemeIcons() {
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            const themeToggleIcon = document.getElementById('theme-toggle-icon');
-            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
-            const themeLogoToggle = document.getElementById('theme-logo');
-
-            if (themeToggleIcon) themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            if (mobileThemeToggleIcon) mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' :
-                'fa-solid fa-sun';
-            if (themeLogoToggle) themeLogoToggle.src = isLightMode ? "{{ asset('assets/p2p logo.svg') }}" :
-                "{{ asset('assets/p2p logo - white.svg') }}";
-        }
-
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        if (mobileThemeToggle && typeof toggleTheme === 'function') {
-            mobileThemeToggle.addEventListener('click', toggleTheme);
-        }
-
 
         function lazyLoadImages() {
             const lazyImages = document.querySelectorAll('.lazy-image');
@@ -759,14 +721,7 @@
             });
         }
 
-        function updateSavedIcons() {
-            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            savedIcons.forEach(icon => {
-                icon.style.color = isLightMode ? 'var(--accent-secondary)' :
-                    'var(--accent-secondary)';
-            });
-        }
+      
 
         function unsaveQuestion(btn) {
             const id = btn.getAttribute('data-question-id');
