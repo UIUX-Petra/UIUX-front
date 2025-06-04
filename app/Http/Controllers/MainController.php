@@ -155,7 +155,7 @@ class MainController extends Controller
       $data['id'] = $currUser['id'];
       $data['title'] = htmlspecialchars($currUser['username'] ?? 'User') . "'s Questions";
     }
-    $data['histories'] = $data['user']['histories'];
+    $data['histories'] = $currUser['histories'];
     return view('userQuestions', $data);
   }
 
