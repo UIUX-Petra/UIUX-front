@@ -393,10 +393,6 @@
                     fellow <span class="font-bold">Petranesian Informates</span>!
                 </p>
             @endif
-            <a href="{{ route('askPage') }}"
-                class="ask-question-btn {{ request()->routeIs('askPage') ? 'active-ask' : '' }} md:hidden flex mt-5 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium text-[0.85rem] p-2.5 rounded-lg items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
-                <i class="fa-solid fa-question-circle mr-2"></i> Ask a Question
-            </a>
         </div>
     </div>
 
@@ -470,20 +466,9 @@
 @section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            initializePageFunctions();
+            initializePageFunctions2();
 
-            const themeObserver = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.attributeName === 'class') {
-                        updateThemeIcons();
-                        updateIconColors();
-                        updateSavedIcons();
-                    }
-                });
-            });
-            themeObserver.observe(document.documentElement, {
-                attributes: true
-            });
+           
 
             const questionsContainer = document.getElementById('pagination-container');
             if (questionsContainer) {
@@ -503,13 +488,60 @@
             }
         });
 
-        function initializePageFunctions() {
-            updateThemeIcons();
-            updateIconColors();
+        function initializePageFunctions2() {
+            // updateThemeIcons();
+            // updateIconColors();
             lazyLoadImages();
             initSmoothScroll();
             initSaveButtons();
+            initClickableQuestionCards();
+            initTagToggles(); 
             updateSavedIcons();
+        }
+
+        function initClickableQuestionCards() {
+            document.querySelectorAll('.question-card').forEach(card => {
+                if (card.dataset.clickableInitialized === 'true') return;
+
+                card.addEventListener('click', function(event) {
+                    if (event.target.closest('.save-question-btn') ||
+                        event.target.closest('.question-tag-link') ||
+                        event.target.closest('.more-tags-button')) {
+                        return;
+                    }
+
+                    const url = this.dataset.url;
+                    if (url) {
+                        window.location.href = url;
+                    }
+                });
+                card.dataset.clickableInitialized = 'true';
+            });
+        }
+
+        function initTagToggles() {
+            document.querySelectorAll('.more-tags-button').forEach(button => {
+                if (button.dataset.toggleInitialized === 'true') return;
+
+                button.addEventListener('click', function(event) {
+                    event.stopPropagation(); // Important: Prevent card click event
+
+                    const questionId = this.dataset.questionId;
+                    const extraTags = document.querySelectorAll(`.extra-tag-${questionId}`);
+                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains('hidden');
+
+                    extraTags.forEach(tag => {
+                        tag.classList.toggle('hidden', !isCurrentlyHidden);
+                    });
+
+                    if (isCurrentlyHidden) {
+                        this.textContent = 'show less';
+                    } else {
+                        this.textContent = this.dataset.initialText; 
+                    }
+                });
+                button.dataset.toggleInitialized = 'true';
+            });
         }
 
         function showLoadingIndicator() {
@@ -662,42 +694,15 @@
                 });
         }
 
-        function updateIconColors() {
-            const statsItems = document.querySelectorAll('.stats-item');
+       
+        function updateSavedIcons() {
+            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
             const isLightMode = document.documentElement.classList.contains('light-mode');
-            if (statsItems) {
-                statsItems.forEach((item, index) => {
-                    const icon = item.querySelector('i');
-                    if (!icon) return;
-                    if (index % 3 === 0) {
-                        icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
-                    } else if (index % 3 === 1) {
-                        icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
-                    } else {
-                        icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
-                    }
-                });
-            }
+            savedIcons.forEach(icon => {
+                icon.style.color = isLightMode ? 'var(--accent-secondary)' :
+                    'var(--accent-secondary)';
+            });
         }
-
-        function updateThemeIcons() {
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            const themeToggleIcon = document.getElementById('theme-toggle-icon');
-            const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
-            const themeLogoToggle = document.getElementById('theme-logo');
-
-            if (themeToggleIcon) themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-            if (mobileThemeToggleIcon) mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' :
-                'fa-solid fa-sun';
-            if (themeLogoToggle) themeLogoToggle.src = isLightMode ? "{{ asset('assets/p2p logo.svg') }}" :
-                "{{ asset('assets/p2p logo - white.svg') }}";
-        }
-
-        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
-        if (mobileThemeToggle && typeof toggleTheme === 'function') {
-            mobileThemeToggle.addEventListener('click', toggleTheme);
-        }
-
 
         function lazyLoadImages() {
             const lazyImages = document.querySelectorAll('.lazy-image');
@@ -759,14 +764,7 @@
             });
         }
 
-        function updateSavedIcons() {
-            const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
-            const isLightMode = document.documentElement.classList.contains('light-mode');
-            savedIcons.forEach(icon => {
-                icon.style.color = isLightMode ? 'var(--accent-secondary)' :
-                    'var(--accent-secondary)';
-            });
-        }
+      
 
         function unsaveQuestion(btn) {
             const id = btn.getAttribute('data-question-id');

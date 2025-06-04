@@ -493,6 +493,7 @@ class UserController extends Controller
         $user = $this->getBasicUserByEmail($email);
         $data['questions'] = $responseData['data'];
         $data['username'] = $user['username'];
+        $data['id'] = $user['id'];
         $data['image'] = $user['image'];
         $data['title'] = 'Saved Questions';
         $data['histories'] = $user['histories'];

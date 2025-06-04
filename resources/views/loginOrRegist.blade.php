@@ -293,6 +293,39 @@
         #passwordRequirements i {
             width: 16px;
         }
+
+        /* Add these to your existing animation styles */
+        @keyframes fadeOutTooltip {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .tooltip-is-hiding {
+            animation: fadeOutTooltip 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeInTooltip {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tooltip-is-showing {
+            animation: fadeInTooltip 0.3s ease-out;
+        }
     </style>
 
     <body>
@@ -305,7 +338,7 @@
                         class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST" novalidate>
                             @csrf
-                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Sign in
+                            <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Login
                             </h1>
 
                             <div class="input-box relative w-full mb-5">
@@ -328,7 +361,7 @@
 
                             <button type="submit"
                                 class="form-btn w-full bg-gradient-to-r from-[#10b981] to-[#1ceaa5] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
-                                Sign In
+                                Login
                             </button>
 
                             <div class="relative text-center my-5">
@@ -356,7 +389,7 @@
                                             d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
                                             fill="#EB4335" />
                                     </svg>
-                                </span> Petra Email Login
+                                </span> Petra Email
                             </button>
                         </form>
                     </div>
@@ -388,11 +421,13 @@
                             </div>
 
                             <div class="input-box relative w-full mb-4">
-                                <input type="password" aria-label="Password" placeholder="Password" required id="password"
-                                    name="password" minlength="8"
-                                    class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i
-                                    class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <div class="relative">
+                                    <input type="password" aria-label="Password" placeholder="Password" required
+                                        id="password" name="password" minlength="8"
+                                        class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                    <i
+                                        class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                </div>
                                 <small class="error-message"></small>
 
                                 {{-- Tooltip --}}
@@ -407,26 +442,28 @@
                                     <p id="passwordStrengthText" class="text-xs font-medium text-gray-500 mb-1 text-right">
                                     </p>
                                     <ul id="passwordRequirements" class="text-xs text-gray-500 space-y-0.5">
-                                        <li data-requirement="length"><i class="fas fa-times text-red-500 mr-1"></i> At
+                                        <li data-requirement="length"><i class="fas fa-times text-red-500 mx-1"></i> At
                                             least 8 characters</li>
-                                        <li data-requirement="uppercase"><i class="fas fa-times text-red-500 mr-1"></i> An
+                                        <li data-requirement="uppercase"><i class="fas fa-times text-red-500 mx-1"></i> An
                                             uppercase letter</li>
-                                        <li data-requirement="lowercase"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                        <li data-requirement="lowercase"><i class="fas fa-times text-red-500 mx-1"></i> A
                                             lowercase letter</li>
-                                        <li data-requirement="number"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                        <li data-requirement="number"><i class="fas fa-times text-red-500 mx-1"></i> A
                                             number</li>
-                                        <li data-requirement="special"><i class="fas fa-times text-red-500 mr-1"></i> A
+                                        <li data-requirement="special"><i class="fas fa-times text-red-500 mx-1"></i> A
                                             special character (e.g., !@#$%^&*)</li>
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="input-box relative w-full mb-7">
-                                <input type="password" aria-label="Confirm Password" placeholder="Confirm Password"
-                                    id="confirmPassword" name="confirmPassword" minlength="8" required
-                                    class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
-                                <i
-                                    class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                <div class="relative">
+                                    <input type="password" aria-label="Confirm Password" placeholder="Confirm Password"
+                                        id="confirmPassword" name="confirmPassword" minlength="8" required
+                                        class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                    <i
+                                        class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
+                                </div>
                                 <small class="error-message"></small>
                             </div>
 
@@ -451,8 +488,7 @@
                                         -
                                     </span> peer?</span><br>Join and explore our community today!</p>
                             <button
-                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Get
-                                Started</button>
+                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-xl">Make an account</button>
                         </div>
                         <div
                             class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
@@ -462,7 +498,7 @@
                             </div>
                             <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Already have an account?</h1>
                             <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Already part of our
-                                community? Sign in to continue your learning journey.</p>
+                                community? Login to continue your learning journey.</p>
                             <button
                                 class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Sign
                                 In</button>
@@ -506,15 +542,15 @@
                 const inputBox = inputElement.closest('.input-box');
                 if (!inputBox) return;
                 const errorElement = inputBox.querySelector('.error-message');
-                const iconElement = inputBox.querySelector('i.fa-solid');
+                const decorativeIconElement = inputBox.querySelector('i.fa-solid:not(.password-toggle)');
 
                 inputElement.classList.add('input-error');
                 if (errorElement) {
                     errorElement.textContent = message;
                     errorElement.classList.add('visible');
                 }
-                if (iconElement) {
-                    iconElement.classList.add('icon-hidden');
+                if (decorativeIconElement) {
+                    decorativeIconElement.classList.add('icon-hidden');
                 }
             }
 
@@ -522,15 +558,15 @@
                 const inputBox = inputElement.closest('.input-box');
                 if (!inputBox) return;
                 const errorElement = inputBox.querySelector('.error-message');
-                const iconElement = inputBox.querySelector('i.fa-solid');
+                const decorativeIconElement = inputBox.querySelector('i.fa-solid:not(.password-toggle)');
 
                 inputElement.classList.remove('input-error');
                 if (errorElement) {
                     errorElement.classList.remove('visible');
                     errorElement.textContent = '';
                 }
-                if (iconElement) {
-                    iconElement.classList.remove('icon-hidden');
+                if (decorativeIconElement) {
+                    decorativeIconElement.classList.remove('icon-hidden');
                 }
             }
 
@@ -539,6 +575,9 @@
             const strengthBarFill = document.getElementById('passwordStrengthFill');
             const strengthText = document.getElementById('passwordStrengthText');
             const requirementsList = document.getElementById('passwordRequirements');
+            const itemAnimationTimeouts = {};
+            const displayNoneTimeouts = {};
+            const classRemovalTimeouts = {};
 
             const strengthLevels = [{
                     text: "Very Weak",
@@ -589,55 +628,197 @@
                 },
                 {
                     id: 'special',
-                    regex: /[^A-Za-z0-9\s]/, // Added \s to ensure space is not counted as special
+                    regex: /[^A-Za-z0-9\s]/,
                     el: requirementsList?.querySelector('[data-requirement="special"]')
                 }
             ];
 
+            function slideUpAndFade(element, criterionId) {
+                if (classRemovalTimeouts[criterionId]) {
+                    clearTimeout(classRemovalTimeouts[criterionId]);
+                    delete classRemovalTimeouts[criterionId];
+                }
+                element.classList.remove('requirement-entering');
+
+                element.style.transition = 'all 0.4s ease-out';
+                element.style.transform = 'translateY(-10px)';
+                element.style.opacity = '0';
+                element.style.maxHeight = '0';
+                element.style.marginBottom = '0';
+
+                if (displayNoneTimeouts[criterionId]) {
+                    clearTimeout(displayNoneTimeouts[criterionId]);
+                }
+                displayNoneTimeouts[criterionId] = setTimeout(() => {
+                    element.style.display = 'none';
+                    delete displayNoneTimeouts[criterionId];
+                }, 400);
+            }
+
+            function slideDownAndShow(element, criterionId) {
+                if (displayNoneTimeouts[criterionId]) {
+                    clearTimeout(displayNoneTimeouts[criterionId]);
+                    delete displayNoneTimeouts[criterionId];
+                }
+                element.style.display = 'list-item';
+                element.offsetHeight;
+
+                element.style.transition = 'all 0.4s ease-out';
+
+                element.style.maxHeight = '24px';
+                element.style.marginBottom = '2px';
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+
+                element.classList.add('requirement-entering');
+
+                if (classRemovalTimeouts[criterionId]) {
+                    clearTimeout(classRemovalTimeouts[criterionId]);
+                }
+                classRemovalTimeouts[criterionId] = setTimeout(() => {
+                    element.classList.remove('requirement-entering');
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                    delete classRemovalTimeouts[criterionId];
+                }, 400);
+            }
+
+            function pulseCheck(icon) {
+                icon.style.animation = 'pulse-check 0.6s ease-out';
+                setTimeout(() => {
+                    icon.style.animation = '';
+                }, 600);
+            }
+
+            function addAnimationStyles() {
+                if (!document.getElementById('password-strength-animations')) {
+                    const style = document.createElement('style');
+                    style.id = 'password-strength-animations';
+                    style.textContent = `
+            @keyframes pulse-check {
+                0% { transform: scale(1); }
+                30% { transform: scale(1.3); }
+                60% { transform: scale(0.9); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes slide-in-bounce {
+                0% { 
+                    transform: translateY(-20px); 
+                    opacity: 0; 
+                }
+                60% { 
+                    transform: translateY(2px); 
+                    opacity: 0.8; 
+                }
+                100% { 
+                    transform: translateY(0); 
+                    opacity: 1; 
+                }
+            }
+            
+            .requirement-item {
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+            
+            .requirement-entering {
+                animation: slide-in-bounce 0.4s ease-out;
+            }
+        `;
+                    document.head.appendChild(style);
+                }
+            }
+
+            let tooltipHideTimeoutId = null;
+
             function updatePasswordStrengthUI(password) {
-                if (!strengthBarFill || !strengthText || !requirementsList) {
+                if (!strengthContainer || !strengthBarFill || !strengthText || !requirementsList) {
                     return;
                 }
 
-                let metCriteriaCount = 0;
-                passwordCriteria.forEach(criterion => {
-                    const icon = criterion.el?.querySelector('i');
-                    if (!icon) return;
+                if (tooltipHideTimeoutId) {
+                    clearTimeout(tooltipHideTimeoutId);
+                    tooltipHideTimeoutId = null;
+                }
+                strengthContainer.classList.remove('tooltip-is-hiding', 'tooltip-is-showing');
 
-                    if (criterion.regex.test(password)) {
+
+                let metCriteriaCount = 0;
+                passwordCriteria.forEach((criterion, index) => {
+                    const icon = criterion.el?.querySelector('i');
+                    if (!icon || !criterion.el) return;
+                    const criterionId = criterion.id;
+
+                    const isMet = criterion.regex.test(password);
+
+                    if (isMet) {
                         metCriteriaCount++;
+                        if (itemAnimationTimeouts[criterionId]) clearTimeout(itemAnimationTimeouts[criterionId]);
+                        if (classRemovalTimeouts[criterionId]) clearTimeout(classRemovalTimeouts[criterionId]);
+                        if (displayNoneTimeouts[criterionId]) clearTimeout(displayNoneTimeouts[criterionId]);
+                        criterion.el.classList.remove('requirement-entering');
+
                         icon.classList.remove('fa-times', 'text-red-500');
                         icon.classList.add('fa-check', 'text-green-500');
-                        criterion.el?.classList.remove('text-gray-500');
-                        criterion.el?.classList.add('text-green-700');
+                        criterion.el.classList.remove('text-gray-500');
+                        criterion.el.classList.add('text-green-700');
+                        pulseCheck(icon);
+
+                        itemAnimationTimeouts[criterionId] = setTimeout(() => {
+                            if (criterion.regex.test(passwordInputForStrength.value)) {
+                                slideUpAndFade(criterion.el, criterionId);
+                            }
+                            delete itemAnimationTimeouts[criterionId];
+                        }, 800);
+
+
                     } else {
+                        if (itemAnimationTimeouts[criterionId]) clearTimeout(itemAnimationTimeouts[criterionId]);
+                        if (displayNoneTimeouts[criterionId]) clearTimeout(displayNoneTimeouts[criterionId]);
+
                         icon.classList.remove('fa-check', 'text-green-500');
                         icon.classList.add('fa-times', 'text-red-500');
-                        criterion.el?.classList.remove('text-green-700');
-                        criterion.el?.classList.add('text-gray-500');
+                        criterion.el.classList.remove('text-green-700');
+                        criterion.el.classList.add('text-gray-500');
+
+                        const computedStyle = window.getComputedStyle(criterion.el);
+                        const needsToShowAnimation = criterion.el.style.display === 'none' ||
+                            computedStyle.opacity !== '1' ||
+                            criterion.el.classList.contains('requirement-entering');
+                        if (needsToShowAnimation) {
+                            slideDownAndShow(criterion.el, criterionId);
+                        } else {
+                            criterion.el.classList.remove('requirement-entering');
+                            if (classRemovalTimeouts[criterionId]) {
+                                clearTimeout(classRemovalTimeouts[criterionId]);
+                                delete classRemovalTimeouts[criterionId];
+                            }
+                            criterion.el.style.opacity = '1';
+                            criterion.el.style.transform = 'translateY(0)';
+                            criterion.el.style.maxHeight = '24px';
+                            criterion.el.style.marginBottom = '2px';
+                        }
                     }
                 });
+
 
                 const lengthMet = passwordCriteria.find(c => c.id === 'length')?.regex.test(password);
                 let levelIndex = metCriteriaCount - 1;
 
                 if (!lengthMet) {
                     levelIndex = Math.min(levelIndex, 0);
-                    if (metCriteriaCount > 0 && password.length > 0) levelIndex =
-                        0;
+                    if (metCriteriaCount > 0 && password.length > 0) levelIndex = 0;
                 }
                 if (password.length === 0) {
                     levelIndex = -1;
                 } else if (metCriteriaCount === 0 && password.length > 0) {
                     levelIndex = 0;
                 }
-
-
-                // Ensure levelIndex is valid for strengthLevels array
                 levelIndex = Math.max(0, Math.min(levelIndex, strengthLevels.length - 1));
-                const currentStrength = (password.length === 0 || metCriteriaCount === 0 && password.length > 0 && !lengthMet) ?
+                const currentStrength = (password.length === 0 || (metCriteriaCount === 0 && password.length > 0 && !
+                        lengthMet)) ?
                     strengthLevels[0] : strengthLevels[levelIndex];
-
 
                 if (password.length === 0) {
                     strengthBarFill.className = 'h-full transition-all duration-300 ease-in-out bg-gray-200';
@@ -650,6 +831,29 @@
                     strengthText.className =
                         `text-xs font-medium mb-1 text-right ${currentStrength.color.replace('bg-', 'text-')}`;
                 }
+
+
+                const isStrong = currentStrength && currentStrength.text === "Strong" && password.length > 0;
+
+                if (isStrong) {
+                    if (!strengthContainer.classList.contains('hidden') && !strengthContainer.classList.contains(
+                            'tooltip-is-hiding')) {
+                        strengthContainer.classList.add('tooltip-is-hiding');
+                        tooltipHideTimeoutId = setTimeout(() => {
+                            strengthContainer.classList.add('hidden');
+                            strengthContainer.classList.remove('tooltip-is-hiding');
+                        }, 300);
+                    }
+                } else {
+                    if (document.activeElement === passwordInputForStrength) {
+                        if (strengthContainer.classList.contains('hidden') || strengthContainer.classList.contains(
+                                'tooltip-is-hiding')) {
+                            strengthContainer.classList.remove('hidden', 'tooltip-is-hiding');
+                            strengthContainer.classList.add('tooltip-is-showing');
+                            setTimeout(() => strengthContainer.classList.remove('tooltip-is-showing'), 300);
+                        }
+                    }
+                }
             }
 
             function resetPasswordStrengthUI() {
@@ -657,33 +861,71 @@
 
                 passwordCriteria.forEach(criterion => {
                     const icon = criterion.el?.querySelector('i');
-                    if (!icon) return;
+                    if (!icon || !criterion.el) return;
+
+                    // Reset icons
                     icon.classList.remove('fa-check', 'text-green-500');
                     icon.classList.add('fa-times', 'text-red-500');
-                    criterion.el?.classList.remove('text-green-700');
-                    criterion.el?.classList.add('text-gray-500');
+                    criterion.el.classList.remove('text-green-700');
+                    criterion.el.classList.add('text-gray-500');
+
+                    // Reset element visibility and styles
+                    criterion.el.style.display = 'list-item';
+                    criterion.el.style.opacity = '1';
+                    criterion.el.style.transform = 'translateY(0)';
+                    criterion.el.style.maxHeight = '';
+                    criterion.el.style.marginBottom = '';
+                    criterion.el.style.paddingTop = '';
+                    criterion.el.style.paddingBottom = '';
+                    // criterion.el.style.transition = '';
                 });
+
                 strengthBarFill.className = 'h-full transition-all duration-300 ease-in-out bg-gray-200';
                 strengthBarFill.style.width = '0%';
                 strengthText.textContent = '';
             }
 
+            // Initialize animations and event listeners
             if (passwordInputForStrength) {
+                // Add animation styles
+                addAnimationStyles();
+
+                // Add requirement-item class to all requirements for smoother animations
+                passwordCriteria.forEach(criterion => {
+                    if (criterion.el) {
+                        criterion.el.classList.add('requirement-item');
+                    }
+                });
+
                 passwordInputForStrength.addEventListener('input', function() {
                     updatePasswordStrengthUI(this.value);
                 });
 
                 passwordInputForStrength.addEventListener('focus', function() {
                     if (strengthContainer) {
+                        if (tooltipHideTimeoutId) {
+                            clearTimeout(tooltipHideTimeoutId);
+                            tooltipHideTimeoutId = null;
+                        }
+                        strengthContainer.classList.remove('tooltip-is-hiding');
+
                         updatePasswordStrengthUI(this.value);
-                        strengthContainer.classList.remove('hidden');
                     }
                 });
 
                 passwordInputForStrength.addEventListener('blur', function() {
                     if (strengthContainer) {
+                        // Clear any pending hide from strength logic because blur takes precedence
+                        if (tooltipHideTimeoutId) {
+                            clearTimeout(tooltipHideTimeoutId);
+                            tooltipHideTimeoutId = null;
+                        }
+                        strengthContainer.classList.remove('tooltip-is-hiding', 'tooltip-is-showing');
+
+                        // Standard blur behavior: hide after a short delay
                         setTimeout(() => {
-                            if (document.activeElement !== this) {
+                            if (document.activeElement !== this && document.activeElement !==
+                                strengthContainer && !strengthContainer.contains(document.activeElement)) {
                                 strengthContainer.classList.add('hidden');
                             }
                         }, 150);
@@ -958,7 +1200,7 @@
 
                             if (!
                                 passwordStillHasIssues
-                                ) { // Example: clear "too short" if it becomes long enough
+                            ) { // Example: clear "too short" if it becomes long enough
                                 const errorMsgElement = this.closest('.input-box').querySelector(
                                     '.error-message');
                                 if (errorMsgElement && (errorMsgElement.textContent.includes('8 characters') ||
