@@ -192,6 +192,8 @@ class AnswerController extends Controller
                     'answer' => $answer,
                     'image' => $user['image'] ?? null,
                     'user' => $user,
+                    'histories' => $user['histories'],
+                    'id' => $user['id'],
                 ]);
             } elseif ($answer) {
                 return redirect()->route('user.answers.index', ['userId' => $answer['user_id']])

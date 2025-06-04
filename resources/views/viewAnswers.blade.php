@@ -145,7 +145,7 @@
                         <i class="fa-solid fa-comments text-md"></i>
                     </button>
                     <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
-                        {{ count($question['answer']) }} 
+                        {{ count($question['answer']) }}
                     </small>
                 </div>
             </div>
@@ -341,138 +341,166 @@
                 <div id="answerList" class="space-y-6">
                     @foreach ($question['answer'] as $ans)
                         @php
+                            $isAnswerOwner = session('email') === ($ans['email'] ?? null);
+                            $answerVoteCount = (int) ($ans['vote'] ?? 0);
                             $isVerified = (int) $ans['verified'] === 1;
                         @endphp
-                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start">
-                            <div class="interaction-section flex flex-col items-center mr-6">
-                                <button
-                                    class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
-                                    data-answer-id="{{ $ans['id'] }}">
-                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
-                                </button>
-                                <span
-                                    class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
-                                <button
-                                    class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
-                                    data-answer-id="{{ $ans['id'] }}">
-                                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
-                                </button>
+                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg"
+                            id="answer-item-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
+                            data-is-owner="{{ $isAnswerOwner ? 'true' : 'false' }}"
+                            data-is-verified="{{ $isVerified ? 'true' : 'false' }}"
+                            data-vote-count="{{ $answerVoteCount }}">
+                            <div class="flex items-start">
+                                <div class="interaction-section flex flex-col items-center mr-6">
+                                    <button
+                                        class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
+                                        data-answer-id="{{ $ans['id'] }}">
+                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                    </button>
+                                    <span
+                                        class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
+                                    <button
+                                        class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
+                                        data-answer-id="{{ $ans['id'] }}">
+                                        <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                    </button>
 
-                                <div id="answer-verify-block-{{ $ans['id'] }}"
-                                    class="mt-4 flex flex-col items-center">
-                                    @if ($isQuestionOwner)
-                                        <i id="verify-icon-{{ $ans['id'] }}"
-                                            class="fa-{{ $isVerified ? 'solid' : 'regular' }} fa-check-circle text-[#23BF7F] text-lg {{ !$isVerified ? 'cursor-pointer verify-toggle-button' : '' }}"
-                                            data-answer-id="{{ $ans['id'] }}"
-                                            data-current-verified="{{ $ans['verified'] }}">
-                                        </i>
-                                        <span id="verify-text-{{ $ans['id'] }}" class="text-xs text-[#23BF7F] mt-1">
-                                            {{ $isVerified ? 'Verified Answer' : 'Verify Answer' }}
-                                        </span>
-                                        @if (!$isVerified)
-                                            <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                    <div id="answer-verify-block-{{ $ans['id'] }}"
+                                        class="mt-4 flex flex-col items-center">
+                                        @if ($isQuestionOwner)
+                                            <i id="verify-icon-{{ $ans['id'] }}"
+                                                class="fa-{{ $isVerified ? 'solid' : 'regular' }} fa-check-circle text-[#23BF7F] text-lg {{ !$isVerified ? 'cursor-pointer verify-toggle-button' : '' }}"
                                                 data-answer-id="{{ $ans['id'] }}"
-                                                data-current-verified="{{ $ans['verified'] }}" style="cursor:pointer;">
-                                                (Click icon or text to verify)
+                                                data-current-verified="{{ $ans['verified'] }}">
+                                            </i>
+                                            <span id="verify-text-{{ $ans['id'] }}"
+                                                class="text-xs text-[#23BF7F] mt-1">
+                                                {{ $isVerified ? 'Verified Answer' : 'Verify Answer' }}
                                             </span>
-                                        @else
-                                            <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
-                                                data-answer-id="{{ $ans['id'] }}"
-                                                data-current-verified="{{ $ans['verified'] }}" style="cursor:pointer;">
-                                                (Click icon or text to unverify)
-                                            </span>
-                                        @endif
-                                    @else
-                                        @if ($isVerified)
+                                            @if (!$isVerified)
+                                                <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                                    data-answer-id="{{ $ans['id'] }}"
+                                                    data-current-verified="{{ $ans['verified'] }}"
+                                                    style="cursor:pointer;">
+                                                    (Click icon or text to verify)
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                                    data-answer-id="{{ $ans['id'] }}"
+                                                    data-current-verified="{{ $ans['verified'] }}"
+                                                    style="cursor:pointer;">
+                                                    (Click icon or text to unverify)
+                                                </span>
+                                            @endif
+                                        @elseif ($isVerified)
                                             <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
                                             <span class="text-xs text-[#23BF7F] mt-1">Verified Answer</span>
                                         @endif
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col flex-grow">
+                                    <div class="prose max-w-none text-[var(--text-primary)]">
+                                        <p class="">{!! nl2br(e($ans['answer'])) !!}</p>
+                                    </div>
+
+                                    @if ($ans['image'])
+                                        <div class="mt-4">
+                                            <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
+                                                class="max-w-lg max-h-96 object-contain rounded-lg border">
+                                        </div>
+                                    @endif
+
+                                    <div class="mt-4 flex justify-between items-center">
+                                        <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
+                                            <div class="flex items-center text-sm text-[var(--text-muted)]">
+                                                <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                                    alt="User avatar" class="w-6 h-6 rounded-full mr-2">
+                                                <span class="hover:underline">Answered by {{ $ans['username'] }} -
+                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                            </div>
+                                        </a>
+
+                                        <button
+                                            class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+                                            <i class="fa-solid fa-comment-dots mr-2"></i>
+                                            <span>{{ count($ans['comments'] ?? []) }} Comments</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Comment input box -->
+                                    <div class="comment-box hidden mt-4 w-full comment-animation">
+                                        <textarea id="answer-comment-{{ $ans['id'] }}"
+                                            class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                                            rows="2" placeholder="Write your comment here!"></textarea>
+                                        <button id="submit-comment-{{ $ans['id'] }}"
+                                            data-answer-id="{{ $ans['id'] }}"
+                                            class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                                            Submit Comment
+                                        </button>
+                                    </div>
+
+                                    <!-- Comments Display Section -->
+                                    @if (isset($ans['comments']) && count($ans['comments']) > 0)
+                                        <div
+                                            class="answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]">
+                                            <h4
+                                                class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                                                <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
+                                                Comments ({{ count($ans['comments']) }})
+                                            </h4>
+
+                                            <div class="space-y-3">
+                                                @foreach ($ans['comments'] as $comment)
+                                                    <div
+                                                        class="answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]">
+                                                        <a
+                                                            href="{{ route('viewUser', ['email' => $comment['user_email']]) }}">
+                                                            <div class="flex items-start">
+                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($comment['username']) }}&background=random"
+                                                                    alt="{{ $comment['username'] }}"
+                                                                    class="w-6 h-6 rounded-full mr-3 mt-1">
+
+                                                                <div class="flex-grow">
+                                                                    <div class="flex items-center mb-1">
+                                                                        <span
+                                                                            class="hover:underline text-sm font-medium text-[var(--text-primary)]">
+                                                                            {{ $comment['username'] }}
+                                                                        </span>
+                                                                        <span
+                                                                            class="text-xs text-[var(--text-muted)] ml-2">
+                                                                            {{ \Carbon\Carbon::parse($comment['timestamp'])->diffForHumans() }}
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <p
+                                                                        class="text-sm text-[var(--text-primary)] leading-relaxed">
+                                                                        {{ $comment['comment'] }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
 
-                            <div class="flex flex-col flex-grow">
-                                <div class="prose max-w-none text-[var(--text-primary)]">
-                                    <p class="">{!! nl2br(e($ans['answer'])) !!}</p>
-                                </div>
-
-                                @if ($ans['image'])
-                                    <div class="mt-4">
-                                        <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
-                                            class="max-w-lg max-h-96 object-contain rounded-lg border">
-                                    </div>
-                                @endif
-
-                                <div class="mt-4 flex justify-between items-center">
-                                    <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
-                                        <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                            <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                                                alt="User avatar" class="w-6 h-6 rounded-full mr-2">
-                                            <span class="hover:underline">Answered by {{ $ans['username'] }} -
-                                                {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
-                                        </div>
+                            <!-- Action Buttons -->
+                            <div id="answer-action-buttons-container-{{ $ans['id'] }}"
+                                class="flex space-x-3 justify-end mt-6">
+                                @if ($isAnswerOwner && !$isVerified && $answerVoteCount == 0)
+                                    <a href="{{ route('user.answers.edit', ['answerId' => $ans['id']]) }}"
+                                        class="action-button edit-answer-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                                        <i class="fas fa-edit mr-2"></i>Edit
                                     </a>
-
                                     <button
-                                        class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
-                                        <i class="fa-solid fa-comment-dots mr-2"></i>
-                                        <span>{{ count($ans['comments'] ?? []) }} Comments</span>
+                                        class="delete-answer-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        data-answer-id="{{ $ans['id'] }}">
+                                        <i class="fas fa-trash-alt mr-2"></i>Delete
                                     </button>
-                                </div>
-
-                                <!-- Comment input box -->
-                                <div class="comment-box hidden mt-4 w-full comment-animation">
-                                    <textarea id="answer-comment-{{ $ans['id'] }}"
-                                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                                        rows="2" placeholder="Write your comment here!"></textarea>
-                                    <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
-                                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                                        Submit Comment
-                                    </button>
-                                </div>
-
-                                <!-- Comments Display Section -->
-                                @if (isset($ans['comments']) && count($ans['comments']) > 0)
-                                    <div class="answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]">
-                                        <h4
-                                            class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
-                                            <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
-                                            Comments ({{ count($ans['comments']) }})
-                                        </h4>
-
-                                        <div class="space-y-3">
-                                            @foreach ($ans['comments'] as $comment)
-                                                <div
-                                                    class="answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]">
-                                                    <a
-                                                        href="{{ route('viewUser', ['email' => $comment['user_email']]) }}">
-                                                        <div class="flex items-start">
-                                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($comment['username']) }}&background=random"
-                                                                alt="{{ $comment['username'] }}"
-                                                                class="w-6 h-6 rounded-full mr-3 mt-1">
-
-                                                            <div class="flex-grow">
-                                                                <div class="flex items-center mb-1">
-                                                                    <span
-                                                                        class="hover:underline text-sm font-medium text-[var(--text-primary)]">
-                                                                        {{ $comment['username'] }}
-                                                                    </span>
-                                                                    <span class="text-xs text-[var(--text-muted)] ml-2">
-                                                                        {{ \Carbon\Carbon::parse($comment['timestamp'])->diffForHumans() }}
-                                                                    </span>
-                                                                </div>
-
-                                                                <p
-                                                                    class="text-sm text-[var(--text-primary)] leading-relaxed">
-                                                                    {{ $comment['comment'] }}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -494,6 +522,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const API_BASE_URL = ("{{ env('API_URL', 'http://localhost:8001/api') }}" + '/').replace(/\/+$/, '/');
+            const API_TOKEN = "{{ session('token') ?? '' }}";
+            const CSRF_TOKEN = "{{ csrf_token() }}";
             // edit question
             document.querySelectorAll('.edit-question-button').forEach(button => {
                 button.addEventListener('click', function() {
@@ -554,29 +585,7 @@
                                             'Your question has been deleted.',
                                             'success'
                                         );
-                                        if (questionItemElement) {
-                                            questionItemElement.style.animation =
-                                                'fadeOutUp 0.5s ease forwards';
-                                            setTimeout(() => {
-                                                questionItemElement.remove();
-                                                checkEmptyQuestionState();
-                                            }, 500);
-                                        }
-                                        const questionsContainer = document
-                                            .getElementById('questions-container');
-                                        const noQuestionsMessage = document
-                                            .getElementById('no-questions-message');
-                                        if (questionsContainer && noQuestionsMessage &&
-                                            questionsContainer.children.length === 0) {
-                                            noQuestionsMessage.style.display = 'block';
-                                            if (questionsContainer.parentElement
-                                                .contains(noQuestionsMessage)) {
-                                                // If it was previously hidden, make sure it's visible
-                                            } else {
-                                                // If it was removed, you might need to re-add or just unhide
-                                            }
-                                            questionsContainer.style.display = 'none';
-                                        }
+                                        window.location.href = "{{ url('/') }}"
                                     } else {
                                         Swal.fire(
                                             'Error!',
@@ -666,7 +675,7 @@
             const questionActionButtonsContainer = document.getElementById('question-action-buttons-container');
 
             // Fungsi untuk menampilkan/menyembunyikan tombol aksi pertanyaan
-            function updateActionButtonsVisibility() {
+            function updateQuestionActionButtonsVisibility() {
                 if (!questionActionButtonsContainer || !jsIsQuestionOwner) {
                     if (questionActionButtonsContainer) questionActionButtonsContainer.innerHTML =
                         ''; // Kosongkan jika bukan owner
@@ -696,9 +705,124 @@
                 }
             }
 
-            // Panggil fungsi ini saat halaman pertama kali dimuat
-            updateActionButtonsVisibility();
+            if (document.getElementById('question-action-buttons-container')) {
+                updateQuestionActionButtonsVisibility(); // Panggilan awal untuk pertanyaan
+            }
 
+            function updateAnswerActionButtonsVisibility(answerId) {
+                const answerItemElement = document.getElementById(`answer-item-${answerId}`);
+                // if (!answerItemElement) {
+                //     console.error(`Answer item element with ID answer-item-${answerId} not found.`);
+                //     return;
+                // }
+
+                const isOwner = answerItemElement.dataset.isOwner === 'true';
+                const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
+                const isVerified = answerItemElement.dataset.isVerified === 'true';
+
+                const container = document.getElementById(`answer-action-buttons-container-${answerId}`);
+                if (!container) {
+                    console.error(`Action button container for answer ${answerId} not found.`);
+                    return;
+                }
+
+                if (isOwner && !isVerified && voteCount === 0) {
+                    // Cek apakah tombol sudah ada untuk menghindari duplikasi listener jika tidak menghapus total
+                    if (!container.querySelector('.edit-answer-button')) {
+                        // Tombol Edit: Menggunakan URL dari route Laravel
+                        const editUrl = "{{ route('user.answers.edit', ['answerId' => ':answerId']) }}".replace(
+                            ':answerId', answerId);
+
+                        container.innerHTML = `
+                    <a href="${editUrl}"
+                       class="action-button edit-answer-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <button
+                        class="delete-answer-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                        data-answer-id="${answerId}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </button>
+                `;
+                        // Pasang listener untuk tombol delete yang baru dibuat
+                        const newDeleteButton = container.querySelector('.delete-answer-button');
+                        if (newDeleteButton) {
+                            attachDeleteAnswerButtonListener(newDeleteButton);
+                        }
+                    }
+                } else {
+                    container.innerHTML = ''; // Kosongkan jika kondisi tidak terpenuhi
+                }
+            }
+
+            // Fungsi untuk memasang listener ke tombol delete jawaban (bisa dipanggil untuk tombol awal & dinamis)
+            function attachDeleteAnswerButtonListener(button) {
+                button.addEventListener('click', function() {
+                    const answerId = this.dataset.answerId;
+                    const answerItemElement = document.getElementById(`answer-item-${answerId}`);
+
+                    Swal.fire({
+                        title: 'Delete Answer?',
+                        text: "This action cannot be undone. Your answer will be permanently deleted.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        // ... (SweetAlert options lainnya)
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                            // Ganti API_BASE_URL dan API_TOKEN jika menggunakan sistem API terpisah
+                            // Jika tidak, gunakan route Laravel biasa untuk delete
+
+
+                            const headers = {
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${API_TOKEN}`,
+                                'X-CSRF-TOKEN': CSRF_TOKEN
+                            };
+
+                            fetch(`${API_BASE_URL}answers/${answerId}`, {
+                                    method: 'DELETE',
+                                    headers: headers
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw err;
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire('Deleted!', data.message ||
+                                            'Your answer has been deleted.', 'success');
+                                        if (answerItemElement) {
+                                            answerItemElement.style.animation =
+                                                'fadeOutUp 0.5s ease forwards';
+                                            setTimeout(() => {
+                                                answerItemElement.remove();
+                                                // Update hitungan jawaban jika perlu
+                                            }, 500);
+                                        }
+                                    } else {
+                                        Swal.fire('Error!', data.message ||
+                                            'Could not delete the answer.', 'error');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error deleting answer:', error);
+                                    Swal.fire('Request Failed!', 'An error occurred.', 'error');
+                                });
+                        }
+                    });
+                });
+            }
+
+            // Pasang listener ke tombol delete jawaban yang sudah ada saat halaman dimuat
+            document.querySelectorAll('.delete-answer-button').forEach(button => {
+                attachDeleteAnswerButtonListener(button);
+            });
 
             const submitButton = document.getElementById("submitAnswer-btn");
             const textArea = document.getElementById('answer-textArea');
@@ -790,7 +914,8 @@
 
                                 jsHasAnswer =
                                     true; // Update state karena pertanyaan sekarang memiliki jawaban
-                                updateActionButtonsVisibility(); // Perbarui visibilitas tombol Edit/Delete
+                                updateQuestionActionButtonsVisibility
+                                    (); // Perbarui visibilitas tombol Edit/Delete
 
                                 currentAnswerCount++;
 
@@ -802,11 +927,22 @@
                                  class="max-w-lg max-h-96 object-contain rounded-lg border">
                          </div>` : '';
 
+                                const isOwnerForNewAnswer =
+                                    true; // Pengguna yang submit adalah pemiliknya
+                                const voteCountForNewAnswer = 0;
+                                const isVerifiedForNewAnswer = false;
                                 const verifyBlockForNewAnswer = generateVerifyBlockHtml(data.answer.id,
                                     jsIsQuestionOwner);
 
                                 const htmlContent = `
-                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start">
+                       <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg"
+                 id="answer-item-${data.answer.id}"   увагу MODIFIED: Tambahkan ID dan data attributes
+                 data-answer-id="${data.answer.id}"
+                 data-is-owner="${isOwnerForNewAnswer ? 'true' : 'false'}"
+                 data-is-verified="${isVerifiedForNewAnswer ? 'true' : 'false'}"
+                 data-vote-count="${voteCountForNewAnswer}">
+
+                <div class="flex items-start">
                             <div class="interaction-section flex flex-col items-center mr-6">
                                 <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="${data.answer.id}">
@@ -848,7 +984,10 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                            </div>
+                             <div id="answer-action-buttons-container-${data.answer.id}"
+                                class="flex space-x-3 justify-end mt-6"></div>
+                         </div>
                     `;
 
                                 let answerList = document.getElementById('answerList');
@@ -866,7 +1005,21 @@
 
                                 if (answerList) {
                                     answerList.insertAdjacentHTML('beforeend', htmlContent);
+                                    const newAnswerElement = document.getElementById(
+                                        `answer-item-${data.answer.id}`);
 
+                                    // Setelah HTML jawaban baru ditambahkan:
+                                    // 1. Pasang listener untuk tombol vote, comment, dll. pada jawaban baru
+                                    attachAnswerEventListeners(data.answer.id);
+
+                                    // 2. Pasang listener untuk tombol verifikasi BARU
+                                    if (newAnswerElement) {
+                                        const newVerifyToggleButtons = newAnswerElement
+                                            .querySelectorAll('.verify-toggle-button');
+                                        newVerifyToggleButtons.forEach(btn => {
+                                            attachVerifyButtonListener(btn); // PENTING!
+                                        });
+                                    }
                                     const answerHeader = document.querySelector(
                                         '.answer-section h2 span');
                                     if (answerHeader) {
@@ -874,6 +1027,9 @@
                                     }
 
                                     attachAnswerEventListeners(data.answer.id);
+                                    updateAnswerActionButtonsVisibility(data.answer.id);
+
+
                                 }
 
                                 Swal.fire({
@@ -897,17 +1053,17 @@
                                 });
                             }
                         })
-                        .catch(error => {
-                            submitButton.innerHTML = originalButtonText;
-                            submitButton.disabled = false;
-                            console.error('Error:', error);
+                    // .catch(error => {
+                    //     submitButton.innerHTML = originalButtonText;
+                    //     submitButton.disabled = false;
+                    //     console.error('Error:', error);
 
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'There was a network error. Please try again.',
-                            });
-                        });
+                    //     Swal.fire({
+                    //         icon: 'error',
+                    //         title: 'Error',
+                    //         text: 'There was a network error. Please try again.',
+                    //     });
+                    // });
                 });
             }
             // });
@@ -944,10 +1100,10 @@
                 const downVoteBtn = document.querySelector(`[data-answer-id="${answerId}"].downVoteAnswer`);
 
                 if (upVoteBtn) {
-                    upVoteBtn.addEventListener('click', () => handleVote(true, answerId));
+                    upVoteBtn.addEventListener('click', () => handleVoteA(true, answerId));
                 }
                 if (downVoteBtn) {
-                    downVoteBtn.addEventListener('click', () => handleVote(false, answerId));
+                    downVoteBtn.addEventListener('click', () => handleVoteA(false, answerId));
                 }
 
                 const submitCommentButton = document.getElementById(`submit-comment-${answerId}`);
@@ -1042,7 +1198,7 @@
                         `;
 
                                         const commentsList = commentsSection.querySelector(
-                                        '.space-y-3');
+                                            '.space-y-3');
                                         commentsList.appendChild(commentDiv);
 
                                         const commentsHeader = commentsSection.querySelector('h4');
@@ -1064,7 +1220,7 @@
                                         commentDiv.style.transform = 'translateY(-10px)';
                                         setTimeout(() => {
                                             commentDiv.style.transition =
-                                            'all 0.3s ease-in-out';
+                                                'all 0.3s ease-in-out';
                                             commentDiv.style.opacity = '1';
                                             commentDiv.style.transform = 'translateY(0)';
                                         }, 100);
@@ -1362,8 +1518,11 @@
 
             const apiBaseUrl = (("{{ env('API_URL') }}" || window.location.origin) + '/').replace(/\/+$/, '/');
             const apiToken = "{{ session('token') }}"
-            document.querySelectorAll('.verify-toggle-button').forEach(button => {
-                button.addEventListener('click', function() {
+
+            function attachVerifyButtonListener(buttonElement) {
+                const apiToken = "{{ session('token') }}"; // Pastikan ini juga sesuai
+
+                buttonElement.addEventListener('click', function() {
                     const answerId = this.dataset.answerId;
                     const currentVerifiedStatus = parseInt(this.dataset.currentVerified);
                     const newVerifiedStatus = currentVerifiedStatus === 0 ? 1 : 0;
@@ -1371,8 +1530,9 @@
                     const actionText = newVerifiedStatus === 1 ? 'verify' : 'un-verify';
                     const iconElement = document.getElementById(`verify-icon-${answerId}`);
                     const textElement = document.getElementById(`verify-text-${answerId}`);
-                    const allToggleButtonsForThisAnswer = document.querySelectorAll(
-                        `.verify-toggle-button[data-answer-id="${answerId}"]`);
+                    // const allToggleButtonsForThisAnswer = document.querySelectorAll( // Tidak digunakan lagi, bisa dihapus jika tidak ada referensi lain
+                    //     `.verify-toggle-button[data-answer-id="${answerId}"]`);
+
                     Swal.fire({
                         title: 'Are you sure?',
                         text: `You are about to ${actionText} this answer.`,
@@ -1383,13 +1543,13 @@
                         confirmButtonText: `Yes, ${actionText} it!`
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            fetch(`${apiBaseUrl}answers/${answerId}/updatePartial`, {
+                            fetch(`${apiBaseUrl}answers/${answerId}/updatePartial`, { // Gunakan apiBaseUrl
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
                                         'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                        'Authorization': `Bearer ${apiToken}`
+                                        'X-CSRF-TOKEN': "{{ csrf_token() }}", // Gunakan CSRF_TOKEN global
+                                        'Authorization': `Bearer ${apiToken}` // Gunakan apiToken
                                     },
                                     body: JSON.stringify({
                                         verified: newVerifiedStatus
@@ -1404,45 +1564,51 @@
                                     return response.json();
                                 })
                                 .then(data => {
-                                    if (data.success || data.status ===
-                                        'success') {
+                                    if (data.success || data.status === 'success') {
+                                        const answerItemElement = document.getElementById(
+                                            `answer-item-${answerId}`);
+                                        if (answerItemElement) {
+                                            // Ambil status verified baru dari response server, atau toggle jika tidak ada di response
+                                            const actualNewVerifiedStatus = parseInt(data.answer
+                                                ?.verified ?? (currentVerifiedStatus === 0 ?
+                                                    1 : 0));
+                                            answerItemElement.dataset.isVerified =
+                                                actualNewVerifiedStatus === 1 ? 'true' :
+                                                'false';
+
+                                            // Update semua tombol toggle untuk answer ini
+                                            document.querySelectorAll(
+                                                `.verify-toggle-button[data-answer-id="${answerId}"]`
+                                                ).forEach(btn => {
+                                                btn.dataset.currentVerified =
+                                                    actualNewVerifiedStatus;
+                                            });
+                                        }
+                                        updateAnswerActionButtonsVisibility(
+                                        answerId); // Update tombol edit/delete jika perlu
                                         Swal.fire(
                                             `${newVerifiedStatus === 1 ? 'Verified!' : 'Un-verified!'}`,
-                                            `The answer has been ${actionText}d.`,
+                                            `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`, // pastikan actionText sesuai
                                             'success'
                                         );
 
                                         if (iconElement) {
                                             if (newVerifiedStatus === 1) {
-                                                iconElement.classList.remove(
-                                                    'fa-regular');
+                                                iconElement.classList.remove('fa-regular');
                                                 iconElement.classList.add('fa-solid');
-                                                iconElement.classList.remove(
-                                                    'cursor-pointer'
-                                                );
+                                                iconElement.classList.remove('cursor-pointer');
                                             } else {
-                                                iconElement.classList.remove(
-                                                    'fa-solid');
+                                                iconElement.classList.remove('fa-solid');
                                                 iconElement.classList.add('fa-regular');
-                                                iconElement.classList.add(
-                                                    'cursor-pointer'
-                                                );
+                                                iconElement.classList.add('cursor-pointer');
                                             }
                                         }
                                         if (textElement) {
-                                            textElement.textContent =
-                                                newVerifiedStatus === 1 ?
+                                            textElement.textContent = newVerifiedStatus === 1 ?
                                                 'Verified Answer' : 'Verify Answer';
                                         }
-
-                                        allToggleButtonsForThisAnswer.forEach(btn => {
-                                            btn.dataset.currentVerified =
-                                                newVerifiedStatus;
-                                        });
-
-                                        const helperTextElement = document
-                                            .querySelector(
-                                                `#answer-verify-block-${answerId} span.text-gray-500`
+                                        const helperTextElement = document.querySelector(
+                                            `#answer-verify-block-${answerId} span.text-gray-500`
                                             );
                                         if (helperTextElement) {
                                             helperTextElement.textContent =
@@ -1451,12 +1617,9 @@
                                                 '(Click icon or text to verify)';
                                         }
                                     } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            data.message ||
-                                            'Could not update verification status.',
-                                            'error'
-                                        );
+                                        Swal.fire('Error!', data.message ||
+                                            'Could not update verification status.', 'error'
+                                            );
                                     }
                                 })
                                 .catch(error => {
@@ -1468,16 +1631,22 @@
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }
-                                    Swal.fire(
-                                        'Request Failed!',
-                                        errorMessage,
-                                        'error'
-                                    );
+                                    Swal.fire('Request Failed!', errorMessage, 'error');
                                 });
                         }
                     });
                 });
+            }
+
+            // Pasang listener ke tombol verifikasi yang SUDAH ADA saat halaman dimuat
+            document.querySelectorAll('.verify-toggle-button').forEach(button => {
+                attachVerifyButtonListener(button);
             });
+            if (document.getElementById('answerList')) {
+                document.querySelectorAll('[id^="answer-item-"]').forEach(answerElement => {
+                    updateAnswerActionButtonsVisibility(answerElement.dataset.answerId);
+                });
+            }
 
             const questionId = @json($question['id']);
 
@@ -1517,7 +1686,7 @@
                                 0); // Jika voteUpdated tidak 0, berarti ada vote
 
                             // 2. Panggil fungsi untuk mengevaluasi ulang visibilitas tombol
-                            updateActionButtonsVisibility();
+                            updateQuestionActionButtonsVisibility();
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -1537,78 +1706,85 @@
 
             upVoteButtonQ.addEventListener('click', () => handleVoteQ(true));
             downVoteButtonQ.addEventListener('click', () => handleVoteQ(false));
-        });
 
-        // Vote Answer
-        const upVoteButtonsA = document.querySelectorAll('.upVoteAnswer');
-        const downVoteButtonsA = document.querySelectorAll('.downVoteAnswer');
+            // Vote Answer
+            const upVoteButtonsA = document.querySelectorAll('.upVoteAnswer');
+            const downVoteButtonsA = document.querySelectorAll('.downVoteAnswer');
 
-        const handleVoteA = (voteType, id) => {
+            const handleVoteA = (voteType, id) => {
 
-            const formData = new FormData();
-            formData.append('vote', voteType);
-            formData.append('answer_id', id);
-            Swal.fire({
-                title: '',
-                background: 'transparent',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            fetch(`{{ route('answer.vote') }}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    },
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    Swal.close();
-                    if (data.success) {
-                        // Update the vote count
-                        const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
-                            .nextElementSibling;
-                        if (voteCountElement) {
-                            voteCountElement.textContent = `${data.voteAnswerUpdated}`;
-                        }
-
-                        // Swal.fire({
-                        //     icon: 'success',
-                        //     title: 'Vote Submitted!',
-                        //     text: 'Your vote has been successfully recorded.',
-                        // });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message,
-                        });
+                const formData = new FormData();
+                formData.append('vote', voteType);
+                formData.append('answer_id', id);
+                Swal.fire({
+                    title: '',
+                    background: 'transparent',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
                     }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Unexpected Error',
-                        text: 'An unexpected error occurred.',
-                    });
                 });
-        };
+                fetch(`{{ route('answer.vote') }}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        },
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        if (data.success) {
+                            const answerItemElement = document.getElementById(`answer-item-${id}`);
+                            // Update the vote count
+                            const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
+                                .nextElementSibling;
+                            if (answerItemElement) {
+                                const voteCountElement = answerItemElement.querySelector(
+                                    '.thumbs-up-count');
+                                if (voteCountElement) {
+                                    voteCountElement.textContent = data.voteAnswerUpdated;
+                                    answerItemElement.dataset.voteCount = data
+                                        .voteAnswerUpdated; // Update data attribute
+                                }
+                            }
+                            updateAnswerActionButtonsVisibility(id);
+                            // Swal.fire({
+                            //     icon: 'success',
+                            //     title: 'Vote Submitted!',
+                            //     text: 'Your vote has been successfully recorded.',
+                            // });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message,
+                            });
+                        }
+                    })
+                // .catch(error => {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Unexpected Error',
+                //         text: 'An unexpected error occurred.',
+                //     });
+                // });
+            };
 
-        upVoteButtonsA.forEach(button => {
-            button.addEventListener('click', () => {
-                const answerId = button.getAttribute('data-answer-id');
-                handleVoteA(true, answerId);
+            upVoteButtonsA.forEach(button => {
+                button.addEventListener('click', () => {
+                    const answerId = button.getAttribute('data-answer-id');
+                    handleVoteA(true, answerId);
+                });
             });
-        });
 
-        downVoteButtonsA.forEach(button => {
-            button.addEventListener('click', () => {
-                const answerId = button.getAttribute('data-answer-id');
-                handleVoteA(false, answerId);
+            downVoteButtonsA.forEach(button => {
+                button.addEventListener('click', () => {
+                    const answerId = button.getAttribute('data-answer-id');
+                    handleVoteA(false, answerId);
+                });
             });
         });
     </script>

@@ -732,7 +732,7 @@
             <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
         </a>
         <a href="{{ route('popular') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('home') ? 'active-nav' : '' }}">
+            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-house mr-3"></i> Home
         </a>
         {{-- <a href="{{ route('popular') }}"

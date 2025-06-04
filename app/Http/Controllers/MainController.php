@@ -264,7 +264,7 @@ class MainController extends Controller
       'username' => $user['username'],
       'id' => $user['id'],
       'image' => $user['image'],
-      'title' => 'Popular Questions',
+      'title' => 'Home',
       'questions' => $questionsPaginator,
       'tags' => $tags,
       'initialSortBy' => $request->input('sort_by', 'latest'),
@@ -285,8 +285,8 @@ class MainController extends Controller
     $data['username'] = $currUser['username'];
     $data['image'] = $currUser['image'];
     $data['title'] = 'View Answers';
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
+    // $currUser = $this->userController->getUserByEmail(session('email'));
+    // $data['image'] = $currUser['image'];
     $data['id'] = $currUser['id'];
     $data['email'] = $currUser['email'];
     // dd($data);

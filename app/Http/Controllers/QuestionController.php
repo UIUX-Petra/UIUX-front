@@ -180,6 +180,7 @@ class QuestionController extends Controller
         $comments = collect($questionData['comment']);
         $countcomments = count($comments);
         $questionData['comment_count'] = $countcomments;
+        // dd($questionData);
         return $questionData;
     }
 
