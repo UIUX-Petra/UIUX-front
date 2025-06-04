@@ -138,24 +138,36 @@ class UserController extends Controller
             $answerCount = 0;
             $followerCount = 0;
             $followingCount = 0;
-            $subjectCount = [];
+            
+            // Mengubah $subjectCount menjadi array untuk menyimpan detail subjek
+            $subjectsAggregated = []; // Ganti nama dari $subjectCount
 
             $allQuestions = $originalUserData['question'] ?? [];
             $topQuestionPost = null;
 
             if (is_array($allQuestions) && !empty($allQuestions)) {
                 $questionCount = count($allQuestions);
-                $topQuestionPost = $allQuestions[0]; // Inisialisasi dengan pertanyaan pertama
+                $topQuestionPost = $allQuestions[0];
                 $topQuestionPost['vote'] = $topQuestionPost['vote'] ?? 0;
                 $topQuestionPost['view'] = $topQuestionPost['view'] ?? 0;
 
                 foreach ($allQuestions as $questionItem) {
-                    // SubjectCount
+                    // SubjectAggregation
                     if (isset($questionItem['group_question']) && is_array($questionItem['group_question'])) {
                         foreach ($questionItem['group_question'] as $group) {
-                            if (isset($group['subject']['name'])) {
-                                $subjectName = $group['subject']['name'];
-                                $subjectCount[$subjectName] = ($subjectCount[$subjectName] ?? 0) + 1;
+                            if (isset($group['subject']['name']) && isset($group['subject']['abbreviation'])) {
+                                $name = $group['subject']['name'];
+                                $abbr = $group['subject']['abbreviation'];
+
+                                // Menggunakan subjectName sebagai kunci unik untuk agregasi
+                                if (!isset($subjectsAggregated[$name])) {
+                                    $subjectsAggregated[$name] = [
+                                        'name' => $name,
+                                        'abbr' => $abbr,
+                                        'count' => 0
+                                    ];
+                                }
+                                $subjectsAggregated[$name]['count']++;
                             }
                         }
                     }
@@ -167,15 +179,13 @@ class UserController extends Controller
                     if ($currentVote > $topQuestionPost['vote']) {
                         $topQuestionPost = $questionItem;
                     } elseif ($currentVote == $topQuestionPost['vote']) {
-                        if ($currentView > ($topQuestionPost['view'] ?? 0)) { // Pastikan ada nilai default untuk view juga
+                        if ($currentView > ($topQuestionPost['view'] ?? 0)) {
                             $topQuestionPost = $questionItem;
                         }
                     }
                 }
-                // Pastikan vote dan view selalu ada di topQuestionPost setelah loop
                 $topQuestionPost['vote'] = $topQuestionPost['vote'] ?? 0;
                 $topQuestionPost['view'] = $topQuestionPost['view'] ?? 0;
-
 
                 if ($topQuestionPost !== null) {
                     $topQuestionPost['comment_count'] = count($topQuestionPost['comment'] ?? []);
@@ -187,9 +197,18 @@ class UserController extends Controller
                 foreach ($originalUserData['answer'] as $answerItem) {
                     if (isset($answerItem['question']['group_question']) && is_array($answerItem['question']['group_question'])) {
                         foreach ($answerItem['question']['group_question'] as $group) {
-                            if (isset($group['subject']['name'])) {
+                             if (isset($group['subject']['name']) && isset($group['subject']['abbreviation'])) {
                                 $subjectName = $group['subject']['name'];
-                                $subjectCount[$subjectName] = ($subjectCount[$subjectName] ?? 0) + 1;
+                                $subjectAbbr = $group['subject']['abbreviation'];
+
+                                if (!isset($subjectsAggregated[$subjectName])) {
+                                    $subjectsAggregated[$subjectName] = [
+                                        'subject_name' => $subjectName,
+                                        'subject_abbr' => $subjectAbbr,
+                                        'count' => 0
+                                    ];
+                                }
+                                $subjectsAggregated[$subjectName]['count']++;
                             }
                         }
                     }
@@ -199,35 +218,37 @@ class UserController extends Controller
             $followerCount = isset($originalUserData['followers']) && is_array($originalUserData['followers']) ? count($originalUserData['followers']) : 0;
             $followingCount = isset($originalUserData['following']) && is_array($originalUserData['following']) ? count($originalUserData['following']) : 0;
 
-
             $topSubjectsData = [];
-            if (!empty($subjectCount)) {
-                arsort($subjectCount);
-                $topSubjectsData = $subjectCount;
+            if (!empty($subjectsAggregated)) {
+                // Mengubah dari array asosiatif (keyed by subject_name) menjadi array numerik
+                $subjectList = array_values($subjectsAggregated);
+
+                // Mengurutkan berdasarkan 'count' secara descending
+                usort($subjectList, function ($a, $b) {
+                    return $b['count'] <=> $a['count']; // PHP 7+ spaceship operator
+                    // Untuk PHP < 7: return $b['count'] - $a['count'];
+                });
+                $topSubjectsData = $subjectList;
             }
 
             $groupedHistories = [];
-
             if (isset($originalUserData['histories']) && is_array($originalUserData['histories'])) {
                 $histories = array_slice(array_reverse($originalUserData['histories']), 0, 5);
-
                 foreach ($histories as $historyItem) {
                     $type = $historyItem['searched_type'] ?? null;
                     $id = $historyItem['searched_id'] ?? null;
                     $username = $historyItem['searched']['username']
                         ?? ($historyItem['searched']['user']['username'] ?? null);
-
                     $title = $historyItem['searched']['title']
                         ?? ($historyItem['searched']['name'] ?? null);
-
-                    $email = $historyItem['searched']['email'] ?? null;
+                    $emailHistory = $historyItem['searched']['email'] ?? null; // Ganti nama variabel agar tidak bentrok
 
                     if ($type && $id && $username) {
-                        $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $email, 'historyId' => $historyItem['id']];
+                        $groupedHistories[$type][$username] = ['id' => $id, 'title' => $title, 'email' => $emailHistory, 'historyId' => $historyItem['id']];
                     }
                 }
             }
-            // dd($groupedHistories);
+
             return [
                 'id' => $originalUserData['id'] ?? null,
                 'username' => $originalUserData['username'] ?? null,
@@ -239,7 +260,7 @@ class UserController extends Controller
                 'followers' => $originalUserData['followers'] ?? [],
                 'following' => $originalUserData['following'] ?? [],
                 'top_question_post' => $topQuestionPost,
-                'top_subjects' => $topSubjectsData,
+                'top_subjects' => $topSubjectsData, // Sudah dalam format yang diinginkan
                 'questions_count' => $questionCount,
                 'answers_count' => $answerCount,
                 'followers_count' => $followerCount,

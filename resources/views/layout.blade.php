@@ -24,6 +24,11 @@
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 
+    {{-- google icon --}}
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=light_mode" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=dark_mode" />
     {{-- Animate On Scroll (AOS) --}}
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -38,7 +43,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     {{-- google icon --}}
-    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet">
     <link rel="icon" href="{{ asset('assets/p2p logo.svg') }}" type="image/svg+xml">
 
     {{-- google font --}}
@@ -121,6 +126,14 @@
             background: rgb(255, 79, 79) !important;
         }
 
+        .material-symbols-rounded {
+            font-variation-settings:
+                'FILL' 1,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+
         @keyframes animateText {
             0% {
                 background-position: 0%;
@@ -168,8 +181,8 @@
         }
 
         /* .question-title:hover {
-            color: var(--text-primary);
-        } */
+    color: var(--text-primary);
+    } */
 
         .interaction-icons i {
             color: var(--text-muted);
@@ -263,10 +276,10 @@
             --text-primary: #ffffff;
             --text-secondary: #d0d9ff;
             --text-muted: #929fd3;
-            --text-highlight: #80ED99;            
+            --text-highlight: #80ED99;
             --text-dark: #101838;
             --text-tag: #ffffff;
-        
+
             /* Accent colors */
             --accent-primary: #7494ec;
             --accent-secondary: #19b675;
@@ -292,7 +305,7 @@
             --bg-light: #e0e2ea;
             --bg-card: #f6f7ff;
             --bg-card-hover: #EDF2FB;
-            --bg-input:#ffffff;
+            --bg-input: #ffffff;
 
             /* Text colors */
             --text-primary: #12192c;
@@ -301,7 +314,7 @@
             --text-dark: #101838;
             --text-highlight: #298b8d;
             --text-tag: #2e406b;
-            
+
             /* Accent colors */
             --accent-primary: #5477c8;
             --accent-secondary: #10b981;
@@ -414,4 +427,5 @@
         @yield('script')
     </div>
 </body>
+
 </html>

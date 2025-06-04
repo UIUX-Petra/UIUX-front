@@ -87,6 +87,7 @@ class MainController extends Controller
     // dd($data);
     $data['image'] = $currUser['image'];
     $data['histories'] = $currUser['histories'];
+    // dd($data);
     return view('profile', $data);
   }
 
@@ -287,6 +288,7 @@ class MainController extends Controller
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['image'] = $currUser['image'];
     $data['id'] = $currUser['id'];
+    $data['email'] = $currUser['email'];
     // dd($data);
     Log::info($data['question']);
 
