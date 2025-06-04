@@ -73,6 +73,31 @@
         .verified-answer {
             border-left: 4px solid #23BF7F;
         }
+
+        /* New Modal Base Styles */
+        #questionCommentsModal {
+            /* Default to hidden: opacity-0 and non-interactive */
+            /* Tailwind classes will handle this: opacity-0 pointer-events-none */
+            /* Transition for the modal container (overlay) */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #questionCommentsModal .modal-content {
+            /* Transition for the content pop-in effect */
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        /* When modal is hidden (initial state or via JS) */
+        #questionCommentsModal.opacity-0 .modal-content {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+
+        /* When modal is visible (JS adds opacity-100, removes pointer-events-none) */
+        #questionCommentsModal.opacity-100 .modal-content {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     </style>
 
     @include('partials.nav')
@@ -162,13 +187,13 @@
                             <span>Asked by {{ $question['user']['username'] }}</span>
                         </div>
                     </a>
-                    <button id="comment-count"
+                    <button id="open-question-comments-modal-btn"
                         class="flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                         <i class="fa-solid fa-comment-dots mr-2"></i>
-                        <span>{{ $question['comment_count'] }} Comments</span>
+                        <span id="question-card-comment-count-text">{{ $question['comment_count'] }} Comments</span>
                     </button>
                 </div>
-
+{{-- 
                 <div class="comment-box hidden mt-4">
                     <textarea
                         class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
@@ -177,73 +202,58 @@
                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Submit Comment
                     </button>
-                </div>
+                </div> --}}
             </div>
         </div>
 
-        <!-- Comments Section -->
-        @if ($question['comment_count'] > 0 || true)
-            <div id="comments-section" class="mt-2 p-6 bg-[var(--bg-secondary)] rounded-lg mb-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)]">
-                        Comments
-                        <span class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
-                    </h3>
+<div id="questionCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
+    <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
+        <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
+            <h3 class="text-xl font-semibold text-[var(--text-primary)]">
+                {{ $question['title'] }}
+                <span id="modal-question-comment-count" class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+            </h3>
+            <button id="close-question-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
+        </div>
 
-                    <button
-                        class="comment-btn text-[var(--text-primary)] bg-[var(--bg-button)] bg-opacity-80 px-3 py-1 rounded-md hover:bg-opacity-100 flex items-center space-x-2 focus:outline-none transition-all">
-                        <i class="fa-solid fa-comment-dots mr-2"></i>
-                        Add Comment
-                    </button>
-                </div>
-
-                <!-- Comment Input Box -->
-                <div class="comment-box hidden mb-4">
-                    <textarea id="question-comment"
-                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                        rows="2" placeholder="Write your comment here!"></textarea>
-                    <button id="qComment-btn"
-                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                        Submit Comment
-                    </button>
-                </div>
-
-                <!-- Comments List -->
-                @if ($question['comment_count'] > 0)
-                    <div id="question-comments" class="space-y-3">
-                        @foreach ($question['comment'] as $comm)
-                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
-                                {{-- <div class="flex flex-col items-center mr-4">
-                                    <button
-                                        class="vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
-                                        <i class="text-sm text-[#23BF7F] fa-solid fa-chevron-up"></i>
-                                    </button>
-                                    <span class="text-xs text-[var(--text-secondary)]">0</span>
-                                    <button
-                                        class="vote-btn text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
-                                        <i class="text-sm text-[#FE0081] fa-solid fa-chevron-down"></i>
-                                    </button>
-                                </div> --}}
-                                <div class="flex-grow">
-                                    <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
-                                    <a href="{{ route('viewUser', ['email' => $comm['email']]) }}" class="hover:underline">
-                                        <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                            <span>Posted by {{ $comm['username'] }} -
-                                                {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
-                                        </div>
-                                    </a>
+        <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3" id="question-comments-list-modal">
+            @if ($question['comment_count'] > 0)
+                @foreach ($question['comment'] as $comm)
+                    <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
+                        <div class="flex-grow">
+                            <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
+                            {{-- Ensure you have user data available consistently, e.g., $comm['user']['email'] or $comm['email'] --}}
+                            <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
+                                <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
+                                     <img src="{{ $comm['user_image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
+                                        alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
+                                    <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
+                                        {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
                                 </div>
-                            </div>
-                        @endforeach
+                            </a>
+                        </div>
                     </div>
-                @else
-                    <div class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
-                        <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
-                        <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
-                    </div>
-                @endif
-            </div>
-        @endif
+                @endforeach
+            @else
+                <div id="no-question-comments-modal" class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
+                    <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
+                    <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
+                </div>
+            @endif
+        </div>
+
+        <div class="flex-shrink-0 p-6 pt-4 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
+            <textarea id="question-comment-textarea"
+                class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                rows="3" placeholder="Write your comment here..."></textarea>
+            <button id="qComment-btn"
+                class="mt-3 w-full px-4 py-2 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                Submit Comment
+            </button>
+        </div>
+    </div>
+</div>
+
 
         <!-- Answer Input Section -->
         <div class="mt-10">
@@ -441,6 +451,71 @@
             @endif
         </div>
     </div>
+
+        <script>
+    document.addEventListener('DOMContentLoaded', () => {
+// Modal for Question Comments
+    const questionCommentsModal = document.getElementById('questionCommentsModal');
+    const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
+    const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
+    const questionCommentTextarea = document.getElementById('question-comment-textarea');
+
+    function openModal() {
+        if (questionCommentsModal) {
+            questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
+            questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
+            if (questionCommentTextarea) {
+                 questionCommentTextarea.focus();
+            }
+        }
+    }
+
+    function closeModal() {
+        if (questionCommentsModal) {
+            questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
+            questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
+        }
+    }
+
+    if (openQuestionCommentsModalBtn) {
+        openQuestionCommentsModalBtn.addEventListener('click', openModal);
+    }
+
+    if (closeQuestionCommentsModalBtn) {
+        closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
+    }
+
+    if (questionCommentsModal) {
+        // Close modal on backdrop click
+        questionCommentsModal.addEventListener('click', (event) => {
+            if (event.target === questionCommentsModal) {
+                closeModal();
+            }
+        });
+        // Close modal on Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && questionCommentsModal.classList.contains('opacity-100')) {
+                closeModal();
+            }
+        });
+    }
+
+    // Toggle comment box for ANSWERS
+    const answerCommentButtons = document.querySelectorAll('.answer-comment-btn'); // Ensure this class is on answer comment buttons
+    answerCommentButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const answerId = button.dataset.answerId; // Assuming you have data-answer-id on these buttons
+            const commentBox = document.getElementById(`answer-${answerId}-comment-box`); // Make sure this ID matches your answer comment boxes
+            if (commentBox) {
+                commentBox.classList.toggle('hidden');
+                if (!commentBox.classList.contains('hidden')) {
+                    commentBox.querySelector('textarea').focus();
+                }
+            }
+        });
+    });
+    });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -898,7 +973,7 @@
             const submitCommentButton = document.getElementById("qComment-btn");
 
             submitCommentButton.addEventListener('click', (event) => {
-                const commentTextArea = document.getElementById("question-comment");
+                const commentTextArea = document.getElementById("question-comment-textarea");
                 const questionId = @json($question['id']);
                 event.preventDefault();
 

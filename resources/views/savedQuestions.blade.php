@@ -286,8 +286,7 @@
             }).then(response => response.json()).then(res => {
                 loadingToast.hideToast();
                 if (res.success) {
-                    Toastify({ text: res.message, duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
-x
+                    Toastify({ text: res.message, duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();  
                     if (questionCard) {
                         questionCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                         questionCard.style.opacity = '0';

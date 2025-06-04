@@ -799,7 +799,7 @@
                     <div class="contributions-section mb-1">
                         <select id="my-contributions-dropdown-desktop" name="contributions"
                             class="w-full text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] appearance-none py-2.5 px-3">
-                            <option value="" class="text-[var(--text-muted)]">My Contributions</option>
+                            <option value="" class="text-[var(--text-muted)]">My Activities</option>
                             <option value="questions">Questions</option>
                             <option value="answers">Answers</option>
                             <option value="saves_general">Saves</option>
@@ -843,7 +843,7 @@
         <div class="mb-8 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Actions</h3>
             <a href="{{ route('askPage') }}"
-                class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+                class="nav-link flex items-center text-[var(--text-dark)] px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
                 <i class="fa-solid fa-plus mr-3"></i> Ask a Question
             </a>
         </div>
