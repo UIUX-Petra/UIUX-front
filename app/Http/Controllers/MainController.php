@@ -142,20 +142,19 @@ class MainController extends Controller
   public function userQuestions($id)
   {
     $data['user'] = $this->userController->showUserQuestionsPage($id);
-    // dd($data['user']);
     $data['username'] = $data['user']['username'];
     $data['image'] = $data['user']['image'];
     $data['id'] = $data['user']['id'];
     $data['title'] = htmlspecialchars($data['user']['username'] ?? 'User') . "'s Questions";
+    $currUser = $this->userController->getBasicUserByEmail(session('email'));
     if (session('email') != $data['user']['email']) {
-      $currUser = $this->userController->getBasicUserByEmail(session('email'));
       $data['viewer'] = $currUser;
       $data['username'] = $currUser['username'];
       $data['image'] = $currUser['image'];
       $data['id'] = $currUser['id'];
       $data['title'] = htmlspecialchars($currUser['username'] ?? 'User') . "'s Questions";
-      $data['histories'] = $currUser['histories'];
     }
+    $data['histories'] = $currUser['histories'];
     return view('userQuestions', $data);
   }
 
