@@ -354,6 +354,7 @@
                 opacity: 0;
                 transform: scale(0.8) translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -478,122 +479,129 @@
                     <i class="fa-solid fa-tags section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Tags</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to help others find your question</p>
-                
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to help others find your question
+                </p>
+
                 <!-- Selected Tags Display -->
                 <div class="mb-4">
-                    <div id="selected-tags-display" class="flex flex-wrap gap-2 min-h-[40px] p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg relative items-end">
+                    <div id="selected-tags-display"
+                        class="flex flex-wrap gap-2 min-h-[40px] p-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg relative items-end">
                         <div id="selected-tags-container" class="flex flex-wrap gap-2 flex-1">
                             <!-- Selected tags will appear here -->
                         </div>
-                        
+
                         <!-- Add Tags Button (Plus Icon) inside the input box -->
-                        <button type="button" id="open-tags-modal" class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
+                        <button type="button" id="open-tags-modal"
+                            class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
                             <i class="fa-solid fa-plus text-sm"></i>
                         </button>
                     </div>
-                    
+
                     <!-- Count Badge and Clear All outside the input box -->
                     <div class="flex items-center justify-between mt-2 mr-1 ml-0.5">
-                        <span id="selected-count-badge" class="text-xs bg-[var(--accent-tertiary)] text-[var(--text-dark)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
-                        <button type="button" id="clear-all-tags" class="font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] underline transition-colors text-md">
+                        <span id="selected-count-badge"
+                            class="text-xs bg-[var(--accent-tertiary)] text-[var(--text-dark)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
+                        <button type="button" id="clear-all-tags"
+                            class="font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] underline transition-colors text-md">
                             Clear All
                         </button>
                     </div>
                 </div>
             </div>
 
-                <!-- Hidden input for form submission -->
-                <select id="tags-multiselect" name="subject_id[]" multiple class="hidden">
-                    @if (isset($allTags) && is_array($allTags))
-                        @php
-                            $sortedTags = collect($allTags)->sortBy('name')->values()->all();
-                        @endphp
-                        @foreach ($sortedTags as $tag)
-                            <option value="{{ $tag['id'] }}" 
-                                    {{ in_array($tag['id'], $selectedTagIdsOnLoad ?? []) ? 'selected' : '' }}>
-                                {{ $tag['name'] }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
+            <!-- Hidden input for form submission -->
+            <select id="tags-multiselect" name="subject_id[]" multiple class="hidden">
+                @if (isset($allTags) && is_array($allTags))
+                    @php
+                        $sortedTags = collect($allTags)->sortBy('name')->values()->all();
+                    @endphp
+                    @foreach ($sortedTags as $tag)
+                        <option value="{{ $tag['id'] }}"
+                            {{ in_array($tag['id'], $selectedTagIdsOnLoad ?? []) ? 'selected' : '' }}>
+                            {{ $tag['name'] }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
+    </div>
+
+    <!-- Tags Modal -->
+    <div id="tags-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
+                <div>
+                    <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Tags</h3>
+                    <p class="text-sm text-[var(--text-secondary)] mt-1">Choose tags that best describe your question</p>
+                </div>
+                <button type="button" id="close-tags-modal"
+                    class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
+                    <i class="fa-solid fa-times text-xl text-[var(--text-secondary)]"></i>
+                </button>
             </div>
 
-            <!-- Tags Modal -->
-            <div id="tags-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
-                <div class="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
-                    <!-- Modal Header -->
-                    <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
-                        <div>
-                            <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Tags</h3>
-                            <p class="text-sm text-[var(--text-secondary)] mt-1">Choose tags that best describe your question</p>
-                        </div>
-                        <button type="button" id="close-tags-modal" class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
-                            <i class="fa-solid fa-times text-xl text-[var(--text-secondary)]"></i>
-                        </button>
+            <!-- Modal Body -->
+            <div class="flex-1 flex flex-col min-h-0">
+                <!-- Search Bar -->
+                <div class="p-6 pb-4 border-b border-[var(--border-color)]">
+                    <div class="relative">
+                        <i
+                            class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]"></i>
+                        <input type="text" id="tags-search-input"
+                            class="w-full pl-10 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent-tertiary)] focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-opacity-20 transition-all"
+                            placeholder="Search tags..." autocomplete="off">
                     </div>
-
-                    <!-- Modal Body -->
-                    <div class="flex-1 flex flex-col min-h-0">
-                        <!-- Search Bar -->
-                        <div class="p-6 pb-4 border-b border-[var(--border-color)]">
-                            <div class="relative">
-                                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]"></i>
-                                <input type="text" 
-                                    id="tags-search-input" 
-                                    class="w-full pl-10 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent-tertiary)] focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-opacity-20 transition-all" 
-                                    placeholder="Search tags..."
-                                    autocomplete="off">
-                            </div>
-                            <div class="flex items-center justify-between mt-3 text-sm text-[var(--text-secondary)]">
-                                <span>
-                                    <span id="showing-count">0</span> tags available
-                                </span>
-                                <span>
-                                    <span id="selected-count-modal">0</span> selected
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Tags Grid -->
-                        <div class="flex-1 overflow-y-auto p-6">
-                            <div id="tags-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <!-- Tags will be populated here -->
-                            </div>
-                            <div id="no-tags-found" class="text-center py-12 hidden">
-                                <i class="fa-solid fa-search text-4xl text-[var(--text-secondary)] opacity-50 mb-4"></i>
-                                <p class="text-[var(--text-secondary)] text-lg">No tags found</p>
-                                <p class="text-[var(--text-secondary)] text-sm mt-1">Try a different search term</p>
-                            </div>
-                        </div>
+                    <div class="flex items-center justify-between mt-3 text-sm text-[var(--text-secondary)]">
+                        <span>
+                            <span id="showing-count">0</span> tags available
+                        </span>
+                        <span>
+                            <span id="selected-count-modal">0</span> selected
+                        </span>
                     </div>
+                </div>
 
-                    <!-- Modal Footer -->
-                    <div class="p-6 border-t border-[var(--border-color)] bg-[var(--bg-secondary)] rounded-b-xl">
-                        <div class="flex items-center justify-between">
-                            <div class="text-sm text-[var(--text-secondary)]">
-                                <span id="selected-count-footer">0</span> tags selected
-                            </div>
-                            <div class="flex gap-3">
-                                <button type="button" id="cancel-tags-modal" class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
-                                    Cancel
-                                </button>
-                                <button type="button" id="confirm-tags-modal" class="px-6 py-2 bg-[var(--accent-secondary)] text-white rounded-lg hover:opacity-90 transition-opacity">
-                                    Done
-                                </button>
-                            </div>
-                        </div>
+                <!-- Tags Grid -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div id="tags-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Tags will be populated here -->
+                    </div>
+                    <div id="no-tags-found" class="text-center py-12 hidden">
+                        <i class="fa-solid fa-search text-4xl text-[var(--text-secondary)] opacity-50 mb-4"></i>
+                        <p class="text-[var(--text-secondary)] text-lg">No tags found</p>
+                        <p class="text-[var(--text-secondary)] text-sm mt-1">Try a different search term</p>
                     </div>
                 </div>
             </div>
 
-            <div class="text-center">
-                <button type="submit" id="submit-btn"
-                    class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
-                    <i class="fa-solid {{ $isEditMode ? 'fa-save' : 'fa-paper-plane' }}"></i> {{ $submitButtonText }}
-                </button>
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-[var(--border-color)] bg-[var(--bg-secondary)] rounded-b-xl">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-[var(--text-secondary)]">
+                        <span id="selected-count-footer">0</span> tags selected
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="button" id="cancel-tags-modal"
+                            class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                            Cancel
+                        </button>
+                        <button type="button" id="confirm-tags-modal"
+                            class="px-6 py-2 bg-[var(--accent-secondary)] text-white rounded-lg hover:opacity-90 transition-opacity">
+                            Done
+                        </button>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <button type="submit" id="submit-btn"
+            class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
+            <i class="fa-solid {{ $isEditMode ? 'fa-save' : 'fa-paper-plane' }}"></i> {{ $submitButtonText }}
+        </button>
+    </div>
+    </form>
     </div>
 @endsection
 
@@ -601,6 +609,7 @@
     <script>
         const IS_EDIT_MODE = {{ isset($questionToEdit) && $questionToEdit !== null ? 'true' : 'false' }};
         const QUESTION_TO_EDIT = @json($questionToEdit ?? null);
+        const EXISTING_TAG_IDS = @json($existingTagIds ?? []);
         const ALL_TAGS_FROM_PHP = @json($allTags ?? []);
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
@@ -635,15 +644,9 @@
             const hiddenSelect = document.getElementById('tags-multiselect');
 
             // Initialize from edit mode if applicable
-            if (IS_EDIT_MODE && QUESTION_TO_EDIT && QUESTION_TO_EDIT.group_question) {
-                QUESTION_TO_EDIT.group_question.forEach(group => {
-                    if (group.subject && group.subject.id) {
-                        const tagId = group.subject.id.toString();
-                        if (!selectedTagIds.includes(tagId)) {
-                            selectedTagIds.push(tagId);
-                        }
-                    }
-                });
+            if (IS_EDIT_MODE && EXISTING_TAG_IDS.length > 0) {
+                // We directly use the simple array of IDs from the controller
+                selectedTagIds = [...EXISTING_TAG_IDS];
             }
 
             function openModal() {
@@ -679,19 +682,19 @@
 
             function renderTagsGrid() {
                 tagsGrid.innerHTML = '';
-                
+
                 if (filteredTags.length === 0) {
                     noTagsFound.classList.remove('hidden');
                     showingCount.textContent = '0';
                     return;
                 }
-                
+
                 noTagsFound.classList.add('hidden');
                 showingCount.textContent = filteredTags.length;
 
                 filteredTags.forEach(tag => {
                     const isSelected = tempSelectedTagIds.includes(tag.id.toString());
-                    
+
                     const tagItem = document.createElement('div');
                     tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
                     tagItem.innerHTML = `
@@ -701,7 +704,7 @@
                             <div class="tag-count">${tag.questions || 0} questions</div>
                         </div>
                     `;
-                    
+
                     tagItem.addEventListener('click', () => toggleTempTag(tag.id.toString()));
                     tagsGrid.appendChild(tagItem);
                 });
@@ -713,7 +716,7 @@
                 } else {
                     tempSelectedTagIds.push(tagId);
                 }
-                
+
                 renderTagsGrid();
                 updateModalCounts();
             }
@@ -756,7 +759,7 @@
                 if (term === '') {
                     filteredTags = [...allTags];
                 } else {
-                    filteredTags = allTags.filter(tag => 
+                    filteredTags = allTags.filter(tag =>
                         tag.name.toLowerCase().includes(term)
                     );
                 }
@@ -814,10 +817,12 @@
                         const reader = new FileReader();
                         reader.onload = function(e) {
                             const imagePreviewContainer = document.getElementById("image-preview");
-                            const oldNewPreview = imagePreviewContainer.querySelector('.new-image-preview-item');
+                            const oldNewPreview = imagePreviewContainer.querySelector(
+                                '.new-image-preview-item');
                             if (oldNewPreview) oldNewPreview.remove();
 
-                            const existingImageDiv = imagePreviewContainer.querySelector('.existing-image');
+                            const existingImageDiv = imagePreviewContainer.querySelector(
+                                '.existing-image');
                             if (existingImageDiv) {
                                 existingImageDiv.style.display = 'none';
                             }
@@ -836,7 +841,8 @@
                                 imageFile = null;
                                 if (existingImageDiv) {
                                     existingImageDiv.style.display = 'flex';
-                                    const removeFlagInput = document.getElementById('remove_existing_image_input');
+                                    const removeFlagInput = document.getElementById(
+                                        'remove_existing_image_input');
                                     if (removeFlagInput) removeFlagInput.remove();
                                 }
                             };
@@ -932,7 +938,8 @@
 
                         if (imageFile) {
                             formData.append("image", imageFile);
-                        } else if (IS_EDIT_MODE && document.getElementById('remove_existing_image_input')) {
+                        } else if (IS_EDIT_MODE && document.getElementById(
+                                'remove_existing_image_input')) {
                             formData.append("remove_existing_image", "1");
                         }
 
@@ -963,26 +970,33 @@
                                     Swal.fire({
                                         icon: 'success',
                                         title: 'Success!',
-                                        text: res.message || `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
+                                        text: res.message ||
+                                            `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
                                     }).then(() => {
                                         if (res.data && res.data.id) {
-                                            window.location.href = "{{ route('user.questions.list', ['id'=>'id']) }}".replace('id',QUESTION_TO_EDIT.user.id);
+                                            window.location.href =
+                                                "{{ route('user.questions.list', ['id' => 'id']) }}"
+                                                .replace('id', QUESTION_TO_EDIT.user
+                                                .id);
                                         } else {
-                                            window.location.href = "{{ route('home') }}";
+                                            window.location.href =
+                                                "{{ route('home') }}";
                                         }
                                     });
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error!',
-                                        text: res.message || 'An unexpected error occurred from the server.'
+                                        text: res.message ||
+                                            'An unexpected error occurred from the server.'
                                     });
                                 }
                             })
                             .catch(err => {
                                 console.error('Fetch Error:', err);
                                 Swal.close();
-                                let errorMessage = 'There was an error processing your request.';
+                                let errorMessage =
+                                'There was an error processing your request.';
                                 if (err.data && err.data.message) {
                                     errorMessage = err.data.message;
                                 } else if (err.message) {

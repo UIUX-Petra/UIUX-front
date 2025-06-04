@@ -63,6 +63,7 @@ class MainController extends Controller
       $questionDetails = $this->questionController->getQuestionDetails($questionId);
       if ($questionDetails && isset($currUser['id']) && isset($questionDetails['user_id']) && $currUser['id'] === $questionDetails['user_id']) {
         $viewData['questionToEdit'] = $questionDetails;
+        $viewData['existingTagIds'] = array_column($questionDetails['group_question'], 'tag_id');
       } else if ($questionDetails) {
         return redirect()->route('home')
           ->with('Error', 'You are not authorized to edit this question.');
