@@ -726,7 +726,7 @@
         <div class="contributions-section mb-1">
             <select id="my-contributions-dropdown-mobile" name="contributions"
                 class="w-full text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] appearance-none py-2.5 px-3">
-                <option value="" class="text-[var(--text-muted)]">My Contributions</option>
+                <option value="" class="text-[var(--text-muted)]">My Activities</option>
                 <option value="questions">Questions</option>
                 <option value="answers">Answers</option>
                 <option value="saves_general">Saves</option>
