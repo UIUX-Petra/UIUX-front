@@ -511,14 +511,14 @@
                         </div>
                     @endforeach
 
-                    <!-- Clear History Option ??? -->
-                    {{-- <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
+                    <!-- Clear History Option -->
+                    <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
                         <button
-                            class="text-xs text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center gap-1 px-2 py-1">
+                            class="text-xs clearHistory text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center gap-1 px-2 py-1">
                             <i class="fa-solid fa-trash-can"></i>
                             Clear History
                         </button>
-                    </div> --}} 
+                    </div>
 
                 </div>
 
@@ -669,14 +669,14 @@
                     </div>
                 @endforeach
 
-                <!-- Clear History Option ??? -->
-                {{-- <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
+                <!-- Clear History Option -->
+                <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
                     <button
-                        class="text-xs text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center gap-1 px-2 py-1">
+                        class="text-xs clearHistory text-[var(--text-muted)] hover:text-[var(--accent-primary)] flex items-center gap-1 px-2 py-1">
                         <i class="fa-solid fa-trash-can"></i>
                         Clear History
                     </button>
-                </div> --}}
+                </div>
 
             </div>
 
@@ -1353,8 +1353,8 @@
             containerId: 'search-container2',
             resultsId: 'searchResultsDropdownContainer2',
             historyId: 'searchHistoryDropdownContainer2',
-            buttonId: 'searchButton2', 
-            trackHistory: true 
+            buttonId: 'searchButton2',
+            trackHistory: true
         });
 
         // Add existing history click handlers for desktop
@@ -1388,10 +1388,98 @@
         });
 
 
+        let clearBtns = document.querySelectorAll('.clearHistory');
+
+        clearBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `You are about to clear all your search histories`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: `Yes, clear it!`
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`{{ route('clearHistory') }}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(res => {
+                                if (res.success) {
+                                    const allContainers = document.querySelectorAll(
+                                        '.history-delete-btn');
+                                    const deletedContainers = new Set();
+
+                                    allContainers.forEach(btn => {
+                                        const ulH = btn.parentElement
+                                            .parentElement.parentElement;
+                                        const ulParentContainer = ulH
+                                            .parentElement;
+
+                                        if (!deletedContainers.has(
+                                                ulParentContainer)) {
+                                            ulParentContainer
+                                        .remove(); // hapus dari DOM
+                                            deletedContainers.add(
+                                                ulParentContainer);
+                                        }
+                                    });
+
+                                    Toastify({
+                                        text: "All history successfully cleared.",
+                                        duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
+                                        style: {
+                                            background: "#27ae60"
+                                        }
+                                    }).showToast();
+
+                                } else {
+                                    Toastify({
+                                        text: "Failed to clear history. Try again later.",
+                                        duration: 7000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
+                                }
+                            })
+                            // .catch(() => {
+                            //     Toastify({
+                            //         text: "Network error while clearing history.",
+                            //         duration: 7000,
+                            //         close: true,
+                            //         gravity: "top",
+                            //         position: "right",
+                            //         style: {
+                            //             background: "#e67e22"
+                            //         }
+                            //     }).showToast();
+                            // });
+                    }
+                });
+            });
+        });
+
+
         let delBtns = document.querySelectorAll('.history-delete-btn');
 
         delBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
                 const historyId = btn.dataset.history;
 
                 // Elemen UL utama

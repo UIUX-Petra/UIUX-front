@@ -527,4 +527,19 @@ class UserController extends Controller
         $responseData = $response->json();
         return $responseData;
     }
+    public function clearHistory()
+    {
+        $email = session('email');
+        $api_url = env('API_URL') . '/history/clear/' . $email;
+
+        $data = ['email' => $email];
+
+        $response = Http::withToken(session('token'))->post($api_url, $data);
+        if ($response->successful()) {
+            $responseData = $response->json();
+            return $responseData;
+        } else {
+            Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
+        }
+    }
 }
