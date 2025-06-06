@@ -74,7 +74,28 @@
             border-left: 4px solid #23BF7F;
         }
 
-        /* New Modal Base Styles */
+        .action-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+                /* New Modal Base Styles */
         #questionCommentsModal {
             /* Default to hidden: opacity-0 and non-interactive */
             /* Tailwind classes will handle this: opacity-0 pointer-events-none */
@@ -120,7 +141,7 @@
                     </div>
 
                     <div id="answerCountAtas" class="flex items-center" title="Comments">
-                        <i class="fa-solid fa-reply text-[var(--accent-tertiary)] mr-2"></i>
+                        <i class="fa-solid fa-comments text-[var(--accent-tertiary)] mr-2"></i>
                         <span class="text-[var(--text-secondary)]">{{ count($question['answer']) }}</span>
                         {{-- Comment atau answer count ?? // ini yang diatas --}}
                     </div>
@@ -146,10 +167,10 @@
 
                 <div class="flex flex-col items-center mt-4" id="reply-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
-                        <i class="fa-solid fa-reply text-md"></i>
+                        <i class="fa-solid fa-comments text-md"></i>
                     </button>
                     <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
-                        {{ count($question['answer']) }} {{-- comment atau answer count ?? comment count sudah ada di kanan e loh --}}
+                        {{ count($question['answer']) }}
                     </small>
                 </div>
             </div>
@@ -202,58 +223,100 @@
                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Submit Comment
                     </button>
-                </div> --}}
+                </div>
             </div>
-        </div>
 
-<div id="questionCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
-    <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
-        <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
-            <h3 class="text-xl font-semibold text-[var(--text-primary)]">
-                {{ $question['title'] }}
-                <span id="modal-question-comment-count" class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
-            </h3>
-            <button id="close-question-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
-        </div>
+            {{-- Action Buttons --}}
+            {{-- Action Buttons --}}
+            @if ($isQuestionOwner)
+                @php
+                    // Inisialisasi ini tetap penting untuk render awal sisi server
+                    $hasAnswer = !empty($question['answer']);
+                    // Pastikan $question['vote'] adalah numerik sebelum perbandingan
+                    $currentVoteCount = isset($question['vote']) ? (int) $question['vote'] : 0;
+                    $hasVote = $currentVoteCount !== 0;
+                @endphp
 
-        <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3" id="question-comments-list-modal">
-            @if ($question['comment_count'] > 0)
-                @foreach ($question['comment'] as $comm)
-                    <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
-                        <div class="flex-grow">
-                            <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
-                            {{-- Ensure you have user data available consistently, e.g., $comm['user']['email'] or $comm['email'] --}}
-                            <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
-                                <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
-                                     <img src="{{ $comm['user_image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
-                                        alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
-                                    <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
-                                        {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                @endforeach
-            @else
-                <div id="no-question-comments-modal" class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
-                    <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
-                    <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
+                {{-- Beri ID pada container tombol aksi --}}
+                <div id="question-action-buttons-container" class="flex justify-end space-x-3 mt-4">
+                    @if (!$hasAnswer && !$hasVote)
+                        <button data-question-id="{{ $question['id'] }}"
+                            class="action-button edit-question-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </button>
+                        <button data-question-id="{{ $question['id'] }}"
+                            class="action-button delete-question-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-trash-alt mr-2"></i>Delete
+                        </button>
+                    @endif
                 </div>
             @endif
         </div>
+        {{-- </div> --}}
 
-        <div class="flex-shrink-0 p-6 pt-4 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
-            <textarea id="question-comment-textarea"
-                class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                rows="3" placeholder="Write your comment here..."></textarea>
-            <button id="qComment-btn"
-                class="mt-3 w-full px-4 py-2 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                Submit Comment
-            </button>
-        </div>
-    </div>
-</div>
+        <!-- Comments Section -->
+        @if ($question['comment_count'] > 0 || true)
+            <div id="comments-section" class="mt-2 p-6 bg-[var(--bg-secondary)] rounded-lg mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)]">
+                        Comments
+                        <span class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+                    </h3>
 
+                    <button
+                        class="comment-btn text-[var(--text-primary)] bg-[var(--bg-button)] bg-opacity-80 px-3 py-1 rounded-md hover:bg-opacity-100 flex items-center space-x-2 focus:outline-none transition-all">
+                        <i class="fa-solid fa-comment-dots mr-2"></i>
+                        Add Comment
+                    </button>
+                </div>
+
+                <!-- Comment Input Box -->
+                <div class="comment-box hidden mb-4">
+                    <textarea id="question-comment"
+                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                        rows="2" placeholder="Write your comment here!"></textarea>
+                    <button id="qComment-btn"
+                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                        Submit Comment
+                    </button>
+                </div>
+
+                <!-- Comments List -->
+                @if ($question['comment_count'] > 0)
+                    <div id="question-comments" class="space-y-3">
+                        @foreach ($question['comment'] as $comm)
+                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
+                                {{-- <div class="flex flex-col items-center mr-4">
+                                    <button
+                                        class="vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
+                                        <i class="text-sm text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                    </button>
+                                    <span class="text-xs text-[var(--text-secondary)]">0</span>
+                                    <button
+                                        class="vote-btn text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
+                                        <i class="text-sm text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                    </button>
+                                </div> --}}
+                                <div class="flex-grow">
+                                    <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
+                                    <a href="{{ route('viewUser', ['email' => $comm['email']]) }}" class="hover:underline">
+                                        <div class="mt-2 text-xs text-[var(--text-muted)]">
+                                            <span>Posted by {{ $comm['username'] }} -
+                                                {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
+                        <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
+                        <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
+                    </div>
+                @endif
+            </div>
+        @endif
 
         <!-- Answer Input Section -->
         <div class="mt-10">
@@ -303,136 +366,166 @@
                 <div id="answerList" class="space-y-6">
                     @foreach ($question['answer'] as $ans)
                         @php
+                            $isAnswerOwner = session('email') === ($ans['email'] ?? null);
+                            $answerVoteCount = (int) ($ans['vote'] ?? 0);
                             $isVerified = (int) $ans['verified'] === 1;
                         @endphp
-                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start">
-                            <div class="interaction-section flex flex-col items-center mr-6">
-                                <button
-                                    class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
-                                    data-answer-id="{{ $ans['id'] }}">
-                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
-                                </button>
-                                <span
-                                    class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
-                                <button
-                                    class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
-                                    data-answer-id="{{ $ans['id'] }}">
-                                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
-                                </button>
+                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg"
+                            id="answer-item-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
+                            data-is-owner="{{ $isAnswerOwner ? 'true' : 'false' }}"
+                            data-is-verified="{{ $isVerified ? 'true' : 'false' }}"
+                            data-vote-count="{{ $answerVoteCount }}">
+                            <div class="flex items-start">
+                                <div class="interaction-section flex flex-col items-center mr-6">
+                                    <button
+                                        class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
+                                        data-answer-id="{{ $ans['id'] }}">
+                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                    </button>
+                                    <span
+                                        class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
+                                    <button
+                                        class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
+                                        data-answer-id="{{ $ans['id'] }}">
+                                        <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                    </button>
 
-                                <div id="answer-verify-block-{{ $ans['id'] }}"
-                                    class="mt-4 flex flex-col items-center">
-                                    @if ($isQuestionOwner)
-                                        <i id="verify-icon-{{ $ans['id'] }}"
-                                            class="fa-{{ $isVerified ? 'solid' : 'regular' }} fa-check-circle text-[#23BF7F] text-lg {{ !$isVerified ? 'cursor-pointer verify-toggle-button' : '' }}"
-                                            data-answer-id="{{ $ans['id'] }}"
-                                            data-current-verified="{{ $ans['verified'] }}">
-                                        </i>
-                                        <span id="verify-text-{{ $ans['id'] }}" class="text-xs text-[#23BF7F] mt-1">
-                                            {{ $isVerified ? 'Verified Answer' : 'Verify Answer' }}
-                                        </span>
-                                        @if (!$isVerified)
-                                            <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                    <div id="answer-verify-block-{{ $ans['id'] }}"
+                                        class="mt-4 flex flex-col items-center">
+                                        @if ($isQuestionOwner)
+                                            <i id="verify-icon-{{ $ans['id'] }}"
+                                                class="fa-{{ $isVerified ? 'solid' : 'regular' }} fa-check-circle text-[#23BF7F] text-lg {{ !$isVerified ? 'cursor-pointer verify-toggle-button' : '' }}"
                                                 data-answer-id="{{ $ans['id'] }}"
-                                                data-current-verified="{{ $ans['verified'] }}" style="cursor:pointer;">
-                                                (Click icon or text to verify)
+                                                data-current-verified="{{ $ans['verified'] }}">
+                                            </i>
+                                            <span id="verify-text-{{ $ans['id'] }}"
+                                                class="text-xs text-[#23BF7F] mt-1">
+                                                {{ $isVerified ? 'Verified Answer' : 'Verify Answer' }}
                                             </span>
-                                        @else
-                                            <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
-                                                data-answer-id="{{ $ans['id'] }}"
-                                                data-current-verified="{{ $ans['verified'] }}" style="cursor:pointer;">
-                                                (Click icon or text to unverify)
-                                            </span>
-                                        @endif
-                                    @else
-                                        @if ($isVerified)
+                                            @if (!$isVerified)
+                                                <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                                    data-answer-id="{{ $ans['id'] }}"
+                                                    data-current-verified="{{ $ans['verified'] }}"
+                                                    style="cursor:pointer;">
+                                                    (Click icon or text to verify)
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-500 mt-1 verify-toggle-button"
+                                                    data-answer-id="{{ $ans['id'] }}"
+                                                    data-current-verified="{{ $ans['verified'] }}"
+                                                    style="cursor:pointer;">
+                                                    (Click icon or text to unverify)
+                                                </span>
+                                            @endif
+                                        @elseif ($isVerified)
                                             <i class="fa-solid fa-check-circle text-[#23BF7F] text-lg"></i>
                                             <span class="text-xs text-[#23BF7F] mt-1">Verified Answer</span>
                                         @endif
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col flex-grow">
+                                    <div class="prose max-w-none text-[var(--text-primary)]">
+                                        <p class="">{!! nl2br(e($ans['answer'])) !!}</p>
+                                    </div>
+
+                                    @if ($ans['image'])
+                                        <div class="mt-4">
+                                            <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
+                                                class="max-w-lg max-h-96 object-contain rounded-lg border">
+                                        </div>
+                                    @endif
+
+                                    <div class="mt-4 flex justify-between items-center">
+                                        <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
+                                            <div class="flex items-center text-sm text-[var(--text-muted)]">
+                                                <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                                    alt="User avatar" class="w-6 h-6 rounded-full mr-2">
+                                                <span class="hover:underline">Answered by {{ $ans['username'] }} -
+                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                            </div>
+                                        </a>
+
+                                        <button
+                                            class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
+                                            <i class="fa-solid fa-comment-dots mr-2"></i>
+                                            <span>{{ count($ans['comments'] ?? []) }} Comments</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Comment input box -->
+                                    <div class="comment-box hidden mt-4 w-full comment-animation">
+                                        <textarea id="answer-comment-{{ $ans['id'] }}"
+                                            class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                                            rows="2" placeholder="Write your comment here!"></textarea>
+                                        <button id="submit-comment-{{ $ans['id'] }}"
+                                            data-answer-id="{{ $ans['id'] }}"
+                                            class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                                            Submit Comment
+                                        </button>
+                                    </div>
+
+                                    <!-- Comments Display Section -->
+                                    @if (isset($ans['comments']) && count($ans['comments']) > 0)
+                                        <div
+                                            class="answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]">
+                                            <h4
+                                                class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
+                                                <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
+                                                Comments ({{ count($ans['comments']) }})
+                                            </h4>
+
+                                            <div class="space-y-3">
+                                                @foreach ($ans['comments'] as $comment)
+                                                    <div
+                                                        class="answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]">
+                                                        <a
+                                                            href="{{ route('viewUser', ['email' => $comment['user_email']]) }}">
+                                                            <div class="flex items-start">
+                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($comment['username']) }}&background=random"
+                                                                    alt="{{ $comment['username'] }}"
+                                                                    class="w-6 h-6 rounded-full mr-3 mt-1">
+
+                                                                <div class="flex-grow">
+                                                                    <div class="flex items-center mb-1">
+                                                                        <span
+                                                                            class="hover:underline text-sm font-medium text-[var(--text-primary)]">
+                                                                            {{ $comment['username'] }}
+                                                                        </span>
+                                                                        <span
+                                                                            class="text-xs text-[var(--text-muted)] ml-2">
+                                                                            {{ \Carbon\Carbon::parse($comment['timestamp'])->diffForHumans() }}
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <p
+                                                                        class="text-sm text-[var(--text-primary)] leading-relaxed">
+                                                                        {{ $comment['comment'] }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
 
-                            <div class="flex flex-col flex-grow">
-                                <div class="prose max-w-none text-[var(--text-primary)]">
-                                    <p class="">{!! nl2br(e($ans['answer'])) !!}</p>
-                                </div>
-
-                                @if ($ans['image'])
-                                    <div class="mt-4">
-                                        <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
-                                            class="max-w-lg max-h-96 object-contain rounded-lg border">
-                                    </div>
-                                @endif
-
-                                <div class="mt-4 flex justify-between items-center">
-                                    <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
-                                        <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                            <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                                alt="User avatar" class="w-6 h-6 rounded-full mr-2">
-                                            <span class="hover:underline">Answered by {{ $ans['username'] }} -
-                                                {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
-                                        </div>
+                            <!-- Action Buttons -->
+                            <div id="answer-action-buttons-container-{{ $ans['id'] }}"
+                                class="flex space-x-3 justify-end mt-6">
+                                @if ($isAnswerOwner && !$isVerified && $answerVoteCount == 0)
+                                    <a href="{{ route('user.answers.edit', ['answerId' => $ans['id']]) }}"
+                                        class="action-button edit-answer-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                                        <i class="fas fa-edit mr-2"></i>Edit
                                     </a>
-
                                     <button
-                                        class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
-                                        <i class="fa-solid fa-comment-dots mr-2"></i>
-                                        <span>{{ count($ans['comments'] ?? []) }} Comments</span>
+                                        class="delete-answer-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                                        data-answer-id="{{ $ans['id'] }}">
+                                        <i class="fas fa-trash-alt mr-2"></i>Delete
                                     </button>
-                                </div>
-
-                                <!-- Comment input box -->
-                                <div class="comment-box hidden mt-4 w-full comment-animation">
-                                    <textarea id="answer-comment-{{ $ans['id'] }}"
-                                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                                        rows="2" placeholder="Write your comment here!"></textarea>
-                                    <button id="submit-comment-{{ $ans['id'] }}" data-answer-id="{{ $ans['id'] }}"
-                                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                                        Submit Comment
-                                    </button>
-                                </div>
-
-                                <!-- Comments Display Section -->
-                                @if (isset($ans['comments']) && count($ans['comments']) > 0)
-                                    <div class="answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]">
-                                        <h4
-                                            class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
-                                            <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
-                                            Comments ({{ count($ans['comments']) }})
-                                        </h4>
-
-                                        <div class="space-y-3">
-                                            @foreach ($ans['comments'] as $comment)
-                                                <div
-                                                    class="answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]">
-                                                    <a href="{{ route('viewUser', ['email' => $comment['user_email']]) }}">
-                                                    <div class="flex items-start">
-                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($comment['username']) }}&background=random"
-                                                            alt="{{ $comment['username'] }}"
-                                                            class="w-6 h-6 rounded-full mr-3 mt-1">
-
-                                                        <div class="flex-grow">
-                                                            <div class="flex items-center mb-1">
-                                                                <span
-                                                                    class="hover:underline text-sm font-medium text-[var(--text-primary)]">
-                                                                    {{ $comment['username'] }}
-                                                                </span>
-                                                                <span class="text-xs text-[var(--text-muted)] ml-2">
-                                                                    {{ \Carbon\Carbon::parse($comment['timestamp'])->diffForHumans() }}
-                                                                </span>
-                                                            </div>
-
-                                                            <p class="text-sm text-[var(--text-primary)] leading-relaxed">
-                                                                {{ $comment['comment'] }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    </a>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -452,74 +545,106 @@
         </div>
     </div>
 
-        <script>
-    document.addEventListener('DOMContentLoaded', () => {
-// Modal for Question Comments
-    const questionCommentsModal = document.getElementById('questionCommentsModal');
-    const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
-    const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
-    const questionCommentTextarea = document.getElementById('question-comment-textarea');
-
-    function openModal() {
-        if (questionCommentsModal) {
-            questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
-            questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
-            if (questionCommentTextarea) {
-                 questionCommentTextarea.focus();
-            }
-        }
-    }
-
-    function closeModal() {
-        if (questionCommentsModal) {
-            questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
-            questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
-        }
-    }
-
-    if (openQuestionCommentsModalBtn) {
-        openQuestionCommentsModalBtn.addEventListener('click', openModal);
-    }
-
-    if (closeQuestionCommentsModalBtn) {
-        closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
-    }
-
-    if (questionCommentsModal) {
-        // Close modal on backdrop click
-        questionCommentsModal.addEventListener('click', (event) => {
-            if (event.target === questionCommentsModal) {
-                closeModal();
-            }
-        });
-        // Close modal on Escape key
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && questionCommentsModal.classList.contains('opacity-100')) {
-                closeModal();
-            }
-        });
-    }
-
-    // Toggle comment box for ANSWERS
-    const answerCommentButtons = document.querySelectorAll('.answer-comment-btn'); // Ensure this class is on answer comment buttons
-    answerCommentButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const answerId = button.dataset.answerId; // Assuming you have data-answer-id on these buttons
-            const commentBox = document.getElementById(`answer-${answerId}-comment-box`); // Make sure this ID matches your answer comment boxes
-            if (commentBox) {
-                commentBox.classList.toggle('hidden');
-                if (!commentBox.classList.contains('hidden')) {
-                    commentBox.querySelector('textarea').focus();
-                }
-            }
-        });
-    });
-    });
-    </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Toggle comment box
+            const API_BASE_URL = ("{{ env('API_URL', 'http://localhost:8001/api') }}" + '/').replace(/\/+$/, '/');
+            const API_TOKEN = "{{ session('token') ?? '' }}";
+            const CSRF_TOKEN = "{{ csrf_token() }}";
+            // edit question
+            document.querySelectorAll('.edit-question-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const questionId = this.dataset.questionId;
+                    window.location.href = `{{ url('/ask') }}/${questionId}`;
+                });
+            });
+            //delete question
+            document.querySelectorAll('.delete-question-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const questionId = this.dataset.questionId;
+                    const questionItemElement = document.getElementById(
+                        `question-item-${questionId}`);
+
+                    Swal.fire({
+                        title: 'Delete Answer?',
+                        text: "This action cannot be undone. Your answer will be permanently deleted.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel',
+                        background: 'var(--bg-card)',
+                        color: 'var(--text-primary)',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            confirmButton: 'rounded-xl px-6 py-3',
+                            cancelButton: 'rounded-xl px-6 py-3'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const headers = {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': CSRF_TOKEN
+                            };
+                            if (API_TOKEN) {
+                                headers['Authorization'] = `Bearer ${API_TOKEN}`;
+                            }
+
+                            fetch(`${API_BASE_URL}questions/${questionId}`, {
+                                    method: 'DELETE',
+                                    headers: headers
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw err;
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success || data.status === 'success') {
+                                        Swal.fire(
+                                            'Deleted!',
+                                            data.message ||
+                                            'Your question has been deleted.',
+                                            'success'
+                                        );
+                                        window.location.href = "{{ url('/') }}"
+                                    } else {
+                                        Swal.fire(
+                                            'Error!',
+                                            data.message ||
+                                            'Could not delete the question.',
+                                            'error'
+                                        );
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error details:', error);
+                                    let errorMessage =
+                                        'An error occurred while deleting the question.';
+                                    if (error && error.message) {
+                                        errorMessage = error.message;
+                                    } else if (typeof error === 'object' && error !==
+                                        null && error.toString && error.toString()
+                                        .includes('Failed to fetch')) {
+                                        errorMessage =
+                                            'Network error or API is unreachable. Please check your connection and the API URL.';
+                                    } else if (typeof error === 'string') {
+                                        errorMessage = error;
+                                    }
+                                    Swal.fire(
+                                        'Request Failed!',
+                                        errorMessage,
+                                        'error'
+                                    );
+                                });
+                        }
+                    });
+                });
+            });
+
             const commentButtons = document.querySelectorAll('.comment-btn');
             commentButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -528,13 +653,7 @@
                     commentBox.classList.toggle('hidden');
                 });
             });
-        });
-    </script>
 
-    <!-- file upload and preview -->
-    <script>
-        // Handle image file upload and preview
-        document.addEventListener('DOMContentLoaded', () => {
             const fileInput = document.getElementById("question-img");
             const imagePreviewsContainer = document.querySelector(".image-previews");
 
@@ -559,11 +678,6 @@
 
                 imagePreviewsContainer.classList.remove('hidden'); // Show the preview section
             });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
             const commentCount = document.getElementById('reply-count');
             const answerTextArea = document.getElementById('answer-textArea');
 
@@ -575,17 +689,169 @@
                 });
                 answerTextArea?.focus();
             });
-        });
-    </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
             const jsIsQuestionOwner = @json($isQuestionOwner);
             let currentAnswerCount = @json(count($question['answer'] ?? []));
 
+            let jsHasAnswer = @json(!empty($question['answer']));
+            let jsHasVote = @json(isset($question['vote']) && (int) $question['vote'] !== 0);
+            const questionIdForActions = @json($question['id']);
+
+            const questionActionButtonsContainer = document.getElementById('question-action-buttons-container');
+
+            // Fungsi untuk menampilkan/menyembunyikan tombol aksi pertanyaan
+            function updateQuestionActionButtonsVisibility() {
+                if (!questionActionButtonsContainer || !jsIsQuestionOwner) {
+                    if (questionActionButtonsContainer) questionActionButtonsContainer.innerHTML =
+                        ''; // Kosongkan jika bukan owner
+                    return;
+                }
+
+                if (!jsHasAnswer && !jsHasVote) {
+                    // Jika tombol belum ada (karena kondisi awal false), buat dan tambahkan
+                    if (!questionActionButtonsContainer.querySelector('.edit-question-button')) {
+                        questionActionButtonsContainer.innerHTML = `
+                    <button data-question-id="${questionIdForActions}"
+                        class="action-button edit-question-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </button>
+                    <button data-question-id="${questionIdForActions}"
+                        class="action-button delete-question-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </button>
+                `;
+                        // Jika tombol edit/delete memiliki event listener sendiri, pasang lagi di sini
+                        // attachEditButtonListener();
+                        // attachDeleteButtonListener();
+                    }
+                } else {
+                    // Jika kondisi tidak terpenuhi, kosongkan container tombol
+                    questionActionButtonsContainer.innerHTML = '';
+                }
+            }
+
+            if (document.getElementById('question-action-buttons-container')) {
+                updateQuestionActionButtonsVisibility(); // Panggilan awal untuk pertanyaan
+            }
+
+            function updateAnswerActionButtonsVisibility(answerId) {
+                const answerItemElement = document.getElementById(`answer-item-${answerId}`);
+                // if (!answerItemElement) {
+                //     console.error(`Answer item element with ID answer-item-${answerId} not found.`);
+                //     return;
+                // }
+
+                const isOwner = answerItemElement.dataset.isOwner === 'true';
+                const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
+                const isVerified = answerItemElement.dataset.isVerified === 'true';
+
+                const container = document.getElementById(`answer-action-buttons-container-${answerId}`);
+                if (!container) {
+                    console.error(`Action button container for answer ${answerId} not found.`);
+                    return;
+                }
+
+                if (isOwner && !isVerified && voteCount === 0) {
+                    // Cek apakah tombol sudah ada untuk menghindari duplikasi listener jika tidak menghapus total
+                    if (!container.querySelector('.edit-answer-button')) {
+                        // Tombol Edit: Menggunakan URL dari route Laravel
+                        const editUrl = "{{ route('user.answers.edit', ['answerId' => ':answerId']) }}".replace(
+                            ':answerId', answerId);
+
+                        container.innerHTML = `
+                    <a href="${editUrl}"
+                       class="action-button edit-answer-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <button
+                        class="delete-answer-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                        data-answer-id="${answerId}">
+                        <i class="fas fa-trash-alt mr-2"></i>Delete
+                    </button>
+                `;
+                        // Pasang listener untuk tombol delete yang baru dibuat
+                        const newDeleteButton = container.querySelector('.delete-answer-button');
+                        if (newDeleteButton) {
+                            attachDeleteAnswerButtonListener(newDeleteButton);
+                        }
+                    }
+                } else {
+                    container.innerHTML = ''; // Kosongkan jika kondisi tidak terpenuhi
+                }
+            }
+
+            // Fungsi untuk memasang listener ke tombol delete jawaban (bisa dipanggil untuk tombol awal & dinamis)
+            function attachDeleteAnswerButtonListener(button) {
+                button.addEventListener('click', function() {
+                    const answerId = this.dataset.answerId;
+                    const answerItemElement = document.getElementById(`answer-item-${answerId}`);
+
+                    Swal.fire({
+                        title: 'Delete Answer?',
+                        text: "This action cannot be undone. Your answer will be permanently deleted.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        // ... (SweetAlert options lainnya)
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                            // Ganti API_BASE_URL dan API_TOKEN jika menggunakan sistem API terpisah
+                            // Jika tidak, gunakan route Laravel biasa untuk delete
+
+
+                            const headers = {
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${API_TOKEN}`,
+                                'X-CSRF-TOKEN': CSRF_TOKEN
+                            };
+
+                            fetch(`${API_BASE_URL}answers/${answerId}`, {
+                                    method: 'DELETE',
+                                    headers: headers
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw err;
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire('Deleted!', data.message ||
+                                            'Your answer has been deleted.', 'success');
+                                        if (answerItemElement) {
+                                            answerItemElement.style.animation =
+                                                'fadeOutUp 0.5s ease forwards';
+                                            setTimeout(() => {
+                                                answerItemElement.remove();
+                                                // Update hitungan jawaban jika perlu
+                                            }, 500);
+                                        }
+                                    } else {
+                                        Swal.fire('Error!', data.message ||
+                                            'Could not delete the answer.', 'error');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error deleting answer:', error);
+                                    Swal.fire('Request Failed!', 'An error occurred.', 'error');
+                                });
+                        }
+                    });
+                });
+            }
+
+            // Pasang listener ke tombol delete jawaban yang sudah ada saat halaman dimuat
+            document.querySelectorAll('.delete-answer-button').forEach(button => {
+                attachDeleteAnswerButtonListener(button);
+            });
+
             const submitButton = document.getElementById("submitAnswer-btn");
             const textArea = document.getElementById('answer-textArea');
-            const fileInput = document.getElementById("question-img");
+            // const fileInput = document.getElementById("question-img");
 
             function generateVerifyBlockHtml(answerId, isQuestionOwnerLocal) {
                 const isVerifiedForNewAnswer = false;
@@ -660,10 +926,6 @@
                         .then(data => {
                             submitButton.innerHTML = originalButtonText;
                             submitButton.disabled = false;
-
-
-
-
                             if (data.success) {
                                 // Clear form
                                 textArea.value = '';
@@ -675,6 +937,11 @@
                                     imagePreviewsContainer.classList.add('hidden');
                                 }
 
+                                jsHasAnswer =
+                                    true; // Update state karena pertanyaan sekarang memiliki jawaban
+                                updateQuestionActionButtonsVisibility
+                                    (); // Perbarui visibilitas tombol Edit/Delete
+
                                 currentAnswerCount++;
 
                                 const timeAgo = formatTimeAgo(new Date(data.answer.timestamp));
@@ -685,11 +952,22 @@
                                  class="max-w-lg max-h-96 object-contain rounded-lg border">
                          </div>` : '';
 
+                                const isOwnerForNewAnswer =
+                                    true; // Pengguna yang submit adalah pemiliknya
+                                const voteCountForNewAnswer = 0;
+                                const isVerifiedForNewAnswer = false;
                                 const verifyBlockForNewAnswer = generateVerifyBlockHtml(data.answer.id,
                                     jsIsQuestionOwner);
 
                                 const htmlContent = `
-                        <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg flex items-start">
+                       <div class="bg-[var(--bg-secondary)] rounded-lg p-6 shadow-lg"
+                 id="answer-item-${data.answer.id}"   увагу MODIFIED: Tambahkan ID dan data attributes
+                 data-answer-id="${data.answer.id}"
+                 data-is-owner="${isOwnerForNewAnswer ? 'true' : 'false'}"
+                 data-is-verified="${isVerifiedForNewAnswer ? 'true' : 'false'}"
+                 data-vote-count="${voteCountForNewAnswer}">
+
+                <div class="flex items-start">
                             <div class="interaction-section flex flex-col items-center mr-6">
                                 <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="${data.answer.id}">
@@ -731,7 +1009,10 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                            </div>
+                             <div id="answer-action-buttons-container-${data.answer.id}"
+                                class="flex space-x-3 justify-end mt-6"></div>
+                         </div>
                     `;
 
                                 let answerList = document.getElementById('answerList');
@@ -749,7 +1030,21 @@
 
                                 if (answerList) {
                                     answerList.insertAdjacentHTML('beforeend', htmlContent);
+                                    const newAnswerElement = document.getElementById(
+                                        `answer-item-${data.answer.id}`);
 
+                                    // Setelah HTML jawaban baru ditambahkan:
+                                    // 1. Pasang listener untuk tombol vote, comment, dll. pada jawaban baru
+                                    attachAnswerEventListeners(data.answer.id);
+
+                                    // 2. Pasang listener untuk tombol verifikasi BARU
+                                    if (newAnswerElement) {
+                                        const newVerifyToggleButtons = newAnswerElement
+                                            .querySelectorAll('.verify-toggle-button');
+                                        newVerifyToggleButtons.forEach(btn => {
+                                            attachVerifyButtonListener(btn); // PENTING!
+                                        });
+                                    }
                                     const answerHeader = document.querySelector(
                                         '.answer-section h2 span');
                                     if (answerHeader) {
@@ -757,6 +1052,9 @@
                                     }
 
                                     attachAnswerEventListeners(data.answer.id);
+                                    updateAnswerActionButtonsVisibility(data.answer.id);
+
+
                                 }
 
                                 Swal.fire({
@@ -780,128 +1078,130 @@
                                 });
                             }
                         })
-                        .catch(error => {
-                            submitButton.innerHTML = originalButtonText;
-                            submitButton.disabled = false;
-                            console.error('Error:', error);
+                    // .catch(error => {
+                    //     submitButton.innerHTML = originalButtonText;
+                    //     submitButton.disabled = false;
+                    //     console.error('Error:', error);
 
+                    //     Swal.fire({
+                    //         icon: 'error',
+                    //         title: 'Error',
+                    //         text: 'There was a network error. Please try again.',
+                    //     });
+                    // });
+                });
+            }
+            // });
+
+            function escapeHtml(text) {
+                if (typeof text !== 'string') return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function formatTimeAgo(date) {
+                const now = new Date();
+                const diffInSeconds = Math.floor((now - date) / 1000);
+
+                if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+                if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+                if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+                return `${Math.floor(diffInSeconds / 86400)} days ago`;
+            }
+
+            function attachAnswerEventListeners(answerId) {
+                const commentBtn = document.querySelector(`#submit-comment-${answerId}`).parentElement
+                    .previousElementSibling.lastElementChild;
+                if (commentBtn && commentBtn.classList.contains('comment-btn')) {
+                    commentBtn.addEventListener('click', () => {
+                        const parentDiv = commentBtn.parentElement;
+                        const commentBox = parentDiv?.nextElementSibling;
+                        commentBox.classList.toggle('hidden');
+                    });
+                }
+
+                const upVoteBtn = document.querySelector(`[data-answer-id="${answerId}"].upVoteAnswer`);
+                const downVoteBtn = document.querySelector(`[data-answer-id="${answerId}"].downVoteAnswer`);
+
+                if (upVoteBtn) {
+                    upVoteBtn.addEventListener('click', () => handleVoteA(true, answerId));
+                }
+                if (downVoteBtn) {
+                    downVoteBtn.addEventListener('click', () => handleVoteA(false, answerId));
+                }
+
+                const submitCommentButton = document.getElementById(`submit-comment-${answerId}`);
+                if (submitCommentButton) {
+                    submitCommentButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+
+                        const commentTextArea = document.getElementById(`answer-comment-${answerId}`);
+                        const commentText = commentTextArea.value.trim();
+
+                        if (commentText === '') {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Error',
-                                text: 'There was a network error. Please try again.',
+                                title: 'Oops...',
+                                text: 'Please write a comment!',
                             });
-                        });
-                });
-            }
-        });
+                        } else {
+                            const formData = new FormData();
+                            formData.append('comment', commentText);
+                            formData.append('answer_id', answerId);
 
-        function escapeHtml(text) {
-            if (typeof text !== 'string') return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+                            fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`
+                                    .replace('aaa',
+                                        answerId), {
+                                        method: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                        },
+                                        body: formData,
+                                    })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Comment Submitted!',
+                                            text: 'Your comment has been successfully posted.',
+                                        });
 
-        function formatTimeAgo(date) {
-            const now = new Date();
-            const diffInSeconds = Math.floor((now - date) / 1000);
+                                        const commentBox = commentTextArea.closest('.comment-box');
+                                        if (commentBox) {
+                                            commentBox.classList.add('hidden');
+                                        }
+                                        commentTextArea.value = '';
 
-            if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
-            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-            return `${Math.floor(diffInSeconds / 86400)} days ago`;
-        }
+                                        const answerContainer = document.querySelector(
+                                            `[data-answer-id="${answerId}"]`).closest(
+                                            '.bg-\\[var\\(--bg-secondary\\)\\]');
 
-        function attachAnswerEventListeners(answerId) {
-            const commentBtn = document.querySelector(`#submit-comment-${answerId}`).parentElement
-                .previousElementSibling.lastElementChild;
-            if (commentBtn && commentBtn.classList.contains('comment-btn')) {
-                commentBtn.addEventListener('click', () => {
-                    const parentDiv = commentBtn.parentElement;
-                    const commentBox = parentDiv?.nextElementSibling;
-                    commentBox.classList.toggle('hidden');
-                });
-            }
+                                        let commentsSection = answerContainer.querySelector(
+                                            '.answer-comments-section');
 
-            const upVoteBtn = document.querySelector(`[data-answer-id="${answerId}"].upVoteAnswer`);
-            const downVoteBtn = document.querySelector(`[data-answer-id="${answerId}"].downVoteAnswer`);
-
-            if (upVoteBtn) {
-                upVoteBtn.addEventListener('click', () => handleVote(true, answerId));
-            }
-            if (downVoteBtn) {
-                downVoteBtn.addEventListener('click', () => handleVote(false, answerId));
-            }
-
-            const submitCommentButton = document.getElementById(`submit-comment-${answerId}`);
-            if (submitCommentButton) {
-                submitCommentButton.addEventListener('click', (event) => {
-                    event.preventDefault();
-
-                    const commentTextArea = document.getElementById(`answer-comment-${answerId}`);
-                    const commentText = commentTextArea.value.trim();
-
-                    if (commentText === '') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Please write a comment!',
-                        });
-                    } else {
-                        const formData = new FormData();
-                        formData.append('comment', commentText);
-                        formData.append('answer_id', answerId);
-
-                        fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`.replace('aaa',
-                                answerId), {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                                },
-                                body: formData,
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Comment Submitted!',
-                                        text: 'Your comment has been successfully posted.',
-                                    });
-
-                                    const commentBox = commentTextArea.closest('.comment-box');
-                                    if (commentBox) {
-                                        commentBox.classList.add('hidden');
-                                    }
-                                    commentTextArea.value = '';
-
-                                    const answerContainer = document.querySelector(
-                                        `[data-answer-id="${answerId}"]`).closest(
-                                        '.bg-\\[var\\(--bg-secondary\\)\\]');
-
-                                    let commentsSection = answerContainer.querySelector(
-                                        '.answer-comments-section');
-
-                                    if (!commentsSection) {
-                                        commentsSection = document.createElement('div');
-                                        commentsSection.className =
-                                            'answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]';
-                                        commentsSection.innerHTML = `
+                                        if (!commentsSection) {
+                                            commentsSection = document.createElement('div');
+                                            commentsSection.className =
+                                                'answer-comments-section mt-6 pt-4 border-t border-[var(--border-color)]';
+                                            commentsSection.innerHTML = `
                                 <h4 class="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center">
                                     <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
                                     Comments (1)
                                 </h4>
                                 <div class="space-y-3"></div>
                             `;
-                                        const flexGrowDiv = answerContainer.querySelector('.flex-grow');
-                                        flexGrowDiv.appendChild(commentsSection);
-                                    }
+                                            const flexGrowDiv = answerContainer.querySelector(
+                                                '.flex-grow');
+                                            flexGrowDiv.appendChild(commentsSection);
+                                        }
 
-                                    const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
-                                    const commentDiv = document.createElement('div');
-                                    commentDiv.className =
-                                        'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
-                                    commentDiv.innerHTML = `
+                                        const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
+                                        const commentDiv = document.createElement('div');
+                                        commentDiv.className =
+                                            'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
+                                        commentDiv.innerHTML = `
                             <div class="flex items-start">
                                 <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.comment.username)}&background=random" 
                                      alt="${data.comment.username}"
@@ -922,54 +1222,53 @@
                             </div>
                         `;
 
-                                    const commentsList = commentsSection.querySelector('.space-y-3');
-                                    commentsList.appendChild(commentDiv);
+                                        const commentsList = commentsSection.querySelector(
+                                            '.space-y-3');
+                                        commentsList.appendChild(commentDiv);
 
-                                    const commentsHeader = commentsSection.querySelector('h4');
-                                    const currentCount = commentsSection.querySelectorAll('.answer-comment')
-                                        .length;
-                                    commentsHeader.innerHTML = `
+                                        const commentsHeader = commentsSection.querySelector('h4');
+                                        const currentCount = commentsSection.querySelectorAll(
+                                                '.answer-comment')
+                                            .length;
+                                        commentsHeader.innerHTML = `
                             <i class="fa-solid fa-comments mr-2 text-[var(--accent-tertiary)]"></i>
                             Comments (${currentCount})
                         `;
 
-                                    const commentButton = answerContainer.querySelector('.comment-btn span');
-                                    if (commentButton) {
-                                        commentButton.textContent = `${currentCount} Comments`;
-                                    }
+                                        const commentButton = answerContainer.querySelector(
+                                            '.comment-btn span');
+                                        if (commentButton) {
+                                            commentButton.textContent = `${currentCount} Comments`;
+                                        }
 
-                                    commentDiv.style.opacity = '0';
-                                    commentDiv.style.transform = 'translateY(-10px)';
-                                    setTimeout(() => {
-                                        commentDiv.style.transition = 'all 0.3s ease-in-out';
-                                        commentDiv.style.opacity = '1';
-                                        commentDiv.style.transform = 'translateY(0)';
-                                    }, 100);
-                                } else {
+                                        commentDiv.style.opacity = '0';
+                                        commentDiv.style.transform = 'translateY(-10px)';
+                                        setTimeout(() => {
+                                            commentDiv.style.transition =
+                                                'all 0.3s ease-in-out';
+                                            commentDiv.style.opacity = '1';
+                                            commentDiv.style.transform = 'translateY(0)';
+                                        }, 100);
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: data.message,
+                                        });
+                                    }
+                                })
+                                .catch(error => {
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
-                                        text: data.message,
+                                        text: 'An unexpected error occurred.',
                                     });
-                                }
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'An unexpected error occurred.',
+                                    console.log(error);
                                 });
-                                console.log(error);
-                            });
-                    }
-                });
+                        }
+                    });
+                }
             }
-        }
-    </script>
-
-    {{-- logic for submitting comment for question --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
             const submitCommentButton = document.getElementById("qComment-btn");
 
             submitCommentButton.addEventListener('click', (event) => {
@@ -1085,11 +1384,11 @@
                         });
                 }
             });
-        });
+            // });
 
-        // COMMENT DI ANSWERRRR
+            // COMMENT DI ANSWERRRR
 
-        document.addEventListener('DOMContentLoaded', () => {
+            // document.addEventListener('DOMContentLoaded', () => {
             const submitCommentButtons = document.querySelectorAll('[id^="submit-comment-"]');
 
             submitCommentButtons.forEach(button => {
@@ -1244,8 +1543,11 @@
 
             const apiBaseUrl = (("{{ env('API_URL') }}" || window.location.origin) + '/').replace(/\/+$/, '/');
             const apiToken = "{{ session('token') }}"
-            document.querySelectorAll('.verify-toggle-button').forEach(button => {
-                button.addEventListener('click', function() {
+
+            function attachVerifyButtonListener(buttonElement) {
+                const apiToken = "{{ session('token') }}"; // Pastikan ini juga sesuai
+
+                buttonElement.addEventListener('click', function() {
                     const answerId = this.dataset.answerId;
                     const currentVerifiedStatus = parseInt(this.dataset.currentVerified);
                     const newVerifiedStatus = currentVerifiedStatus === 0 ? 1 : 0;
@@ -1253,8 +1555,9 @@
                     const actionText = newVerifiedStatus === 1 ? 'verify' : 'un-verify';
                     const iconElement = document.getElementById(`verify-icon-${answerId}`);
                     const textElement = document.getElementById(`verify-text-${answerId}`);
-                    const allToggleButtonsForThisAnswer = document.querySelectorAll(
-                        `.verify-toggle-button[data-answer-id="${answerId}"]`);
+                    // const allToggleButtonsForThisAnswer = document.querySelectorAll( // Tidak digunakan lagi, bisa dihapus jika tidak ada referensi lain
+                    //     `.verify-toggle-button[data-answer-id="${answerId}"]`);
+
                     Swal.fire({
                         title: 'Are you sure?',
                         text: `You are about to ${actionText} this answer.`,
@@ -1265,13 +1568,13 @@
                         confirmButtonText: `Yes, ${actionText} it!`
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            fetch(`${apiBaseUrl}answers/${answerId}/updatePartial`, {
+                            fetch(`${apiBaseUrl}answers/${answerId}/updatePartial`, { // Gunakan apiBaseUrl
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
                                         'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                        'Authorization': `Bearer ${apiToken}`
+                                        'X-CSRF-TOKEN': "{{ csrf_token() }}", // Gunakan CSRF_TOKEN global
+                                        'Authorization': `Bearer ${apiToken}` // Gunakan apiToken
                                     },
                                     body: JSON.stringify({
                                         verified: newVerifiedStatus
@@ -1286,45 +1589,51 @@
                                     return response.json();
                                 })
                                 .then(data => {
-                                    if (data.success || data.status ===
-                                        'success') {
+                                    if (data.success || data.status === 'success') {
+                                        const answerItemElement = document.getElementById(
+                                            `answer-item-${answerId}`);
+                                        if (answerItemElement) {
+                                            // Ambil status verified baru dari response server, atau toggle jika tidak ada di response
+                                            const actualNewVerifiedStatus = parseInt(data.answer
+                                                ?.verified ?? (currentVerifiedStatus === 0 ?
+                                                    1 : 0));
+                                            answerItemElement.dataset.isVerified =
+                                                actualNewVerifiedStatus === 1 ? 'true' :
+                                                'false';
+
+                                            // Update semua tombol toggle untuk answer ini
+                                            document.querySelectorAll(
+                                                `.verify-toggle-button[data-answer-id="${answerId}"]`
+                                                ).forEach(btn => {
+                                                btn.dataset.currentVerified =
+                                                    actualNewVerifiedStatus;
+                                            });
+                                        }
+                                        updateAnswerActionButtonsVisibility(
+                                        answerId); // Update tombol edit/delete jika perlu
                                         Swal.fire(
                                             `${newVerifiedStatus === 1 ? 'Verified!' : 'Un-verified!'}`,
-                                            `The answer has been ${actionText}d.`,
+                                            `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`, // pastikan actionText sesuai
                                             'success'
                                         );
 
                                         if (iconElement) {
                                             if (newVerifiedStatus === 1) {
-                                                iconElement.classList.remove(
-                                                    'fa-regular');
+                                                iconElement.classList.remove('fa-regular');
                                                 iconElement.classList.add('fa-solid');
-                                                iconElement.classList.remove(
-                                                    'cursor-pointer'
-                                                );
+                                                iconElement.classList.remove('cursor-pointer');
                                             } else {
-                                                iconElement.classList.remove(
-                                                    'fa-solid');
+                                                iconElement.classList.remove('fa-solid');
                                                 iconElement.classList.add('fa-regular');
-                                                iconElement.classList.add(
-                                                    'cursor-pointer'
-                                                );
+                                                iconElement.classList.add('cursor-pointer');
                                             }
                                         }
                                         if (textElement) {
-                                            textElement.textContent =
-                                                newVerifiedStatus === 1 ?
+                                            textElement.textContent = newVerifiedStatus === 1 ?
                                                 'Verified Answer' : 'Verify Answer';
                                         }
-
-                                        allToggleButtonsForThisAnswer.forEach(btn => {
-                                            btn.dataset.currentVerified =
-                                                newVerifiedStatus;
-                                        });
-
-                                        const helperTextElement = document
-                                            .querySelector(
-                                                `#answer-verify-block-${answerId} span.text-gray-500`
+                                        const helperTextElement = document.querySelector(
+                                            `#answer-verify-block-${answerId} span.text-gray-500`
                                             );
                                         if (helperTextElement) {
                                             helperTextElement.textContent =
@@ -1333,12 +1642,9 @@
                                                 '(Click icon or text to verify)';
                                         }
                                     } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            data.message ||
-                                            'Could not update verification status.',
-                                            'error'
-                                        );
+                                        Swal.fire('Error!', data.message ||
+                                            'Could not update verification status.', 'error'
+                                            );
                                     }
                                 })
                                 .catch(error => {
@@ -1350,23 +1656,29 @@
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }
-                                    Swal.fire(
-                                        'Request Failed!',
-                                        errorMessage,
-                                        'error'
-                                    );
+                                    Swal.fire('Request Failed!', errorMessage, 'error');
                                 });
                         }
                     });
                 });
+            }
+
+            // Pasang listener ke tombol verifikasi yang SUDAH ADA saat halaman dimuat
+            document.querySelectorAll('.verify-toggle-button').forEach(button => {
+                attachVerifyButtonListener(button);
             });
+            if (document.getElementById('answerList')) {
+                document.querySelectorAll('[id^="answer-item-"]').forEach(answerElement => {
+                    updateAnswerActionButtonsVisibility(answerElement.dataset.answerId);
+                });
+            }
 
             const questionId = @json($question['id']);
 
-            const upVoteButton = document.getElementById('upVoteQuestion');
-            const downVoteButton = document.getElementById('downVoteQuestion');
+            const upVoteButtonQ = document.getElementById('upVoteQuestion');
+            const downVoteButtonQ = document.getElementById('downVoteQuestion');
 
-            const handleVote = (voteType) => {
+            const handleVoteQ = (voteType) => {
                 const formData = new FormData();
                 formData.append('vote', voteType);
                 formData.append('question_id', questionId);
@@ -1394,7 +1706,76 @@
                         if (data.success) {
                             const voteTotal = document.getElementById('voteTotal');
                             voteTotal.textContent = `${data.voteUpdated}`;
+                            // 1. Perbarui state jsHasVote
+                            jsHasVote = (parseInt(data.voteUpdated) !==
+                                0); // Jika voteUpdated tidak 0, berarti ada vote
 
+                            // 2. Panggil fungsi untuk mengevaluasi ulang visibilitas tombol
+                            updateQuestionActionButtonsVisibility();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message,
+                            });
+                        }
+                    })
+                // .catch(error => {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Unexpected Error',
+                //         text: 'An unexpected error occurred.',
+                //     });
+                // });
+            };
+
+            upVoteButtonQ.addEventListener('click', () => handleVoteQ(true));
+            downVoteButtonQ.addEventListener('click', () => handleVoteQ(false));
+
+            // Vote Answer
+            const upVoteButtonsA = document.querySelectorAll('.upVoteAnswer');
+            const downVoteButtonsA = document.querySelectorAll('.downVoteAnswer');
+
+            const handleVoteA = (voteType, id) => {
+
+                const formData = new FormData();
+                formData.append('vote', voteType);
+                formData.append('answer_id', id);
+                Swal.fire({
+                    title: '',
+                    background: 'transparent',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                fetch(`{{ route('answer.vote') }}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        },
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        if (data.success) {
+                            const answerItemElement = document.getElementById(`answer-item-${id}`);
+                            // Update the vote count
+                            const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
+                                .nextElementSibling;
+                            if (answerItemElement) {
+                                const voteCountElement = answerItemElement.querySelector(
+                                    '.thumbs-up-count');
+                                if (voteCountElement) {
+                                    voteCountElement.textContent = data.voteAnswerUpdated;
+                                    answerItemElement.dataset.voteCount = data
+                                        .voteAnswerUpdated; // Update data attribute
+                                }
+                            }
+                            updateAnswerActionButtonsVisibility(id);
                             // Swal.fire({
                             //     icon: 'success',
                             //     title: 'Vote Submitted!',
@@ -1417,80 +1798,18 @@
                 // });
             };
 
-            upVoteButton.addEventListener('click', () => handleVote(true));
-            downVoteButton.addEventListener('click', () => handleVote(false));
-        });
-
-        // Vote Answer
-        const upVoteButtons = document.querySelectorAll('.upVoteAnswer');
-        const downVoteButtons = document.querySelectorAll('.downVoteAnswer');
-
-        const handleVote = (voteType, id) => {
-
-            const formData = new FormData();
-            formData.append('vote', voteType);
-            formData.append('answer_id', id);
-            Swal.fire({
-                title: '',
-                background: 'transparent',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            fetch(`{{ route('answer.vote') }}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                    },
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    Swal.close();
-                    if (data.success) {
-                        // Update the vote count
-                        const voteCountElement = document.querySelector(`[data-answer-id="${id}"]`)
-                            .nextElementSibling;
-                        if (voteCountElement) {
-                            voteCountElement.textContent = `${data.voteAnswerUpdated}`;
-                        }
-
-                        // Swal.fire({
-                        //     icon: 'success',
-                        //     title: 'Vote Submitted!',
-                        //     text: 'Your vote has been successfully recorded.',
-                        // });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message,
-                        });
-                    }
-                })
-                .catch(error => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Unexpected Error',
-                        text: 'An unexpected error occurred.',
-                    });
+            upVoteButtonsA.forEach(button => {
+                button.addEventListener('click', () => {
+                    const answerId = button.getAttribute('data-answer-id');
+                    handleVoteA(true, answerId);
                 });
-        };
-
-        upVoteButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const answerId = button.getAttribute('data-answer-id');
-                handleVote(true, answerId);
             });
-        });
 
-        downVoteButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const answerId = button.getAttribute('data-answer-id');
-                handleVote(false, answerId);
+            downVoteButtonsA.forEach(button => {
+                button.addEventListener('click', () => {
+                    const answerId = button.getAttribute('data-answer-id');
+                    handleVoteA(false, answerId);
+                });
             });
         });
     </script>

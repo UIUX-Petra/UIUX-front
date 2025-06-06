@@ -27,14 +27,14 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['isLogin'])->group(function () {
-    Route::get('/popular', [MainController::class, 'popular'])->name('popular');
+    Route::get('/', [MainController::class, 'popular'])->name('popular');
     Route::get('/ask/{questionId?}', [MainController::class, 'askPage'])->name('askPage');
     Route::post('/questions/{id}/save-edit', [QuestionController::class, 'saveEditedQuestion'])->name('question.saveEdit');
     Route::get('/viewUser/{email}', [MainController::class, 'viewOther'])->name('viewOthers');
 
     // Route::get('/{id}', [UserController::class, 'viewOther']);
     Route::post('/follow', [UserController::class, 'nembakFollow'])->name('nembakFollow');
-    Route::get('/', [MainController::class, 'home'])->name('home');
+    // Route::get('/', [MainController::class, 'home'])->name('home');
 
     Route::get('/myProfile', [MainController::class, 'seeProfile'])->name('seeProfile');
     // routes/web.php

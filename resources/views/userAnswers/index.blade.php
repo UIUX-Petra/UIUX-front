@@ -450,7 +450,7 @@
                                             <i class="fas fa-trash-alt mr-2"></i>Delete
                                         </button>
                                     </div>
-                                @else
+                                {{-- @else
                                     @php
                                         $tooltipMessage = '';
                                         if ($answer['votes_count'] !== 0) {
@@ -469,7 +469,7 @@
                                             data-answer-id="{{ $answer['id'] }}" disabled>
                                             <i class="fas fa-trash-alt mr-2"></i>Delete
                                         </button>
-                                    </div>
+                                    </div> --}}
                                 @endif
                             @endif
                         </div>

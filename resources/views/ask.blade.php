@@ -968,7 +968,7 @@
                                         if (res.data && res.data.id) {
                                             window.location.href = "{{ route('user.questions.list', ['id'=>'id']) }}".replace('id',QUESTION_TO_EDIT.user.id);
                                         } else {
-                                            window.location.href = "{{ route('home') }}";
+                                            window.location.href = "{{ route('popular') }}";
                                         }
                                     });
                                 } else {

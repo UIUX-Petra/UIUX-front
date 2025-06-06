@@ -87,6 +87,7 @@ class MainController extends Controller
     // dd($data);
     $data['image'] = $currUser['image'];
     $data['histories'] = $currUser['histories'];
+    // dd($data);
     return view('profile', $data);
   }
 
@@ -142,20 +143,19 @@ class MainController extends Controller
   public function userQuestions($id)
   {
     $data['user'] = $this->userController->showUserQuestionsPage($id);
-    // dd($data['user']);
     $data['username'] = $data['user']['username'];
     $data['image'] = $data['user']['image'];
     $data['id'] = $data['user']['id'];
     $data['title'] = htmlspecialchars($data['user']['username'] ?? 'User') . "'s Questions";
+    $currUser = $this->userController->getBasicUserByEmail(session('email'));
     if (session('email') != $data['user']['email']) {
-      $currUser = $this->userController->getBasicUserByEmail(session('email'));
       $data['viewer'] = $currUser;
       $data['username'] = $currUser['username'];
       $data['image'] = $currUser['image'];
       $data['id'] = $currUser['id'];
       $data['title'] = htmlspecialchars($currUser['username'] ?? 'User') . "'s Questions";
-      $data['histories'] = $currUser['histories'];
     }
+    $data['histories'] = $currUser['histories'];
     return view('userQuestions', $data);
   }
 
@@ -264,7 +264,7 @@ class MainController extends Controller
       'username' => $user['username'],
       'id' => $user['id'],
       'image' => $user['image'],
-      'title' => 'Popular Questions',
+      'title' => 'Home',
       'questions' => $questionsPaginator,
       'tags' => $tags,
       'initialSortBy' => $request->input('sort_by', 'latest'),
@@ -285,9 +285,10 @@ class MainController extends Controller
     $data['username'] = $currUser['username'];
     $data['image'] = $currUser['image'];
     $data['title'] = 'View Answers';
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $currUser['image'];
+    // $currUser = $this->userController->getUserByEmail(session('email'));
+    // $data['image'] = $currUser['image'];
     $data['id'] = $currUser['id'];
+    $data['email'] = $currUser['email'];
     // dd($data);
     Log::info($data['question']);
 

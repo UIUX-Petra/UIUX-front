@@ -256,9 +256,9 @@
         }
 
         /* .tag-filter-select:hover {
-                                border-color: #f59e0b;
-                                color: #f59e0b;
-                            } */
+                                    border-color: #f59e0b;
+                                    color: #f59e0b;
+                                } */
 
         .tag-filter-select:focus {
             border-color: #f59e0b;
@@ -310,10 +310,9 @@
             });
         </script>
     @endif
-    {{-- @include('utils.background2') --}}
 
     <!-- Header Section -->
-    <div
+    {{-- <div
         class=" bg-transparent rounded-lg p-6 px-8 max-w-5xl mt-6 mb-6 flex justify-start items-start space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
         <!-- Decorative fire elements -->
         <div
@@ -335,6 +334,32 @@
                 Hottest discussions voted by the community. These questions have received the most engagement.
             </p>
         </div>
+    </div> --}}
+
+    <div
+        class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.2)] to-[rgba(128,237,153,0.2)] blur-2xl">
+    </div>
+    <div
+        class="bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start items-start my-6 flex flex-col md:flex-row md:items-center md:space-x-6 backdrop-blur-sm relative overflow-hidden">
+        <div class="flex flex-col pl-3 z-10">
+            @if (session()->has('email'))
+                <div class="mb-4">
+                    <div class="cal-sans-regular text-xl lg:text-2xl text-[var(--text-secondary)] mb-1 tracking-wide">
+                        Welcome,
+                    </div>
+                    <h1
+                        class="cal-sans-regular text-4xl lg:text-6xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
+                        {{ $username }}!
+                    </h1>
+                </div>
+                <p class="text-[var(--text-muted)] text-lg pl-0.5 leading-relaxed max-w-xl">
+                    <span class="font-semibold text-[#3cac9d]">Ask questions</span>.
+                    <span class="font-semibold text-[#57CC99]">share answers</span>,
+                    <span class="font-semibold text-[#6bce82]">learn together</span>, with
+                    fellow <span class="font-bold">Petranesian Informates</span>!
+                </p>
+            @endif
+        </div>
     </div>
 
     <div class="max-w-5xl justify-start items-start px-8 mt-6 mb-8">
@@ -350,7 +375,7 @@
             <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
                 <a href="#" data-sortby="latest"
                     class="filter-button {{ ($initialSortBy ?? 'latest') == 'latest' ? 'active' : '' }}">
-                    <i class="fa-solid fa-bolt"></i> New Questions
+                    <i class="fa-solid fa-bolt"></i> Most Recent
                 </a>
                 <a href="#" data-sortby="views"
                     class="filter-button {{ ($initialSortBy ?? '') == 'views' ? 'active' : '' }}">
@@ -371,60 +396,12 @@
                             </option>
                         @endforeach
                     @else
-                        <option value="" disabled>No tags available</option>
+                        <option value="" disabled>No subjects available</option>
                     @endif
                 </select>
             </div>
         </div>
     </div>
-{{-- 
-    <div class="max-w-5xl mx-auto px-8 mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div
-                class="bg-[var(--bg-card)] rounded-lg p-5 text-center border border-[var(--border-color)] hover:border-[#f59e0b] transition-all duration-200">
-                <div class="flex justify-center mb-3">
-                    <div class="p-3 rounded-full bg-[rgba(245,158,11,0.15)]">
-                        <i class="fa-solid fa-trophy text-2xl text-amber-500"></i>
-                    </div>
-                </div>
-                <h4 class="text-lg font-medium mb-1">Top Contributor</h4>
-                <p class="text-sm text-[var(--text-muted)] mb-2">This Month</p>
-                <div class="flex items-center justify-center">
-                    <img src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($username ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                        class="w-8 h-8 rounded-full mr-2">
-                    <span class="font-medium">User123</span>
-                </div>
-            </div>
-
-            <div
-                class="bg-[var(--bg-card)] rounded-lg p-5 text-center border border-[var(--border-color)] hover:border-[#f59e0b] transition-all duration-200">
-                <div class="flex justify-center mb-3">
-                    <div class="p-3 rounded-full bg-[rgba(245,158,11,0.15)]">
-                        <i class="fa-solid fa-star text-2xl text-amber-500"></i>
-                    </div>
-                </div>
-                <h4 class="text-lg font-medium mb-1">Most Upvoted Question</h4>
-                <p class="text-sm text-[var(--text-muted)] mb-2">This Week</p>
-                <a href="#" class="font-medium hover:text-[#f59e0b] transition-colors">How to implement sorting
-                    algorithms?</a>
-            </div>
-
-            <div
-                class="bg-[var(--bg-card)] rounded-lg p-5 text-center border border-[var(--border-color)] hover:border-[#f59e0b] transition-all duration-200">
-                <div class="flex justify-center mb-3">
-                    <div class="p-3 rounded-full bg-[rgba(245,158,11,0.15)]">
-                        <i class="fa-solid fa-fire-flame-curved text-2xl text-amber-500"></i>
-                    </div>
-                </div>
-                <h4 class="text-lg font-medium mb-1">Trending Topic</h4>
-                <p class="text-sm text-[var(--text-muted)] mb-2">Right Now</p>
-                <div class="flex flex-wrap justify-center gap-2">
-                    <span class="text-xs px-2 py-1 rounded-full bg-[rgba(245,158,11,0.25)] text-amber-500">Machine
-                        Learning</span>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
     <div class="max-w-7xl justify-start items-start px-8">
         <div class="flex flex-col md:flex-row gap-6">
@@ -520,10 +497,11 @@
                 if (button.dataset.toggleInitialized === 'true') return;
 
                 button.addEventListener('click', function(event) {
-                    event.stopPropagation(); 
+                    event.stopPropagation();
                     const questionId = this.dataset.questionId;
                     const extraTags = document.querySelectorAll(`.extra-tag-${questionId}`);
-                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains('hidden');
+                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains(
+                        'hidden');
 
                     extraTags.forEach(tag => {
                         tag.classList.toggle('hidden', !isCurrentlyHidden);
@@ -544,17 +522,18 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             // Initial calls for elements present on page load
-            initSaveButtons();      // Existing
-            updateSavedIcons();     // Existing
-            updateIconColors();     // Existing
+            initSaveButtons(); // Existing
+            updateSavedIcons(); // Existing
+            updateIconColors(); // Existing
             initClickableQuestionCards(); // New
-            initTagToggles();       // New
+            initTagToggles(); // New
 
             if (typeof Trie === 'undefined') {
                 console.error(
                     'FATAL ERROR: Trie class is not defined. Make sure utils.trie.blade.php is included correctly and defines the Trie class globally.'
                 );
-                const questionsListOutputContainer = document.getElementById('questionsListOutput'); // Assuming this is a typo and meant questionsListContainer
+                const questionsListOutputContainer = document.getElementById(
+                'questionsListOutput'); // Assuming this is a typo and meant questionsListContainer
                 const mainQuestionContainer = document.getElementById('questions-list-ajax-container');
                 if (mainQuestionContainer) {
                     mainQuestionContainer.innerHTML =
@@ -570,7 +549,8 @@
                     mutations.forEach(function(mutation) {
                         if (mutation.attributeName === 'class') {
                             updateIconColors();
-                            updateSavedIcons(); // Good to update saved icon colors on theme change too
+                            updateSavedIcons
+                        (); // Good to update saved icon colors on theme change too
                         }
                     });
                 });
@@ -596,11 +576,13 @@
             function showLoadingSkeleton() {
                 // ... (your existing skeleton logic - no change needed here)
                 if (!questionsListContainer) return;
-                const listContentArea = questionsListContainer.querySelector('#questionsListOutput'); // Assuming content goes here
+                const listContentArea = questionsListContainer.querySelector(
+                '#questionsListOutput'); // Assuming content goes here
                 if (listContentArea) { // Clear only specific content area if it exists
-                     listContentArea.innerHTML = ''; // Clear previous questions
+                    listContentArea.innerHTML = ''; // Clear previous questions
                 } else { // Fallback: clear most of container except pagination
-                    while (questionsListContainer.firstChild && questionsListContainer.firstChild !== paginationLinksContainer) {
+                    while (questionsListContainer.firstChild && questionsListContainer.firstChild !==
+                        paginationLinksContainer) {
                         questionsListContainer.removeChild(questionsListContainer.firstChild);
                     }
                 }
@@ -621,7 +603,8 @@
                 }
                 // Insert skeleton before pagination or at the start of where content should be
                 const targetInsertLocation = listContentArea || questionsListContainer;
-                const insertBeforeElement = listContentArea ? null : paginationLinksContainer; // If listContentArea, append. Else, insert before pagination.
+                const insertBeforeElement = listContentArea ? null :
+                paginationLinksContainer; // If listContentArea, append. Else, insert before pagination.
 
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = skeletonHTML;
@@ -664,26 +647,29 @@
                     const data = await response.json();
 
                     // Determine where to inject the new HTML content
-                    const listContentArea = questionsListContainer.querySelector('#questionsListOutput'); // Ideal target
+                    const listContentArea = questionsListContainer.querySelector(
+                    '#questionsListOutput'); // Ideal target
                     const targetContainer = listContentArea || questionsListContainer; // Fallback
-                    const insertBeforeNode = listContentArea ? null : paginationLinksContainer; // If using listContentArea, append to it. Otherwise, insert before pagination in main container.
+                    const insertBeforeNode = listContentArea ? null :
+                    paginationLinksContainer; // If using listContentArea, append to it. Otherwise, insert before pagination in main container.
 
                     // Clear previous content before injecting new HTML
                     if (listContentArea) {
                         listContentArea.innerHTML = data.html; // Replace content of specific area
                     } else {
-                         // Clear old question cards if not using a dedicated output div
-                        while (targetContainer.firstChild && targetContainer.firstChild !== paginationLinksContainer) {
+                        // Clear old question cards if not using a dedicated output div
+                        while (targetContainer.firstChild && targetContainer.firstChild !==
+                            paginationLinksContainer) {
                             targetContainer.removeChild(targetContainer.firstChild);
                         }
                         const tempContentDiv = document.createElement('div');
                         tempContentDiv.innerHTML = data.html;
                         Array.from(tempContentDiv.children).forEach(contentNode => {
-                             if(insertBeforeNode) {
+                            if (insertBeforeNode) {
                                 targetContainer.insertBefore(contentNode, insertBeforeNode);
-                             } else {
+                            } else {
                                 targetContainer.appendChild(contentNode);
-                             }
+                            }
                         });
                     }
 
@@ -701,26 +687,28 @@
                             searchTerm: currentSearchTerm
                         }, '', historyUrl);
                     }
-                    
+
                     // Re-initialize interactive elements for the new content
                     initSaveButtons();
                     updateSavedIcons();
                     updateIconColors();
                     initClickableQuestionCards(); // Apply to new cards
-                    initTagToggles();           // Apply to new tags
+                    initTagToggles(); // Apply to new tags
 
                 } catch (error) {
                     console.error('Error fetching questions:', error);
-                    const errorTarget = questionsListContainer.querySelector('#questionsListOutput') || questionsListContainer;
+                    const errorTarget = questionsListContainer.querySelector('#questionsListOutput') ||
+                        questionsListContainer;
                     while (errorTarget.firstChild && errorTarget.firstChild !== paginationLinksContainer) {
                         errorTarget.removeChild(errorTarget.firstChild);
                     }
                     const errorDiv = document.createElement('div');
                     errorDiv.className = 'popular-question-card rounded-lg p-8 text-center text-red-500';
                     errorDiv.innerHTML = '<p>Sorry, something went wrong. Please try refreshing the page.</p>';
-                    
-                    const insertBeforeErrorNode = questionsListContainer.querySelector('#questionsListOutput') ? null : paginationLinksContainer;
-                    if(insertBeforeErrorNode) {
+
+                    const insertBeforeErrorNode = questionsListContainer.querySelector('#questionsListOutput') ?
+                        null : paginationLinksContainer;
+                    if (insertBeforeErrorNode) {
                         errorTarget.insertBefore(errorDiv, insertBeforeErrorNode);
                     } else {
                         errorTarget.appendChild(errorDiv);
@@ -731,7 +719,7 @@
             }
 
             function initializePaginationLinks() {
-            // ... (your existing pagination logic - no change needed here)
+                // ... (your existing pagination logic - no change needed here)
                 if (!paginationLinksContainer) return;
                 paginationLinksContainer.querySelectorAll('a[href]').forEach(link => {
                     if (link.getAttribute('aria-current') === 'page' || link.closest(
@@ -747,7 +735,7 @@
             initializePaginationLinks(); // Initial call for any pre-rendered pagination
 
             sortByButtons.forEach(button => {
-            // ... (your existing sort button logic - no change needed here)
+                // ... (your existing sort button logic - no change needed here)
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
                     const newSortBy = this.dataset.sortby;
@@ -762,8 +750,8 @@
             });
 
             if (tagFilterSelect) {
-            // ... (your existing tag filter logic - no change needed here)
-                 tagFilterSelect.addEventListener('change', function() {
+                // ... (your existing tag filter logic - no change needed here)
+                tagFilterSelect.addEventListener('change', function() {
                     currentFilterTag = this.value;
                     currentPage = 1;
                     fetchQuestions(currentPage);
@@ -772,7 +760,7 @@
 
             let searchDebounceTimeout;
             if (searchInput) {
-            // ... (your existing search input logic - no change needed here)
+                // ... (your existing search input logic - no change needed here)
                 searchInput.addEventListener('input', function() {
                     clearTimeout(searchDebounceTimeout);
                     searchDebounceTimeout = setTimeout(() => {
@@ -784,7 +772,7 @@
             }
 
             window.addEventListener('popstate', function(event) {
-            // ... (your existing popstate logic - no change needed here)
+                // ... (your existing popstate logic - no change needed here)
                 const state = event.state || {};
                 const paramsFromUrl = new URLSearchParams(window.location.search);
 
@@ -801,7 +789,7 @@
             });
 
             questionsListContainer.addEventListener('click', function(event) {
-            // ... (your existing filter clear logic - no change needed here)
+                // ... (your existing filter clear logic - no change needed here)
                 if (event.target.matches('a.filter-clear-link')) {
                     event.preventDefault();
                     currentFilterTag = '';
@@ -824,8 +812,8 @@
 
             const communityCards = document.querySelectorAll('.grid > div');
             if (communityCards) {
-            // ... (your existing community card hover logic - no change needed here)
-                 communityCards.forEach(card => {
+                // ... (your existing community card hover logic - no change needed here)
+                communityCards.forEach(card => {
                     card.addEventListener('mouseenter', function() {
                         this.style.transform = 'translateY(-5px)';
                         this.style.boxShadow = '0 10px 25px rgba(245, 158, 11, 0.1)';
@@ -848,7 +836,7 @@
                 if (button.dataset.saveBtnInitialized === 'true') return;
 
                 const newButton = button.cloneNode(true);
-                newButton.removeAttribute('onclick'); 
+                newButton.removeAttribute('onclick');
                 button.parentNode.replaceChild(newButton, button);
 
                 newButton.addEventListener('click', function(e) {
@@ -856,7 +844,8 @@
                     e.stopPropagation(); // Crucial to prevent card click
 
                     const icon = this.querySelector('i');
-                    if (icon && icon.classList.contains('fa-solid') && icon.classList.contains('fa-bookmark')) {
+                    if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
+                            'fa-bookmark')) {
                         unsaveQuestion(this);
                     } else {
                         saveQuestion(this);
@@ -865,7 +854,7 @@
                 newButton.dataset.saveBtnInitialized = 'true'; // Mark as initialized
             });
         }
-        
+
         function updateIconColors() { // This function is defined in your original script
             const statsItems = document.querySelectorAll('.stats-item');
             const isLightMode = document.documentElement.classList.contains('light-mode');
@@ -882,61 +871,95 @@
 
 
         function updateSavedIcons() {
-        // ... (your existing updateSavedIcons logic - no change needed here)
+            // ... (your existing updateSavedIcons logic - no change needed here)
             const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
             const isLightMode = document.documentElement.classList.contains('light-mode');
             savedIcons.forEach(icon => {
-                icon.style.color = 'var(--accent-secondary)'; // Simplified as it seems to be the same for both modes
+                icon.style.color =
+                'var(--accent-secondary)'; // Simplified as it seems to be the same for both modes
             });
         }
 
         function unsaveQuestion(btn) {
-        // ... (your existing unsaveQuestion logic - no change needed here)
+            // ... (your existing unsaveQuestion logic - no change needed here)
             const id = btn.getAttribute('data-question-id');
             let formData = new FormData();
             formData.append("question_id", id);
 
-            let loadingToast = Toastify({ text: "Unsaving...", duration: -1, /*...*/ style: { background: "#444" } });
+            let loadingToast = Toastify({
+                text: "Unsaving...",
+                duration: -1,
+                /*...*/ style: {
+                    background: "#444"
+                }
+            });
             loadingToast.showToast();
 
             fetch("{{ route('unsaveQuestion') }}", {
                 method: "POST",
-                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
                 body: formData
             }).then(response => response.json()).then(res => {
                 loadingToast.hideToast();
                 if (res.success) {
-                    Toastify({ text: res.message, duration: 3000, /*...*/ style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
-                    btn.innerHTML = `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        /*...*/ style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                        }
+                    }).showToast();
+                    btn.innerHTML =
+                        `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
                     btn.setAttribute("title", "Save Question");
-                } else { /* Error Toast */ }
-            }).catch(err => { /* Error Toast */ });
+                } else {
+                    /* Error Toast */ }
+            }).catch(err => {
+                /* Error Toast */ });
         }
 
         function saveQuestion(btn) {
-        // ... (your existing saveQuestion logic - no change needed here)
+            // ... (your existing saveQuestion logic - no change needed here)
             const id = btn.getAttribute('data-question-id');
             let formData = new FormData();
             formData.append("question_id", id);
 
-            let loadingToast = Toastify({ text: "Saving...", duration: -1, /*...*/ style: { background: "#444" } });
+            let loadingToast = Toastify({
+                text: "Saving...",
+                duration: -1,
+                /*...*/ style: {
+                    background: "#444"
+                }
+            });
             loadingToast.showToast();
 
             fetch("{{ route('saveQuestion') }}", {
                 method: "POST",
-                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
                 body: formData
             }).then(response => response.json()).then(res => {
                 loadingToast.hideToast();
                 if (res.success) {
-                    Toastify({ text: res.message, duration: 3000, /*...*/ style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        /*...*/ style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                        }
+                    }).showToast();
                     btn.innerHTML = `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
                     btn.setAttribute("title", "Unsave Question");
                     updateSavedIcons(); // Call to ensure new saved icon gets correct styling
                     btn.classList.add('saved-animation');
                     setTimeout(() => btn.classList.remove('saved-animation'), 300);
-                } else { /* Error Toast */ }
-            }).catch(err => { /* Error Toast */ });
+                } else {
+                    /* Error Toast */ }
+            }).catch(err => {
+                /* Error Toast */ });
         }
     </script>
 @endsection

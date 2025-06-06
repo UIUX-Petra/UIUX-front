@@ -487,8 +487,8 @@
                                     class="font-bold cal-sans-regular text-[#fff]">peer <span class="text-[#FFD249]">- to
                                         -
                                     </span> peer?</span><br>Join and explore our community today!</p>
-                            <button
-                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-xl">Make an account</button>
+                            {{-- <button
+                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-xl">Make an account</button> --}}
                         </div>
                         <div
                             class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">

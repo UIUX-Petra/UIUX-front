@@ -171,17 +171,17 @@
                                     @php
                                         $hasAnswer = !empty($question['answer']);
                                         $hasVote = isset($question['vote']) && $question['vote'] !== 0;
-                                        $tooltipMessage =
-                                            $hasAnswer && $hasVote
-                                                ? 'Your question has been answered and voted.'
-                                                : ($hasVote
-                                                    ? 'Your question has been voted.'
-                                                    : ($hasAnswer
-                                                        ? 'Your question has been answered.'
-                                                        : ''));
+                                        // $tooltipMessage =
+                                        //     $hasAnswer && $hasVote
+                                        //         ? 'Your question has been answered and voted.'
+                                        //         : ($hasVote
+                                        //             ? 'Your question has been voted.'
+                                        //             : ($hasAnswer
+                                        //                 ? 'Your question has been answered.'
+                                        //                 : ''));
                                     @endphp
 
-                                    <div class="flex justify-end space-x-3 mt-4" title="{{ $tooltipMessage }}">
+                                    <div class="flex justify-end space-x-3 mt-4">
                                         @if (!$hasAnswer && !$hasVote)
                                             <button data-question-id="{{ $question['id'] }}"
                                                 class="edit-question-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
@@ -189,15 +189,6 @@
                                             </button>
                                             <button data-question-id="{{ $question['id'] }}"
                                                 class="delete-question-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
-                                                <i class="fas fa-trash-alt mr-2"></i>Delete
-                                            </button>
-                                        @else
-                                            <button disabled
-                                                class="disabled:opacity-50 inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg">
-                                                <i class="fas fa-edit mr-2"></i>Edit
-                                            </button>
-                                            <button disabled
-                                                class="disabled:opacity-50 inline-flex items-center px-4 py-2 bg-red-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg">
                                                 <i class="fas fa-trash-alt mr-2"></i>Delete
                                             </button>
                                         @endif

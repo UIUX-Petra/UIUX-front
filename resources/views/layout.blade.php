@@ -24,6 +24,11 @@
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 
+    {{-- google icon --}}
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=light_mode" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=dark_mode" />
     {{-- Animate On Scroll (AOS) --}}
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -38,7 +43,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     {{-- google icon --}}
-    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded" rel="stylesheet">
     <link rel="icon" href="{{ asset('assets/p2p logo.svg') }}" type="image/svg+xml">
 
     {{-- google font --}}
@@ -121,6 +126,14 @@
             background: rgb(255, 79, 79) !important;
         }
 
+        .material-symbols-rounded {
+            font-variation-settings:
+                'FILL' 1,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+
         @keyframes animateText {
             0% {
                 background-position: 0%;
@@ -168,8 +181,8 @@
         }
 
         /* .question-title:hover {
-            color: var(--text-primary);
-        } */
+    color: var(--text-primary);
+    } */
 
         .interaction-icons i {
             color: var(--text-muted);
@@ -247,7 +260,7 @@
 
         .dark-mode {
             /* Background colors */
-            --bg-a: rgba(5, 13, 36, 1);
+            /* --bg-a: rgba(5, 13, 36, 1);
             --bg-b: rgba(16, 26, 61, 1);
             --bg-c: rgba(43, 88, 120, 1);
             --bg-primary: #1C2245;
@@ -257,25 +270,37 @@
             --bg-light: #494e73;
             --bg-card: #1c2246;
             --bg-card-hover: #232753;
+            --bg-input: #0e1337; */
+
+            --bg-a: rgba(5, 13, 36, 1);
+            --bg-b: rgba(16, 26, 61, 1);
+            --bg-c: rgba(43, 88, 120, 1);
+            --bg-primary: #030712;
+            --bg-secondary: #070a13;
+            --bg-tertiary: #0b0e17;
+            --bg-shadow: #32386E;
+            --bg-light: #494e73;
+            --bg-card: #10141E;
+            --bg-card-hover: #1C2029;
             --bg-input: #0e1337;
+
 
             /* Text colors */
             --text-primary: #ffffff;
-            --text-secondary: #d0d9ff;
-            --text-muted: #929fd3;
-            --text-highlight: #80ED99;            
+            --text-secondary: #E5E7EB;
+            --text-muted: #D1D5DC;
+            --text-highlight: #80ED99;
             --text-dark: #101838;
-            --text-tag: #ffffff;
-        
+            --text-tag: #E5E7EB;
+
             /* Accent colors */
-            --accent-primary: #7494ec;
+            --accent-primary: #00BCFF;
             --accent-secondary: #19b675;
             --accent-tertiary: #ffd249;
             --accent-neg: #cf2c5a;
 
             /* Border colors */
-            --border-color: rgba(9, 15, 56, 0.604);
-
+            --border-color: #293B4A;
             /* Button colors */
             --button-primary: linear-gradient(to right, #38A3A5, #80ED99);
             --button-primary-trf: linear-gradient(to left, #38A3A5, #80ED99);
@@ -292,7 +317,7 @@
             --bg-light: #e0e2ea;
             --bg-card: #f6f7ff;
             --bg-card-hover: #EDF2FB;
-            --bg-input:#ffffff;
+            --bg-input: #ffffff;
 
             /* Text colors */
             --text-primary: #12192c;
@@ -301,9 +326,9 @@
             --text-dark: #101838;
             --text-highlight: #298b8d;
             --text-tag: #2e406b;
-            
+
             /* Accent colors */
-            --accent-primary: #5477c8;
+            --accent-primary: #63D0FF;
             --accent-secondary: #10b981;
             --accent-tertiary: #f4ab24;
             --accent-neg: #ee1150;
@@ -414,4 +439,5 @@
         @yield('script')
     </div>
 </body>
+
 </html>

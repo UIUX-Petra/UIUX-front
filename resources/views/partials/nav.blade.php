@@ -454,7 +454,7 @@
         </div>
 
         <!-- Logo Section with hover effect -->
-        <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
+        <a href="{{ route('popular') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
             <div class="relative overflow-hidden">
                 <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo"
                     class="h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-90">
@@ -553,7 +553,8 @@
             <!-- Theme Toggle with subtle animation -->
             <button id="theme-toggle" onclick="toggleTheme()" class="theme-toggle p-2 rounded-full"
                 aria-label="Toggle theme">
-                <i id="theme-toggle-icon" class="fa-solid fa-sun text-[var(--accent-tertiary)]"></i>
+                <span id="theme-toggle-icon"
+                    class="material-symbols-rounded text-[var(--accent-tertiary)]">light_mode</span>
             </button>
 
             @if (!session()->has('email'))
@@ -594,9 +595,11 @@
                                 <i class="fa-solid fa-gear mr-2"></i> Settings
                             </a>
 
-                             @if(session()->has('email'))
+                            @if (session()->has('email'))
                                 @php
-                                    $currentUser = app('App\Http\Controllers\UserController')->getUserByEmail(session('email'));
+                                    $currentUser = app('App\Http\Controllers\UserController')->getUserByEmail(
+                                        session('email'),
+                                    );
                                 @endphp
                                 <div class="border-t border-[var(--border-color)] my-1"></div>
                                 <a href="{{ route('user.questions.list', ['id' => $currentUser['id'] ?? 0]) }}"
@@ -632,7 +635,8 @@
         @else
             <!-- Mobile User Menu -->
             <div class="md:hidden relative">
-                <button type="button" class="relative flex rounded-full bg-[var(--bg-card)] text-sm focus:outline-none"
+                <button type="button"
+                    class="relative flex rounded-full bg-[var(--bg-card)] text-sm focus:outline-none"
                     id="mobile-user-menu-button" aria-expanded="false" aria-haspopup="true">
                     <span class="sr-only">Open user menu</span>
                     <img class="size-8 rounded-full p-0.5 border border-[var(--accent-tertiary)]"
@@ -723,28 +727,19 @@
                 class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
             </div>
         </div>
-        <div class="contributions-section mb-1">
-            <select id="my-contributions-dropdown-mobile" name="contributions"
-                class="w-full text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] appearance-none py-2.5 px-3">
-                <option value="" class="text-[var(--text-muted)]">My Activities</option>
-                <option value="questions">Questions</option>
-                <option value="answers">Answers</option>
-                <option value="saves_general">Saves</option>
-            </select>
-        </div>
         <a href="{{ route('askPage') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
         </a>
-        <a href="{{ route('home') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('home') ? 'active-nav' : '' }}">
+        <a href="{{ route('popular') }}"
+            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-house mr-3"></i> Home
         </a>
-        <a href="{{ route('popular') }}"
+        {{-- <a href="{{ route('popular') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-fire mr-3"></i> Popular
             <span class="nav-badge">Hot</span>
-        </a>
+        </a> --}}
         <a href="{{ route('viewAllTags') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-tags mr-3"></i> Subjects
@@ -764,7 +759,7 @@
         <div class="flex items-center justify-between p-2">
             <button id="mobile-theme-toggle" onclick="toggleTheme()" class="theme-toggle p-2"
                 aria-label="Toggle theme">
-                <i id="mobile-theme-toggle-icon" class="fa-solid fa-sun"></i>
+                <span id="mobile-theme-toggle-icon" class="material-symbols-rounded">light_mode</span>
             </button>
 
             @if (session()->has('email'))
@@ -796,32 +791,39 @@
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Main Navigation</h3>
             <nav class="flex flex-col space-y-1">
                 <nav class="flex flex-col space-y-1">
-                    <div class="contributions-section mb-1">
-                        <select id="my-contributions-dropdown-desktop" name="contributions"
-                            class="w-full text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-tertiary)] appearance-none py-2.5 px-3">
-                            <option value="" class="text-[var(--text-muted)]">My Activities</option>
-                            <option value="questions">Questions</option>
-                            <option value="answers">Answers</option>
-                            <option value="saves_general">Saves</option>
-                        </select>
-                    </div>
-                    <a href="{{ route('home') }}"
-                        class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                    <a href="{{ route('popular') }}"
+                        class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                         <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
                     </a>
-                    <a href="{{ route('popular') }}"
+                    {{-- <a href="{{ route('popular') }}"
                         class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                         <i class="fa-solid fa-fire mr-3 w-5 text-center"></i> Popular
                         <span class="nav-badge">Hot</span>
-                    </a>
+                    </a> --}}
                     <a href="{{ route('viewAllTags') }}"
                         class="nav-link {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                         <i class="fa-solid fa-tags mr-3 w-5 text-center"></i> Subjects
                     </a>
-                    {{-- <a href="{{ route('savedQuestions') }}"
-                    class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                    <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
-                </a> --}}
+                </nav>
+        </div>
+
+        <!-- My Activities section-->
+        <div class="mb-8 nav-section pb-6">
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">MY ACTIVITES</h3>
+            <nav class="flex flex-col space-y-1">
+                <nav class="flex flex-col space-y-1">
+                    <a href="{{ route('user.questions.list', ['id' => $id]) }}"
+                        class="nav-link {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> Questions
+                    </a>
+                    <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
+                        class="nav-link {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Answers
+                    </a>
+                    <a href="{{ route('savedQuestions') }}"
+                        class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
+                    </a>
                 </nav>
         </div>
 
@@ -853,74 +855,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         initializePageFunctions();
-        const contributionsDropdown = document.getElementById('my-contributions-dropdown');
-        const userId = {!! isset($id) && $id ? json_encode($id) : "'null'" !!};
 
-        function getContributionTypeFromUrl() {
-            const path = window.location.pathname;
-            if (userId && userId !== 'null') {
-                const cleanUserId = userId.replace(/"/g, '');
-                if (path.includes(`/user/${cleanUserId}/questions`)) return 'questions';
-                if (path.includes(`/user/${cleanUserId}/answers`)) return 'answers';
-            }
-            const savedQuestionsPath = "{{ route('savedQuestions') }}";
-            if (path.includes(savedQuestionsPath) && savedQuestionsPath !== "{{ url('/') }}")
-            return 'saves_general';
-            return '';
-        }
-
-        function setupContributionsDropdown(dropdownElement) {
-            if (!dropdownElement) {
-                // console.log('Dropdown element not found:', dropdownElement); // Untuk debugging jika salah satu tidak ada
-                return;
-            }
-
-            const currentType = getContributionTypeFromUrl();
-            if (currentType) {
-                const optionExists = dropdownElement.querySelector(`option[value="${currentType}"]`);
-                if (optionExists) {
-                    dropdownElement.value = currentType;
-                } else {
-                    dropdownElement.value = "";
-                }
-            } else {
-                dropdownElement.value = "";
-            }
-
-            dropdownElement.addEventListener('change', function() {
-                const selectedValue = this.value;
-                let targetUrl = null;
-                const cleanUserId = userId ? userId.replace(/"/g, '') : null;
-
-                if (selectedValue === "questions") {
-                    if (cleanUserId && cleanUserId !== 'null') {
-                        targetUrl = `/user/${cleanUserId}/questions`;
-                    } else {
-                        console.error("User ID tidak tersedia untuk 'My Questions'.");
-                    }
-                } else if (selectedValue === "answers") {
-                    if (cleanUserId && cleanUserId !== 'null') {
-                        targetUrl = `/user/${cleanUserId}/answers`;
-                    } else {
-                        console.error("User ID tidak tersedia untuk 'My Answers'.");
-                    }
-                } else if (selectedValue === "saves_general") {
-                    targetUrl = "{{ route('savedQuestions') }}";
-                }
-
-                if (targetUrl) {
-                    window.location.href = targetUrl;
-                }
-            });
-            // console.log('Setup complete for:', dropdownElement.id); // Debugging
-        }
-
-        // Inisialisasi untuk kedua dropdown
-        const desktopDropdown = document.getElementById('my-contributions-dropdown-desktop');
-        const mobileDropdown = document.getElementById('my-contributions-dropdown-mobile');
-
-        setupContributionsDropdown(desktopDropdown);
-        setupContributionsDropdown(mobileDropdown);
 
         const hamburger = document.querySelector('.hamburger');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -1552,7 +1487,7 @@
                                         if (!deletedContainers.has(
                                                 ulParentContainer)) {
                                             ulParentContainer
-                                        .remove(); // hapus dari DOM
+                                                .remove(); // hapus dari DOM
                                             deletedContainers.add(
                                                 ulParentContainer);
                                         }
@@ -1582,18 +1517,18 @@
                                     }).showToast();
                                 }
                             })
-                            // .catch(() => {
-                            //     Toastify({
-                            //         text: "Network error while clearing history.",
-                            //         duration: 7000,
-                            //         close: true,
-                            //         gravity: "top",
-                            //         position: "right",
-                            //         style: {
-                            //             background: "#e67e22"
-                            //         }
-                            //     }).showToast();
-                            // });
+                        // .catch(() => {
+                        //     Toastify({
+                        //         text: "Network error while clearing history.",
+                        //         duration: 7000,
+                        //         close: true,
+                        //         gravity: "top",
+                        //         position: "right",
+                        //         style: {
+                        //             background: "#e67e22"
+                        //         }
+                        //     }).showToast();
+                        // });
                     }
                 });
             });
@@ -1740,12 +1675,31 @@
             const mobileThemeToggleIcon = document.getElementById('mobile-theme-toggle-icon');
             const themeLogoToggle = document.getElementById('theme-logo');
 
-            if (themeToggleIcon) themeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' :
-                'fa-solid fa-sun';
-            if (mobileThemeToggleIcon) mobileThemeToggleIcon.className = isLightMode ? 'fa-solid fa-moon' :
-                'fa-solid fa-sun';
-            if (themeLogoToggle) themeLogoToggle.src = isLightMode ? "{{ asset('assets/p2p logo.svg') }}" :
-                "{{ asset('assets/p2p logo - white.svg') }}";
+            if (themeToggleIcon) {
+                if (isLightMode) {
+                    themeToggleIcon.className = 'material-symbols-rounded';
+                    themeToggleIcon.textContent = 'dark_mode'; 
+                } else {
+                    // Saat dark mode, tombol akan menampilkan ikon untuk beralih ke light mode (misalnya, matahari)
+                    themeToggleIcon.className = 'material-symbols-rounded text-white';
+                    themeToggleIcon.textContent = 'light_mode';
+                }
+            }
+
+            if (mobileThemeToggleIcon) {
+                if (isLightMode) {
+                    mobileThemeToggleIcon.className = 'material-symbols-rounded'; // Menggunakan FontAwesome
+                    mobileThemeToggleIcon.textContent = 'dark_mode';
+                } else {
+                    mobileThemeToggleIcon.className = 'material-symbols-rounded text-white';
+                    mobileThemeToggleIcon.textContent = 'light_mode';
+                }
+            }
+
+            if (themeLogoToggle) {
+                themeLogoToggle.src = isLightMode ? "{{ asset('assets/p2p logo.svg') }}" :
+                    "{{ asset('assets/p2p logo - white.svg') }}";
+            }
         }
 
         const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
