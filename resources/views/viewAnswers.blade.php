@@ -214,8 +214,8 @@
                         <span id="question-card-comment-count-text">{{ $question['comment_count'] }} Comments</span>
                     </button>
                 </div>
-{{-- 
-                <div class="comment-box hidden mt-4">
+
+                {{-- <div class="comment-box hidden mt-4">
                     <textarea
                         class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
                         rows="2" placeholder="Write your comment here!"></textarea>
@@ -223,10 +223,9 @@
                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Submit Comment
                     </button>
-                </div>
+                </div> --}}
             </div>
 
-            {{-- Action Buttons --}}
             {{-- Action Buttons --}}
             @if ($isQuestionOwner)
                 @php
@@ -272,7 +271,7 @@
 
                 <!-- Comment Input Box -->
                 <div class="comment-box hidden mb-4">
-                    <textarea id="question-comment"
+                    <textarea id="question-comment-textarea"
                         class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                         rows="2" placeholder="Write your comment here!"></textarea>
                     <button id="qComment-btn"
@@ -1301,7 +1300,8 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-
+                            console.log(data);
+                            
                             if (data.success) {
                                 let commentList = document.getElementById('question-comments');
                                 const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
