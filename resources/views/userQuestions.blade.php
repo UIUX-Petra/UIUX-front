@@ -2,20 +2,23 @@
 
 @section('content')
     <style>
-        .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
-            background-size: 20px 20px;
-        }
-
         .question-card {
             border: 1px solid var(--border-color);
             background-color: var(--bg-card);
-            transition: box-shadow 0.2s, background-color 0.2s;
+            transition: all 0.3s ease;
         }
 
         .question-card:hover {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-            background-color: var(--bg-card-hover);
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .action-button {
@@ -39,262 +42,409 @@
             left: 100%;
         }
 
-        .header-gradient {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .stats-item {
+            transition: all 0.2s ease;
+        }
+
+        .stats-item:hover {
+            transform: scale(1.05);
         }
     </style>
+    
     @include('partials.nav')
     @include('utils.background')
 
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <div class="flex space-x-5 text-white">
-
-            <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
-                src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                alt="{{ $user['username'] }}'s avatar">
-            <div class="flex-col md:flex-row flex w-full justify-between items-center">
-                <div class="flex flex-col">
-
-                    @if (session('email') === $user['email'])
-                        <h1 class="text-4xl font-bold header-gradient mb-2">
-                            My Questions
-                        </h1>
-                        <p class="text-[var(--text-muted)]">
-                            Manage and track your questions
-                        </p>
-                    @else
-                        <h1 class="text-4xl font-bold header-gradient mb-2">
-                            {{ $user['username'] }}'s Questions
-                        </h1>
-
-                        <p class="text-[var(--text-muted)]">
-                            Track {{ $user['username'] }}'s questions
-                        </p>
-                    @endif
-
-                </div>
-
-                <div class="mt-4">
-                    @if (session('email') === $user['email'])
-                        <div class="text-center" data-aos="fade-up">
-                            <a href="{{ route('seeProfile') }}"
-                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i>
-                                Go to My Profile
-                            </a>
-                        </div>
-                    @else
-                        <div class="text-center" data-aos="fade-up">
-                            <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i>
-                                Go to {{ $user['username'] }}'s Profile
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
+    <!-- Header Section -->
+    <div class="w-full bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start mt-6 mb-6 flex items-start space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
+        <div class="text-3xl relative p-4 rounded-full bg-[var(--bg-primary)] z-10">
+            <i class="fa-solid fa-question-circle bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight p-0.5"></i>
         </div>
-        <hr class="my-6 border-gray-700">
 
+        <div class="flex flex-col z-10">
+            <div>
+                <h1 class="cal-sans-regular text-4xl lg:text-5xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight py-1">
+                    @if (session('email') === $user['email'])
+                    My Questions
+                @else
+                    {{ $user['username'] }}'s Questions
+                @endif
+                </h1>
+                {{-- <div class="h-1 w-24 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div> --}}
+            </div>
+            <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl mt-2">
+                @if (session('email') === $user['email'])
+                    Manage and track your questions
+                @else
+                    Track {{ $user['username'] }}'s questions
+                @endif
+            </p>
+        </div>
+    </div>
 
-        @if (!empty($user['question']) && count($user['question']) > 0)
-            <div class="space-y-8" id="questions-container">
+    <!-- Main Content -->
+    <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
+        <!-- Questions List -->
+        <div class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
+            @if (!empty($user['question']) && count($user['question']) > 0)
                 @foreach ($user['question'] as $index => $question)
                     <div id="question-item-{{ $question['id'] }}"
-                        class="question-card shadow-xl rounded-2xl p-8 transition-all duration-500 fade-in"
-                        data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                        class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden"
+                        data-url="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}" style="cursor: pointer;">
+                        
+                        <div class="absolute inset-0 bg-pattern opacity-5"></div>
 
-                        {{-- Header stats --}}
-                        <div class="flex items-start mb-4 space-x-6">
-                            <div class="flex flex-col items-start text-[var(--text-primary)] space-y-2">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fa-regular fa-thumbs-up"></i>
-                                    <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }} votes</span>
+                        <!-- Action Buttons (for owner only) -->
+                        @if (session('email') === ($user['email'] ?? null))
+                            @php
+                                $hasAnswer = !empty($question['answer']);
+                                $hasVote = isset($question['vote']) && $question['vote'] !== 0;
+                            @endphp
+                            @if (!$hasAnswer && !$hasVote)
+                                <div class="absolute top-3 right-3 z-20 flex space-x-2">
+                                    <button data-question-id="{{ $question['id'] }}"
+                                        class="edit-question-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-yellow-600 bg-[var(--accent-tertiary)] text-[var(--text-dark)]"
+                                        title="Edit Question">
+                                        <i class="fa-solid fa-edit text-sm"></i>
+                                    </button>
+                                    <button data-question-id="{{ $question['id'] }}"
+                                        class="delete-question-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-rose-900 bg-[var(--accent-neg)] !text-white"
+                                        title="Delete Question">
+                                        <i class="fa-solid fa-trash text-sm"></i>
+                                    </button>
                                 </div>
-                                <div class="flex items-center space-x-2">
-                                    <i class="fa-solid fa-eye"></i>
-                                    <span class="text-sm font-medium">{{ $question['view'] ?? 0 }} views</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <i class="fa-solid fa-reply"></i>
-                                    <span class="text-sm font-medium">{{ count($question['answer']) ?? 0 }} answers</span>
-                                </div>
+                            @endif
+                        @endif
+
+                        <!-- Stats Section -->
+                        <div class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
+                                <i class="text-sm fa-regular fa-thumbs-up"></i>
                             </div>
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
+                                <i class="text-sm fa-solid fa-eye"></i>
+                            </div>
+                            <div class="stats-item flex flex-row items-center space-x-2">
+                                <span class="text-sm font-medium">{{ count($question['answer'] ?? []) }}</span>
+                                <i class="text-sm fa-regular fa-comment"></i>
+                            </div>
+                        </div>
 
-                            {{-- Konten Pertanyaan --}}
-                            <div class="flex-1">
-                                <h2
-                                    class="text-xl font-semibold text-[var(--text-highlight)] hover:underline underline-offset-2 decoration-[var(--accent-secondary)]">
-                                    <a href="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}">
-                                        {{ $question['title'] ?? 'Untitled Question' }}
-                                    </a>
-                                </h2>
+                        <!-- Question Content -->
+                        <div class="flex-1 pt-0 mr-4 z-10">
+                            <h2 class="text-xl font-medium text-[var(--text-highlight)] question-title transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
+                                {{ $question['title'] ?? 'Untitled Question' }}
+                            </h2>
 
-                                @if (isset($question['question_content']) && is_string($question['question_content']))
-                                    <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
-                                        {{ Str::limit($question['question_content'], 200) }}
-                                    </p>
-                                @elseif (isset($question['question']) && is_string($question['question']))
-                                    <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
-                                        {{ Str::limit($question['question'], 200) }}
-                                    </p>
-                                @endif
+                            @if (isset($question['question_content']) && is_string($question['question_content']))
+                                <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
+                                    {{ \Str::limit(strip_tags($question['question_content']), 150) }}
+                                </p>
+                            @elseif (isset($question['question']) && is_string($question['question']))
+                                <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
+                                    {{ \Str::limit(strip_tags($question['question']), 150) }}
+                                </p>
+                            @endif
 
-                                {{-- Tags --}}
-                                <div class="flex mt-2 flex-wrap gap-2">
-                                    @foreach ($question['group_question'] ?? [] as $tag)
-                                        @if (isset($tag['subject']['name']))
-                                            <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
-                                                class="text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)] hover:border-white hover:border-2">
-                                                {{ $tag['subject']['name'] }}
+                            <!-- Tags -->
+                            @if (!empty($question['group_question']) && is_array($question['group_question']))
+                                <div class="flex mt-2 flex-wrap gap-1 items-center tags-wrapper" data-question-id="{{ $question['id'] }}">
+                                    @php
+                                        $tags = $question['group_question'];
+                                        $totalTags = count($tags);
+                                        $displayLimit = 3;
+                                    @endphp
+
+                                    @foreach ($tags as $index => $tag)
+                                        @if(isset($tag['subject']['name']))
+                                            <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
+                                               class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
+                                                <span class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                                    {{ $tag['subject']['name'] }}
+                                                </span>
                                             </a>
                                         @endif
                                     @endforeach
-                                </div>
 
-                                {{-- Created at --}}
-                                <div class="mt-4 text-sm text-gray-500">
-                                    @if (isset($question['created_at']))
-                                        <span>Posted on:
-                                            {{ \Carbon\Carbon::parse($question['created_at'])->format('M d, Y') }}</span>
+                                    @if ($totalTags > $displayLimit)
+                                        <span class="text-xs text-[var(--accent-secondary)] cursor-pointer hover:underline more-tags-button"
+                                              data-question-id="{{ $question['id'] }}"
+                                              data-initial-text="+ {{ $totalTags - $displayLimit }} more">
+                                             + {{ $totalTags - $displayLimit }} more
+                                        </span>
                                     @endif
                                 </div>
+                            @endif
 
-                                {{-- Action Buttons --}}
-                                @if (session('email') === ($user['email'] ?? null))
-                                    @php
-                                        $hasAnswer = !empty($question['answer']);
-                                        $hasVote = isset($question['vote']) && $question['vote'] !== 0;
-                                        // $tooltipMessage =
-                                        //     $hasAnswer && $hasVote
-                                        //         ? 'Your question has been answered and voted.'
-                                        //         : ($hasVote
-                                        //             ? 'Your question has been voted.'
-                                        //             : ($hasAnswer
-                                        //                 ? 'Your question has been answered.'
-                                        //                 : ''));
-                                    @endphp
-
-                                    <div class="flex justify-end space-x-3 mt-4">
-                                        @if (!$hasAnswer && !$hasVote)
-                                            <button data-question-id="{{ $question['id'] }}"
-                                                class="edit-question-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
-                                                <i class="fas fa-edit mr-2"></i>Edit
-                                            </button>
-                                            <button data-question-id="{{ $question['id'] }}"
-                                                class="delete-question-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
-                                                <i class="fas fa-trash-alt mr-2"></i>Delete
-                                            </button>
-                                        @endif
-                                    </div>
-                                @endif
-                            </div>
+                            <!-- Created Date -->
+                            @if (isset($question['created_at']))
+                                <div class="mt-3 text-sm text-[var(--text-muted)]">
+                                    Posted on {{ \Carbon\Carbon::parse($question['created_at'])->format('M d, Y') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @endforeach
-            </div>
-        @else
-            <div id="no-questions-message" class="text-center py-20" data-aos="fade-up">
-                <div class="max-w-md mx-auto">
-                    <div class="mb-8">
-                        <i class="fas fa-question-circle text-8xl text-[var(--text-muted)] mb-4"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-[var(--text-primary)] mb-4">
+            @else
+                <div id="no-questions-message" class="text-center py-8">
+                    <i class="fa-regular fa-folder-open text-4xl text-[var(--text-muted)] mb-3"></i>
+                    <h3 class="text-xl font-medium text-[var(--text-primary)] mb-2">
                         @if (session('email') === $user['email'])
                             You haven't asked any questions yet.
                         @else
                             {{ $user['username'] }} has not posted any questions yet.
                         @endif
                     </h3>
-                    <p class="text-[var(--text-muted)] text-lg mb-8">
+                    <p class="text-[var(--text-muted)] mb-4">
                         Start contributing by asking your first question!
                     </p>
                     <a href="{{ route('askPage') }}"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
-                        <i class="fas fa-plus mr-2"></i>
+                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium rounded-lg hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+                        <i class="fa-solid fa-plus mr-2"></i>
                         Ask Question
                     </a>
                 </div>
+            @endif
+        </div>
+
+        <div class="w-72 mt-6 ml-6 hidden md:flex flex-col space-y-6 sticky top-24 h-fit">
+            <!-- User Profile Card -->
+            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
+
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20 mb-4"
+                        src="{{ $image ? asset('storage/' . $image) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                        alt="{{ $user['username'] }}'s avatar">
+                    
+                    <h3 class="text-lg font-bold text-[var(--text-primary)] mb-2">
+                        {{ $user['username'] ?? 'User' }}
+                    </h3>
+                    
+                    <div class="w-full mb-4">
+                        @if (session('email') === $user['email'])
+                            <a href="{{ route('seeProfile') }}"
+                                class="w-full inline-flex items-center justify-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-sm transition-colors duration-300 py-2">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                View My Profile
+                            </a>
+                        @else
+                            <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
+                                class="w-full inline-flex items-center justify-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-sm transition-colors duration-300 py-2">
+                                <i class="fas fa-user mr-2"></i>
+                                View {{ $user['username'] }}'s Profile
+                            </a>
+                        @endif
+                    </div>
+
+                    <div class="w-full pt-4 border-t border-[var(--border-color)]">
+                        <h4 class="font-medium mb-3 text-sm">Quick Stats</h4>
+                        <div class="space-y-2 text-left">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-[var(--text-secondary)]">Questions</span>
+                                <span class="font-medium text-[var(--text-primary)]">{{ count($user['question'] ?? []) }}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-[var(--text-secondary)]">Total Views</span>
+                                <span class="font-medium text-[var(--text-primary)]">
+                                    {{ collect($user['question'] ?? [])->sum('view') }}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-[var(--text-secondary)]">Total Votes</span>
+                                <span class="font-medium text-[var(--text-primary)]">
+                                    {{ collect($user['question'] ?? [])->sum('vote') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        @endif
 
+            <!-- Ask Question Card -->
+            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
+                
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <div class="mb-5 bg-[var(--bg-accent-subtle)] p-3 rounded-full">
+                        <i class="fa-solid fa-lightbulb text-3xl text-[var(--accent-tertiary)]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[var(--text-primary)] mb-3">
+                        Have a Question?
+                    </h2>
+                    <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
+                        Connect with fellow Petranesian Informates and get insights from your peers!
+                    </p>
+                    <a href="{{ route('askPage') }}"
+                        class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+                        <i class="fa-solid fa-plus mr-2"></i> Ask a Question
+                    </a>
+                    
+                    <div class="w-full mt-5 pt-5 border-t border-[var(--border-color)]">
+                        <h3 class="font-medium mb-3 text-sm">Quick Links</h3>
+                        <ul class="space-y-2 text-left">
+                            {{-- <li class="flex items-center text-sm">
+                                <i class="fa-solid fa-bookmark mr-2 text-[var(--accent-primary)]"></i>
+                                <a href="{{ route('user.saved.questions', ['id' => $user['id'] ?? session('user_id')]) }}"
+                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">Saved Questions</a>
+                            </li> --}}
+                            <li class="flex items-center text-sm">
+                                <i class="fa-solid fa-comments mr-2 text-[var(--accent-secondary)]"></i>
+                                <a href="{{ route('user.answers.index', ['userId' => $user['id'] ?? session('user_id')]) }}"
+                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">My Answers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
+            {{-- The Community Card --}}
+            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
+                
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <div class="mb-5 bg-[var(--bg-accent-subtle)] p-3 rounded-full">
+                        <i class="fa-solid fa-user-plus text-3xl text-[var(--accent-tertiary)]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[var(--text-primary)] mb-3">
+                        The Community
+                    </h2>
+                    <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
+                        Connect with brilliant minds, share knowledge, and grow together in PCU's Informatics community.
+                    </p>
+                    <div class="w-full space-y-3">
+                        <div class="text-center p-3 bg-[var(--bg-secondary)] rounded-lg">
+                            <div class="font-bold text-lg text-[var(--text-primary)]">{{ count($order_by_reputation ?? []) + count($order_by_newest ?? []) + count($order_by_vote ?? []) }}</div>
+                            <div class="text-sm text-[var(--text-muted)]">Active Members</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 @endsection
 
 @section('script')
     <script>
+        function initClickableQuestionCards() {
+            document.querySelectorAll('.question-card').forEach(card => {
+                if (card.dataset.clickableInitialized === 'true') return;
+                card.addEventListener('click', function(event) {
+                    if (event.target.closest('.edit-question-button') ||
+                        event.target.closest('.delete-question-button') ||
+                        event.target.closest('.question-tag-link') ||
+                        event.target.closest('.more-tags-button')) {
+                        return;
+                    }
+                    const url = this.dataset.url;
+                    if (url) {
+                        window.location.href = url;
+                    }
+                });
+                card.dataset.clickableInitialized = 'true';
+            });
+        }
+
+        function initTagToggles() {
+            document.querySelectorAll('.more-tags-button').forEach(button => {
+                if (button.dataset.toggleInitialized === 'true') return;
+                button.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    const questionId = this.dataset.questionId;
+                    const extraTags = document.querySelectorAll(`.extra-tag-${questionId}`);
+                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains('hidden');
+                    extraTags.forEach(tag => tag.classList.toggle('hidden', !isCurrentlyHidden));
+                    this.textContent = isCurrentlyHidden ? 'show less' : this.dataset.initialText;
+                });
+                button.dataset.toggleInitialized = 'true';
+            });
+        }
+
+        function updateIconColors() {
+            const statsItems = document.querySelectorAll('.stats-item');
+            const isLightMode = document.documentElement.classList.contains('light-mode');
+            if (statsItems) {
+                statsItems.forEach((item, index) => {
+                    const icon = item.querySelector('i');
+                    if (!icon) return;
+                    if (index % 3 === 0) icon.style.color = isLightMode ? 'var(--stats-icon-color-1-light, #10b981)' : 'var(--stats-icon-color-1-dark, #23BF7F)';
+                    else if (index % 3 === 1) icon.style.color = isLightMode ? 'var(--stats-icon-color-2-light, #f59e0b)' : 'var(--stats-icon-color-2-dark, #ffd249)';
+                    else icon.style.color = isLightMode ? 'var(--stats-icon-color-3-light, #3b82f6)' : 'var(--stats-icon-color-3-dark, #909ed5)';
+                });
+            }
+        }
+
         // Initialize AOS
         AOS.init({
             duration: 800,
             once: true,
             offset: 100
         });
+
         document.addEventListener('DOMContentLoaded', function() {
             const API_BASE_URL = (("{{ env('API_URL') }}" || window.location.origin) + '/').replace(/\/+$/, '/');
             const API_TOKEN = "{{ session('token') ?? '' }}";
             const CSRF_TOKEN = "{{ csrf_token() }}";
 
-            AOS.init({
-                duration: 800,
-                once: true,
-                offset: 100
-            });
+            // Initialize all functions
+            initClickableQuestionCards();
+            initTagToggles();
+            updateIconColors();
 
+            // Edit button functionality
             document.querySelectorAll('.edit-question-button').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     const questionId = this.dataset.questionId;
                     window.location.href = `{{ url('/ask') }}/${questionId}`;
                 });
             });
 
+            // Delete button functionality
             function checkEmptyQuestionState() {
                 const questionContainer = document.querySelectorAll('[id^="question-item-"]');
                 if (questionContainer.length === 0) {
-                    const emptyStateHTML = `
-                <div class="text-center py-20" data-aos="fade-up">
-                    <div class="max-w-md mx-auto">
-                        <div class="mb-8">
-                            <i class="fas fa-question-circle no-answers-illustration text-8xl mb-4"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold text-[var(--text-primary)] mb-4">
-                            No questions yet
-                        </h3>
-                        <p class="text-[var(--text-muted)] text-lg mb-8">
-                            Ask something to start a discussion or learn something new.
-                        </p>
-                        <a href="{{ route('askPage') }}" 
-                           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
-                            <i class="fas fa-plus mr-2"></i>
-                            Ask a Question
-                        </a>
-                    </div>
-                </div>
-            `;
-                    const container = document.getElementById('no-questions-message');
+                    const container = document.querySelector('.max-w-3xl.justify-start.items-start');
                     if (container) {
-                        container.innerHTML = emptyStateHTML;
+                        container.innerHTML = `
+                            <div class="text-center py-8">
+                                <i class="fa-regular fa-folder-open text-4xl text-[var(--text-muted)] mb-3"></i>
+                                <h3 class="text-xl font-medium text-[var(--text-primary)] mb-2">
+                                    @if (session('email') === $user['email'])
+                                        You haven't asked any questions yet.
+                                    @else
+                                        {{ $user['username'] }} has not posted any questions yet.
+                                    @endif
+                                </h3>
+                                <p class="text-[var(--text-muted)] mb-4">
+                                    Start contributing by asking your first question!
+                                </p>
+                                <a href="{{ route('askPage') }}"
+                                    class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium rounded-lg hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+                                    <i class="fa-solid fa-plus mr-2"></i>
+                                    Ask Question
+                                </a>
+                            </div>
+                        `;
                     }
-                     location.reload();
                 }
             }
+
             document.querySelectorAll('.delete-question-button').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     const questionId = this.dataset.questionId;
-                    const questionItemElement = document.getElementById(
-                        `question-item-${questionId}`);
+                    const questionItemElement = document.getElementById(`question-item-${questionId}`);
 
                     Swal.fire({
-                        title: 'Delete Answer?',
-                        text: "This action cannot be undone. Your answer will be permanently deleted.",
+                        title: 'Delete Question?',
+                        text: "This action cannot be undone. Your question will be permanently deleted.",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#ef4444',
@@ -319,190 +469,73 @@
                             }
 
                             fetch(`${API_BASE_URL}questions/${questionId}`, {
-                                    method: 'DELETE',
-                                    headers: headers
-                                })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        return response.json().then(err => {
-                                            throw err;
-                                        });
-                                    }
-                                    return response.json();
-                                })
-                                .then(data => {
-                                    if (data.success || data.status === 'success') {
-                                        Swal.fire(
-                                            'Deleted!',
-                                            data.message ||
-                                            'Your question has been deleted.',
-                                            'success'
-                                        );
-                                        if (questionItemElement) {
-                                            questionItemElement.style.animation =
-                                                'fadeOutUp 0.5s ease forwards';
-                                            setTimeout(() => {
-                                                questionItemElement.remove();
-                                                checkEmptyQuestionState();
-                                            }, 500);
-                                        }
-                                        const questionsContainer = document
-                                            .getElementById('questions-container');
-                                        const noQuestionsMessage = document
-                                            .getElementById('no-questions-message');
-                                        if (questionsContainer && noQuestionsMessage &&
-                                            questionsContainer.children.length === 0) {
-                                            noQuestionsMessage.style.display = 'block';
-                                            if (questionsContainer.parentElement
-                                                .contains(noQuestionsMessage)) {
-                                                // If it was previously hidden, make sure it's visible
-                                            } else {
-                                                // If it was removed, you might need to re-add or just unhide
-                                            }
-                                            questionsContainer.style.display = 'none';
-                                        }
-                                    } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            data.message ||
-                                            'Could not delete the question.',
-                                            'error'
-                                        );
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error details:', error);
-                                    let errorMessage =
-                                        'An error occurred while deleting the question.';
-                                    if (error && error.message) {
-                                        errorMessage = error.message;
-                                    } else if (typeof error === 'object' && error !==
-                                        null && error.toString && error.toString()
-                                        .includes('Failed to fetch')) {
-                                        errorMessage =
-                                            'Network error or API is unreachable. Please check your connection and the API URL.';
-                                    } else if (typeof error === 'string') {
-                                        errorMessage = error;
-                                    }
+                                method: 'DELETE',
+                                headers: headers
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.json().then(err => {
+                                        throw err;
+                                    });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success || data.status === 'success') {
                                     Swal.fire(
-                                        'Request Failed!',
-                                        errorMessage,
+                                        'Deleted!',
+                                        data.message || 'Your question has been deleted.',
+                                        'success'
+                                    );
+                                    if (questionItemElement) {
+                                        questionItemElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                        questionItemElement.style.opacity = '0';
+                                        questionItemElement.style.transform = 'scale(0.95)';
+                                        setTimeout(() => {
+                                            questionItemElement.remove();
+                                            checkEmptyQuestionState();
+                                        }, 500);
+                                    }
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        data.message || 'Could not delete the question.',
                                         'error'
                                     );
-                                });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error details:', error);
+                                let errorMessage = 'An error occurred while deleting the question.';
+                                if (error && error.message) {
+                                    errorMessage = error.message;
+                                } else if (typeof error === 'object' && error !== null && error.toString && error.toString().includes('Failed to fetch')) {
+                                    errorMessage = 'Network error or API is unreachable. Please check your connection and the API URL.';
+                                } else if (typeof error === 'string') {
+                                    errorMessage = error;
+                                }
+                                Swal.fire(
+                                    'Request Failed!',
+                                    errorMessage,
+                                    'error'
+                                );
+                            });
                         }
                     });
                 });
             });
 
-
-
-            const style = document.createElement('style');
-            style.textContent = `
-            @keyframes fadeOutUp {
-                to {
-                    opacity: 0;
-                    transform: translateY(-30px);
-                }
+            // Theme observer
+            if (typeof window.pageThemeObserver === 'undefined' && typeof MutationObserver !== 'undefined') {
+                window.pageThemeObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.attributeName === 'class' && mutation.target === document.documentElement) {
+                            updateIconColors();
+                        }
+                    });
+                });
+                window.pageThemeObserver.observe(document.documentElement, { attributes: true });
             }
-            
-            /* Enhanced hover effects */
-            .question-card {
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-            
-            .question-card:hover {
-                transform: translateY(-8px) scale(1.02);
-            }
-            
-            /* Smooth scrolling for better UX */
-            html {
-                scroll-behavior: smooth;
-            }
-            
-            /* Loading states */
-            .btn-loading {
-                position: relative;
-                pointer-events: none;
-            }
-            
-            .btn-loading::after {
-                content: '';
-                position: absolute;
-                width: 16px;
-                height: 16px;
-                margin: auto;
-                border: 2px solid transparent;
-                border-top-color: currentColor;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-            }
-            
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            
-            /* Enhanced responsive design */
-            @media (max-width: 640px) {
-                .question-card {
-                    padding: 1.5rem;
-                    margin: 0 -0.5rem;
-                }
-                
-                .stats-badge {
-                    font-size: 0.75rem;
-                    padding: 0.125rem 0.5rem;
-                }
-                
-                .action-button {
-                    padding: 0.5rem 1rem;
-                    font-size: 0.875rem;
-                }
-            }
-            
-            /* Dark mode enhancements */
-            .dark-mode .question-card {
-                backdrop-filter: blur(20px);
-                background: rgba(28, 34, 70, 0.8);
-            }
-            
-            .light-mode .question-card {
-                backdrop-filter: blur(20px);
-                background: rgba(246, 247, 255, 0.9);
-            }
-            
-            /* Improved accessibility */
-            .question-card:focus-within {
-                outline: 2px solid var(--accent-primary);
-                outline-offset: 2px;
-            }
-            
-            /* Enhanced image gallery effect */
-            .question-content img {
-                cursor: zoom-in;
-                position: relative;
-            }
-            
-            .question-content img::after {
-                content: '🔍';
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: rgba(0,0,0,0.7);
-                color: white;
-                padding: 0.25rem 0.5rem;
-                border-radius: 4px;
-                font-size: 0.75rem;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-            }
-            
-            .question-content img:hover::after {
-                opacity: 1;
-            }
-        `;
-            document.head.appendChild(style);
         });
     </script>
 @endsection

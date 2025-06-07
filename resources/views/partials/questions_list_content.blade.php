@@ -16,12 +16,12 @@
                 @if ($activeSearchTerm)
                     <br>Search: "<span class="font-semibold">{{ $activeSearchTerm }}</span>".
                 @endif
-                <br>Try adjusting your filters or <a href="{{ route('home') }}" class="text-amber-500 hover:underline filter-clear-link">clear all filters</a>.
+                <br>Try adjusting your filters or <a href="{{ route('popular') }}" class="text-[var(--accent-tertiary)] hover:underline filter-clear-link">clear all filters</a>.
             </p>
         @else
             <p class="text-[var(--text-secondary)] mt-2">
                 It seems there are no popular questions at the moment.
-                Why not be the first to <a href="{{ route('askPage') }}" class="text-amber-500 hover:underline">ask a question</a>?
+                Why not be the first to <a href="{{ route('askPage') }}" class="text-[var(--accent-tertiary)] hover:underline">ask a question</a>?
             </p>
         @endif
     </div>
@@ -33,7 +33,7 @@
             
             @if (isset($question['vote']) && $question['vote'] > 50)
                 <div class="absolute bottom-0 right-0">
-                    <div class="bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs py-1 px-3 rounded-tl-lg rounded-tr-lg font-medium flex items-center">
+                    <div class="bg-gradient-to-r from-[#f4ab24] to-[#ffd249] text-[var(--text-dark)] text-xs py-1 px-3 rounded-tl-lg rounded-tr-lg font-medium flex items-center">
                         <i class="fa-solid fa-fire-flame-curved mr-1.5"></i> Hot
                     </div>
                 </div>
@@ -60,7 +60,7 @@
             <div class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
                 <div class="stats-item flex flex-row items-center space-x-2">
                     <span class="text-sm font-medium">{{ $question['vote'] ?? 0 }}</span>
-                    <i class="text-sm fa-regular fa-thumbs-up"></i>
+                    <i class="text-sm fa-solid fa-thumbs-up"></i>
                 </div>
                 <div class="stats-item flex flex-row items-center space-x-2">
                     <span class="text-sm font-medium">{{ $question['view'] ?? 0 }}</span>
@@ -68,7 +68,7 @@
                 </div>
                 <div class="stats-item flex flex-row items-center space-x-2">
                     <span class="text-sm font-medium">{{ count($question['answer']) ?? 0 }}</span>
-                    <i class="text-sm fa-solid fa-comments"></i>
+                    <i class="text-sm fa-solid fa-reply-all"></i>
                 </div>
             </div>
 
@@ -92,9 +92,9 @@
                     @if(!empty($tags) && is_array($tags))
                         @foreach ($tags as $index => $tag)
                             @if(isset($tag['subject']['name']))
-                                <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => $currentSortBy ?? 'latest', 'page' => 1]) }}" {{-- Ensure $currentSortBy is available or use a default --}}
+                                <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => $currentSortBy ?? 'latest', 'page' => 1]) }}" {{-- Ensure $currentSortBy is available or use a default --}}
                                    class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
-                                    <span class="hover:border-[var(--accent-secondary)] font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                    <span class="scale-100 transition-all duration-300 hover:font-normal font-light text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                         {{ $tag['subject']['name'] }}
                                     </span>
                                 </a>
@@ -102,7 +102,7 @@
                         @endforeach
 
                         @if ($totalTags > $displayLimit)
-                            <span class="text-xs text-[var(--accent-secondary)] cursor-pointer hover:underline more-tags-button"
+                            <span class="text-xs text-[var(--accent-primary)] cursor-pointer ease-linear hover:underline underline-offset-2 more-tags-button"
                                   data-question-id="{{ $question['id'] }}"
                                   data-initial-text="+ {{ $totalTags - $displayLimit }} more">
                                  + {{ $totalTags - $displayLimit }} more

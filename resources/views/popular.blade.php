@@ -27,7 +27,7 @@
         }
 
         .popular-question-card:hover {
-            border-color: #f59e0b;
+            border-color: var(--accent-tertiary);
             box-shadow: 0 10px 25px rgba(245, 158, 11, 0.08);
             transform: translateY(-2px);
         }
@@ -80,7 +80,7 @@
         a:focus-visible,
         input:focus-visible,
         select:focus-visible {
-            outline: 2px solid #f59e0b;
+            outline: 2px solid var(--accent-tertiary);
             outline-offset: 2px;
         }
 
@@ -169,7 +169,7 @@
         }
 
         .question-search-bar:focus-within {
-            border-color: #f59e0b;
+            border-color: var(--accent-tertiary);
             /* Tema popular */
             box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
             /* Tema popular */
@@ -192,79 +192,121 @@
             margin-right: 0.75rem;
         }
 
+        .tabs-container {
+            border-bottom: 1px solid var(--border-color);
+        }
 
-        /* MODIFIKASI: Tombol filter/sort dan select, disesuaikan dengan style tab referensi */
-        .filter-button {
-            /* Untuk <a> tag (Sort by) */
+        .tab-item {
+            padding: 0.5rem 0.25rem;
+            margin-bottom: -1px;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .tab-item:not(.active):hover {
+            color: var(--text-primary);
+            border-bottom-color: var(--border-color);
+        }
+
+        .tab-item.active {
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom-color: var(--accent-tertiary);
+        }
+        .tag-filter-button {
             background-color: var(--bg-card);
-            color: var(--text-muted);
+            color: var(--text-secondary);
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            padding: 10px 20px;
-            /* Sesuai referensi tabs */
+            padding: 10px 15px;
             font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
+            transition: all 0.2s ease-in-out;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
-
-        .filter-button:hover {
-            border-color: #f59e0b;
-            color: #f59e0b;
-        }
-
-        .filter-button.active {
-            background-color: #f59e0b;
-            /* Warna tema popular, bukan var(--accent-tertiary) dari referensi */
-            color: var(--text-dark, #1a202c);
-            font-weight: 600;
-            /* Sesuai referensi tabs */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            /* Sesuai referensi tabs */
-            border-color: #f59e0b;
-        }
-
-        .tag-filter-select {
-            /* Untuk <select> element */
-            background-color: var(--bg-card);
-            color: #f59e0b;
-            border: 1px solid #f59e0b;
-            border-radius: 8px;
-            padding: 10px 16px;
-            /* Mirip tombol, tinggi sama, padding horizontal sedikit beda utk arrow */
-            font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            /* Samakan dengan search input jika perlu */
-            line-height: 1.5;
-            /* Sesuaikan dengan padding vertikal */
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 1.25em 1.25em;
-            padding-right: 2.5rem;
-            min-width: 150px;
-            /* Lebar minimal agar "All Tags" terbaca */
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             cursor: pointer;
         }
 
-        /* .tag-filter-select:hover {
-                                    border-color: #f59e0b;
-                                    color: #f59e0b;
-                                } */
+        .tag-filter-button:hover, .tag-filter-button.active {
+            border-color: var(--accent-tertiary);
+            color: var(--text-primary);
+        }
 
-        .tag-filter-select:focus {
-            border-color: #f59e0b;
-            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+        .tag-filter-button .chevron-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .tag-filter-button.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        #tag-filter-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem); /* Position below the button with a small gap */
+            right: 0;
+            width: 280px;
+            z-index: 40; /* Make sure it's above other content but below the main navbar */
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        #tag-filter-dropdown.open {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Search bar inside the dropdown */
+        .tag-search-input-wrapper {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .tag-search-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem 0.5rem 2.25rem; /* Space for the icon */
+            border-radius: 6px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+        .tag-search-input:focus {
             outline: none;
-            color: #f59e0b;
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 0 0 2px rgba(56, 163, 165, 0.2);
+        }
+
+        /* List items in the dropdown */
+        .tag-link-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+        }
+
+        .tag-link-item:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-left-color: var(--accent-primary);
+        }
+
+        .tag-link-item.active {
+            background-color: var(--bg-accent-subtle);
+            color: var(--accent-tertiary);
+            font-weight: 600;
+            border-left-color: var(--accent-tertiary);
         }
 
         .skeleton {
@@ -323,7 +365,7 @@
         </div>
 
         <div class="text-4xl relative p-3 rounded-full bg-[rgba(245,158,11,0.15)] z-10">
-            <i class="fa-solid fa-fire text-[#f59e0b]"></i>
+            <i class="fa-solid fa-fire text-[var(--accent-tertiary)]"></i>
         </div>
 
         <div class="flex flex-col z-10">
@@ -344,26 +386,27 @@
         <div class="flex flex-col pl-3 z-10">
             @if (session()->has('email'))
                 <div class="mb-4">
-                    <div class="cal-sans-regular text-xl lg:text-2xl text-[var(--text-secondary)] mb-1 tracking-wide">
+                    <div class="cal-sans-regular text-xl lg:text-2xl text-[var(--text-primary)] mb-1 tracking-wide">
                         Welcome,
                     </div>
                     <h1
-                        class="cal-sans-regular text-4xl lg:text-6xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
+                        class="cal-sans-regular text-4xl lg:text-6xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] py-0.5 bg-clip-text text-transparent leading-tight">
                         {{ $username }}!
                     </h1>
                 </div>
-                <p class="text-[var(--text-muted)] text-lg pl-0.5 leading-relaxed max-w-xl">
+                <p class=" text-lg pl-0.5 leading-relaxed max-w-xl">
                     <span class="font-semibold text-[#3cac9d]">Ask questions</span>.
                     <span class="font-semibold text-[#57CC99]">share answers</span>,
-                    <span class="font-semibold text-[#6bce82]">learn together</span>, with
-                    fellow <span class="font-bold">Petranesian Informates</span>!
+                    <span class="font-semibold text-[#6bce82]">learn together</span>,
+                    <span class="text-[var(--text-muted)]"> with fellow </span>
+                    <span class="font-bold !text-[var(text-secondary)]">Petranesian Informates</span>!
                 </p>
             @endif
         </div>
     </div>
 
-    <div class="max-w-5xl justify-start items-start px-8 mt-6 mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="w-full justify-start items-start px-8 mt-6 mb-8">
+        <div class="flex flex-col md:flex-row gap-4">
             {{-- Search Bar --}}
             {{-- <div class="question-search-bar w-full md:w-auto md:flex-1 max-w-md">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -372,33 +415,50 @@
             </div> --}}
 
             {{-- Sort & Tag Filters --}}
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
-                <a href="#" data-sortby="latest"
-                    class="filter-button {{ ($initialSortBy ?? 'latest') == 'latest' ? 'active' : '' }}">
-                    <i class="fa-solid fa-bolt"></i> Most Recent
-                </a>
-                <a href="#" data-sortby="views"
-                    class="filter-button {{ ($initialSortBy ?? '') == 'views' ? 'active' : '' }}">
-                    <i class="fa-solid fa-eye"></i> Views
-                </a>
-                <a href="#" data-sortby="votes"
-                    class="filter-button {{ ($initialSortBy ?? '') == 'votes' ? 'active' : '' }}">
-                    <i class="fa-solid fa-thumbs-up"></i> Votes
-                </a>
+            <div class="flex flex-col md:flex-row justify-between items-end gap-4 w-full">
+                <div class="tabs-container flex items-center gap-x-6 text-sm">
+                    <a href="#" data-sortby="latest" class="tab-item {{ ($initialSortBy ?? 'latest') == 'latest' ? 'active' : '' }}">
+                        <i class="fa-solid fa-bolt mr-1.5"></i> Most Recent
+                    </a>
+                    <a href="#" data-sortby="views" class="tab-item {{ ($initialSortBy ?? '') == 'views' ? 'active' : '' }}">
+                        <i class="fa-solid fa-eye mr-1.5"></i> Most Views
+                    </a>
+                    <a href="#" data-sortby="votes" class="tab-item {{ ($initialSortBy ?? '') == 'votes' ? 'active' : '' }}">
+                        <i class="fa-solid fa-thumbs-up mr-1.5"></i> Most Votes
+                    </a>
+                </div>
 
-                <select id="filter_tag_select" name="filter_tag" class="tag-filter-select">
-                    <option value="">All Subjects</option>
-                    @if (isset($tags) && count($tags) > 0)
-                        @foreach ($tags as $tag)
-                            <option value="{{ $tag['name'] }}"
-                                {{ ($initialFilterTag ?? '') == $tag['name'] ? 'selected' : '' }}>
-                                {{ $tag['name'] }}
-                            </option>
-                        @endforeach
-                    @else
-                        <option value="" disabled>No subjects available</option>
-                    @endif
-                </select>
+                <div class="relative md:ml-auto" id="tag-filter-container">
+
+                    <button type="button" id="tag-filter-button" class="tag-filter-button w-full md:w-auto">
+                        <i class="fa-solid fa-tag text-xs"></i>
+                        <span>Subject: <span id="current-tag-name" class="font-semibold">{{ $initialFilterTag ?: 'All' }}</span></span>
+                        <i class="fa-solid fa-chevron-down chevron-icon text-xs ml-auto"></i>
+                    </button>
+
+                    <div id="tag-filter-dropdown">
+                        <div class="tag-search-input-wrapper">
+                            <i class="fa-solid fa-magnifying-glass text-sm text-gray-500 absolute left-6 top-1/2 -translate-y-1/2 transform"></i>
+                            <input type="text" id="tag-search-input" placeholder="Search subjects..." class="tag-search-input">
+                        </div>
+
+                        <ul class="max-h-60 overflow-y-auto p-1" id="tag-list">
+                            <li>
+                                <a href="#" class="tag-link-item {{ !$initialFilterTag ? 'active' : '' }}" data-tag-name="">All Subjects</a>
+                            </li>
+
+                            @if (isset($tags) && count($tags) > 0)
+                                @foreach ($tags as $tag)
+                                    <li>
+                                        <a href="#" class="tag-link-item {{ ($initialFilterTag ?? '') == $tag['name'] ? 'active' : '' }}" data-tag-name="{{ $tag['name'] }}">
+                                            {{ $tag['name'] }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            @endif
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -439,12 +499,14 @@
                                 Connect with fellow Petranesian Informates and get insights from your peers!
                             </p>
 
-                            <a href="{{ route('askPage') }}"
-                                class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
-                                <i class="fa-solid fa-plus mr-2"></i> Ask a Question
-                            </a>
+                            <div class="w-full mt-1 pt-5 border-t border-[var(--border-color)]">
+                                <a href="{{ route('askPage') }}"
+                                    class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+                                    <i class="fa-solid fa-plus mr-2"></i> Ask a Question
+                                </a>
+                            </div>
 
-                            <!-- Popular topics -->
+                            {{-- <!-- Popular topics -->
                             <div class="w-full mt-5 pt-5 border-t border-[var(--border-color)]">
                                 <h3 class="font-medium mb-3 text-sm">Popular Topics</h3>
                                 <div class="flex flex-wrap gap-2">
@@ -458,7 +520,7 @@
                                     <a href="#"
                                         class="text-xs px-2 py-1 rounded-full bg-[rgba(245,158,11,0.15)] text-amber-500 hover:bg-[rgba(245,158,11,0.25)] transition-colors">Algorithms</a>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -563,15 +625,71 @@
             const questionsListContainer = document.getElementById('questions-list-ajax-container');
             const paginationLinksContainer = questionsListContainer.querySelector('.pagination-container');
             const searchInput = document.getElementById('questionSearchInput');
-            const tagFilterSelect = document.getElementById('filter_tag_select');
-            const sortByButtons = document.querySelectorAll('.filter-button[data-sortby]');
+            // const tagFilterSelect = document.getElementById('filter_tag_select');
+            const sortByButtons = document.querySelectorAll('.tab-item[data-sortby]');
+
+            const tagFilterContainer = document.getElementById('tag-filter-container');
+            const tagFilterButton = document.getElementById('tag-filter-button');
+            const tagFilterDropdown = document.getElementById('tag-filter-dropdown');
+            const tagSearchInput = document.getElementById('tag-search-input');
+            const tagList = document.getElementById('tag-list');
+            const currentTagNameSpan = document.getElementById('current-tag-name');
 
             let currentPage = {{ $initialPage ?? 1 }};
             let currentSortBy = '{{ $initialSortBy ?? 'latest' }}';
             let currentFilterTag = '{{ $initialFilterTag ?? '' }}';
             let currentSearchTerm = '{{ $initialSearchTerm ?? '' }}';
 
-            const ajaxUrl = '{{ route('home') }}';
+            const ajaxUrl = '{{ route('popular') }}';
+
+            // event listener buat subject drop down + search
+            if (tagFilterContainer) {
+                tagFilterButton.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent the 'document' click listener from firing immediately
+                    const isOpen = tagFilterDropdown.classList.toggle('open');
+                    tagFilterButton.classList.toggle('active', isOpen);
+                    if (isOpen) {
+                        tagSearchInput.focus();
+                    }
+                });
+
+                tagSearchInput.addEventListener('input', () => {
+                    const searchTerm = tagSearchInput.value.toLowerCase();
+                    tagList.querySelectorAll('li').forEach(li => {
+                        const tagName = li.textContent.toLowerCase();
+                        li.style.display = tagName.includes(searchTerm) ? 'block' : 'none';
+                    });
+                });
+
+                // handle select subject
+                tagList.addEventListener('click', (event) => {
+                    const targetLink = event.target.closest('.tag-link-item');
+                    if (targetLink) {
+                        event.preventDefault();
+                        const selectedTag = targetLink.dataset.tagName;
+
+                        if (currentFilterTag !== selectedTag) {
+                            currentFilterTag = selectedTag;
+                            fetchQuestions(1); // Fetch new questions for page 1 with the new tag
+
+                            // Update the button text and active state in the list
+                            currentTagNameSpan.textContent = selectedTag || 'All';
+                            tagList.querySelectorAll('.tag-link-item').forEach(link => link.classList.remove('active'));
+                            targetLink.classList.add('active');
+                        }
+
+                        tagFilterDropdown.classList.remove('open');
+                        tagFilterButton.classList.remove('active');
+                    }
+                });
+            }
+            
+            document.addEventListener('click', (event) => {
+                if (tagFilterContainer && !tagFilterContainer.contains(event.target)) {
+                    tagFilterDropdown.classList.remove('open');
+                    tagFilterButton.classList.remove('active');
+                }
+            });
 
             function showLoadingSkeleton() {
                 // ... (your existing skeleton logic - no change needed here)
@@ -864,7 +982,7 @@
                     if (!icon) return;
                     if (index % 3 === 0) icon.style.color = isLightMode ? '#10b981' : '#23BF7F';
                     else if (index % 3 === 1) icon.style.color = isLightMode ? '#f59e0b' : '#ffd249';
-                    else icon.style.color = isLightMode ? '#3b82f6' : '#909ed5';
+                    else icon.style.color = isLightMode ? '#4DB2BF' : '#3DAAA3';
                 });
             }
         }

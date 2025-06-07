@@ -56,7 +56,7 @@
             background-color: var(--bg-secondary);
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: #6366F1 #e5e7eb;
+            scrollbar-color: var(--accent-secondary) var(--bg-light);
         }
 
         #editor::-webkit-scrollbar {
@@ -64,7 +64,7 @@
         }
 
         #editor::-webkit-scrollbar-thumb {
-            background-color: #6366F1;
+            background-color: var(--accent-secondary);
             border-radius: 10px;
         }
 
@@ -80,18 +80,11 @@
         }
 
         .image-upload-button {
-            background: linear-gradient(to right, #38A3A5, #80ED99);
-            color: white;
             border: none;
             border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
-        }
-
-        .image-upload-button:hover {
-            background: linear-gradient(to right, #80ED99, #38A3A5);
-            transform: translateY(-2px);
         }
 
         .image-preview-item {
@@ -417,7 +410,7 @@
                     <li class="flex items-start gap-2 mb-2"><i class="fa-solid fa-check-circle mt-1"></i><span>Explain what
                             you tried</span></li>
                     <li class="flex items-start gap-2 mb-2"><i class="fa-solid fa-check-circle mt-1"></i><span>Select
-                            appropriate tags</span></li>
+                            appropriate subjects</span></li>
                 </ul>
             </div>
         @endif
@@ -435,7 +428,7 @@
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your
                     question quickly</p>
-                <input type="text" id="title" name="title" class="input-field p-3 text-black"
+                <input type="text" id="title" name="title" class="placeholder-[var(--text-muted)] input-field p-3 text-black"
                     placeholder="What's your question about?"
                     value="{{ old('title', $isEditMode ? $questionToEdit['title'] ?? '' : '') }}" required>
             </div>
@@ -447,14 +440,8 @@
                     <h2 class="text-lg font-semibold">Question Details</h2>
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details</p>
-                <div id="editor" class="w-full">
-                    <div class="toolbar flex flex-col justify-center gap-4 p-3">
-                        <button type="button" id="upload-image-btn"
-                            class="image-upload-button w-[200px] flex items-center gap-2 py-2 px-4">
-                            <i class="fa-solid fa-image"></i> Add Image
-                        </button>
-                    </div>
-                    <div class="p-4 bg-[var(--bg-secondary)]">
+                <div id="editor" class="w-auto">
+                    <div class="p-4 pb-0 bg-[var(--bg-secondary)]">
                         <textarea id="question" name="question" rows="8"
                             class="block w-full px-0 text-[var(--text-primary)] placeholder-[var(--text-muted)] bg-transparent border-0 focus:ring-0"
                             placeholder="Describe your question in detail..." required>{{ old('question', $isEditMode ? $questionToEdit['question'] ?? '' : '') }}</textarea>
@@ -470,6 +457,12 @@
                             @endif
                         </div>
                     </div>
+                    <div class="toolbar w-full flex flex-col items-end gap-4 p-3 pb-6">
+                        <button type="button" id="upload-image-btn"
+                            class="image-upload-button w-max text-[var(--text-dark)] bg-[var(--accent-tertiary)] flex items-center gap-2 py-2 px-4">
+                            <i class="fa-solid fa-image"></i> Add Image
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -477,9 +470,9 @@
             <div class="p-6 mb-6">
                 <div class="flex items-center mb-4">
                     <i class="fa-solid fa-tags section-icon mr-3"></i>
-                    <h2 class="text-lg font-semibold">Tags</h2>
+                    <h2 class="text-lg font-semibold">Subjects</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to help others find your question
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant subjects to help others find your question
                 </p>
 
                 <!-- Selected Tags Display -->
@@ -531,8 +524,8 @@
             <!-- Modal Header -->
             <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
                 <div>
-                    <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Tags</h3>
-                    <p class="text-sm text-[var(--text-secondary)] mt-1">Choose tags that best describe your question</p>
+                    <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Subjects</h3>
+                    <p class="text-sm text-[var(--text-secondary)] mt-1">Choose subjects that best describe your question</p>
                 </div>
                 <button type="button" id="close-tags-modal"
                     class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
@@ -979,7 +972,7 @@
                                                 .replace('id', QUESTION_TO_EDIT.user
                                                 .id);
                                         } else {
-                                            window.location.href = "{{ route('home') }}";
+                                            window.location.href = "{{ route('popular') }}";
                                         }
                                     });
                                 } else {

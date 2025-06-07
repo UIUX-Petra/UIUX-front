@@ -21,50 +21,44 @@
     .logo-text:hover span {
         letter-spacing: 0.02rem;
     }
-
-    /* Navigation items */
     .nav-link {
         position: relative;
-        transition: all 0.3s ease;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
         border-radius: 0.5rem;
-        margin-bottom: 0.25rem;
-        overflow: hidden;
+        border-left: 3px solid transparent;
     }
 
-    .nav-link::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 0;
-        background-color: var(--accent-tertiary);
-        opacity: 0.1;
-        transition: width 0.3s ease;
+    .nav-link:not(.active-nav):hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        transition: all 0.2s ease;
     }
-
-    .nav-link:hover::before {
-        width: 100%;
-    }
-
     .nav-link i {
         transition: transform 0.3s ease;
+
     }
 
-    .nav-link:hover i {
-        transform: translateX(3px);
-    }
 
     .active-nav {
+        font-weight: 600;
+        color: var(--text-highlight) !important;
+        background-color: var(--bg-secondary);
+        border-image: linear-gradient(to bottom, #38A3A5, #80ED99);
+        border-image-slice: 1;
+        border-left-width: 3px;
+    }
+
+    .active-nav i {
+        color: var(--accent-secondary);
+    }
+
+    
+    /* .active-nav {
         background-color: var(--border-color);
         background-opacity: 0.1;
         color: var(--text-primary) !important;
         font-weight: 500;
-    }
-
-    .active-nav i {
-        color: var(--accent-tertiary);
-    }
+    } */
 
     /* Dropdown styling */
     .user-dropdown {
@@ -454,10 +448,10 @@
         </div>
 
         <!-- Logo Section with hover effect -->
-        <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
+        <a href="{{ route('popular') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
             <div class="relative overflow-hidden">
                 <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo"
-                    class="h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-90">
+                    class="p-1 h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-90">
             </div>
             <div class="text-md cal-sans-regular logo-text">
                 <span class="font-bold text-white transition-all">peer</span>
@@ -564,6 +558,11 @@
                     Sign Up / Login
                 </a>
             @else
+            
+                <a href="{{ route('askPage') }}"
+                    class="flex items-center text-[var(--text-dark)] px-3 py-2 rounded-full bg-gradient-to-r from-[#38A3A5] to-[#80ED99]">
+                    <i class="fa-solid fa-plus"></i>
+                </a>
                 <!-- User Avatar with hover effects -->
                 <div class="avatar-container relative">
                     <button type="button"
@@ -728,10 +727,10 @@
             </div>
         </div>
         <a href="{{ route('askPage') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
+            class="nav-link flex items-center px-3 py-2 rounded-md text-[var(--text-dark)] bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+            <i class="fa-solid fa-plus mr-3"></i> Ask a Question
         </a>
-        <a href="{{ route('home') }}"
+        <a href="{{ route('popular') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-house mr-3"></i> Home
         </a>
@@ -787,11 +786,11 @@
     <!-- Sidebar content -->
     <div class="flex flex-col h-full mt-16">
         <!-- Main Navigation Section -->
-        <div class="mb-8 nav-section pb-6">
+        <div class="mb-6 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Main Navigation</h3>
             <nav class="flex flex-col space-y-1">
                 <nav class="flex flex-col space-y-1">
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('popular') }}"
                         class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                         <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
                     </a>
@@ -808,7 +807,7 @@
         </div>
 
         <!-- My Activities section-->
-        <div class="mb-8 nav-section pb-6">
+        <div class="mb-6 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">MY ACTIVITES</h3>
             <nav class="flex flex-col space-y-1">
                 <nav class="flex flex-col space-y-1">
@@ -828,7 +827,7 @@
         </div>
 
         <!-- Community Section -->
-        <div class="mb-8 nav-section pb-6">
+        <div class="mb-6 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Community</h3>
             <nav class="flex flex-col space-y-1">
                 <a href="{{ route('viewAllUsers') }}"
@@ -840,14 +839,6 @@
                     <i class="fa-solid fa-trophy mr-3 w-5 text-center"></i> Leaderboard
                 </a>
             </nav>
-        </div>
-
-        <div class="mb-8 nav-section pb-6">
-            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Actions</h3>
-            <a href="{{ route('askPage') }}"
-                class="nav-link flex items-center text-[var(--text-dark)] px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-                <i class="fa-solid fa-plus mr-3"></i> Ask a Question
-            </a>
         </div>
     </div>
 </div>

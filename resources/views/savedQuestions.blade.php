@@ -31,14 +31,15 @@
     <div
         class="w-full bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start mt-6 mb-6 flex items-start space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
         <div class="text-3xl relative p-4 rounded-full bg-[var(--bg-primary)] z-10">
-            <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+            <i class="fa-solid fa-bookmark bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight p-0.5"></i>
         </div>
 
         <div class="flex flex-col z-10">
-            <h1 class="cal-sans-regular popular-title lg:text-3xl text-2xl mb-2 font-bold">
+             <h1 class="cal-sans-regular text-4xl lg:text-5xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight py-1">
                 Saved Questions
             </h1>
-            <p class="text-[var(--text-secondary)] text-lg pl-0.5 font-regular max-w-xl">
+             <div class="h-1 w-24 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div>
+            <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl mt-2">
                 Questions saved by you
             </p>
         </div>
@@ -95,7 +96,7 @@
 
                                     @foreach ($tags as $index => $tag)
                                         @if(isset($tag['subject']['name']))
-                                            <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
+                                            <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
                                                class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
                                                 <span class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                                     {{ $tag['subject']['name'] }}
@@ -152,16 +153,14 @@
                         <h3 class="font-medium mb-3 text-sm">Quick Links</h3>
                         <ul class="space-y-2 text-left">
                             <li class="flex items-center text-sm">
-                                <i class="fa-solid fa-fire-flame-curved mr-2 text-amber-500"></i>
-                                <a href="{{ route('home') }}" {{-- Updated link --}}
-                                    class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Popular
-                                    Questions</a>
+                                <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
+                                <a href="{{ route('user.questions.list', ['id' => $id]) }}" {{-- Updated link --}}
+                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">My Questions</a>
                             </li>
                             <li class="flex items-center text-sm">
-                                <i class="fa-solid fa-star mr-2 text-yellow-500"></i>
-                                <a href="{{ route('home', ['sort_by' => 'unanswered']) }}" {{-- Updated link for unanswered --}}
-                                    class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Unanswered
-                                    Questions</a>
+                                <i class="fa-solid fa-comments mr-2 text-[var(--accent-secondary)]"></i>
+                                <a href="{{ route('user.answers.index', ['userId' => $id]) }}" {{-- Updated link for unanswered --}}
+                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">My Answers</a>
                             </li>
                         </ul>
                     </div>

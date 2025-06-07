@@ -95,7 +95,7 @@
             left: 100%;
         }
 
-                /* New Modal Base Styles */
+        /* New Modal Base Styles */
         #questionCommentsModal {
             /* Default to hidden: opacity-0 and non-interactive */
             /* Tailwind classes will handle this: opacity-0 pointer-events-none */
@@ -141,9 +141,8 @@
                     </div>
 
                     <div id="answerCountAtas" class="flex items-center" title="Comments">
-                        <i class="fa-solid fa-comments text-[var(--accent-tertiary)] mr-2"></i>
+                        <i class="fa-solid fa-reply-all text-[var(--accent-tertiary)] mr-2"></i>
                         <span class="text-[var(--text-secondary)]">{{ count($question['answer']) }}</span>
-                        {{-- Comment atau answer count ?? // ini yang diatas --}}
                     </div>
                 </div>
             </div>
@@ -165,14 +164,31 @@
                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                 </button>
 
-                <div class="flex flex-col items-center mt-4" id="reply-count">
+                {{-- <div class="flex flex-col items-center mt-4" id="reply-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
                         <i class="fa-solid fa-comments text-md"></i>
                     </button>
                     <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
                         {{ count($question['answer']) }}
                     </small>
-                </div>
+                </div> --}}
+
+                {{-- Save/Unsave Button --}}
+                @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
+                    <button type="button"
+                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                            data-question-id="{{ $question['id'] }}"
+                            title="Unsave Question">
+                        <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+                    </button>
+                @else
+                    <button type="button"
+                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                            data-question-id="{{ $question['id'] }}"
+                            title="Save Question">
+                        <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+                    </button>
+                @endif
             </div>
 
             <!-- Question Content -->
@@ -253,69 +269,54 @@
         </div>
         {{-- </div> --}}
 
-        <!-- Comments Section -->
-        @if ($question['comment_count'] > 0 || true)
-            <div id="comments-section" class="mt-2 p-6 bg-[var(--bg-secondary)] rounded-lg mb-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)]">
-                        Comments
-                        <span class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+        <div id="questionCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
+            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
+                <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
+                    <h3 class="text-xl font-semibold text-[var(--text-primary)]">
+                        {{ $question['title'] }}
+                        <span id="modal-question-comment-count" class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
                     </h3>
-
-                    <button
-                        class="comment-btn text-[var(--text-primary)] bg-[var(--bg-button)] bg-opacity-80 px-3 py-1 rounded-md hover:bg-opacity-100 flex items-center space-x-2 focus:outline-none transition-all">
-                        <i class="fa-solid fa-comment-dots mr-2"></i>
-                        Add Comment
-                    </button>
+                    <button id="close-question-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                 </div>
 
-                <!-- Comment Input Box -->
-                <div class="comment-box hidden mb-4">
-                    <textarea id="question-comment-textarea"
-                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                        rows="2" placeholder="Write your comment here!"></textarea>
-                    <button id="qComment-btn"
-                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                        Submit Comment
-                    </button>
-                </div>
-
-                <!-- Comments List -->
-                @if ($question['comment_count'] > 0)
-                    <div id="question-comments" class="space-y-3">
+                <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3" id="question-comments-list-modal">
+                    @if ($question['comment_count'] > 0)
                         @foreach ($question['comment'] as $comm)
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
-                                {{-- <div class="flex flex-col items-center mr-4">
-                                    <button
-                                        class="vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up mb-1">
-                                        <i class="text-sm text-[#23BF7F] fa-solid fa-chevron-up"></i>
-                                    </button>
-                                    <span class="text-xs text-[var(--text-secondary)]">0</span>
-                                    <button
-                                        class="vote-btn text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down mt-1">
-                                        <i class="text-sm text-[#FE0081] fa-solid fa-chevron-down"></i>
-                                    </button>
-                                </div> --}}
                                 <div class="flex-grow">
-                                    <p class="text-[var(--text-primary)]">{{ $comm['comment'] }}</p>
-                                    <a href="{{ route('viewUser', ['email' => $comm['email']]) }}" class="hover:underline">
-                                        <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                            <span>Posted by {{ $comm['username'] }} -
+                                    <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
+                                    {{-- Ensure you have user data available consistently, e.g., $comm['user']['email'] or $comm['email'] --}}
+                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
+                                        <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
+                                            <img src="{{ $comm['user_image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
+                                                alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
+                                            <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
                                                 {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
-                                        </div>
                                     </a>
                                 </div>
                             </div>
+                            
                         @endforeach
-                    </div>
-                @else
-                    <div class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
-                        <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
-                        <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
-                    </div>
-                @endif
+                    @else
+                        <div id="no-question-comments-modal" class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
+                            <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
+                            <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex-shrink-0 p-6 pt-4 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
+                    <textarea id="question-comment-textarea"
+                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                        rows="3" placeholder="Write your comment here..."></textarea>
+                    <button id="qComment-btn"
+                        class="mt-3 w-full px-4 py-2 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                        Submit Comment
+                    </button>
+                </div>
             </div>
-        @endif
+        </div>
+
 
         <!-- Answer Input Section -->
         <div class="mt-10">
@@ -330,7 +331,7 @@
                 </div>
 
                 <textarea id="answer-textArea"
-                    class="w-full bg-[var(--bg-input)] rounded-lg p-4 text-[var(--text-primary)] placeholder-[var(--text-muted)]  min-h-[150px]"
+                    class="w-full bg-[var(--bg-input)] rounded-lg p-4 text-[var(--text-primary)] placeholder-[var(--text-muted)]  min-h-[150px] border-none"
                     placeholder="Write your detailed answer here..."></textarea>
 
                 <div class="flex justify-end items-center space-x-2  mt-4">
@@ -532,17 +533,82 @@
                 </div>
             @else
                 <div class="bg-[var(--bg-secondary)] rounded-lg p-8 shadow-lg text-center">
-                    <i class="fa-solid fa-lightbulb text-4xl text-[var(--accent-secondary)] mb-4"></i>
+                    <i class="fa-solid fa-lightbulb text-4xl text-[var(--accent-tertiary)] mb-4"></i>
                     <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-2">No Answers Yet</h3>
                     <p class="text-[var(--text-secondary)] mb-4">Be the first one to answer this question!</p>
                     <a href="#answer-textArea"
-                        class="px-6 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                        class="px-6 py-2 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Write an Answer
                     </a>
                 </div>
             @endif
         </div>
     </div>
+
+     <script>
+    document.addEventListener('DOMContentLoaded', () => {
+// Modal for Question Comments
+    const questionCommentsModal = document.getElementById('questionCommentsModal');
+    const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
+    const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
+    const questionCommentTextarea = document.getElementById('question-comment-textarea');
+
+    function openModal() {
+        if (questionCommentsModal) {
+            questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
+            questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
+            if (questionCommentTextarea) {
+                 questionCommentTextarea.focus();
+            }
+        }
+    }
+
+    function closeModal() {
+        if (questionCommentsModal) {
+            questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
+            questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
+        }
+    }
+
+    if (openQuestionCommentsModalBtn) {
+        openQuestionCommentsModalBtn.addEventListener('click', openModal);
+    }
+
+    if (closeQuestionCommentsModalBtn) {
+        closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
+    }
+
+    if (questionCommentsModal) {
+        // Close modal on backdrop click
+        questionCommentsModal.addEventListener('click', (event) => {
+            if (event.target === questionCommentsModal) {
+                closeModal();
+            }
+        });
+        // Close modal on Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && questionCommentsModal.classList.contains('opacity-100')) {
+                closeModal();
+            }
+        });
+    }
+
+    // Toggle comment box for ANSWERS
+    const answerCommentButtons = document.querySelectorAll('.answer-comment-btn'); // Ensure this class is on answer comment buttons
+    answerCommentButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const answerId = button.dataset.answerId; // Assuming you have data-answer-id on these buttons
+            const commentBox = document.getElementById(`answer-${answerId}-comment-box`); // Make sure this ID matches your answer comment boxes
+            if (commentBox) {
+                commentBox.classList.toggle('hidden');
+                if (!commentBox.classList.contains('hidden')) {
+                    commentBox.querySelector('textarea').focus();
+                }
+            }
+        });
+    });
+    });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

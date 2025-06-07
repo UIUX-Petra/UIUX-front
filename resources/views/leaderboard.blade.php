@@ -206,25 +206,25 @@
                 Leaderboard
             </h1>
             <p class="text-[var(--text-muted)] text-lg max-w-2xl">
-                Discover the top contributors in each tag and find your special connection
+                Discover the top contributors in each subject and find your special connection
             </p>
         </div>
 
         <!-- Best user in each tag section -->
         <div class="max-w-4xl justify-start items-start mb-16">
             <h2 class="section-heading text-2xl md:text-3xl text-[var(--text-primary)] font-semibold mb-8">
-                Top Contributors by Tag
+                Top Contributors by Subjects
             </h2>
 
             <div class="flex flex-col space-y-6">
                 <!-- Tag Selection -->
                 <div class="w-full max-w-sm">
                     <label for="tags" class="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                        Select a tag to see the top contributor
+                        Select a subject to see the top contributor
                     </label>
                     <select name="tags" id="tags"
                         class="custom-select w-full px-4 py-3 rounded-lg font-medium text-center">
-                        <option value="" disabled selected>Choose a tag...</option>
+                        <option value="" disabled selected>Choose a subject...</option>
                         @foreach ($tags as $tag)
                             <option value="{{ $tag['id'] }}">{{ $tag['name'] }}</option>
                         @endforeach

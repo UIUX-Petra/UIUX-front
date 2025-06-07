@@ -96,17 +96,25 @@
     <!-- Welcome Section -->
     <div class="w-full rounded-lg p-6 px-8 max-w-5xl items-start justify-start my-6 relative z-10">
         <div class="relative z-10">
-            <h1 class="cal-sans-regular lg:text-4xl text-3xl mb-4 text-[var(--text-primary)] ">
-                Academic Subjects
-            </h1>
-            <p class="text-[var(--text-secondary)] text-md lg:text-lg pl-0.5 font-regular leading-relaxed max-w-4xl">
-                Explore comprehensive subjects from
-                <span class="font-semibold text-[var(--accent-tertiary)]">Informatics</span>,
-                <span class="font-semibold text-[var(--accent-secondary)]">Business Information Systems</span>, and
-                <span class="font-semibold text-[var(--accent-primary)]">Data Science & Analytics</span>
-                programs at Petra Christian University. Connect with fellow students and dive deep into your academic
-                interests.
-            </p>
+                <div class="flex flex-col space-y-6">
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div>
+                                <h1 class="cal-sans-regular text-4xl lg:text-5xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
+                                    Academic Subjects
+                                </h1>
+                                <div class="h-1 w-44 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div>
+                            </div>
+                        </div>
+                        <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl">
+                            Explore comprehensive subjects from <span class="font-semibold text-[#3cac9d]">Informatics</span>,
+                            <span class="font-semibold text-[#57CC99]">Business Information Systems</span>, and
+                            <span class="font-semibold text-[#6bce82]">Data Science & Analytics</span>
+                            programs at Petra Christian University. Connect with fellow students and dive deep into your academic
+                            interests.
+                        </p>
+                    </div>
+                </div>
         </div>
     </div>
 
@@ -115,7 +123,7 @@
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl items-start justify-start px-6">
         @if (isset($tags) && count($tags) > 0)
             @foreach ($tags as $index => $tag)
-                <a href="{{ route('home', ['filter_tag' => $tag['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
+                <a href="{{ route('popular', ['filter_tag' => $tag['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
                     class="tag-link hover:no-underline focus:no-underline text-xl font-bold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-all duration-300 relative focus:outline-2 focus:outline-[var(--accent-primary)] focus:outline-offset-2 focus:rounded"
                     aria-label="View questions for {{ $tag['name'] }}">
                     <div
@@ -132,7 +140,7 @@
                             </div>
                         </div>
 
-                        <div class="text-sm my-4 text-[var(--text-muted)] leading-relaxed">
+                        <div class="text-sm my-4 text-[var(--text-muted)] leading-relaxed mt-1 pt-5 border-t border-[var(--border-color)]">
                             <p>{{ $tag['description'] ?? 'Explore questions and discussions related to this subject area.' }}
                             </p>
                         </div>
