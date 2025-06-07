@@ -65,7 +65,7 @@ class MainController extends Controller
         $viewData['questionToEdit'] = $questionDetails;
         $viewData['existingTagIds'] = array_column($questionDetails['group_question'], 'tag_id');
       } else if ($questionDetails) {
-        return redirect()->route('home')
+        return redirect()->route('popular')
           ->with('Error', 'You are not authorized to edit this question.');
       } else {
         return redirect()->route('askPage')

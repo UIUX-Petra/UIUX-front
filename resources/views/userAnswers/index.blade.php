@@ -488,7 +488,7 @@
                     <p class="text-[var(--text-muted)] text-lg mb-8">
                         Start contributing to the community by answering questions. Your knowledge can help others!
                     </p>
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('popular') }}"
                         class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
                         <i class="fas fa-search mr-2"></i>
                         Browse Questions
@@ -711,7 +711,7 @@
                                 <p class="text-[var(--text-muted)] text-lg mb-8">
                                     Start contributing to the community by answering questions. Your knowledge can help others!
                                 </p>
-                                <a href="{{ route('home') }}" 
+                                <a href="{{ route('popular') }}" 
                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
                                     <i class="fas fa-search mr-2"></i>
                                     Browse Questions
