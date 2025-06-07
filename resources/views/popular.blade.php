@@ -377,7 +377,7 @@
             <div class="flex flex-wrap items-center gap-x-3 gap-y-3">
                 <a href="#" data-sortby="latest"
                     class="filter-button {{ ($initialSortBy ?? 'latest') == 'latest' ? 'active' : '' }}">
-                    <i class="fa-solid fa-bolt"></i> New Questions
+                    <i class="fa-solid fa-bolt"></i> Most Recent
                 </a>
                 <a href="#" data-sortby="views"
                     class="filter-button {{ ($initialSortBy ?? '') == 'views' ? 'active' : '' }}">
@@ -573,7 +573,7 @@
             let currentFilterTag = '{{ $initialFilterTag ?? '' }}';
             let currentSearchTerm = '{{ $initialSearchTerm ?? '' }}';
 
-            const ajaxUrl = '{{ route('popular') }}';
+            const ajaxUrl = '{{ route('home') }}';
 
             function showLoadingSkeleton() {
                 // ... (your existing skeleton logic - no change needed here)

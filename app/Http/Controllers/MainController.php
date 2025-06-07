@@ -22,31 +22,31 @@ class MainController extends Controller
     $this->questionController = $questionController;
     $this->tagController = $tagController;
   }
-  public function home(Request $request)
-  {
-    $user = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $user['image'] ?? null;
-    $data['username'] = $user['username'] ?? 'Guest';
-    $data['id'] = $user['id'];
-    $data['title'] = 'Home';
-    $questions = $this->questionController->getAllQuestions($request);
+  // public function home(Request $request)
+  // {
+  //   $user = $this->userController->getUserByEmail(session('email'));
+  //   $data['image'] = $user['image'] ?? null;
+  //   $data['username'] = $user['username'] ?? 'Guest';
+  //   $data['id'] = $user['id'];
+  //   $data['title'] = 'Home';
+  //   $questions = $this->questionController->getAllQuestions($request);
 
-    if ($request->ajax() || $request->wantsJson()) {
-      $questionsHtml = view('partials.questions_only_list', ['questions' => $questions])->render();
-      $paginationHtml = $questions->links()->toHtml();
+  //   if ($request->ajax() || $request->wantsJson()) {
+  //     $questionsHtml = view('partials.questions_only_list', ['questions' => $questions])->render();
+  //     $paginationHtml = $questions->links()->toHtml();
 
-      return response()->json([
-        'success' => true,
-        'questions_html' => $questionsHtml,
-        'pagination_html' => $paginationHtml,
-      ]);
-    }
-    $data['questions'] = $questions;
-    $data['user'] = $user;
-    $data['histories'] = $user['histories'];
-    // dd($data);
-    return view('home', $data);
-  }
+  //     return response()->json([
+  //       'success' => true,
+  //       'questions_html' => $questionsHtml,
+  //       'pagination_html' => $paginationHtml,
+  //     ]);
+  //   }
+  //   $data['questions'] = $questions;
+  //   $data['user'] = $user;
+  //   $data['histories'] = $user['histories'];
+  //   // dd($data);
+  //   return view('home', $data);
+  // }
 
   public function askPage(Request $request, $questionId = null) // Added Request for consistency if needed later
   {
@@ -63,6 +63,7 @@ class MainController extends Controller
       $questionDetails = $this->questionController->getQuestionDetails($questionId);
       if ($questionDetails && isset($currUser['id']) && isset($questionDetails['user_id']) && $currUser['id'] === $questionDetails['user_id']) {
         $viewData['questionToEdit'] = $questionDetails;
+        $viewData['existingTagIds'] = array_column($questionDetails['group_question'], 'tag_id');
       } else if ($questionDetails) {
         return redirect()->route('home')
           ->with('Error', 'You are not authorized to edit this question.');
@@ -84,7 +85,6 @@ class MainController extends Controller
     $data['currUser'] = $currUser;
     $data['username'] = $currUser['username'];
     $data['id'] = $currUser['id'];
-    // dd($data);
     $data['image'] = $currUser['image'];
     $data['histories'] = $currUser['histories'];
     // dd($data);
@@ -237,7 +237,7 @@ class MainController extends Controller
   }
 
 
-  public function popular(Request $request)
+  public function home(Request $request)
   {
     $email = session('email');
     $user = $email ? $this->userController->getUserByEmail($email) : null;
@@ -273,8 +273,7 @@ class MainController extends Controller
       'initialPage' => $request->input('page', 1),
       'histories' => $user['histories'],
     ];
-
-    return view('popular', $data);
+    return view('home', $data);
   }
 
   // hrse terima param id question, nih aku cuman mau coba view
@@ -290,7 +289,6 @@ class MainController extends Controller
     $data['id'] = $currUser['id'];
     $data['email'] = $currUser['email'];
     // dd($data);
-    Log::info($data['question']);
 
     $data['histories'] = $currUser['histories'];
     return view('viewAnswers', $data);

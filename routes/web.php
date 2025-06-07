@@ -27,7 +27,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['isLogin'])->group(function () {
-    Route::get('/', [MainController::class, 'popular'])->name('popular');
+    Route::get('/', [MainController::class, 'home'])->name('home');
     Route::get('/ask/{questionId?}', [MainController::class, 'askPage'])->name('askPage');
     Route::post('/questions/{id}/save-edit', [QuestionController::class, 'saveEditedQuestion'])->name('question.saveEdit');
     Route::get('/viewUser/{email}', [MainController::class, 'viewOther'])->name('viewOthers');
@@ -57,7 +57,7 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/viewUser/{email}', [MainController::class, 'viewUser'])->name('viewUser');
     Route::post('/submitAnswer/{questionId}', [AnswerController::class, 'submitAnswer'])->name('submitAnswer');
     Route::post('/addQuestion', [QuestionController::class, 'addQuestion'])->name('addQuestion');
-    Route::post('/submit/question/comment/{questionId}', [QuestionController::class, 'submitQuestionComment'])->name('question.comment.submit');
+    Route::post('/submit/comment', [UserController::class, 'submitComment'])->name('comment.submit');
     Route::get('/leaderboard', [MainController::class, 'leaderboard'])->name('user.leaderboard');
     Route::get('/getTagLeaderboard/{id}', [TagController::class, 'getTagLeaderboard'])->name('tag.leaderboard');
     Route::get('/getMostViewed', [UserController::class, 'getMostViewed'])->name('user.mostViewed');

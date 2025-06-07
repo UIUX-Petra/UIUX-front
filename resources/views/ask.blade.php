@@ -354,7 +354,6 @@
                 opacity: 0;
                 transform: scale(0.8) translateY(-10px);
             }
-
             to {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -483,7 +482,6 @@
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to help others find your question
                 </p>
-
                 <!-- Selected Tags Display -->
                 <div class="mb-4">
                     <div id="selected-tags-display"
@@ -491,7 +489,6 @@
                         <div id="selected-tags-container" class="flex flex-wrap gap-2 flex-1">
                             <!-- Selected tags will appear here -->
                         </div>
-
                         <!-- Add Tags Button (Plus Icon) inside the input box -->
                         <button type="button" id="open-tags-modal"
                             class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
@@ -611,6 +608,7 @@
     <script>
         const IS_EDIT_MODE = {{ isset($questionToEdit) && $questionToEdit !== null ? 'true' : 'false' }};
         const QUESTION_TO_EDIT = @json($questionToEdit ?? null);
+        const EXISTING_TAG_IDS = @json($existingTagIds ?? []);
         const ALL_TAGS_FROM_PHP = @json($allTags ?? []);
         const CSRF_TOKEN = "{{ csrf_token() }}";
 
@@ -645,15 +643,9 @@
             const hiddenSelect = document.getElementById('tags-multiselect');
 
             // Initialize from edit mode if applicable
-            if (IS_EDIT_MODE && QUESTION_TO_EDIT && QUESTION_TO_EDIT.group_question) {
-                QUESTION_TO_EDIT.group_question.forEach(group => {
-                    if (group.subject && group.subject.id) {
-                        const tagId = group.subject.id.toString();
-                        if (!selectedTagIds.includes(tagId)) {
-                            selectedTagIds.push(tagId);
-                        }
-                    }
-                });
+            if (IS_EDIT_MODE && EXISTING_TAG_IDS.length > 0) {
+                // We directly use the simple array of IDs from the controller
+                selectedTagIds = [...EXISTING_TAG_IDS];
             }
 
             function openModal() {
@@ -996,8 +988,7 @@
                                                 .replace('id', QUESTION_TO_EDIT.user
                                                     .id);
                                         } else {
-                                            window.location.href =
-                                                "{{ route('popular') }}";
+                                            window.location.href = "{{ route('home') }}";
                                         }
                                     }, 3000);
                                 } else {

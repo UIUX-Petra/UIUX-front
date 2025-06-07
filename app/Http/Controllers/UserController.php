@@ -71,11 +71,6 @@ class UserController extends Controller
         // Convert the result to an array (since array_filter returns an array of matches)
         $recUser = array_values($recUser);
 
-        // Log the results for debugging
-        Log::info("Users ordered by reputation: " . print_r($usersByReputation, true));
-        Log::info("Users ordered by vote: " . print_r($usersByVote, true));
-        Log::info("Users ordered by new user: " . print_r($usersByNewest, true));
-
         return [
             'users_by_reputation' => $usersByReputation,
             'users_by_vote' => $usersByVote,
@@ -138,7 +133,7 @@ class UserController extends Controller
             $answerCount = 0;
             $followerCount = 0;
             $followingCount = 0;
-            
+
             // Mengubah $subjectCount menjadi array untuk menyimpan detail subjek
             $subjectsAggregated = []; // Ganti nama dari $subjectCount
 
@@ -197,14 +192,14 @@ class UserController extends Controller
                 foreach ($originalUserData['answer'] as $answerItem) {
                     if (isset($answerItem['question']['group_question']) && is_array($answerItem['question']['group_question'])) {
                         foreach ($answerItem['question']['group_question'] as $group) {
-                             if (isset($group['subject']['name']) && isset($group['subject']['abbreviation'])) {
+                            if (isset($group['subject']['name']) && isset($group['subject']['abbreviation'])) {
                                 $subjectName = $group['subject']['name'];
                                 $subjectAbbr = $group['subject']['abbreviation'];
 
                                 if (!isset($subjectsAggregated[$subjectName])) {
                                     $subjectsAggregated[$subjectName] = [
-                                        'subject_name' => $subjectName,
-                                        'subject_abbr' => $subjectAbbr,
+                                        'name' => $subjectName,
+                                        'abbr' => $subjectAbbr,
                                         'count' => 0
                                     ];
                                 }
@@ -268,7 +263,7 @@ class UserController extends Controller
                 'histories' => $groupedHistories,
             ];
         } else {
-            Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", (array)$responseData);
+            Log::warning("Unexpected API response structure or missing 'data' for user email {$email}: ", (array) $responseData);
             return null;
         }
     }
@@ -471,12 +466,9 @@ class UserController extends Controller
             $data['image'] = $path;
         }
 
-        Log::info($data);
-
         $api_url = env('API_URL') . '/users/editProfileDULU';
 
         $response = Http::withToken(session('token'))->post($api_url, $data);
-        Log::info($response);
         if ($response->successful()) {
             return response()->json(['success' => true, 'message' => 'Profile has been Updated!']);
         } else {
@@ -562,6 +554,44 @@ class UserController extends Controller
             return $responseData;
         } else {
             Log::error('Failed to fetch most viewed user. API Response: ' . $response->body());
+        }
+    }
+
+    public function submitComment(Request $request)
+    {
+        $request->validate([
+            'comment' => 'required|string',
+            'commentable_id' => 'required|uuid',
+            'commentable_type' => 'required|string|in:question,answer',
+        ]);
+
+        if (session('reputation') < 10) {
+            return response()->json(['success' => false, 'message' => 'Your Reputation is Insufficient']);
+        }
+
+        $apiData = [
+            'email' => session('email'),
+            'comment' => $request->comment,
+            'commentable_id' => $request->commentable_id,
+            'commentable_type' => $request->commentable_type,
+        ];
+
+        $apiUrl = env('API_URL') . '/comments';
+        $response = Http::withToken(session('token'))->post($apiUrl, $apiData);
+
+        if ($response->successful()) {
+            $data = $response->object();
+            $comment = $data->data->comment;
+            $formattedComment = [
+                'id' => $comment->id,
+                'username' => $comment->user->username ?? null,
+                'comment' => $comment->comment,
+                'timestamp' => $comment->created_at,
+            ];
+            return response()->json(['success' => true, 'message' => 'Comment is submitted successfully!', 'comment' => $formattedComment]);
+        } else {
+            $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
+            return response()->json(['success' => false, 'message' => $errorMessage]);
         }
     }
 }

@@ -1,8 +1,5 @@
 @extends('layout')
 
-@section('head')
-@endsection
-
 @section('content')
     <style>
         /* Core styling variables that match the homepage */
@@ -263,7 +260,8 @@
                             <a href="{{ route('user.questions.list', ['id' => $userViewed['id']]) }}" class="text-link">
                                 <span>Questions</span>
                             </a>
-                            <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
+                            <span
+                                class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
                         </div>
                     </div>
                 </div>
@@ -274,10 +272,11 @@
                         <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Top Tags</h3>
                     </div>
                     <ul class="space-y-3">
-                        @foreach ($userViewed['top_subjects'] as $subjectName => $subjectCount)
+                        @foreach ($userViewed['top_subjects'] as $subject)
                             <li class="flex justify-between items-center tag-score p-1">
-                                <span class="text-[var(--text-secondary)]">{{ $subjectName }}</span>
-                                <span class="font-bold text-[var(--text-primary)]">{{ $subjectCount }}</span>
+                                <span
+                                    class="text-[var(--text-secondary)]">{{ $subject['abbr'] }}</span>
+                                <span class="font-bold text-[var(--text-primary)]">{{ $subject['count'] }}</span>
                             </li>
                         @endforeach
                     </ul>

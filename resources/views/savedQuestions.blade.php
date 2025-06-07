@@ -100,11 +100,10 @@
                                     @endphp
 
                                     @foreach ($tags as $index => $tag)
-                                        @if (isset($tag['subject']['name']))
-                                            <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
-                                                class="question-tag-link @if ($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
-                                                <span
-                                                    class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                        @if(isset($tag['subject']['name']))
+                                            <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
+                                               class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
+                                                <span class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                                     {{ $tag['subject']['name'] }}
                                                 </span>
                                             </a>
@@ -161,13 +160,13 @@
                         <ul class="space-y-2 text-left">
                             <li class="flex items-center text-sm">
                                 <i class="fa-solid fa-fire-flame-curved mr-2 text-amber-500"></i>
-                                <a href="{{ route('popular') }}" {{-- Updated link --}}
+                                <a href="{{ route('home') }}" {{-- Updated link --}}
                                     class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Popular
                                     Questions</a>
                             </li>
                             <li class="flex items-center text-sm">
                                 <i class="fa-solid fa-star mr-2 text-yellow-500"></i>
-                                <a href="{{ route('popular', ['sort_by' => 'unanswered']) }}" {{-- Updated link for unanswered --}}
+                                <a href="{{ route('home', ['sort_by' => 'unanswered']) }}" {{-- Updated link for unanswered --}}
                                     class="text-[var(--text-secondary)] hover:text-[var(--accent-secondary)] transition-colors">Unanswered
                                     Questions</a>
                             </li>

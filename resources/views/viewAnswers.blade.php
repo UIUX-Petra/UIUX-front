@@ -94,6 +94,31 @@
         .action-button:hover::before {
             left: 100%;
         }
+
+                /* New Modal Base Styles */
+        #questionCommentsModal {
+            /* Default to hidden: opacity-0 and non-interactive */
+            /* Tailwind classes will handle this: opacity-0 pointer-events-none */
+            /* Transition for the modal container (overlay) */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #questionCommentsModal .modal-content {
+            /* Transition for the content pop-in effect */
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        /* When modal is hidden (initial state or via JS) */
+        #questionCommentsModal.opacity-0 .modal-content {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+
+        /* When modal is visible (JS adds opacity-100, removes pointer-events-none) */
+        #questionCommentsModal.opacity-100 .modal-content {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     </style>
 
     @include('partials.nav')
@@ -183,14 +208,14 @@
                             <span>Asked by {{ $question['user']['username'] }}</span>
                         </div>
                     </a>
-                    <button id="comment-count"
+                    <button id="open-question-comments-modal-btn"
                         class="flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                         <i class="fa-solid fa-comment-dots mr-2"></i>
-                        <span>{{ $question['comment_count'] }} Comments</span>
+                        <span id="question-card-comment-count-text">{{ $question['comment_count'] }} Comments</span>
                     </button>
                 </div>
 
-                <div class="comment-box hidden mt-4">
+                {{-- <div class="comment-box hidden mt-4">
                     <textarea
                         class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
                         rows="2" placeholder="Write your comment here!"></textarea>
@@ -198,10 +223,9 @@
                         class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                         Submit Comment
                     </button>
-                </div>
+                </div> --}}
             </div>
 
-            {{-- Action Buttons --}}
             {{-- Action Buttons --}}
             @if ($isQuestionOwner)
                 @php
@@ -247,7 +271,7 @@
 
                 <!-- Comment Input Box -->
                 <div class="comment-box hidden mb-4">
-                    <textarea id="question-comment"
+                    <textarea id="question-comment-textarea"
                         class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                         rows="2" placeholder="Write your comment here!"></textarea>
                     <button id="qComment-btn"
@@ -1160,11 +1184,10 @@
                         } else {
                             const formData = new FormData();
                             formData.append('comment', commentText);
-                            formData.append('answer_id', answerId);
+                            formData.append('commentable_id', answerId);
+                            formData.append('commentable_type', 'answer');
 
-                            fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`
-                                    .replace('aaa',
-                                        answerId), {
+                            fetch(`{{ route('comment.submit' ) }}`, {
                                         method: 'POST',
                                         headers: {
                                             'X-CSRF-TOKEN': "{{ csrf_token() }}",
@@ -1291,7 +1314,7 @@
             const submitCommentButton = document.getElementById("qComment-btn");
 
             submitCommentButton.addEventListener('click', (event) => {
-                const commentTextArea = document.getElementById("question-comment");
+                const commentTextArea = document.getElementById("question-comment-textarea");
                 const questionId = @json($question['id']);
                 event.preventDefault();
 
@@ -1308,21 +1331,21 @@
                 } else {
                     const formData = new FormData();
                     formData.append('comment', commentText);
-                    formData.append('question_id', questionId);
+                    formData.append('commentable_id', questionId);
+                    formData.append('commentable_type', 'question');
 
                     // Send comment data to the server
-                    fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`.replace('aaa',
-                            questionId), {
+                    fetch(`{{ route('comment.submit') }}`, {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': "{{ csrf_token() }}",
                             },
                             body: formData,
-
                         })
                         .then(response => response.json())
                         .then(data => {
-
+                            console.log(data);
+                            
                             if (data.success) {
                                 let commentList = document.getElementById('question-comments');
                                 const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
@@ -1439,11 +1462,10 @@
                     } else {
                         const formData = new FormData();
                         formData.append('comment', commentText);
-                        formData.append('answer_id', answerId);
+                        formData.append('commentable_id', answerId);
+                        formData.append('commentable_type', 'answer');
 
-                        fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`
-                                .replace('aaa',
-                                    answerId), {
+                        fetch(`{{ route('comment.submit' ) }}`, {
                                     method: 'POST',
                                     headers: {
                                         'X-CSRF-TOKEN': "{{ csrf_token() }}",

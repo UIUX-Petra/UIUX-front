@@ -111,7 +111,7 @@ class QuestionController extends Controller
         $queryParams = [
             'page' => $page,
             'per_page' => $per_page_from_request,
-            'email' => session('email'), // Pastikan session 'email' ada dan valid
+            'email' => session('email'),
             'sort_by' => $sortBy,
         ];
 
@@ -121,8 +121,6 @@ class QuestionController extends Controller
         if (!empty($searchTerm)) {
             $queryParams['search_term'] = $searchTerm;
         }
-
-        Log::info("QuestionController: Requesting API: {$api_url} with params: " . json_encode($queryParams));
 
         $response = Http::withToken(session('token'))->get($api_url, $queryParams); // Pastikan session 'token' ada
 
@@ -216,17 +214,10 @@ class QuestionController extends Controller
 
             $path = $image->storeAs("uploads/questions/", $customFileName, 'public');
             $data['image'] = $path;
-
-            Log::info("Image uploaded to: " . $path);  // Log image upload path for debugging
         }
-
-        Log::info("Data to be sent: ", $data);
 
         try {
             $response = Http::withToken(session('token'))->post($api_url, $data);
-
-            Log::info("API Response Status: " . $response->status());
-            Log::info("API Response Body: " . $response->body());
 
             if ($response->successful()) {
                 return response()->json(['success' => true, 'message' => 'Question submitted successfully!']);
@@ -272,23 +263,16 @@ class QuestionController extends Controller
 
             $path = $imageFile->storeAs("uploads/questions", $customFileName, 'public');
             $apiPayload['image'] = $path;
-            Log::info("WEB saveEditedQuestion: New image stored at final location: " . $path);
         }
         if ($request->has('remove_existing_image') && $request->input('remove_existing_image') == '1') {
             $apiPayload['remove_existing_image_flag'] = true;
-            Log::info("WEB saveEditedQuestion: Flag set to remove existing image.");
         }
 
         $apiUrlForUpdate = env('API_URL') . "/questions/{$questionId}/updatePartial";
 
-        Log::info("WEB saveEditedQuestion: Sending data to API: ", $apiPayload);
-
         try {
             $response = Http::withToken(session('token'))
                 ->post($apiUrlForUpdate, $apiPayload);
-
-            Log::info("WEB saveEditedQuestion: API Update Response Status: " . $response->status());
-            Log::info("WEB saveEditedQuestion: API Update Response Body: " . $response->body());
 
             if ($response->successful()) {
                 $responseData = $response->json();
@@ -304,47 +288,6 @@ class QuestionController extends Controller
         } catch (\Exception $e) {
             Log::error("WEB saveEditedQuestion: Error calling update API: " . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error during API request from web handler.'], 500);
-        }
-    }
-    public function submitQuestionComment(Request $request, $questionId)
-    {
-        $request->validate([
-            'comment' => 'required',
-        ]);
-
-        if (!isset($request->answer_id)) {
-            $data['question_id'] = $questionId;
-        } else {
-            $data['answer_id'] = $questionId;
-        }
-
-        // if (session('reputation') < 11) {
-        //     return response()->json(['success' => false, 'message' => 'Your Reputation is Insufficient']);
-        // }
-
-        $data['email'] = session('email');
-        $data['comment'] = $request->comment;
-        Log::info("Data to be sent: ", $data);
-        
-        $api_url = env('API_URL') . '/comments';
-        $response = Http::withToken(session('token'))->post($api_url, $data);
-        // Log::info($response);
-        if ($response->successful()) {
-            
-            $data = $response->object();
-
-            $comment = $data->data->comment;
-            
-            $formattedComment = [
-                'id' => $comment->id,
-                'username' => $comment->user->username ?? null,
-                'comment' => $comment->comment,
-                'timestamp' => $comment->created_at,
-            ];
-            return response()->json(['success' => true, 'message' => 'Comment is submitted successfully!', 'comment' => $formattedComment]);
-        } else {
-            $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
-            return response()->json(['success' => false, 'message' => $errorMessage]);
         }
     }
 
@@ -450,11 +393,11 @@ class QuestionController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string',
             'question' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042', // Ukuran dan format gambar
-            'subject_id' => 'required|array', // Pastikan subject_id adalah array
-            'subject_id.*' => 'integer', // Setiap elemen di subject_id harus integer
-            'email' => 'required|email', // Tambahkan validasi email
-            'deleted_image' => 'nullable|boolean', // Flag untuk menandakan penghapusan gambar
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',
+            'subject_id' => 'required|array',
+            'subject_id.*' => 'integer',
+            'email' => 'required|email',
+            'deleted_image' => 'nullable|boolean',
         ]);
 
         $api_url = env('API_URL') . '/questions/' . $id;
@@ -462,14 +405,12 @@ class QuestionController extends Controller
         $data = [
             'title' => $request->input('title'),
             'question' => $request->input('question'),
-            'subject_id' => $request->input('subject_id'), // Pastikan ini array
-            'email' => $request->input('email'), // Pastikan email user yang login dikirim
+            'subject_id' => $request->input('subject_id'),
+            'email' => $request->input('email'),
         ];
 
-        // Buat request builder dengan token
         $requestBuilder = Http::withToken(session('token'));
 
-        // Handle image: check if new image is uploaded or old image is deleted
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $timestamp = date('Y-m-d_H-i-s');
@@ -478,21 +419,12 @@ class QuestionController extends Controller
 
             // Attach new image
             $requestBuilder->attach('image', file_get_contents($image->getRealPath()), $customFileName);
-            Log::info("Attaching new image for update: " . $customFileName);
         } elseif ($request->input('deleted_image')) {
-            // If deleted_image flag is true and no new image is uploaded, send empty 'image' field to API
-            // This signals the API to delete the existing image
             $data['image'] = '';
-            Log::info("Signaling API to delete existing image for question ID: " . $id);
         }
-        // If no new image and deleted_image is false, do nothing to the 'image' field,
-        // which means the existing image will be kept by the API.
 
         try {
-            $response = $requestBuilder->put($api_url, $data); // Menggunakan method PUT untuk update
-
-            Log::info("API Response Status for updateQuestion: " . $response->status());
-            Log::info("API Response Body for updateQuestion: " . $response->body());
+            $response = $requestBuilder->put($api_url, $data);
 
             if ($response->successful()) {
                 return response()->json(['success' => true, 'message' => 'Question updated successfully!']);
@@ -511,10 +443,7 @@ class QuestionController extends Controller
 
         try {
             $response = Http::withToken(session('token'))
-                ->delete($api_url, ['email' => session('email')]); // Kirim email untuk otorisasi
-
-            Log::info("API Response Status for deleteQuestion: " . $response->status());
-            Log::info("API Response Body for deleteQuestion: " . $response->body());
+                ->delete($api_url, ['email' => session('email')]);
 
             if ($response->successful()) {
                 return response()->json(['success' => true, 'message' => 'Question deleted successfully!']);
