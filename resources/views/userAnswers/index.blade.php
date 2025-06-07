@@ -450,7 +450,7 @@
                                             <i class="fas fa-trash-alt mr-2"></i>Delete
                                         </button>
                                     </div>
-                                {{-- @else
+                                    {{-- @else
                                     @php
                                         $tooltipMessage = '';
                                         if ($answer['votes_count'] !== 0) {
@@ -631,19 +631,28 @@
                                 })
                                 .then(data => {
                                     if (data.success) {
-                                        Swal.fire({
-                                            title: 'Deleted!',
+                                        Toastify({
                                             text: data.message ||
                                                 'Your answer has been deleted successfully.',
-                                            icon: 'success',
-                                            background: 'var(--bg-card)',
-                                            color: 'var(--text-primary)',
-                                            confirmButtonColor: 'var(--accent-secondary)',
-                                            customClass: {
-                                                popup: 'rounded-2xl',
-                                                confirmButton: 'rounded-xl px-6 py-3'
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
-                                        });
+                                        }).showToast();
+                                        
+                                        // Swal.fire({
+                                        //     title: 'Deleted!',
+                                        //     text: data.message ||
+                                        //         'Your answer has been deleted successfully.',
+                                        //     icon: 'success',
+                                        //     background: 'var(--bg-card)',
+                                        //     color: 'var(--text-primary)',
+                                        //     confirmButtonColor: 'var(--accent-secondary)',
+                                        //     customClass: {
+                                        //         popup: 'rounded-2xl',
+                                        //         confirmButton: 'rounded-xl px-6 py-3'
+                                        //     }
+                                        // });
 
                                         // Animate removal
                                         if (answerItemElement) {
@@ -671,18 +680,27 @@
                                             .flat().join(' ');
                                     }
 
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: errorMessage,
-                                        icon: 'error',
-                                        background: 'var(--bg-card)',
-                                        color: 'var(--text-primary)',
-                                        confirmButtonColor: '#ef4444',
-                                        customClass: {
-                                            popup: 'rounded-2xl',
-                                            confirmButton: 'rounded-xl px-6 py-3'
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'An error occurred while deleting the answer.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
                                         }
-                                    });
+                                    }).showToast();
+
+                                    // Swal.fire({
+                                    //     title: 'Error!',
+                                    //     text: errorMessage,
+                                    //     icon: 'error',
+                                    //     background: 'var(--bg-card)',
+                                    //     color: 'var(--text-primary)',
+                                    //     confirmButtonColor: '#ef4444',
+                                    //     customClass: {
+                                    //         popup: 'rounded-2xl',
+                                    //         confirmButton: 'rounded-xl px-6 py-3'
+                                    //     }
+                                    // });
 
                                     // Reset button state
                                     this.innerHTML =

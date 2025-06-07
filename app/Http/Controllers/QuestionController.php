@@ -318,23 +318,23 @@ class QuestionController extends Controller
             $data['answer_id'] = $questionId;
         }
 
-        if (session('reputation') < 11) {
-            return response()->json(['success' => false, 'message' => 'Your Reputation is Insufficient']);
-        }
+        // if (session('reputation') < 11) {
+        //     return response()->json(['success' => false, 'message' => 'Your Reputation is Insufficient']);
+        // }
 
         $data['email'] = session('email');
         $data['comment'] = $request->comment;
         Log::info("Data to be sent: ", $data);
-
+        
         $api_url = env('API_URL') . '/comments';
         $response = Http::withToken(session('token'))->post($api_url, $data);
         // Log::info($response);
         if ($response->successful()) {
-
+            
             $data = $response->object();
 
             $comment = $data->data->comment;
-
+            
             $formattedComment = [
                 'id' => $comment->id,
                 'username' => $comment->user->username ?? null,

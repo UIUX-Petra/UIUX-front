@@ -579,20 +579,28 @@
                                 })
                                 .then(data => {
                                     if (data.success || data.status === 'success') {
-                                        Swal.fire(
-                                            'Deleted!',
-                                            data.message ||
-                                            'Your question has been deleted.',
-                                            'success'
-                                        );
-                                        window.location.href = "{{ url('/') }}"
+                                        Toastify({
+                                            text: data.message ||
+                                                'Your question has been deleted.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
+
+                                        setTimeout(() => {
+                                            window.location.href =
+                                                "{{ url('/') }}"
+                                        }, 2000);
                                     } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            data.message ||
-                                            'Could not delete the question.',
-                                            'error'
-                                        );
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not delete the question.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
@@ -609,11 +617,14 @@
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }
-                                    Swal.fire(
-                                        'Request Failed!',
-                                        errorMessage,
-                                        'error'
-                                    );
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
                         }
                     });
@@ -795,8 +806,14 @@
                                 })
                                 .then(data => {
                                     if (data.success) {
-                                        Swal.fire('Deleted!', data.message ||
-                                            'Your answer has been deleted.', 'success');
+                                        Toastify({
+                                            text: data.message ||
+                                                'Your answer has been deleted.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
                                         if (answerItemElement) {
                                             answerItemElement.style.animation =
                                                 'fadeOutUp 0.5s ease forwards';
@@ -806,13 +823,26 @@
                                             }, 500);
                                         }
                                     } else {
-                                        Swal.fire('Error!', data.message ||
-                                            'Could not delete the answer.', 'error');
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not delete the answer.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
                                     console.error('Error deleting answer:', error);
-                                    Swal.fire('Request Failed!', 'An error occurred.', 'error');
+                                    Toastify({
+                                        text: error ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
                         }
                     });
@@ -872,11 +902,14 @@
                         submitButton.innerHTML = originalButtonText;
                         submitButton.disabled = false;
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
+                        Toastify({
                             text: 'Please provide an answer!',
-                        });
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
+
                         return;
                     }
 
@@ -1032,25 +1065,27 @@
 
                                 }
 
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Answer Submitted!',
+                                Toastify({
                                     text: 'Your answer has been successfully submitted.',
-                                    confirmButtonText: 'Great!',
-                                });
+                                    duration: 3000,
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
 
                                 let replies = document.querySelector('#reply-count small')
                                 let answerCountAtas = document.querySelector('#answerCountAtas span')
                                 let count = parseInt(replies.textContent.trim(), 10) + 1;
                                 replies.textContent = count;
                                 answerCountAtas.textContent = count;
-                                console.log('aman bgt bung 1');
                             } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
+                                Toastify({
                                     text: data.message || 'Something went wrong',
-                                });
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                             }
                         })
                     // .catch(error => {
@@ -1115,11 +1150,13 @@
                         const commentText = commentTextArea.value.trim();
 
                         if (commentText === '') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
+                            Toastify({
                                 text: 'Please write a comment!',
-                            });
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                         } else {
                             const formData = new FormData();
                             formData.append('comment', commentText);
@@ -1137,11 +1174,13 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Comment Submitted!',
+                                        Toastify({
                                             text: 'Your comment has been successfully posted.',
-                                        });
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
 
                                         const commentBox = commentTextArea.closest('.comment-box');
                                         if (commentBox) {
@@ -1225,19 +1264,24 @@
                                             commentDiv.style.transform = 'translateY(0)';
                                         }, 100);
                                     } else {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: data.message,
-                                        });
+                                        Toastify({
+                                            text: data.message ||
+                                                'An Unexpected Error Occurred.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'An unexpected error occurred.',
-                                    });
+                                    Toastify({
+                                        text: error || 'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                     console.log(error);
                                 });
                         }
@@ -1254,11 +1298,13 @@
                 const commentText = commentTextArea.value.trim();
 
                 if (commentText === '') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
+                    Toastify({
                         text: 'Please write a comment!',
-                    });
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 } else {
                     const formData = new FormData();
                     formData.append('comment', commentText);
@@ -1335,25 +1381,33 @@
                                 }
                                 commentTextArea.value = '';
 
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Comment Submitted!',
+                                Toastify({
                                     text: 'Your comment has been successfully posted.',
-                                });
+                                    duration: 3000,
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
+
                             } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: data.message,
-                                });
+                                Toastify({
+                                    text: data.message ||
+                                        'An Unexpected Error Occurred.',
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                             }
                         })
                         .catch(error => { // Handle any errors that occur during the fetch
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'An unexpected error occurred.',
-                            });
+                            Toastify({
+                                text: error || 'An Unexpected Error Occurred.',
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                             console.log(error);
 
                         });
@@ -1375,11 +1429,13 @@
                     const commentText = commentTextArea.value.trim();
 
                     if (commentText === '') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
+                        Toastify({
                             text: 'Please write a comment!',
-                        });
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
                     } else {
                         const formData = new FormData();
                         formData.append('comment', commentText);
@@ -1397,11 +1453,14 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Comment Submitted!',
+
+                                    Toastify({
                                         text: 'Your comment has been successfully posted.',
-                                    });
+                                        duration: 3000,
+                                        style: {
+                                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                        }
+                                    }).showToast();
 
                                     const commentBox = commentTextArea.closest('.comment-box');
                                     if (commentBox) {
@@ -1497,19 +1556,24 @@
                                     }, 100);
 
                                 } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: data.message,
-                                    });
+                                    Toastify({
+                                        text: data.message ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 }
                             })
                             .catch(error => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'An unexpected error occurred.',
-                                });
+                                Toastify({
+                                    text: error || 'An Unexpected Error Occurred.',
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                                 console.log(error);
                             });
                     }
@@ -1579,18 +1643,20 @@
                                             // Update semua tombol toggle untuk answer ini
                                             document.querySelectorAll(
                                                 `.verify-toggle-button[data-answer-id="${answerId}"]`
-                                                ).forEach(btn => {
+                                            ).forEach(btn => {
                                                 btn.dataset.currentVerified =
                                                     actualNewVerifiedStatus;
                                             });
                                         }
                                         updateAnswerActionButtonsVisibility(
-                                        answerId); // Update tombol edit/delete jika perlu
-                                        Swal.fire(
-                                            `${newVerifiedStatus === 1 ? 'Verified!' : 'Un-verified!'}`,
-                                            `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`, // pastikan actionText sesuai
-                                            'success'
-                                        );
+                                            answerId); // Update tombol edit/delete jika perlu
+                                        Toastify({
+                                            text: `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`,
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
 
                                         if (iconElement) {
                                             if (newVerifiedStatus === 1) {
@@ -1609,7 +1675,7 @@
                                         }
                                         const helperTextElement = document.querySelector(
                                             `#answer-verify-block-${answerId} span.text-gray-500`
-                                            );
+                                        );
                                         if (helperTextElement) {
                                             helperTextElement.textContent =
                                                 newVerifiedStatus === 1 ?
@@ -1617,9 +1683,14 @@
                                                 '(Click icon or text to verify)';
                                         }
                                     } else {
-                                        Swal.fire('Error!', data.message ||
-                                            'Could not update verification status.', 'error'
-                                            );
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not update verification status.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
@@ -1631,7 +1702,14 @@
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }
-                                    Swal.fire('Request Failed!', errorMessage, 'error');
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
                         }
                     });
@@ -1688,11 +1766,14 @@
                             // 2. Panggil fungsi untuk mengevaluasi ulang visibilitas tombol
                             updateQuestionActionButtonsVisibility();
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message,
-                            });
+                            Toastify({
+                                text: data.message ||
+                                    'An Unexpected Error Occurred.',
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                         }
                     })
                 // .catch(error => {
@@ -1757,11 +1838,14 @@
                             //     text: 'Your vote has been successfully recorded.',
                             // });
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message,
-                            });
+                            Toastify({
+                                text: data.message ||
+                                    'An Unexpected Error Occurred.',
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                         }
                     })
                 // .catch(error => {

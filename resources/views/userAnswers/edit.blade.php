@@ -206,12 +206,12 @@
             .form-container {
                 padding: 1rem 0.5rem;
             }
-            
+
             .form-actions {
                 flex-direction: column-reverse;
                 gap: 0.75rem;
             }
-            
+
             .submit-button,
             .cancel-button {
                 width: 100%;
@@ -235,14 +235,8 @@
         <form id="edit-answer-form" enctype="multipart/form-data">
             <div class="form-section">
                 <label for="answer_content_input" class="input-label">Your Answer:</label>
-                <textarea 
-                    id="answer_content_input" 
-                    name="answer_content" 
-                    rows="10" 
-                    class="textarea-field" 
-                    required
-                    placeholder="Enter your answer here..."
-                >{{ old('answer_content', $answer['answer'] ?? '') }}</textarea>
+                <textarea id="answer_content_input" name="answer_content" rows="10" class="textarea-field" required
+                    placeholder="Enter your answer here...">{{ old('answer_content', $answer['answer'] ?? '') }}</textarea>
             </div>
 
             <div class="form-section">
@@ -259,7 +253,8 @@
                         </div>
                     @endif
                 </div>
-                <p class="helper-text">Uploading a new image will replace the current one. Click 'X' on an image to remove it.</p>
+                <p class="helper-text">Uploading a new image will replace the current one. Click 'X' on an image to remove
+                    it.</p>
             </div>
 
             <div class="form-actions">
@@ -297,7 +292,7 @@
                     fileInput.type = 'file';
                     fileInput.name = 'image';
                     fileInput.accept = 'image/jpeg,image/png,image/jpg';
-                    
+
                     fileInput.onchange = event => {
                         const file = event.target.files[0];
                         if (file) {
@@ -305,7 +300,8 @@
                             removeExistingImageFlag = false;
 
                             // Remove previous new image preview if any
-                            const oldNewPreview = imagePreviewContainer.querySelector('.new-image-preview-item');
+                            const oldNewPreview = imagePreviewContainer.querySelector(
+                                '.new-image-preview-item');
                             if (oldNewPreview) oldNewPreview.remove();
 
                             // Hide existing image preview if present
@@ -315,10 +311,10 @@
                             reader.onload = function(e) {
                                 const previewDiv = document.createElement('div');
                                 previewDiv.className = 'image-preview-item new-image-preview-item';
-                                
+
                                 const img = document.createElement('img');
                                 img.src = e.target.result;
-                                
+
                                 const deleteBtn = document.createElement('button');
                                 deleteBtn.type = 'button';
                                 deleteBtn.innerHTML = '&times;';
@@ -331,7 +327,7 @@
                                         existingImageItem.style.display = 'flex';
                                     }
                                 };
-                                
+
                                 previewDiv.appendChild(img);
                                 previewDiv.appendChild(deleteBtn);
                                 imagePreviewContainer.appendChild(previewDiv);
@@ -351,8 +347,9 @@
                         existingImageItem.style.display = 'none';
                         removeExistingImageFlag = true;
                         newImageFile = null;
-                        
-                        const oldNewPreview = imagePreviewContainer.querySelector('.new-image-preview-item');
+
+                        const oldNewPreview = imagePreviewContainer.querySelector(
+                            '.new-image-preview-item');
                         if (oldNewPreview) oldNewPreview.remove();
                     });
                 }
@@ -365,13 +362,21 @@
                     const answerText = answerContentInput.value.trim();
 
                     if (answerText.length < 5) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validation Error',
+                        Toastify({
                             text: 'Answer content must be at least 5 characters long.',
-                            background: 'var(--bg-card)',
-                            color: 'var(--text-primary)'
-                        });
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
+
+                        // Swal.fire({
+                        //     icon: 'error',
+                        //     title: 'Validation Error',
+                        //     text: 'Answer content must be at least 5 characters long.',
+                        //     background: 'var(--bg-card)',
+                        //     color: 'var(--text-primary)'
+                        // });
                         return;
                     }
 
@@ -407,63 +412,80 @@
                             } else if (removeExistingImageFlag) {
                                 formData.append('remove_existing_image', '1');
                             }
-                            
+
                             formData.append('_token', CSRF_TOKEN);
 
-                            const frontendUpdateUrl = "{{ route('user.answers.update', ['answerId' => $answer['id']]) }}";
+                            const frontendUpdateUrl =
+                                "{{ route('user.answers.update', ['answerId' => $answer['id']]) }}";
 
                             fetch(frontendUpdateUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': CSRF_TOKEN,
-                                    'Accept': 'application/json',
-                                },
-                                body: formData
-                            })
-                            .then(response => response.json())
-                            .then(res => {
-                                Swal.close();
-                                if (res.success) {
-                                    Swal.fire({
-                                        title: 'Success!',
-                                        text: res.message || 'Answer updated successfully!',
-                                        icon: 'success',
-                                        background: 'var(--bg-card)',
-                                        color: 'var(--text-primary)'
-                                    }).then(() => {
-                                        window.location.href = "{{ route('user.answers.index', ['userId' => $answer['user_id']]) }}";
-                                    });
-                                } else {
-                                    let errorText = res.message || 'An unknown error occurred.';
-                                    if (res.errors) {
-                                        errorText += '<ul class="text-left mt-2">';
-                                        for (const field in res.errors) {
-                                            res.errors[field].forEach(errorMessage => {
-                                                errorText += `<li>${errorMessage}</li>`;
-                                            });
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': CSRF_TOKEN,
+                                        'Accept': 'application/json',
+                                    },
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(res => {
+                                    Swal.close();
+                                    if (res.success) {
+                                        Toastify({
+                                            text: res.message ||
+                                                'Answer updated successfully!',
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
+
+                                        setTimeout(() => {
+                                            window.location.href =
+                                                "{{ route('user.answers.index', ['userId' => $answer['user_id']]) }}";
+                                        }, 2000);
+                                    } else {
+                                        let errorText = res.message ||
+                                            'An unknown error occurred.';
+                                        if (res.errors) {
+                                            errorText += '<ul class="text-left mt-2">';
+                                            for (const field in res.errors) {
+                                                res.errors[field].forEach(errorMessage => {
+                                                    errorText +=
+                                                        `<li>${errorMessage}</li>`;
+                                                });
+                                            }
+                                            errorText += '</ul>';
                                         }
-                                        errorText += '</ul>';
+                                        Toastify({
+                                            text: res.message ||
+                                                'An unknown error occurred.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
+
+                                        // Swal.fire({
+                                        //     title: 'Update Failed!',
+                                        //     html: errorText,
+                                        //     icon: 'error',
+                                        //     background: 'var(--bg-card)',
+                                        //     color: 'var(--text-primary)'
+                                        // });
                                     }
-                                    Swal.fire({
-                                        title: 'Update Failed!',
-                                        html: errorText,
-                                        icon: 'error',
-                                        background: 'var(--bg-card)',
-                                        color: 'var(--text-primary)'
-                                    });
-                                }
-                            })
-                            .catch(err => {
-                                Swal.close();
-                                console.error('Fetch Error:', err);
-                                Swal.fire({
-                                    title: 'Request Error!',
-                                    text: 'There was a problem submitting your request. Please check your connection and try again.',
-                                    icon: 'error',
-                                    background: 'var(--bg-card)',
-                                    color: 'var(--text-primary)'
+                                })
+                                .catch(err => {
+                                    Swal.close();
+                                    console.error('Fetch Error:', err);
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
-                            });
                         }
                     });
                 });

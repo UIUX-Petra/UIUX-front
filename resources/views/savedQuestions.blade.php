@@ -21,11 +21,13 @@
     @include('partials.nav')
     @if (session()->has('Error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}'
-            });
+            Toastify({
+                text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
+                duration: 3000,
+                style: {
+                    background: "#e74c3c"
+                }
+            }).showToast();
         </script>
     @endif
     <div
@@ -50,7 +52,8 @@
                 @foreach ($questions as $question)
                     <div id="question-card-{{ $question['id'] }}" {{-- Ensure IDs are unique if $question['id'] could clash --}}
                         class="question-card rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden"
-                        data-url="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}" style="cursor: pointer;">
+                        data-url="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}"
+                        style="cursor: pointer;">
                         <div class="absolute inset-0 bg-pattern opacity-5"></div>
 
                         <button type="button" {{-- Changed from type="submit" --}}
@@ -71,7 +74,9 @@
                                 <i class="text-sm fa-solid fa-eye"></i>
                             </div>
                             <div class="stats-item flex flex-row items-center space-x-2">
-                                <span class="text-sm font-medium">{{ $question['comment_count'] ?? ($question['answer_count'] ?? count($question['answer'] ?? [])) }}</span> {{-- Using more common keys --}}
+                                <span
+                                    class="text-sm font-medium">{{ $question['comment_count'] ?? ($question['answer_count'] ?? count($question['answer'] ?? [])) }}</span>
+                                {{-- Using more common keys --}}
                                 <i class="text-sm fa-regular fa-comment"></i>
                             </div>
                         </div>
@@ -86,7 +91,8 @@
                                 {{ \Str::limit(strip_tags($question['question']), 150) }}</p>
 
                             @if (!empty($question['group_question']) && is_array($question['group_question']))
-                                <div class="flex mt-2 flex-wrap gap-1 items-center tags-wrapper" data-question-id="{{ $question['id'] }}">
+                                <div class="flex mt-2 flex-wrap gap-1 items-center tags-wrapper"
+                                    data-question-id="{{ $question['id'] }}">
                                     @php
                                         $tags = $question['group_question'];
                                         $totalTags = count($tags);
@@ -94,10 +100,11 @@
                                     @endphp
 
                                     @foreach ($tags as $index => $tag)
-                                        @if(isset($tag['subject']['name']))
+                                        @if (isset($tag['subject']['name']))
                                             <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
-                                               class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
-                                                <span class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                                class="question-tag-link @if ($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
+                                                <span
+                                                    class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                                     {{ $tag['subject']['name'] }}
                                                 </span>
                                             </a>
@@ -105,10 +112,11 @@
                                     @endforeach
 
                                     @if ($totalTags > $displayLimit)
-                                        <span class="text-xs text-[var(--accent-secondary)] cursor-pointer hover:underline more-tags-button"
-                                              data-question-id="{{ $question['id'] }}"
-                                              data-initial-text="+ {{ $totalTags - $displayLimit }} more">
-                                             + {{ $totalTags - $displayLimit }} more
+                                        <span
+                                            class="text-xs text-[var(--accent-secondary)] cursor-pointer hover:underline more-tags-button"
+                                            data-question-id="{{ $question['id'] }}"
+                                            data-initial-text="+ {{ $totalTags - $displayLimit }} more">
+                                            + {{ $totalTags - $displayLimit }} more
                                         </span>
                                     @endif
                                 </div>
@@ -198,7 +206,8 @@
                     event.stopPropagation();
                     const questionId = this.dataset.questionId;
                     const extraTags = document.querySelectorAll(`.extra-tag-${questionId}`);
-                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains('hidden');
+                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains(
+                        'hidden');
                     extraTags.forEach(tag => tag.classList.toggle('hidden', !isCurrentlyHidden));
                     this.textContent = isCurrentlyHidden ? 'show less' : this.dataset.initialText;
                 });
@@ -213,9 +222,12 @@
                 statsItems.forEach((item, index) => {
                     const icon = item.querySelector('i');
                     if (!icon) return;
-                    if (index % 3 === 0) icon.style.color = isLightMode ? 'var(--stats-icon-color-1-light, #10b981)' : 'var(--stats-icon-color-1-dark, #23BF7F)';
-                    else if (index % 3 === 1) icon.style.color = isLightMode ? 'var(--stats-icon-color-2-light, #f59e0b)' : 'var(--stats-icon-color-2-dark, #ffd249)';
-                    else icon.style.color = isLightMode ? 'var(--stats-icon-color-3-light, #3b82f6)' : 'var(--stats-icon-color-3-dark, #909ed5)';
+                    if (index % 3 === 0) icon.style.color = isLightMode ?
+                        'var(--stats-icon-color-1-light, #10b981)' : 'var(--stats-icon-color-1-dark, #23BF7F)';
+                    else if (index % 3 === 1) icon.style.color = isLightMode ?
+                        'var(--stats-icon-color-2-light, #f59e0b)' : 'var(--stats-icon-color-2-dark, #ffd249)';
+                    else icon.style.color = isLightMode ? 'var(--stats-icon-color-3-light, #3b82f6)' :
+                        'var(--stats-icon-color-3-dark, #909ed5)';
                 });
             }
         }
@@ -225,11 +237,10 @@
             savedIcons.forEach(icon => {
                 icon.style.color = 'var(--accent-secondary)';
             });
-             const unsavedIcons = document.querySelectorAll('.save-question-btn i.fa-regular.fa-bookmark');
-             unsavedIcons.forEach(icon => {
-             });
+            const unsavedIcons = document.querySelectorAll('.save-question-btn i.fa-regular.fa-bookmark');
+            unsavedIcons.forEach(icon => {});
         }
-        
+
         function initSaveButtons() {
             document.querySelectorAll('.save-question-btn').forEach(button => {
                 if (button.dataset.saveBtnInitialized === 'true') return;
@@ -240,8 +251,9 @@
                     e.stopPropagation();
 
                     const icon = this.querySelector('i');
-                    if (icon && icon.classList.contains('fa-solid') && icon.classList.contains('fa-bookmark')) {
-                        unsaveQuestion(this); 
+                    if (icon && icon.classList.contains('fa-solid') && icon.classList.contains(
+                            'fa-bookmark')) {
+                        unsaveQuestion(this);
                     } else {
                         saveQuestion(this);
                     }
@@ -257,16 +269,19 @@
             updateIconColors();
             updateSavedIcons();
 
-             if (typeof window.pageThemeObserver === 'undefined' && typeof MutationObserver !== 'undefined') {
+            if (typeof window.pageThemeObserver === 'undefined' && typeof MutationObserver !== 'undefined') {
                 window.pageThemeObserver = new MutationObserver(function(mutations) {
                     mutations.forEach(function(mutation) {
-                        if (mutation.attributeName === 'class' && mutation.target === document.documentElement) {
+                        if (mutation.attributeName === 'class' && mutation.target === document
+                            .documentElement) {
                             updateIconColors();
                             updateSavedIcons();
                         }
                     });
                 });
-                window.pageThemeObserver.observe(document.documentElement, { attributes: true });
+                window.pageThemeObserver.observe(document.documentElement, {
+                    attributes: true
+                });
             }
         });
 
@@ -276,18 +291,32 @@
             let formData = new FormData();
             formData.append("question_id", questionId);
 
-            let loadingToast = Toastify({ /* ... Toast params ... */ text: "Unsaving...", style: { background: "#444" } });
+            let loadingToast = Toastify({
+                /* ... Toast params ... */
+                text: "Unsaving...",
+                style: {
+                    background: "#444"
+                }
+            });
             loadingToast.showToast();
 
             fetch("{{ route('unsaveQuestion') }}", {
                 method: "POST",
-                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
                 body: formData
             }).then(response => response.json()).then(res => {
                 loadingToast.hideToast();
                 if (res.success) {
-                    Toastify({ text: res.message, duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
-x
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                        }
+                    }).showToast();
+                    
                     if (questionCard) {
                         questionCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                         questionCard.style.opacity = '0';
@@ -297,9 +326,10 @@ x
                             // Check if no more questions are left
                             const remainingCards = document.querySelectorAll('.question-card');
                             if (remainingCards.length === 0) {
-                                const container = document.querySelector('.max-w-3xl.justify-start.items-start'); // Adjust selector if needed
+                                const container = document.querySelector(
+                                    '.max-w-3xl.justify-start.items-start'); // Adjust selector if needed
                                 if (container) {
-                                     container.innerHTML = `<div class="text-center py-8">
+                                    container.innerHTML = `<div class="text-center py-8">
                                         <i class="fa-regular fa-folder-open text-4xl text-[var(--text-muted)] mb-3"></i>
                                         <p class="text-lg text-[var(--text-muted)]">You haven't saved any questions yet.</p>
                                      </div>`;
@@ -308,11 +338,23 @@ x
                         }, 500);
                     }
                 } else {
-                     Toastify({ text: res.message || "Failed to unsave.", duration: 3000, style: { background: "#e74c3c" } }).showToast();
+                    Toastify({
+                        text: res.message || "Failed to unsave.",
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 }
             }).catch(err => {
                 loadingToast.hideToast();
-                Toastify({ text: "Something went wrong", duration: 3000, style: { background: "#e74c3c" } }).showToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
             });
         }
 
@@ -322,26 +364,52 @@ x
             let formData = new FormData();
             formData.append("question_id", questionId);
 
-            let loadingToast = Toastify({ /* ... Toast params ... */ text: "Saving...", style: { background: "#444" } });
+            let loadingToast = Toastify({
+                /* ... Toast params ... */
+                text: "Saving...",
+                style: {
+                    background: "#444"
+                }
+            });
             loadingToast.showToast();
 
             fetch("{{ route('saveQuestion') }}", {
                 method: "POST",
-                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
                 body: formData
             }).then(response => response.json()).then(res => {
                 loadingToast.hideToast();
                 if (res.success) {
-                    Toastify({ text: res.message, duration: 3000, style: { background: "linear-gradient(to right, #00b09b, #96c93d)" } }).showToast();
+                    Toastify({
+                        text: res.message,
+                        duration: 3000,
+                        style: {
+                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                        }
+                    }).showToast();
                     btn.innerHTML = `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>`;
                     btn.setAttribute("title", "Unsave Question");
                     updateSavedIcons();
                 } else {
-                     Toastify({ text: res.message || "Failed to save.", duration: 3000, style: { background: "#e74c3c" } }).showToast();
+                    Toastify({
+                        text: res.message || "Failed to save.",
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 }
             }).catch(err => {
                 loadingToast.hideToast();
-                Toastify({ text: "Something went wrong", duration: 3000, style: { background: "#e74c3c" } }).showToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
             });
         }
     </script>

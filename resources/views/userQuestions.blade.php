@@ -283,7 +283,7 @@
                     if (container) {
                         container.innerHTML = emptyStateHTML;
                     }
-                     location.reload();
+                    location.reload();
                 }
             }
             document.querySelectorAll('.delete-question-button').forEach(button => {
@@ -332,12 +332,13 @@
                                 })
                                 .then(data => {
                                     if (data.success || data.status === 'success') {
-                                        Swal.fire(
-                                            'Deleted!',
-                                            data.message ||
-                                            'Your question has been deleted.',
-                                            'success'
-                                        );
+                                        Toastify({
+                                            text: 'Your question has been deleted.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
                                         if (questionItemElement) {
                                             questionItemElement.style.animation =
                                                 'fadeOutUp 0.5s ease forwards';
@@ -362,12 +363,14 @@
                                             questionsContainer.style.display = 'none';
                                         }
                                     } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            data.message ||
-                                            'Could not delete the question.',
-                                            'error'
-                                        );
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not delete the question.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
@@ -384,11 +387,14 @@
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }
-                                    Swal.fire(
-                                        'Request Failed!',
-                                        errorMessage,
-                                        'error'
-                                    );
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'Something went wrong',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
                         }
                     });

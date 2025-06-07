@@ -2,11 +2,13 @@
 @section('content')
     @if (session()->has('Error'))
         <Script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}'
-            });
+            Toastify({
+                text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
+                duration: 3000,
+                style: {
+                    background: "#e74c3c"
+                }
+            }).showToast();
         </Script>
     @endif
     <div class="flex justify-center items-center min-h-screen">

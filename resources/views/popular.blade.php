@@ -256,9 +256,9 @@
         }
 
         /* .tag-filter-select:hover {
-                                    border-color: #f59e0b;
-                                    color: #f59e0b;
-                                } */
+                                        border-color: #f59e0b;
+                                        color: #f59e0b;
+                                    } */
 
         .tag-filter-select:focus {
             border-color: #f59e0b;
@@ -303,11 +303,13 @@
     @include('partials.nav')
     @if (session()->has('Error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}'
-            });
+            Toastify({
+                text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
+                duration: 3000,
+                style: {
+                    background: "#e74c3c"
+                }
+            }).showToast();
         </script>
     @endif
 
@@ -533,7 +535,7 @@
                     'FATAL ERROR: Trie class is not defined. Make sure utils.trie.blade.php is included correctly and defines the Trie class globally.'
                 );
                 const questionsListOutputContainer = document.getElementById(
-                'questionsListOutput'); // Assuming this is a typo and meant questionsListContainer
+                    'questionsListOutput'); // Assuming this is a typo and meant questionsListContainer
                 const mainQuestionContainer = document.getElementById('questions-list-ajax-container');
                 if (mainQuestionContainer) {
                     mainQuestionContainer.innerHTML =
@@ -550,7 +552,7 @@
                         if (mutation.attributeName === 'class') {
                             updateIconColors();
                             updateSavedIcons
-                        (); // Good to update saved icon colors on theme change too
+                                (); // Good to update saved icon colors on theme change too
                         }
                     });
                 });
@@ -577,7 +579,7 @@
                 // ... (your existing skeleton logic - no change needed here)
                 if (!questionsListContainer) return;
                 const listContentArea = questionsListContainer.querySelector(
-                '#questionsListOutput'); // Assuming content goes here
+                    '#questionsListOutput'); // Assuming content goes here
                 if (listContentArea) { // Clear only specific content area if it exists
                     listContentArea.innerHTML = ''; // Clear previous questions
                 } else { // Fallback: clear most of container except pagination
@@ -604,7 +606,7 @@
                 // Insert skeleton before pagination or at the start of where content should be
                 const targetInsertLocation = listContentArea || questionsListContainer;
                 const insertBeforeElement = listContentArea ? null :
-                paginationLinksContainer; // If listContentArea, append. Else, insert before pagination.
+                    paginationLinksContainer; // If listContentArea, append. Else, insert before pagination.
 
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = skeletonHTML;
@@ -648,10 +650,10 @@
 
                     // Determine where to inject the new HTML content
                     const listContentArea = questionsListContainer.querySelector(
-                    '#questionsListOutput'); // Ideal target
+                        '#questionsListOutput'); // Ideal target
                     const targetContainer = listContentArea || questionsListContainer; // Fallback
                     const insertBeforeNode = listContentArea ? null :
-                    paginationLinksContainer; // If using listContentArea, append to it. Otherwise, insert before pagination in main container.
+                        paginationLinksContainer; // If using listContentArea, append to it. Otherwise, insert before pagination in main container.
 
                     // Clear previous content before injecting new HTML
                     if (listContentArea) {
@@ -876,7 +878,7 @@
             const isLightMode = document.documentElement.classList.contains('light-mode');
             savedIcons.forEach(icon => {
                 icon.style.color =
-                'var(--accent-secondary)'; // Simplified as it seems to be the same for both modes
+                    'var(--accent-secondary)'; // Simplified as it seems to be the same for both modes
             });
         }
 
@@ -889,7 +891,8 @@
             let loadingToast = Toastify({
                 text: "Unsaving...",
                 duration: -1,
-                /*...*/ style: {
+                /*...*/
+                style: {
                     background: "#444"
                 }
             });
@@ -907,7 +910,8 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
-                        /*...*/ style: {
+                        /*...*/
+                        style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
@@ -915,9 +919,11 @@
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
                     btn.setAttribute("title", "Save Question");
                 } else {
-                    /* Error Toast */ }
+                    /* Error Toast */
+                }
             }).catch(err => {
-                /* Error Toast */ });
+                /* Error Toast */
+            });
         }
 
         function saveQuestion(btn) {
@@ -929,7 +935,8 @@
             let loadingToast = Toastify({
                 text: "Saving...",
                 duration: -1,
-                /*...*/ style: {
+                /*...*/
+                style: {
                     background: "#444"
                 }
             });
@@ -947,7 +954,8 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
-                        /*...*/ style: {
+                        /*...*/
+                        style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
@@ -957,9 +965,11 @@
                     btn.classList.add('saved-animation');
                     setTimeout(() => btn.classList.remove('saved-animation'), 300);
                 } else {
-                    /* Error Toast */ }
+                    /* Error Toast */
+                }
             }).catch(err => {
-                /* Error Toast */ });
+                /* Error Toast */
+            });
         }
     </script>
 @endsection

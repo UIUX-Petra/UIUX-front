@@ -3,12 +3,13 @@
 @section('content')
     @if (session()->has('Error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}',
-                confirmButtonColor: '#3085d6',
-            });
+            Toastify({
+                text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
+                duration: 3000,
+                style: {
+                    background: "#e74c3c"
+                }
+            }).showToast();
         </script>
     @endif
 
@@ -1120,22 +1121,24 @@
                             if (data.errors) {
                                 errorMessage = Object.values(data.errors).flat().join('\n');
                             }
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Registration Error',
-                                text: errorMessage,
-                                confirmButtonColor: '#d33',
-                            });
+                            Toastify({
+                                text: errorMessage || 'Registration Error',
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                         }
                     } catch (error) {
                         Swal.close();
                         console.error('Registration Fetch Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
+                        Toastify({
                             text: 'An unexpected error occurred. Please try again.',
-                            confirmButtonColor: '#d33',
-                        });
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
                     }
                 });
             }
