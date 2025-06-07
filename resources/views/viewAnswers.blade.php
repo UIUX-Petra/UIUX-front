@@ -95,7 +95,7 @@
             left: 100%;
         }
 
-                /* New Modal Base Styles */
+        /* New Modal Base Styles */
         #questionCommentsModal {
             /* Default to hidden: opacity-0 and non-interactive */
             /* Tailwind classes will handle this: opacity-0 pointer-events-none */
@@ -1020,11 +1020,13 @@
                                 ${imageHtml}
                                 
                                 <div class="mt-4 flex justify-between items-center">
+                                    <a href="/viewUser/${@json($username ?? null)}">
                                     <div class="flex items-center text-sm text-[var(--text-muted)]">
                                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.answer.username)}&background=random" 
                                              alt="User" class="w-6 h-6 rounded-full mr-2">
-                                        <span>Answered by ${escapeHtml(data.answer.username)} - ${timeAgo}</span>
+                                        <span class="hover:underline">Answered by ${escapeHtml(data.answer.username)} - ${timeAgo}</span>
                                     </div>
+                                    </a>
                                     <button class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                                         <i class="fa-solid fa-comment-dots mr-2"></i>
                                         <span>Add Comment</span>
@@ -1083,10 +1085,7 @@
                                         answerHeader.textContent = `(${currentAnswerCount})`;
                                     }
 
-                                    attachAnswerEventListeners(data.answer.id);
                                     updateAnswerActionButtonsVisibility(data.answer.id);
-
-
                                 }
 
                                 Toastify({
@@ -1187,13 +1186,13 @@
                             formData.append('commentable_id', answerId);
                             formData.append('commentable_type', 'answer');
 
-                            fetch(`{{ route('comment.submit' ) }}`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                                        },
-                                        body: formData,
-                                    })
+                            fetch(`{{ route('comment.submit') }}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                    },
+                                    body: formData,
+                                })
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
@@ -1239,6 +1238,7 @@
                                         commentDiv.className =
                                             'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
                                         commentDiv.innerHTML = `
+                                        <a href="/viewUser/${@json($username ?? null)}">
                             <div class="flex items-start">
                                 <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.comment.username)}&background=random" 
                                      alt="${data.comment.username}"
@@ -1257,7 +1257,7 @@
                                     </p>
                                 </div>
                             </div>
-                        `;
+                        </a>`;
 
                                         const commentsList = commentsSection.querySelector(
                                             '.space-y-3');
@@ -1345,7 +1345,7 @@
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
-                            
+
                             if (data.success) {
                                 let commentList = document.getElementById('question-comments');
                                 const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
@@ -1354,9 +1354,11 @@
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">${escapeHtml(data.comment.comment)}</p>
+                                    <a href="/viewUser/${@json($username ?? null)}">
                                     <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                        <span>Posted by ${escapeHtml(data.comment.username)} - ${timeAgo}</span>
+                                        <span class="hover:underline">Posted by ${escapeHtml(data.comment.username)} - ${timeAgo}</span>
                                     </div>
+                                    </a>
                                 </div>
                             </div>
                         `;
@@ -1465,13 +1467,13 @@
                         formData.append('commentable_id', answerId);
                         formData.append('commentable_type', 'answer');
 
-                        fetch(`{{ route('comment.submit' ) }}`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                                    },
-                                    body: formData,
-                                })
+                        fetch(`{{ route('comment.submit') }}`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                },
+                                body: formData,
+                            })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
@@ -1527,6 +1529,7 @@
                                         'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
 
                                     commentDiv.innerHTML = `
+                                    <a href="/viewUser/${@json($username ?? null)}">
                                 <div class="flex items-start">
                                     <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.comment.username)}&background=random" 
                                          alt="${data.comment.username}"
@@ -1534,7 +1537,7 @@
                                     
                                     <div class="flex-grow">
                                         <div class="flex items-center mb-1">
-                                            <span class="text-sm font-medium text-[var(--text-primary)]">
+                                            <span class="text-sm hover:underline font-medium text-[var(--text-primary)]">
                                                 ${data.comment.username}
                                             </span>
                                             <span class="text-xs text-[var(--text-muted)] ml-2">
@@ -1547,6 +1550,7 @@
                                         </p>
                                     </div>
                                 </div>
+                                    </a>
                             `;
 
                                     const commentsList = commentsSection.querySelector(
