@@ -42,7 +42,6 @@ class TagController extends Controller
             }
 
             $responseData = $response->json();
-            Log::info("Leaderboard data:", $responseData['data'] ?? []);
 
             return response()->json($responseData['data']);
         } catch (\Exception $e) {

@@ -85,7 +85,6 @@ class MainController extends Controller
     $data['currUser'] = $currUser;
     $data['username'] = $currUser['username'];
     $data['id'] = $currUser['id'];
-    // dd($data);
     $data['image'] = $currUser['image'];
     $data['histories'] = $currUser['histories'];
     // dd($data);
@@ -290,7 +289,6 @@ class MainController extends Controller
     $data['id'] = $currUser['id'];
     $data['email'] = $currUser['email'];
     // dd($data);
-    Log::info($data['question']);
 
     $data['histories'] = $currUser['histories'];
     return view('viewAnswers', $data);

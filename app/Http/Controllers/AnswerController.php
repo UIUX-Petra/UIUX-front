@@ -91,7 +91,7 @@ class AnswerController extends Controller
                 ]
             );
         } else {
-            $errorMessage = $response->json()['message'] ?? 'Failed to comment.';
+            $errorMessage = $response->json()['message'] ?? 'Failed to vote.';
             return response()->json(['success' => false, 'message' => $errorMessage]);
         }
     }

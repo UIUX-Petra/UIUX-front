@@ -1147,11 +1147,10 @@
                         } else {
                             const formData = new FormData();
                             formData.append('comment', commentText);
-                            formData.append('answer_id', answerId);
+                            formData.append('commentable_id', answerId);
+                            formData.append('commentable_type', 'answer');
 
-                            fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`
-                                    .replace('aaa',
-                                        answerId), {
+                            fetch(`{{ route('comment.submit' ) }}`, {
                                         method: 'POST',
                                         headers: {
                                             'X-CSRF-TOKEN': "{{ csrf_token() }}",
@@ -1286,17 +1285,16 @@
                 } else {
                     const formData = new FormData();
                     formData.append('comment', commentText);
-                    formData.append('question_id', questionId);
+                    formData.append('commentable_id', questionId);
+                    formData.append('commentable_type', 'question');
 
                     // Send comment data to the server
-                    fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`.replace('aaa',
-                            questionId), {
+                    fetch(`{{ route('comment.submit') }}`, {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': "{{ csrf_token() }}",
                             },
                             body: formData,
-
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -1408,11 +1406,10 @@
                     } else {
                         const formData = new FormData();
                         formData.append('comment', commentText);
-                        formData.append('answer_id', answerId);
+                        formData.append('commentable_id', answerId);
+                        formData.append('commentable_type', 'answer');
 
-                        fetch(`{{ route('question.comment.submit', ['questionId' => 'aaa']) }}`
-                                .replace('aaa',
-                                    answerId), {
+                        fetch(`{{ route('comment.submit' ) }}`, {
                                     method: 'POST',
                                     headers: {
                                         'X-CSRF-TOKEN': "{{ csrf_token() }}",
