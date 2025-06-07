@@ -845,7 +845,7 @@
         <div class="mb-8 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Actions</h3>
             <a href="{{ route('askPage') }}"
-                class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+                class="nav-link flex items-center text-[var(--text-dark)] px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
                 <i class="fa-solid fa-plus mr-3"></i> Ask a Question
             </a>
         </div>

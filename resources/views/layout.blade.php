@@ -260,7 +260,7 @@
 
         .dark-mode {
             /* Background colors */
-            --bg-a: rgba(5, 13, 36, 1);
+            /* --bg-a: rgba(5, 13, 36, 1);
             --bg-b: rgba(16, 26, 61, 1);
             --bg-c: rgba(43, 88, 120, 1);
             --bg-primary: #1C2245;
@@ -270,25 +270,37 @@
             --bg-light: #494e73;
             --bg-card: #1c2246;
             --bg-card-hover: #232753;
+            --bg-input: #0e1337; */
+
+            --bg-a: rgba(5, 13, 36, 1);
+            --bg-b: rgba(16, 26, 61, 1);
+            --bg-c: rgba(43, 88, 120, 1);
+            --bg-primary: #030712;
+            --bg-secondary: #070a13;
+            --bg-tertiary: #0b0e17;
+            --bg-shadow: #32386E;
+            --bg-light: #494e73;
+            --bg-card: #10141E;
+            --bg-card-hover: #1C2029;
             --bg-input: #0e1337;
+
 
             /* Text colors */
             --text-primary: #ffffff;
-            --text-secondary: #d0d9ff;
-            --text-muted: #929fd3;
+            --text-secondary: #E5E7EB;
+            --text-muted: #D1D5DC;
             --text-highlight: #80ED99;
             --text-dark: #101838;
-            --text-tag: #ffffff;
+            --text-tag: #E5E7EB;
 
             /* Accent colors */
-            --accent-primary: #7494ec;
+            --accent-primary: #00BCFF;
             --accent-secondary: #19b675;
             --accent-tertiary: #ffd249;
             --accent-neg: #cf2c5a;
 
             /* Border colors */
-            --border-color: rgba(9, 15, 56, 0.604);
-
+            --border-color: #293B4A;
             /* Button colors */
             --button-primary: linear-gradient(to right, #38A3A5, #80ED99);
             --button-primary-trf: linear-gradient(to left, #38A3A5, #80ED99);
@@ -316,7 +328,7 @@
             --text-tag: #2e406b;
 
             /* Accent colors */
-            --accent-primary: #5477c8;
+            --accent-primary: #63D0FF;
             --accent-secondary: #10b981;
             --accent-tertiary: #f4ab24;
             --accent-neg: #ee1150;
