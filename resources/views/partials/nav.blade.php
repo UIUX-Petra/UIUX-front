@@ -503,7 +503,7 @@
                                 @endif
                                 {{ strtoupper($history) }}S
                             </h4>
-                            @foreach ($historyItems as $username => $historyItem)
+                            @foreach ($historyItems as $usname => $historyItem)
                                 <ul>
                                     <li>
                                         <div
@@ -517,7 +517,7 @@
                                                 @elseif($history == 'question')
                                                     <i class="fa-solid fa-comment-question text-green-400"></i>
                                                 @endif
-                                                <span>{{ $history == 'user' ? $username : ($history == 'question' ? $historyItem['title'] . ' (by ' . $username . ')' : 'aa') }}</span>
+                                                <span>{{ $history == 'user' ? $usname : ($history == 'question' ? $historyItem['title'] . ' (by ' . $usname . ')' : 'aa') }}</span>
                                             </a>
                                             <button class="history-delete-btn"
                                                 data-history="{{ $historyItem['historyId'] }}"
