@@ -979,7 +979,7 @@
                                                 .replace('id', QUESTION_TO_EDIT.user
                                                 .id);
                                         } else {
-                                            window.location.href = "{{ route('popular') }}";
+                                            window.location.href = "{{ route('home') }}";
                                         }
                                     });
                                 } else {

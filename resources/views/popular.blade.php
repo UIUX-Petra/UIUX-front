@@ -571,7 +571,7 @@
             let currentFilterTag = '{{ $initialFilterTag ?? '' }}';
             let currentSearchTerm = '{{ $initialSearchTerm ?? '' }}';
 
-            const ajaxUrl = '{{ route('popular') }}';
+            const ajaxUrl = '{{ route('home') }}';
 
             function showLoadingSkeleton() {
                 // ... (your existing skeleton logic - no change needed here)

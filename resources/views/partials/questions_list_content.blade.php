@@ -16,7 +16,7 @@
                 @if ($activeSearchTerm)
                     <br>Search: "<span class="font-semibold">{{ $activeSearchTerm }}</span>".
                 @endif
-                <br>Try adjusting your filters or <a href="{{ route('popular') }}" class="text-amber-500 hover:underline filter-clear-link">clear all filters</a>.
+                <br>Try adjusting your filters or <a href="{{ route('home') }}" class="text-amber-500 hover:underline filter-clear-link">clear all filters</a>.
             </p>
         @else
             <p class="text-[var(--text-secondary)] mt-2">
@@ -92,7 +92,7 @@
                     @if(!empty($tags) && is_array($tags))
                         @foreach ($tags as $index => $tag)
                             @if(isset($tag['subject']['name']))
-                                <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => $currentSortBy ?? 'latest', 'page' => 1]) }}" {{-- Ensure $currentSortBy is available or use a default --}}
+                                <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => $currentSortBy ?? 'latest', 'page' => 1]) }}" {{-- Ensure $currentSortBy is available or use a default --}}
                                    class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
                                     <span class="hover:border-[var(--accent-secondary)] font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                         {{ $tag['subject']['name'] }}

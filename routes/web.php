@@ -27,7 +27,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['isLogin'])->group(function () {
-    Route::get('/', [MainController::class, 'popular'])->name('popular');
+    Route::get('/', [MainController::class, 'home'])->name('home');
     Route::get('/ask/{questionId?}', [MainController::class, 'askPage'])->name('askPage');
     Route::post('/questions/{id}/save-edit', [QuestionController::class, 'saveEditedQuestion'])->name('question.saveEdit');
     Route::get('/viewUser/{email}', [MainController::class, 'viewOther'])->name('viewOthers');

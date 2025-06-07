@@ -111,7 +111,7 @@ class QuestionController extends Controller
         $queryParams = [
             'page' => $page,
             'per_page' => $per_page_from_request,
-            'email' => session('email'), // Pastikan session 'email' ada dan valid
+            'email' => session('email'),
             'sort_by' => $sortBy,
         ];
 

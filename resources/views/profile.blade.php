@@ -285,7 +285,7 @@
                     </div>
                     <ul class="space-y-3">
                         @foreach ($currUser['top_subjects'] as $topSubject)
-                            <a href="{{ route('popular', ['filter_tag' => $topSubject['name'], 'sort_by' => 'latest', 'page' => 1]) }}">
+                            <a href="{{ route('home', ['filter_tag' => $topSubject['name'], 'sort_by' => 'latest', 'page' => 1]) }}">
                                 <li
                                     class="flex justify-between items-center tag-score p-1 text-[var(--text-highlight)] font-bold follow-div">
                                     <p class="text-sm  follow-link">{{ $topSubject['abbr'] }}</p>

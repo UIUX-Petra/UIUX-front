@@ -150,7 +150,7 @@
                                 <div class="flex mt-2 flex-wrap gap-2">
                                     @foreach ($question['group_question'] ?? [] as $tag)
                                         @if (isset($tag['subject']['name']))
-                                            <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
+                                            <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
                                                 class="text-xs px-2 py-1 font-bold rounded-full bg-[var(--bg-light)] text-[var(--text-tag)] hover:border-white hover:border-2">
                                                 {{ $tag['subject']['name'] }}
                                             </a>

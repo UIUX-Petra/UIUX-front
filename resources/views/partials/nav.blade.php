@@ -454,7 +454,7 @@
         </div>
 
         <!-- Logo Section with hover effect -->
-        <a href="{{ route('popular') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
+        <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
             <div class="relative overflow-hidden">
                 <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo"
                     class="h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-90">
@@ -731,7 +731,7 @@
             class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
         </a>
-        <a href="{{ route('popular') }}"
+        <a href="{{ route('home') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-house mr-3"></i> Home
         </a>
@@ -791,7 +791,7 @@
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Main Navigation</h3>
             <nav class="flex flex-col space-y-1">
                 <nav class="flex flex-col space-y-1">
-                    <a href="{{ route('popular') }}"
+                    <a href="{{ route('home') }}"
                         class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                         <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
                     </a>
