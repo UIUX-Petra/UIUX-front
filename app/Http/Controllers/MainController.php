@@ -95,10 +95,7 @@ class MainController extends Controller
         }
       }
     }
-
-
-    // dd($data);
-    return view('otherProfiles', $data);
+    return view('profile', $data);
   }
 
 
