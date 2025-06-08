@@ -584,7 +584,7 @@
                                 class="block text-sm font-medium text-[var(--accent-tertiary)]">{{ $username ?? 'User' }}</span>
                         </div>
                         <div class="py-1" role="none">
-                            <a href="{{ route('seeProfile') }}"
+                            <a href="{{ route('viewUser', ['email' => session('email')]) }}"
                                 class="user-menu-item text-[var(--text-primary)] hover:text-[var(--accent-tertiary)] hover:bg-[var(--bg-card-hover)] block px-4 py-2 text-sm"
                                 role="menuitem">
                                 <i class="fa-solid fa-user mr-2"></i> Profile
@@ -764,7 +764,7 @@
 
             @if (session()->has('email'))
                 <div class="flex space-x-3">
-                    <a href="{{ route('seeProfile') }}"
+                    <a href="{{ route('viewUser', ['email' => session('email')]) }}"
                         class="text-[var(--text-primary)] hover:text-[var(--accent-tertiary)]">
                         <i class="fa-solid fa-user"></i>
                     </a>

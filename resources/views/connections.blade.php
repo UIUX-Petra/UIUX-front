@@ -167,7 +167,7 @@
         .follow-btn {
             padding: 4px 8px;
             border-radius: 5px;
-            font-size: 0.5rem;
+            font-size: 1rem;
             font-weight: 600;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid transparent;

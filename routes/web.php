@@ -36,9 +36,6 @@ Route::middleware(['isLogin'])->group(function () {
     Route::post('/follow', [UserController::class, 'nembakFollow'])->name('nembakFollow');
     // Route::get('/', [MainController::class, 'home'])->name('home');
 
-    Route::get('/myProfile', [MainController::class, 'seeProfile'])->name('seeProfile');
-    // routes/web.php
-
     Route::get('/user/{id}/questions', [MainController::class, 'userQuestions'])->name('user.questions.list');
     Route::get('/user/{email}/connections', [MainController::class, 'userConnections'])->name('user.connections');
     // Route untuk aksi follow/unfollow (via POST untuk AJAX)

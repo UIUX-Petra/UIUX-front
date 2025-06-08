@@ -144,6 +144,21 @@
             opacity: 1;
         }
 
+        
+        .follow-link::after {
+            content: "\f0c1";
+            font-family: "Font Awesome 6 Free";
+            /* font-weight: 900; */
+            /* font-size: 0.75rem; */
+            margin-left: 0.35rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .follow-div:hover .follow-link::after {
+            opacity: 1;
+        }
+
         /* Responsive improvements */
         @media (max-width: 768px) {
             .profile-stats {
@@ -201,25 +216,30 @@
             </div>
 
             <!-- Stats Bar -->
-            <div
-                class="bg-[var(--bg-card-hover)] px-6 py-4 flex justify-around border-t border-b border-[var(--border-color)]">
-                <div class="text-center">
-                    <h3 id="followers_count" class="text-[var(--text-primary)] text-xl font-bold">
-                        {{ $userViewed['followers_count'] }}
-                    </h3>
-                    <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'followers']) }}#followers"
-                        class="hover:underline">
-                        <p class="text-[var(--text-muted-dark)] text-sm">Followers</p>
-                    </a>
-                </div>
-                <div class="text-center">
-                    <h3 id="followings_count" class="text-[var(--text-primary)] text-xl font-bold">
-                        {{ $userViewed['followings_count'] }}</h3>
-                    <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'following']) }}#following"
-                        class="hover:underline">
-                        <p class="text-[var(--text-muted-dark)] text-sm">Followings</p>
-                    </a>
-                </div>
+           
+           <div class="bg-[var(--bg-card-hover)] grid grid-cols-2 border-t border-b border-[var(--border-color)]">
+                 <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'followers']) }}#followers"
+                    class="">
+                    <div class="hover:bg-[var(--bg-card)] w-full px-6 py-4 follow-div">
+                        <div class="text-center ">
+                            <h3 id="countFollowers" class="text-[var(--text-primary)] text-xl font-bold">
+                                {{ $userViewed['followers_count'] }}
+                            </h3>
+
+                            <p class="text-[var(--text-highlight)] font-semibold text-sm follow-link ml-5">Followers</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="{{ route('user.connections', ['email' => $userViewed['email'], 'type' => 'following']) }}#following"
+                    class="">
+                    <div class="hover:bg-[var(--bg-card)] w-full px-6 py-4 follow-div">
+                        <div class="text-center">
+                            <h3 class="text-[var(--text-primary)] text-xl font-bold"> {{ $userViewed['followings_count'] }}
+                            </h3>
+                            <p class="text-[var(--text-highlight)] font-semibold text-sm follow-link ml-5">Following</p>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
 
@@ -228,7 +248,7 @@
             <!-- Left Sidebar -->
             <div class="col-span-1 lg:col-span-3 space-y-6">
                 <!-- About Section -->
-                <div class="profile-card p-6">
+                {{-- <div class="profile-card p-6">
                     <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Skills</h3>
                     <div class="flex flex-wrap gap-2">
                         <span
@@ -240,15 +260,15 @@
                         <span
                             class="profile-tag px-3 py-1 text-white bg-[var(--bg-shadow)] text-sm rounded cursor-pointer">javascript</span>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Stats Section -->
-                <div class="profile-card p-6">
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
                     <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Stats</h3>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
                             <span class="text-[var(--text-secondary)]">Reputation</span>
-                            <span class="font-bold text-[var(--text-primary)]">{{ $userViewed['reputation'] }}</span>
+                            <span class="font-bold text-[var(--text-primary)]"> {{ $userViewed['reputation'] }}</span>
                         </div>
                         <div class="clickable-stat flex justify-between items-center font-bold">
                             <a href="{{ route('user.answers.index', ['userId' => $userViewed['id']]) }}" class="text-link">
@@ -260,24 +280,26 @@
                             <a href="{{ route('user.questions.list', ['id' => $userViewed['id']]) }}" class="text-link">
                                 <span>Questions</span>
                             </a>
-                            <span
-                                class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
+                            <span class="font-bold text-[var(--text-highlight)]">{{ $userViewed['questions_count'] }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Top Tags Section -->
-                <div class="profile-card p-6">
+                <div class="profile-card border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Top Tags</h3>
+                        <h3 class="text-[var(--text-primary)] text-xl font-bold cal-sans-regular">Top Subjects</h3>
+                        {{-- <a href="#" class="text-[var(--text-secondary)] text-sm hover:underline">View All</a> --}}
                     </div>
                     <ul class="space-y-3">
-                        @foreach ($userViewed['top_subjects'] as $subject)
-                            <li class="flex justify-between items-center tag-score p-1">
-                                <span
-                                    class="text-[var(--text-secondary)]">{{ $subject['abbr'] }}</span>
-                                <span class="font-bold text-[var(--text-primary)]">{{ $subject['count'] }}</span>
-                            </li>
+                        @foreach ($userViewed['top_subjects'] as $topSubject)
+                            <a href="{{ route('home', ['filter_tag' => $topSubject['name'], 'sort_by' => 'latest', 'page' => 1]) }}">
+                                <li
+                                    class="flex justify-between items-center tag-score p-1 text-[var(--text-highlight)] font-bold follow-div">
+                                    <p class="text-sm  follow-link">{{ $topSubject['abbr'] }}</p>
+                                    <span class="">{{ $topSubject['count'] }}</span>
+                                </li>
+                            </a>
                         @endforeach
                     </ul>
                 </div>
