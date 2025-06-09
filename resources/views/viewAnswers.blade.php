@@ -480,7 +480,7 @@
                     @endforeach
                 </div>
             @else
-                <div class="bg-[var(--bg-secondary)] rounded-lg p-8 shadow-lg text-center">
+                <div class="bg-[var(--bg-secondary)] rounded-lg py-8 shadow-lg text-center">
                     <i class="fa-solid fa-lightbulb text-4xl text-[var(--accent-tertiary)] mb-4"></i>
                     <h3 class="text-xl font-semibold text-[var(--text-primary)] mb-2">No Answers Yet</h3>
                     <p class="text-[var(--text-secondary)] mb-4">Be the first one to answer this question!</p>
@@ -1349,7 +1349,7 @@
                             console.log(data);
 
                             if (data.success) {
-                                let commentList = document.getElementById('question-comments');
+                                let commentList = document.getElementById('question-comments-list-modal');
                                 const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
 
                                 const htmlContent = `
@@ -1946,7 +1946,7 @@
 
     </script>
 
-        <script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const questionCommentsModal = document.getElementById('questionCommentsModal');
             const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');

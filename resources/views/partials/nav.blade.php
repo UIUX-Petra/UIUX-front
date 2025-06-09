@@ -559,10 +559,11 @@
                 </a>
             @else
             
-                <a href="{{ route('askPage') }}"
+                {{-- <a href="{{ route('askPage') }}"
                     class="flex items-center text-[var(--text-dark)] px-3 py-2 rounded-full bg-gradient-to-r from-[#38A3A5] to-[#80ED99]">
                     <i class="fa-solid fa-plus"></i>
-                </a>
+                </a> --}}
+                
                 <!-- User Avatar with hover effects -->
                 <div class="avatar-container relative">
                     <button type="button"
@@ -739,6 +740,11 @@
             <i class="fa-solid fa-fire mr-3"></i> Popular
             <span class="nav-badge">Hot</span>
         </a> --}}
+
+        <a href="{{ route('askPage') }}"
+            class="nav-link flex items-center px-3 py-2 rounded-md text-[var(--text-dark)] bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+            <i class="fa-solid fa-plus mr-3"></i> Ask a Question
+        </a>
         <a href="{{ route('viewAllTags') }}"
             class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
             <i class="fa-solid fa-tags mr-3"></i> Subjects
@@ -810,20 +816,29 @@
         <div class="mb-6 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">MY ACTIVITES</h3>
             <nav class="flex flex-col space-y-1">
-                <nav class="flex flex-col space-y-1">
-                    <a href="{{ route('user.questions.list', ['id' => $id]) }}"
-                        class="nav-link {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                        <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> Questions
+                <div class="nav-link {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }} flex items-center justify-between rounded-md font-medium">
+                    <a href="{{ route('user.questions.list', ['id' => $id]) }}" class="flex-grow items-center py-2.5 pl-3 text-sm flex {{ request()->routeIs('user.questions.list', ['id' => $id]) ? '' : 'text-[var(--text-primary)]' }}">
+                        <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i>
+                        Questions
                     </a>
-                    <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
-                        class="nav-link {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                        <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Answers
+                    
+                    <a href="{{ route('askPage') }}"
+                       class="group relative px-2 mr-1 rounded-full z-20 transition-all duration-200 hover:scale-110  hover:bg-[var(--bg-shadow)] {{ request()->routeIs('user.questions.list', ['id' => $id]) ? '' : 'text-[var(--text-primary)]' }} hover:text-[var(--text-highlight)]">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span class="absolute left-full ml-3 top-1/2 -translate-y-1/2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap px-3 py-1.5 text-sm bg-[var(--bg-card)] text-[var(--text-primary)] rounded-md shadow-lg border border-[var(--border-color)]">
+                            Ask a Question
+                        </span>
                     </a>
-                    <a href="{{ route('savedQuestions') }}"
-                        class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                        <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
-                    </a>
-                </nav>
+                </div>
+                <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
+                    class="nav-link {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Answers
+                </a>
+                <a href="{{ route('savedQuestions') }}"
+                    class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                    <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
+                </a>
+            </nav>
         </div>
 
         <!-- Community Section -->

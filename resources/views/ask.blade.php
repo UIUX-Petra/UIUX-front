@@ -352,6 +352,32 @@
                 transform: scale(1) translateY(0);
             }
         }
+
+        .form-section {
+            background-color: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .form-section:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+            border-color: var(--accent-tertiary);
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(56, 163, 165, 0.02) 0%, rgba(128, 237, 153, 0.02) 100%);
+            border-radius: 1rem;
+            pointer-events: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -377,16 +403,15 @@
         $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
         $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
     @endphp
-
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
-        <div class="flex items-center gap-4">
-            <div class="page-title-icon flex items-center justify-center">
-                <i class="fa-solid {{ $isEditMode ? 'fa-pen-to-square' : 'fa-question' }}"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-bold text-[var(--text-primary)]">{{ $pageH1Title }}</h1>
-                <p class="text-[var(--text-secondary)]">
+        <div class="w-full bg-transparent rounded-lg p-2 px-4 max-w-5xl justify-start mt-6 mb-6 flex items-start space-x-5 backdrop-blur-sm relative overflow-hidden">
+            <div class="flex flex-col z-10">
+                <h1 class="cal-sans-regular text-3xl lg:text-4xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight py-1">
+                    {{ $pageH1Title }}
+                </h1>
+                <div class="h-1 w-24 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div>
+                <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl mt-2">
                     @if ($isEditMode)
                         Update the details of your question.
                     @else
@@ -396,9 +421,9 @@
             </div>
         </div>
 
-        @if (!$isEditMode)
+        {{-- @if (!$isEditMode)
             <!-- Tips Section (Show only for new questions) -->
-            <div class="tips-section p-6 my-8">
+            <div class="tips-section p-6 my-8 relative overflow-hidden">
                 <div class="tips-title flex items-center gap-2 mb-4">
                     <i class="fa-solid fa-lightbulb"></i>
                     <span>Tips for a Great Question</span>
@@ -414,7 +439,7 @@
                             appropriate subjects</span></li>
                 </ul>
             </div>
-        @endif
+        @endif --}}
 
         <form id="post-form" enctype="multipart/form-data">
             @if ($isEditMode)
@@ -422,10 +447,13 @@
             @endif
 
             <!-- Title Section -->
-            <div class="p-6 mb-6">
-                <div class="flex items-center mb-4">
-                    <i class="fa-solid fa-heading section-icon mr-3"></i>
-                    <h2 class="text-lg font-semibold">Question Title</h2>
+            <div class="form-section p-6 mb-6 relative overflow-hidden">
+                <div class="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.08)] to-[rgba(128,237,153,0.08)]"></div>
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-heading text-white text-sm"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-[var(--text-primary)]">Question Title</h2>
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your
                     question quickly</p>
@@ -435,10 +463,13 @@
             </div>
 
             <!-- Details Section -->
-            <div class="p-6 mb-6">
-                <div class="flex items-center mb-4">
-                    <i class="fa-solid fa-align-left section-icon mr-3"></i>
-                    <h2 class="text-lg font-semibold">Question Details</h2>
+            <div class="form-section p-6 mb-6 relative overflow-hidden">
+                <div class="absolute -bottom-5 -left-5 w-20 h-20 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.08)] to-[rgba(128,237,153,0.08)]"></div>
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-align-left text-white text-sm"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-[var(--text-primary)]">Question Details</h2>
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details</p>
                 <div id="editor" class="w-auto">
@@ -458,20 +489,28 @@
                             @endif
                         </div>
                     </div>
-                    <div class="toolbar w-full flex flex-col items-end gap-4 p-3 pb-6">
-                        <button type="button" id="upload-image-btn"
-                            class="image-upload-button w-max text-[var(--text-dark)] bg-[var(--accent-tertiary)] flex items-center gap-2 py-2 px-4">
-                            <i class="fa-solid fa-image"></i> Add Image
-                        </button>
-                    </div>
+                </div>
+
+                <div class="toolbar w-full flex flex-col items-end gap-4 p-3 pb-6 bg-transparent border-none">
+                    <button type="button" id="upload-image-btn"
+                        class="image-upload-button w-max text-[var(--text-dark)] bg-[var(--accent-tertiary)] flex items-center gap-2 py-2 px-4 relative group"
+                        >
+                        <i class="fa-solid fa-image"></i>
+                        <span class="absolute bottom-full mb-2 border border-[var(--border-color)] left-1/2 transform -translate-x-1/2 bg-[var(--bg-secondary)] text-[--text-muted] text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+                            Add Image
+                        </span>
+                    </button>
                 </div>
             </div>
 
             <!-- Tags Section -->
-            <div class="p-6 mb-6">
-                <div class="flex items-center mb-4">
-                    <i class="fa-solid fa-tags section-icon mr-3"></i>
-                    <h2 class="text-lg font-semibold">Subjects</h2>
+            <div class="form-section p-6 mb-6 relative overflow-hidden">
+                <div class="absolute -top-5 -right-5 w-16 h-16 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.05)] to-[rgba(128,237,153,0.05)]"></div>
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-tags text-white text-sm"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-[var(--text-primary)]">Subjects</h2>
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant subjects to help others find your question
                 </p>
@@ -484,7 +523,7 @@
                         </div>
                         <!-- Add Tags Button (Plus Icon) inside the input box -->
                         <button type="button" id="open-tags-modal"
-                            class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
+                            class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-full hover:opacity-90 transition-opacity shrink-0">
                             <i class="fa-solid fa-plus text-sm"></i>
                         </button>
                     </div>
@@ -492,10 +531,9 @@
                     <!-- Count Badge and Clear All outside the input box -->
                     <div class="flex items-center justify-between mt-2 mr-1 ml-0.5">
                         <span id="selected-count-badge"
-                            class="text-xs bg-[var(--accent-tertiary)] text-[var(--text-dark)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
+                            class="text-xs bg-[var(--bg-shadow)] text-[var(--text-tag)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
                         <button type="button" id="clear-all-tags"
-                            class="font-semibold text-[var(--text-primary)] hover:text-[var(--text-secondary)] underline transition-colors text-md">
-                            Clear All
+                            h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider mx-2 mb-3 hover:underline underline-offset-2">CLEAR ALL</h3>
                         </button>
                     </div>
                 </div>
@@ -515,85 +553,88 @@
                     @endforeach
                 @endif
             </select>
-    </div>
 
-    <!-- Tags Modal -->
-    <div id="tags-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
-                <div>
-                    <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Subjects</h3>
-                    <p class="text-sm text-[var(--text-secondary)] mt-1">Choose subjects that best describe your question</p>
-                </div>
-                <button type="button" id="close-tags-modal"
-                    class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
-                    <i class="fa-solid fa-times text-xl text-[var(--text-secondary)]"></i>
-                </button>
-            </div>
 
-            <!-- Modal Body -->
-            <div class="flex-1 flex flex-col min-h-0">
-                <!-- Search Bar -->
-                <div class="p-6 pb-4 border-b border-[var(--border-color)]">
-                    <div class="relative">
-                        <i
-                            class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]"></i>
-                        <input type="text" id="tags-search-input"
-                            class="w-full pl-10 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent-tertiary)] focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-opacity-20 transition-all"
-                            placeholder="Search tags..." autocomplete="off">
-                    </div>
-                    <div class="flex items-center justify-between mt-3 text-sm text-[var(--text-secondary)]">
-                        <span>
-                            <span id="showing-count">0</span> tags available
-                        </span>
-                        <span>
-                            <span id="selected-count-modal">0</span> selected
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Tags Grid -->
-                <div class="flex-1 overflow-y-auto p-6">
-                    <div id="tags-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <!-- Tags will be populated here -->
-                    </div>
-                    <div id="no-tags-found" class="text-center py-12 hidden">
-                        <i class="fa-solid fa-search text-4xl text-[var(--text-secondary)] opacity-50 mb-4"></i>
-                        <p class="text-[var(--text-secondary)] text-lg">No tags found</p>
-                        <p class="text-[var(--text-secondary)] text-sm mt-1">Try a different search term</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-6 border-t border-[var(--border-color)] bg-[var(--bg-secondary)] rounded-b-xl">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm text-[var(--text-secondary)]">
-                        <span id="selected-count-footer">0</span> tags selected
-                    </div>
-                    <div class="flex gap-3">
-                        <button type="button" id="cancel-tags-modal"
-                            class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
-                            Cancel
-                        </button>
-                        <button type="button" id="confirm-tags-modal"
-                            class="px-6 py-2 bg-[var(--accent-secondary)] text-white rounded-lg hover:opacity-90 transition-opacity">
-                            Done
+            <!-- Tags Modal -->
+            <div id="tags-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+                <div class="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
+                        <div>
+                            <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Subjects</h3>
+                            <p class="text-sm text-[var(--text-secondary)] mt-1">Choose subjects that best describe your question</p>
+                        </div>
+                        <button type="button" id="close-tags-modal"
+                            class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
+                            <i class="fa-solid fa-times text-xl text-[var(--text-secondary)]"></i>
                         </button>
                     </div>
+
+                    <!-- Modal Body -->
+                    <div class="flex-1 flex flex-col min-h-0">
+                        <!-- Search Bar -->
+                        <div class="p-6 pb-4 border-b border-[var(--border-color)]">
+                            <div class="relative">
+                                <i
+                                    class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-secondary)]"></i>
+                                <input type="text" id="tags-search-input"
+                                    class="w-full pl-10 pr-4 py-3 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--accent-tertiary)] focus:ring-2 focus:ring-[var(--accent-tertiary)] focus:ring-opacity-20 transition-all"
+                                    placeholder="Search tags..." autocomplete="off">
+                            </div>
+                            <div class="flex items-center justify-between mt-3 text-sm text-[var(--text-secondary)]">
+                                <span>
+                                    <span id="showing-count">0</span> tags available
+                                </span>
+                                <span>
+                                    <span id="selected-count-modal">0</span> selected
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Tags Grid -->
+                        <div class="flex-1 overflow-y-auto p-6">
+                            <div id="tags-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <!-- Tags will be populated here -->
+                            </div>
+                            <div id="no-tags-found" class="text-center py-12 hidden">
+                                <i class="fa-solid fa-search text-4xl text-[var(--text-secondary)] opacity-50 mb-4"></i>
+                                <p class="text-[var(--text-secondary)] text-lg">No tags found</p>
+                                <p class="text-[var(--text-secondary)] text-sm mt-1">Try a different search term</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="p-6 border-t border-[var(--border-color)] bg-[var(--bg-secondary)] rounded-b-xl">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-[var(--text-secondary)]">
+                                <span id="selected-count-footer">0</span> tags selected
+                            </div>
+                            <div class="flex gap-3 font-semibold">
+                                <button type="button" id="cancel-tags-modal"
+                                    class="px-4 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="button" id="confirm-tags-modal"
+                                    class="px-6 py-2 bg-[var(--accent-secondary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity">
+                                    Done
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="text-center">
-        <button type="submit" id="submit-btn"
-            class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
-            <i class="fa-solid {{ $isEditMode ? 'fa-save' : 'fa-paper-plane' }}"></i> {{ $submitButtonText }}
-        </button>
-    </div>
-    </form>
+            <div class="text-center mt-8">
+                <div class="inline-block relative">
+                    <div class="absolute -inset-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-lg blur-sm opacity-30"></div>
+                    <button type="submit" id="submit-btn"
+                        class="submit-button relative inline-flex items-center justify-center gap-2 py-4 px-10 text-lg font-semibold">
+                        <i class="fa-solid {{ $isEditMode ? 'fa-save' : 'fa-paper-plane' }}"></i> {{ $submitButtonText }}
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 @endsection
 
