@@ -347,7 +347,6 @@
                 opacity: 0;
                 transform: scale(0.8) translateY(-10px);
             }
-
             to {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -358,11 +357,13 @@
 @section('content')
     @if (session()->has('Error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}'
-            });
+            Toastify({
+                text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
+                duration: 3000,
+                style: {
+                    background: "#e74c3c"
+                }
+            }).showToast();
         </script>
     @endif
     @include('partials.nav')
@@ -474,7 +475,6 @@
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant subjects to help others find your question
                 </p>
-
                 <!-- Selected Tags Display -->
                 <div class="mb-4">
                     <div id="selected-tags-display"
@@ -482,7 +482,6 @@
                         <div id="selected-tags-container" class="flex flex-wrap gap-2 flex-1">
                             <!-- Selected tags will appear here -->
                         </div>
-
                         <!-- Add Tags Button (Plus Icon) inside the input box -->
                         <button type="button" id="open-tags-modal"
                             class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg hover:opacity-90 transition-opacity shrink-0">
@@ -881,27 +880,33 @@
                 const questionText = document.getElementById("question").value.trim();
 
                 if (title === '') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Title must be filled out!'
-                    });
+                    Toastify({
+                        text: "Title must be filled out!",
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                     return;
                 }
                 if (questionText === '') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Question details must be filled out!'
-                    });
+                    Toastify({
+                        text: "Question details must be filled out!",
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                     return;
                 }
                 if (selectedTagIds.length === 0) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Please select at least one tag!'
-                    });
+                    Toastify({
+                        text: "Please select at least one tag!",
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                     return;
                 }
 
@@ -960,45 +965,55 @@
                             .then(res => {
                                 Swal.close();
                                 if (res.success || (res.data && res.data.id)) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Success!',
+                                    Toastify({
                                         text: res.message ||
-                                            `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`
-                                    }).then(() => {
+                                            `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`,
+                                        duration: 3000,
+                                        style: {
+                                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                        }
+                                    }).showToast()
+
+                                    setTimeout(() => {
                                         if (res.data && res.data.id) {
                                             window.location.href =
                                                 "{{ route('user.questions.list', ['id' => 'id']) }}"
                                                 .replace('id', QUESTION_TO_EDIT.user
-                                                .id);
+                                                    .id);
                                         } else {
                                             window.location.href = "{{ route('popular') }}";
                                         }
-                                    });
+                                    }, 3000);
                                 } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error!',
+                                    Toastify({
                                         text: res.message ||
-                                            'An unexpected error occurred from the server.'
-                                    });
+                                            "An unexpected error occurred from the server.",
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
+
                                 }
                             })
                             .catch(err => {
                                 console.error('Fetch Error:', err);
                                 Swal.close();
                                 let errorMessage =
-                                'There was an error processing your request.';
+                                    'There was an error processing your request.';
                                 if (err.data && err.data.message) {
                                     errorMessage = err.data.message;
                                 } else if (err.message) {
                                     errorMessage = err.message;
                                 }
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Submission Error',
-                                    text: errorMessage
-                                });
+                                Toastify({
+                                    text: res.message ||
+                                        "Submission Error",
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                             });
                     }
                 });

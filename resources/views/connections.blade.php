@@ -196,8 +196,8 @@
         }
 
         .btn-follow:hover {
-            transform: translateY(-2px);f
-            box-shadow: 0 8px 20px rgba(56, 163, 165, 0.4);
+            transform: translateY(-2px);
+            f box-shadow: 0 8px 20px rgba(56, 163, 165, 0.4);
         }
 
         .btn-unfollow {
@@ -308,7 +308,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(45deg, transparent, rgba(56,163,165,0.1), transparent);
+            background: linear-gradient(45deg, transparent, rgba(56, 163, 165, 0.1), transparent);
             transform: translateX(-100%);
             transition: transform 0.6s;
         }
@@ -626,7 +626,7 @@
             //         const targetTab = statItem.getAttribute('data-stat-target');
             //         if (targetTab) {
             //             updateURLAndActivateTab(targetTab);
-                        
+
             //             // Smooth scroll to tab navigation
             //             const tabNavigation = document.querySelector('.tab-navigation');
             //             if (tabNavigation) {
@@ -947,12 +947,24 @@
                             });
 
                     } else {
-                        Swal.fire('Error', data.message || 'An error occurred.', 'error');
+                        Toastify({
+                            text: data.message || 'An error occurred.',
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
                         actionButton.innerHTML = originalButtonHTML;
                     }
                 } catch (error) {
+                    Toastify({
+                        text: 'A network error occurred. Please try again.',
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                     console.error('Follow action error:', error);
-                    Swal.fire('Error', 'A network error occurred. Please try again.', 'error');
                     actionButton.innerHTML = originalButtonHTML;
                 } finally {
                     actionButton.disabled = false;

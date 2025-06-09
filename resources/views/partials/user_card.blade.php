@@ -1,5 +1,5 @@
 {{-- resources/views/partials/user_card.blade.php --}}
-<div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl p-4 flex items-center justify-between transition-all duration-300 relative overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)] min-h-[80px] no-underline cursor-pointer hover:transform hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)] hover:border-[var(--accent-tertiary)] hover:no-underline group">
+<div class="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl p-4 flex items-center justify-between transition-all duration-300 relative overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)] min-h-[80px] no-underline cursor-pointer hover:transform hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)]  hover:no-underline group">
     
     {{-- Hover gradient top border --}}
     <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#38A3A5] to-[#80ED99] opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>

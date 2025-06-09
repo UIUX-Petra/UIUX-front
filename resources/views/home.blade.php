@@ -17,13 +17,13 @@
         }
 
         /*
-            .question-title {
-                color: var(--text-primary);
-            }
+                .question-title {
+                    color: var(--text-primary);
+                }
 
-            .question-title:hover {
-                color: var(--text-primary);
-            } */
+                .question-title:hover {
+                    color: var(--text-primary);
+                } */
 
         .interaction-icons i {
             color: var(--text-muted);
@@ -361,11 +361,13 @@
     @include('partials.nav')
     @if (session()->has('Error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}'
-            });
+            Toastify({
+                text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
+                duration: 3000,
+                style: {
+                    background: "#e74c3c"
+                }
+            }).showToast();
         </script>
     @endif
     {{-- @include('utils.background2') --}}
@@ -382,14 +384,15 @@
                     <div class="cal-sans-regular text-xl lg:text-2xl text-[var(--text-secondary)] mb-1 tracking-wide">
                         Welcome,
                     </div>
-                    <h1 class="cal-sans-regular text-4xl lg:text-6xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
+                    <h1
+                        class="cal-sans-regular text-4xl lg:text-6xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
                         {{ $username }}!
                     </h1>
                 </div>
                 <p class="text-[var(--text-muted)] text-lg pl-0.5 leading-relaxed max-w-xl">
-                    <span class="font-semibold text-[#3cac9d]">Ask questions</span>. 
-                    <span class="font-semibold text-[#57CC99]">share answers</span>, 
-                    <span class="font-semibold text-[#6bce82]">learn together</span>, with 
+                    <span class="font-semibold text-[#3cac9d]">Ask questions</span>.
+                    <span class="font-semibold text-[#57CC99]">share answers</span>,
+                    <span class="font-semibold text-[#6bce82]">learn together</span>, with
                     fellow <span class="font-bold">Petranesian Informates</span>!
                 </p>
             @endif
@@ -468,7 +471,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializePageFunctions2();
 
-           
+
 
             const questionsContainer = document.getElementById('pagination-container');
             if (questionsContainer) {
@@ -495,7 +498,7 @@
             initSmoothScroll();
             initSaveButtons();
             initClickableQuestionCards();
-            initTagToggles(); 
+            initTagToggles();
             updateSavedIcons();
         }
 
@@ -528,7 +531,8 @@
 
                     const questionId = this.dataset.questionId;
                     const extraTags = document.querySelectorAll(`.extra-tag-${questionId}`);
-                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains('hidden');
+                    const isCurrentlyHidden = extraTags.length > 0 && extraTags[0].classList.contains(
+                        'hidden');
 
                     extraTags.forEach(tag => {
                         tag.classList.toggle('hidden', !isCurrentlyHidden);
@@ -537,7 +541,7 @@
                     if (isCurrentlyHidden) {
                         this.textContent = 'show less';
                     } else {
-                        this.textContent = this.dataset.initialText; 
+                        this.textContent = this.dataset.initialText;
                     }
                 });
                 button.dataset.toggleInitialized = 'true';
@@ -694,7 +698,7 @@
                 });
         }
 
-       
+
         function updateSavedIcons() {
             const savedIcons = document.querySelectorAll('.save-question-btn i.fa-solid.fa-bookmark');
             const isLightMode = document.documentElement.classList.contains('light-mode');
@@ -764,7 +768,7 @@
             });
         }
 
-      
+
 
         function unsaveQuestion(btn) {
             const id = btn.getAttribute('data-question-id');

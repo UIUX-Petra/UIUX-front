@@ -433,6 +433,7 @@
                             </div>
                         `;
                     }
+                    location.reload();
                 }
             }
 
@@ -469,57 +470,83 @@
                             }
 
                             fetch(`${API_BASE_URL}questions/${questionId}`, {
-                                method: 'DELETE',
-                                headers: headers
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    return response.json().then(err => {
-                                        throw err;
-                                    });
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                if (data.success || data.status === 'success') {
-                                    Swal.fire(
-                                        'Deleted!',
-                                        data.message || 'Your question has been deleted.',
-                                        'success'
-                                    );
-                                    if (questionItemElement) {
-                                        questionItemElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                                        questionItemElement.style.opacity = '0';
-                                        questionItemElement.style.transform = 'scale(0.95)';
-                                        setTimeout(() => {
-                                            questionItemElement.remove();
-                                            checkEmptyQuestionState();
-                                        }, 500);
+                                    method: 'DELETE',
+                                    headers: headers
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw err;
+                                        });
                                     }
-                                } else {
-                                    Swal.fire(
-                                        'Error!',
-                                        data.message || 'Could not delete the question.',
-                                        'error'
-                                    );
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error details:', error);
-                                let errorMessage = 'An error occurred while deleting the question.';
-                                if (error && error.message) {
-                                    errorMessage = error.message;
-                                } else if (typeof error === 'object' && error !== null && error.toString && error.toString().includes('Failed to fetch')) {
-                                    errorMessage = 'Network error or API is unreachable. Please check your connection and the API URL.';
-                                } else if (typeof error === 'string') {
-                                    errorMessage = error;
-                                }
-                                Swal.fire(
-                                    'Request Failed!',
-                                    errorMessage,
-                                    'error'
-                                );
-                            });
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success || data.status === 'success') {
+                                        Toastify({
+                                            text: 'Your question has been deleted.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
+                                        if (questionItemElement) {
+                                            questionItemElement.style.animation =
+                                                'fadeOutUp 0.5s ease forwards';
+                                            setTimeout(() => {
+                                                questionItemElement.remove();
+                                                checkEmptyQuestionState();
+                                            }, 500);
+                                        }
+                                        const questionsContainer = document
+                                            .getElementById('questions-container');
+                                        const noQuestionsMessage = document
+                                            .getElementById('no-questions-message');
+                                        if (questionsContainer && noQuestionsMessage &&
+                                            questionsContainer.children.length === 0) {
+                                            noQuestionsMessage.style.display = 'block';
+                                            if (questionsContainer.parentElement
+                                                .contains(noQuestionsMessage)) {
+                                                // If it was previously hidden, make sure it's visible
+                                            } else {
+                                                // If it was removed, you might need to re-add or just unhide
+                                            }
+                                            questionsContainer.style.display = 'none';
+                                        }
+                                    } else {
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not delete the question.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error details:', error);
+                                    let errorMessage =
+                                        'An error occurred while deleting the question.';
+                                    if (error && error.message) {
+                                        errorMessage = error.message;
+                                    } else if (typeof error === 'object' && error !==
+                                        null && error.toString && error.toString()
+                                        .includes('Failed to fetch')) {
+                                        errorMessage =
+                                            'Network error or API is unreachable. Please check your connection and the API URL.';
+                                    } else if (typeof error === 'string') {
+                                        errorMessage = error;
+                                    }
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'Something went wrong',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
+                                });
                         }
                     });
                 });

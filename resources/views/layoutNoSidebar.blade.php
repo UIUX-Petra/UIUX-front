@@ -35,13 +35,17 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css" />
 
     {{-- SwiperJS --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />   
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     {{-- google icon --}}
     <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 
     {{-- Alphine JS --}}
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+
+    {{-- Toastify JS --}}
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
@@ -66,6 +70,7 @@
             --spotify-grad: linear-gradient(45deg, #1DB954, #191414);
             --tiktok-grad: linear-gradient(45deg, #ff0050, #191414 40%, #191414 60%, #00f2ea);
         }
+
         @keyframes gradient {
             0% {
                 background-position: 0% 50%;
@@ -101,7 +106,7 @@
             overflow-x: hidden;
             animation: gradient 30s ease infinite;
             /* opacity: 50%; */
-            z-index:1 ;
+            z-index: 1;
         }
 
 
@@ -112,8 +117,9 @@
             font-weight: normal;
             font-style: normal;
         }
-         /* Chrome, Edge and Safari */
-         *::-webkit-scrollbar {
+
+        /* Chrome, Edge and Safari */
+        *::-webkit-scrollbar {
             height: 10px;
             width: 10px;
         }
@@ -165,6 +171,7 @@
                 background-position: 500%;
             }
         }
+
         body {
             --bg-c: rgba(43, 88, 120, 1);
             --bg-primary: #1C2245;
@@ -177,6 +184,7 @@
     @yield('style')
 </head>
 {{-- @include('partials.nav') --}}
+
 <body>
     @include('partials.loader')
     @yield('content')

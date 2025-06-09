@@ -1,12 +1,24 @@
+
 @extends('layout')
 
 @section('style')
     <style>
-        .answer-card {
-            background: var(--bg-card);
-            color: var(--text-primary);
+
+        .question-card {
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
+            background-color: var(--bg-card);
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        .answer-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
@@ -28,9 +40,8 @@
         }
 
         .answer-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            border-color: rgba(56, 163, 165, 0.3);
         }
 
         .answer-content {
@@ -140,6 +151,17 @@
             }
         }
 
+        @keyframes fadeOutUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+
         .loading-skeleton {
             background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
             background-size: 200% 100%;
@@ -190,48 +212,6 @@
             box-shadow: 0 12px 40px rgba(56, 163, 165, 0.4);
         }
 
-        .search-filter-bar {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .search-input {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(56, 163, 165, 0.1);
-        }
-
-        .filter-button {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .filter-button:hover,
-        .filter-button.active {
-            background: var(--button-primary);
-            color: var(--button-text);
-            border-color: transparent;
-        }
-
         .answer-meta {
             display: flex;
             align-items: center;
@@ -269,6 +249,14 @@
             border-color: #ef4444;
         }
 
+        .stats-item {
+            transition: all 0.2s ease;
+        }
+
+        .stats-item:hover {
+            transform: scale(1.05);
+        }
+
         @media (max-width: 768px) {
             .floating-action {
                 bottom: 1rem;
@@ -279,10 +267,6 @@
                 width: 50px;
                 height: 50px;
             }
-
-            .search-filter-bar {
-                padding: 1rem;
-            }
         }
     </style>
 @endsection
@@ -291,213 +275,278 @@
     @include('partials.nav')
     @include('utils.background')
 
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-[var(--text-primary)]">
+    <!-- Header Section -->
+    <div class="w-full bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start mt-6 mb-6 flex items-start space-x-5 popular-container backdrop-blur-sm relative overflow-hidden">
+        <div class="text-3xl relative p-4 rounded-full bg-[var(--bg-primary)] z-10">
+            <i class="fa-solid fa-comments bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight p-0.5"></i>
+        </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8" data-aos="fade-down">
-            <div class="flex-col md:flex-row flex w-full justify-between items-center">
-                <div class="flex items-center space-x-4 mb-4 sm:mb-0">
-                    @if (isset($user) && $user)
-                        <div class="relative">
-                            <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20"
-                                src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                                alt="{{ $user['username'] ?? 'User' }}'s avatar">
-                            <div
-                                class="absolute -bottom-1 -right-1 w-6 h-6 bg-[var(--accent-secondary)] rounded-full flex items-center justify-center">
-                                <i class="fas fa-comments text-white text-xs"></i>
-                            </div>
-                        </div>
+        <div class="flex flex-col z-10">
+            <div>
+                <h1 class="cal-sans-regular text-4xl lg:text-5xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight py-1">
+                    @if (session('email') === $user['email'])
+                        My Answers
+                    @else
+                        {{ $user['username'] }}'s Answers
                     @endif
-                    <div>
-                        @if (session('email') === $user['email'])
-                            <h1 class="text-4xl font-bold header-gradient mb-2">
-                                My Answers
-                            </h1>
-                            <p class="text-[var(--text-muted)]">
-                                Manage and track your answers
-                            </p>
-                        @else
-                            <h1 class="text-4xl font-bold header-gradient mb-2">
-                                {{ $user['username'] }}'s Answers
-                            </h1>
-                            <p class="text-[var(--text-muted)]">
-                                Track {{ $user['username'] }}'s answers
-                            </p>
-                        @endif
+                </h1>
+            </div>
+            <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl mt-2">
+                @if (session('email') === $user['email'])
+                    Manage and track your answers
+                @else
+                    Track {{ $user['username'] }}'s answers
+                @endif
+            </p>
+        </div>
+    </div>
 
+    <!-- Main Content -->
+    <div class="justify-start items-start max-w-8xl px-4 flex space-x-6">
+        <!-- Answers List -->
+        <div class="w-full bg-transparent rounded-lg p-6 shadow-lg max-w-3xl justify-start items-start">
+            @if (session('success'))
+                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg mb-6 shadow-lg"
+                    data-aos="fade-in">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle mr-3 text-xl"></i>
+                        <span class="font-medium">{{ session('success') }}</span>
                     </div>
                 </div>
-                <!-- Back to Profile Link -->
-                <div class="" data-aos="fade-up">
-                    @if (session('email') === $user['email'])
-                        <div class="" data-aos="fade-up">
-                            <a href="{{ route('seeProfile') }}"
-                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i>
-                                Go to My Profile
-                            </a>
-                        </div>
-                    @else
-                        <div class="" data-aos="fade-up">
-                            <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                class="inline-flex items-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-lg transition-colors duration-300">
-                                <i class="fas fa-arrow-left mr-2"></i>
-                                Go to {{ $user['username'] }}'s Profile
-                            </a>
-                        </div>
-                    @endif
+            @endif
+
+            @if (session('error'))
+                <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-lg mb-6 shadow-lg"
+                    data-aos="fade-in">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
+                        <span class="font-medium">{{ session('error') }}</span>
+                    </div>
                 </div>
+            @endif
 
-            </div>
-        </div>
-        <hr class="my-6 border-gray-700">
-
-
-        @if (session('success'))
-            <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-lg mb-6 shadow-lg"
-                data-aos="fade-in">
-                <div class="flex items-center">
-                    <i class="fas fa-check-circle mr-3 text-xl"></i>
-                    <span class="font-medium">{{ session('success') }}</span>
+            @if (isset($apiError))
+                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black p-4 rounded-lg mb-6 shadow-lg"
+                    data-aos="fade-in">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-3 text-xl"></i>
+                        <span class="font-medium">{{ $apiError }}</span>
+                    </div>
                 </div>
-            </div>
-        @endif
+            @endif
 
-        @if (session('error'))
-            <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-4 rounded-lg mb-6 shadow-lg"
-                data-aos="fade-in">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
-                    <span class="font-medium">{{ session('error') }}</span>
-                </div>
-            </div>
-        @endif
+            @if (!empty($answers) && count($answers) > 0)
+                <div class="space-y-4" id="answers-container">
+                    @foreach ($answers as $index => $answer)
+                        <div id="answer-item-{{ $answer['id'] }}"
+                            class="answer-card rounded-lg mb-4 p-5 transition-all duration-200 relative overflow-hidden fade-in"
+                            data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+                            
+                            <div class="absolute inset-0 bg-pattern opacity-5"></div>
 
-        @if (isset($apiError))
-            <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black p-4 rounded-lg mb-6 shadow-lg"
-                data-aos="fade-in">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-triangle mr-3 text-xl"></i>
-                    <span class="font-medium">{{ $apiError }}</span>
-                </div>
-            </div>
-        @endif
-
-        <!-- Answers Section -->
-        @if (!empty($answers) && count($answers) > 0)
-            <div class="space-y-8" id="answers-container">
-                @foreach ($answers as $index => $answer)
-                    <div id="answer-item-{{ $answer['id'] }}"
-                        class="answer-card shadow-xl rounded-2xl p-8 transition-all duration-500 fade-in"
-                        data-answer-date="{{ $answer['created_at'] }}" data-answer-votes="{{ $answer['vote'] ?? 0 }}"
-                        data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-
-                        <!-- Answer Header -->
-                        <div class="answer-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>{{ \Carbon\Carbon::parse($answer['created_at'])->format('M d, Y') }}</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-clock"></i>
-                                <span>{{ \Carbon\Carbon::parse($answer['created_at'])->format('H:i') }}</span>
-                            </div>
-                            @if (isset($answer['question']) && $answer['question'])
-                                <div class="meta-item">
-                                    <i class="fas fa-question-circle"></i>
-                                    <a href="{{ route('user.viewQuestions', ['questionId' => $answer['question']['id']]) }}"
-                                        class="question-link">
-                                        {{ Str::limit($answer['question']['title'] ?? 'Question', 40) }}
-                                    </a>
-                                </div>
-                            @endif
-                        </div>
-
-                        <!-- Answer Content -->
-                        <div class="answer-content prose prose-lg max-w-none dark:text-gray-300 mb-6">
-                            {!! nl2br(e($answer['answer'])) !!}
-                        </div>
-
-                        <!-- Answer Image -->
-                        @if (!empty($answer['image']))
-                            <div class="mb-6">
-                                <img src="{{ asset('storage/' . $answer['image']) }}" alt="Answer image"
-                                    class="rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
-                                    onclick="openImageModal(this.src)">
-                            </div>
-                        @endif
-
-                        <!-- Answer Footer -->
-                        <div class="flex justify-between items-center pt-6 border-t border-[var(--border-color)]">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="vote-indicator {{ ($answer['vote'] ?? 0) > 0 ? 'positive' : (($answer['vote'] ?? 0) < 0 ? 'negative' : '') }}">
-                                    <i class="fas fa-heart"></i>
-                                    <span>{{ $answer['vote'] ?? 0 }} votes</span>
-                                </div>
-                            </div>
-
-                            <!-- Action Buttons -->
+                            <!-- Action Buttons (for owner only) -->
                             @if (session('email') === ($user['email'] ?? null))
                                 @if (isset($answer['user_id']) && ($answer['votes_count'] ?? 0) == 0)
-                                    <div class="flex space-x-3">
+                                    <div class="absolute top-3 right-3 z-20 flex space-x-2">
                                         <a href="{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}"
-                                            class="action-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
-                                            <i class="fas fa-edit mr-2"></i>Edit
+                                            class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-yellow-600 bg-[var(--accent-tertiary)] text-[var(--text-dark)]"
+                                            title="Edit Answer">
+                                            <i class="fa-solid fa-edit text-sm"></i>
                                         </a>
-                                        <button
-                                            class="delete-answer-button action-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
-                                            data-answer-id="{{ $answer['id'] }}">
-                                            <i class="fas fa-trash-alt mr-2"></i>Delete
+                                        <button data-answer-id="{{ $answer['id'] }}"
+                                            class="delete-answer-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-rose-900 bg-[var(--accent-neg)] !text-white"
+                                            title="Delete Answer">
+                                            <i class="fa-solid fa-trash text-sm"></i>
                                         </button>
                                     </div>
-                                {{-- @else
-                                    @php
-                                        $tooltipMessage = '';
-                                        if ($answer['votes_count'] !== 0) {
-                                            $tooltipMessage = 'Your answer has been voted.';
-                                        } 
-                                    @endphp
-                                    <div class="flex space-x-3 z-[1000]" title="{{ $tooltipMessage }}">
-                                        <button
-                                            class="disabled:opacity-50 inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg"
-                                            onclick="window.location.href='{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}'"
-                                            disabled>
-                                            <i class="fas fa-edit mr-2"></i>Edit
-                                        </button>
-                                        <button
-                                            class="disabled:opacity-50 delete-answer-button inline-flex items-center px-4 py-2 bg-red-600 text-white font-medium rounded-xl transition-all duration-300 shadow-lg"
-                                            data-answer-id="{{ $answer['id'] }}" disabled>
-                                            <i class="fas fa-trash-alt mr-2"></i>Delete
-                                        </button>
-                                    </div> --}}
                                 @endif
                             @endif
+
+                            <!-- Answer Content -->
+                            <div class="flex-1 pt-0 mr-20 z-10">
+                                <!-- Answer Meta -->
+                                <div class="answer-meta mb-4">
+                                    <div class="meta-item">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>{{ \Carbon\Carbon::parse($answer['created_at'])->format('M d, Y') }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>{{ \Carbon\Carbon::parse($answer['created_at'])->format('H:i') }}</span>
+                                    </div>
+
+                                    {{-- <div class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)] float-right"> --}}
+                                        <div class="meta-item">
+                                            <i class="fas fa-heart text-[var(--text-highlight)]"></i>
+                                            <span class="text-sm font-medium">{{ $answer['vote'] ?? 0 }}</span>
+                                        </div>
+                                    {{-- </div> --}}
+                                    @if (isset($answer['question']) && $answer['question'])
+                                        <div class="meta-item">
+                                            <i class="fas fa-question-circle"></i>
+                                            <a href="{{ route('user.viewQuestions', ['questionId' => $answer['question']['id']]) }}"
+                                                class="question-link">
+                                                {{ Str::limit($answer['question']['title'] ?? 'Question', 40) }}
+                                            </a>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Answer Content -->
+                                <div class="answer-content prose prose-lg max-w-none text-[var(--text-primary)] mb-6">
+                                    <div class="text-[var(--text-secondary)] text-md leading-relaxed">
+                                        {!! nl2br(e($answer['answer'])) !!}
+                                    </div>
+                                </div>
+
+                                <!-- Answer Image -->
+                                @if (!empty($answer['image']))
+                                    <div class="mb-4">
+                                        <img src="{{ asset('storage/' . $answer['image']) }}" alt="Answer image"
+                                            class="rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer max-w-full h-auto"
+                                            onclick="openImageModal(this.src)">
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="clear-both"></div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <div id="no-answers-message" class="text-center py-20" data-aos="fade-up">
-                <div class="max-w-md mx-auto">
-                    <div class="mb-8">
-                        <i class="fas fa-comments no-answers-illustration text-8xl mb-4"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-[var(--text-primary)] mb-4">
-                        No answers yet
+                    @endforeach
+                </div>
+            @else
+                <div id="no-answers-message" class="text-center py-8">
+                    <i class="fa-regular fa-folder-open text-4xl text-[var(--text-muted)] mb-3"></i>
+                    <h3 class="text-xl font-medium text-[var(--text-primary)] mb-2">
+                        @if (session('email') === $user['email'])
+                            You haven't answered any questions yet.
+                        @else
+                            {{ $user['username'] }} has not answered any questions yet.
+                        @endif
                     </h3>
-                    <p class="text-[var(--text-muted)] text-lg mb-8">
+                    <p class="text-[var(--text-muted)] mb-4">
                         Start contributing to the community by answering questions. Your knowledge can help others!
                     </p>
                     <a href="{{ route('popular') }}"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
+                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium rounded-lg hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
                         <i class="fas fa-search mr-2"></i>
                         Browse Questions
                     </a>
                 </div>
+            @endif
+        </div>
+
+        <!-- Sidebar -->
+        <div class="w-72 mt-6 ml-6 hidden md:flex flex-col space-y-6 sticky top-24 h-fit">
+            <!-- User Profile Card -->
+            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
+
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <img class="w-16 h-16 rounded-full ring-4 ring-[var(--accent-primary)] ring-opacity-20 mb-4"
+                        src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                        alt="{{ $user['username'] ?? 'User' }}'s avatar">
+                    
+                    <h3 class="text-lg font-bold text-[var(--text-primary)] mb-2">
+                        {{ $user['username'] ?? 'User' }}
+                    </h3>
+                    
+                    <div class="w-full mb-4">
+                        @if (session('email') === $user['email'])
+                            <a href="{{ route('seeProfile') }}"
+                                class="w-full inline-flex items-center justify-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-sm transition-colors duration-300 py-2">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                View My Profile
+                            </a>
+                        @else
+                            <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
+                                class="w-full inline-flex items-center justify-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-sm transition-colors duration-300 py-2">
+                                <i class="fas fa-user mr-2"></i>
+                                View {{ $user['username'] }}'s Profile
+                            </a>
+                        @endif
+                    </div>
+
+                    <div class="w-full pt-4 border-t border-[var(--border-color)]">
+                        <h4 class="font-medium mb-3 text-sm">Quick Stats</h4>
+                        <div class="space-y-2 text-left">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-[var(--text-secondary)]">Answers</span>
+                                <span class="font-medium text-[var(--text-primary)]">{{ count($answers ?? []) }}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-[var(--text-secondary)]">Total Votes</span>
+                                <span class="font-medium text-[var(--text-primary)]">
+                                    {{ collect($answers ?? [])->sum('vote') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        @endif
 
+            <!-- Quick Actions Card -->
+            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
+                
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <div class="mb-5 bg-[var(--bg-accent-subtle)] p-3 rounded-full">
+                        <i class="fa-solid fa-lightbulb text-3xl text-[var(--accent-tertiary)]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[var(--text-primary)] mb-3">
+                        Keep Contributing!
+                    </h2>
+                    <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
+                        Help fellow Petranesian Informates by sharing your knowledge and insights!
+                    </p>
+                    <a href="{{ route('popular') }}"
+                        class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
+                        <i class="fa-solid fa-search mr-2"></i> Browse Questions
+                    </a>
+                    
+                    <div class="w-full mt-5 pt-5 border-t border-[var(--border-color)]">
+                        <h3 class="font-medium mb-3 text-sm">Quick Links</h3>
+                        <ul class="space-y-2 text-left">
+                            {{-- <li class="flex items-center text-sm">
+                                <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-primary)]"></i>
+                                <a href="{{ route('user.questions.index', ['userId' => $user['id'] ?? session('user_id')]) }}"
+                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">My Questions</a>
+                            </li> --}}
+                            <li class="flex items-center text-sm">
+                                <i class="fa-solid fa-plus mr-2 text-[var(--accent-secondary)]"></i>
+                                <a href="{{ route('askPage') }}"
+                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">Ask Question</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Community Card -->
+            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
+                
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <div class="mb-5 bg-[var(--bg-accent-subtle)] p-3 rounded-full">
+                        <i class="fa-solid fa-user-plus text-3xl text-[var(--accent-tertiary)]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[var(--text-primary)] mb-3">
+                        The Community
+                    </h2>
+                    <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
+                        Connect with brilliant minds, share knowledge, and grow together in PCU's Informatics community.
+                    </p>
+                    <div class="w-full space-y-3">
+                        <div class="text-center p-3 bg-[var(--bg-secondary)] rounded-lg">
+                            <div class="font-bold text-lg text-[var(--text-primary)]">Active Community</div>
+                            <div class="text-sm text-[var(--text-muted)]">Growing Every Day</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Image Modal -->
@@ -510,8 +559,9 @@
             </button>
         </div>
     </div>
-@endsection
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+@endsection
 @section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -608,7 +658,7 @@
                         if (result.isConfirmed) {
                             // Show loading state
                             this.innerHTML =
-                                '<i class="fas fa-spinner fa-spin mr-2"></i>Deleting...';
+                                '<i class="fas fa-spinner fa-spin mr-2"></i>';
                             this.disabled = true;
 
                             const headers = {
@@ -631,19 +681,28 @@
                                 })
                                 .then(data => {
                                     if (data.success) {
-                                        Swal.fire({
-                                            title: 'Deleted!',
+                                        Toastify({
                                             text: data.message ||
                                                 'Your answer has been deleted successfully.',
-                                            icon: 'success',
-                                            background: 'var(--bg-card)',
-                                            color: 'var(--text-primary)',
-                                            confirmButtonColor: 'var(--accent-secondary)',
-                                            customClass: {
-                                                popup: 'rounded-2xl',
-                                                confirmButton: 'rounded-xl px-6 py-3'
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
-                                        });
+                                        }).showToast();
+                                        
+                                        // Swal.fire({
+                                        //     title: 'Deleted!',
+                                        //     text: data.message ||
+                                        //         'Your answer has been deleted successfully.',
+                                        //     icon: 'success',
+                                        //     background: 'var(--bg-card)',
+                                        //     color: 'var(--text-primary)',
+                                        //     confirmButtonColor: 'var(--accent-secondary)',
+                                        //     customClass: {
+                                        //         popup: 'rounded-2xl',
+                                        //         confirmButton: 'rounded-xl px-6 py-3'
+                                        //     }
+                                        // });
 
                                         // Animate removal
                                         if (answerItemElement) {
@@ -671,18 +730,27 @@
                                             .flat().join(' ');
                                     }
 
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: errorMessage,
-                                        icon: 'error',
-                                        background: 'var(--bg-card)',
-                                        color: 'var(--text-primary)',
-                                        confirmButtonColor: '#ef4444',
-                                        customClass: {
-                                            popup: 'rounded-2xl',
-                                            confirmButton: 'rounded-xl px-6 py-3'
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'An error occurred while deleting the answer.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
                                         }
-                                    });
+                                    }).showToast();
+
+                                    // Swal.fire({
+                                    //     title: 'Error!',
+                                    //     text: errorMessage,
+                                    //     icon: 'error',
+                                    //     background: 'var(--bg-card)',
+                                    //     color: 'var(--text-primary)',
+                                    //     confirmButtonColor: '#ef4444',
+                                    //     customClass: {
+                                    //         popup: 'rounded-2xl',
+                                    //         confirmButton: 'rounded-xl px-6 py-3'
+                                    //     }
+                                    // });
 
                                     // Reset button state
                                     this.innerHTML =
@@ -829,17 +897,6 @@
                     padding: 0.5rem 1rem;
                     font-size: 0.875rem;
                 }
-            }
-            
-            /* Dark mode enhancements */
-            .dark-mode .answer-card {
-                backdrop-filter: blur(20px);
-                background: rgba(28, 34, 70, 0.8);
-            }
-            
-            .light-mode .answer-card {
-                backdrop-filter: blur(20px);
-                background: rgba(246, 247, 255, 0.9);
             }
             
             /* Improved accessibility */

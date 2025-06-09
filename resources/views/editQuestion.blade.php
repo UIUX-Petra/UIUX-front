@@ -2,11 +2,13 @@
 @section('content')
     @if (session()->has('Error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('Error') }}'
-            });
+            Toastify({
+                text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
+                duration: 3000,
+                style: {
+                    background: "#e74c3c"
+                }
+            }).showToast();
         </script>
     @endif
 
@@ -16,6 +18,7 @@
             background-color: var(--bg-primary);
             overflow-x: hidden;
         }
+
         .section-container {
             background-color: transparent;
             border-radius: 1rem;
@@ -231,16 +234,16 @@
 
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <div class="flex items-center gap-4">
-                <div class="page-title-icon flex items-center justify-center">
-                    <i class="fa-solid fa-question"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-[var(--text-primary)]">Edit Question</h1>
-                    <p class="text-[var(--text-secondary)]">Update your question and clarify your problem</p>
-                </div>
+            <div class="page-title-icon flex items-center justify-center">
+                <i class="fa-solid fa-question"></i>
             </div>
+            <div>
+                <h1 class="text-2xl font-bold text-[var(--text-primary)]">Edit Question</h1>
+                <p class="text-[var(--text-secondary)]">Update your question and clarify your problem</p>
+            </div>
+        </div>
 
-            <div class="tips-section p-6 my-8">
+        <div class="tips-section p-6 my-8">
             <div class="tips-title flex items-center gap-2 mb-4">
                 <i class="fa-solid fa-lightbulb"></i>
                 <span>Tips for Editing Your Question</span>
@@ -269,8 +272,10 @@
                     <i class="fa-solid fa-heading section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Question Title</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your question quickly</p>
-                <input type="text" id="title" class="input-field p-3" placeholder="What's your question about?" value="{{ $question->title }}" required>
+                <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your
+                    question quickly</p>
+                <input type="text" id="title" class="input-field p-3" placeholder="What's your question about?"
+                    value="{{ $question->title }}" required>
             </div>
 
             <div class="p-6 mb-6">
@@ -278,22 +283,27 @@
                     <i class="fa-solid fa-align-left section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Question Details</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details to help others understand your problem</p>
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Provide all relevant details to help others understand
+                    your problem</p>
 
                 <div id="editor" class="w-full">
                     <div class="toolbar flex items-center gap-4 p-3">
-                        <button type="button" id="upload-image-btn" class="image-upload-button flex items-center gap-2 py-2 px-4">
+                        <button type="button" id="upload-image-btn"
+                            class="image-upload-button flex items-center gap-2 py-2 px-4">
                             <i class="fa-solid fa-image"></i> Add Image
                         </button>
                     </div>
                     <div class="p-4 bg-[var(--bg-secondary)]">
-                        <textarea id="question-content" rows="8" class="block w-full px-0 text-[var(--text-primary)] bg-transparent border-0 focus:ring-0" placeholder="Describe your question in detail..." required>{{ $question->question }}</textarea>
+                        <textarea id="question-content" rows="8"
+                            class="block w-full px-0 text-[var(--text-primary)] bg-transparent border-0 focus:ring-0"
+                            placeholder="Describe your question in detail..." required>{{ $question->question }}</textarea>
 
                         <div id="image-preview" class="flex flex-wrap gap-4 mt-4 p-2">
                             @if ($question->image)
                                 <div class="image-preview-item">
                                     <img src="{{ $question->image_url }}" alt="Question Image">
-                                    <button type="button" class="delete-btn" data-image-url="{{ $question->image }}">X</button>
+                                    <button type="button" class="delete-btn"
+                                        data-image-url="{{ $question->image }}">X</button>
                                 </div>
                             @endif
                         </div>
@@ -306,7 +316,8 @@
                     <i class="fa-solid fa-tags section-icon mr-3"></i>
                     <h2 class="text-lg font-semibold">Tags</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to categorize your question and reach the right audience</p>
+                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant tags to categorize your question and
+                    reach the right audience</p>
 
                 <div class="flex flex-wrap gap-6 mb-6">
                     <div class="flex-1 min-w-[200px]">
@@ -314,12 +325,26 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach ($data as $dat)
                                 @if (in_array($dat['name'], [
-                                    'Introduction to Programming', 'Software Engineering', 'Web Development', 'Mobile App Development',
-                                    'Game Development', 'Embedded Systems', 'Smart Devices and Sensors', 'Cloud Application Development',
-                                    'Cloud Computing', 'Cloud Storage and Virtualization', 'Distributed Systems', 'Operating Systems',
-                                    'Computer Networks', 'Advanced Networking', 'Digital Logic Design', 'Computer Graphics', 'Cloud Infrastructure'
-                                ]))
-                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                        'Introduction to Programming',
+                                        'Software Engineering',
+                                        'Web Development',
+                                        'Mobile App Development',
+                                        'Game Development',
+                                        'Embedded Systems',
+                                        'Smart Devices and Sensors',
+                                        'Cloud Application Development',
+                                        'Cloud Computing',
+                                        'Cloud Storage and Virtualization',
+                                        'Distributed Systems',
+                                        'Operating Systems',
+                                        'Computer Networks',
+                                        'Advanced Networking',
+                                        'Digital Logic Design',
+                                        'Computer Graphics',
+                                        'Cloud Infrastructure',
+                                    ]))
+                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}"
+                                        class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
                                 @endif
                             @endforeach
                         </div>
@@ -330,12 +355,26 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach ($data as $dat)
                                 @if (in_array($dat['name'], [
-                                    'Data Structures and Algorithms', 'Database Systems', 'Advanced Database Systems', 'Data Analytics', 'Advanced Data Analytics',
-                                    'Data Science', 'Data Mining', 'Big Data', 'Machine Learning', 'Advanced Machine Learning',
-                                    'Artificial Intelligence', 'Advanced Artificial Intelligence', 'Artificial Neural Networks',
-                                    'Computer Vision', 'Natural Language Processing', 'Business Intelligence', 'Data Warehousing'
-                                ]))
-                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                        'Data Structures and Algorithms',
+                                        'Database Systems',
+                                        'Advanced Database Systems',
+                                        'Data Analytics',
+                                        'Advanced Data Analytics',
+                                        'Data Science',
+                                        'Data Mining',
+                                        'Big Data',
+                                        'Machine Learning',
+                                        'Advanced Machine Learning',
+                                        'Artificial Intelligence',
+                                        'Advanced Artificial Intelligence',
+                                        'Artificial Neural Networks',
+                                        'Computer Vision',
+                                        'Natural Language Processing',
+                                        'Business Intelligence',
+                                        'Data Warehousing',
+                                    ]))
+                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}"
+                                        class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
                                 @endif
                             @endforeach
                         </div>
@@ -346,11 +385,22 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach ($data as $dat)
                                 @if (in_array($dat['name'], [
-                                    'Cybersecurity', 'Ethical Hacking', 'Cryptography', 'Digital Forensics', 'Web Security', 'AI Ethics',
-                                    'Blockchain Technology', 'Quantum Computing', 'Virtual Reality', 'Smart Cities', 'Internet of Things (IoT)',
-                                    'Computational Biology', 'Robotics'
-                                ]))
-                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                        'Cybersecurity',
+                                        'Ethical Hacking',
+                                        'Cryptography',
+                                        'Digital Forensics',
+                                        'Web Security',
+                                        'AI Ethics',
+                                        'Blockchain Technology',
+                                        'Quantum Computing',
+                                        'Virtual Reality',
+                                        'Smart Cities',
+                                        'Internet of Things (IoT)',
+                                        'Computational Biology',
+                                        'Robotics',
+                                    ]))
+                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}"
+                                        class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
                                 @endif
                             @endforeach
                         </div>
@@ -360,23 +410,60 @@
                         <h3 class="category-title mb-3">Others</h3>
                         <div class="flex flex-wrap gap-2">
                             @foreach ($data as $dat)
-                                @if (!in_array($dat['name'], [
-                                    'Introduction to Programming', 'Software Engineering', 'Web Development', 'Mobile App Development',
-                                    'Game Development', 'Embedded Systems', 'Smart Devices and Sensors', 'Cloud Application Development',
-                                    'Cloud Computing', 'Cloud Storage and Virtualization', 'Distributed Systems', 'Operating Systems',
-                                    'Computer Networks', 'Advanced Networking', 'Digital Logic Design', 'Computer Graphics', 'Cloud Infrastructure',
-
-                                    'Data Structures and Algorithms', 'Database Systems', 'Advanced Database Systems', 'Data Analytics', 'Advanced Data Analytics',
-                                    'Data Science', 'Data Mining', 'Big Data', 'Machine Learning', 'Advanced Machine Learning',
-                                    'Artificial Intelligence', 'Advanced Artificial Intelligence', 'Artificial Neural Networks',
-                                    'Computer Vision', 'Natural Language Processing', 'Business Intelligence', 'Data Warehousing',
-
-                                    'Cybersecurity', 'Ethical Hacking', 'Cryptography', 'Digital Forensics', 'Web Security', 'AI Ethics',
-                                    'Blockchain Technology', 'Quantum Computing', 'Virtual Reality', 'Smart Cities', 'Internet of Things (IoT)',
-                                    'Computational Biology', 'Robotics'
-                                ]))
-
-                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}" class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
+                                @if (
+                                    !in_array($dat['name'], [
+                                        'Introduction to Programming',
+                                        'Software Engineering',
+                                        'Web Development',
+                                        'Mobile App Development',
+                                        'Game Development',
+                                        'Embedded Systems',
+                                        'Smart Devices and Sensors',
+                                        'Cloud Application Development',
+                                        'Cloud Computing',
+                                        'Cloud Storage and Virtualization',
+                                        'Distributed Systems',
+                                        'Operating Systems',
+                                        'Computer Networks',
+                                        'Advanced Networking',
+                                        'Digital Logic Design',
+                                        'Computer Graphics',
+                                        'Cloud Infrastructure',
+                                
+                                        'Data Structures and Algorithms',
+                                        'Database Systems',
+                                        'Advanced Database Systems',
+                                        'Data Analytics',
+                                        'Advanced Data Analytics',
+                                        'Data Science',
+                                        'Data Mining',
+                                        'Big Data',
+                                        'Machine Learning',
+                                        'Advanced Machine Learning',
+                                        'Artificial Intelligence',
+                                        'Advanced Artificial Intelligence',
+                                        'Artificial Neural Networks',
+                                        'Computer Vision',
+                                        'Natural Language Processing',
+                                        'Business Intelligence',
+                                        'Data Warehousing',
+                                
+                                        'Cybersecurity',
+                                        'Ethical Hacking',
+                                        'Cryptography',
+                                        'Digital Forensics',
+                                        'Web Security',
+                                        'AI Ethics',
+                                        'Blockchain Technology',
+                                        'Quantum Computing',
+                                        'Virtual Reality',
+                                        'Smart Cities',
+                                        'Internet of Things (IoT)',
+                                        'Computational Biology',
+                                        'Robotics',
+                                    ]))
+                                    <a id="{{ $dat['name'] }}" data-tag-id="{{ $dat['id'] }}"
+                                        class="tab-inactive py-2 px-4">{{ $dat['name'] }}</a>
                                 @endif
                             @endforeach
                         </div>
@@ -385,7 +472,8 @@
             </div>
 
             <div class="text-center">
-                <button type="submit" id="update-btn" class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
+                <button type="submit" id="update-btn"
+                    class="submit-button inline-flex items-center justify-center gap-2 py-3 px-8 mt-4">
                     <i class="fa-solid fa-paper-plane"></i> Update Question
                 </button>
             </div>
@@ -415,7 +503,8 @@
             // Initialize image preview for existing image
             if (existingImageUrl) {
                 const imagePreviewContainer = document.getElementById("image-preview");
-                imagePreviewContainer.innerHTML = ""; // Clear existing content to prevent duplicates if somehow there's something
+                imagePreviewContainer.innerHTML =
+                    ""; // Clear existing content to prevent duplicates if somehow there's something
                 const imagePreviewItem = document.createElement("div");
                 imagePreviewItem.classList.add("image-preview-item");
 
@@ -484,7 +573,8 @@
                         deleteBtn.addEventListener("click", function() {
                             imagePreviewContainerNew.remove();
                             imageFile = null; // Reset the imageFile variable
-                            existingImageUrl = null; // Ensure existing image is removed if new one was there
+                            existingImageUrl =
+                                null; // Ensure existing image is removed if new one was there
                             deletedImage = true; // Set flag to indicate image deletion
                         });
 
@@ -515,11 +605,13 @@
 
                 // Validate input
                 if (title.trim() === '' || questionContent.trim() === '') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Title and question content must be filled out!'
-                    });
+                    Toastify({
+                        text: 'Title and question content must be filled out!',
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                     return;
                 }
 
@@ -553,7 +645,8 @@
                         if (imageFile) {
                             formData.append("image", imageFile);
                         } else if (deletedImage) {
-                            formData.append("image", ""); // Send an empty string or null to indicate image removal
+                            formData.append("image",
+                                ""); // Send an empty string or null to indicate image removal
                         }
                         // If imageFile is null and deletedImage is false, it means existing image is kept, so no need to append image
 
@@ -569,32 +662,42 @@
                                 Swal.close();
 
                                 if (res.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Success!',
-                                        text: 'Your question has been successfully updated!'
-                                    }).then(() => {
-                                        window.location.href = "{{ route('askPage') }}"; // Redirect to relevant page
-                                    });
+                                    Toastify({
+                                        text: 'Your question has been successfully updated!',
+                                        duration: 3000,
+                                        style: {
+                                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                        }
+                                    }).showToast();
+
+                                    setTimeout((result) => {
+                                        window.location.href =
+                                            "{{ route('askPage') }}"; // Redirect to relevant page
+                                    }, 3000);
                                 } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error!',
-                                        text: res.message || 'There was an error updating your question.'
-                                    });
+                                    Toastify({
+                                        text: res.message ||
+                                            'There was an error updating your question.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 }
                             })
                             .catch(err => {
                                 console.error('Fetch Error:', err);
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'There was an error while updating your question.'
-                                });
+                                Toastify({
+                                    text: 'There was an error while updating your question.',
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                             });
                     }
                 });
             });
         });
     </script>
-@endsection 
+@endsection

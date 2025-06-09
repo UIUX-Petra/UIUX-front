@@ -127,7 +127,7 @@
                     class="tag-link hover:no-underline focus:no-underline text-xl font-bold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-all duration-300 relative focus:outline-2 focus:outline-[var(--accent-primary)] focus:outline-offset-2 focus:rounded"
                     aria-label="View questions for {{ $tag['name'] }}">
                     <div
-                        class="tag-card fade-in shadow-lg rounded-xl p-6 bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-2 hover:scale-105 hover:shadow-xl hover:border-[var(--accent-tertiary)] hover:bg-[var(--bg-card-hover)]">
+                        class="tag-card fade-in shadow-lg rounded-xl p-6 bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-2 hover:scale-105 hover:shadow-xl hover:border-[var(--accent-primary)] hover:bg-[var(--bg-card-hover)]">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex-1">
                                 <div class="mb-1">

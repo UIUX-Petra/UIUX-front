@@ -36,11 +36,11 @@
 
         .card-badge {
             font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0;
             border-radius: 9999px;
             font-weight: 600;
             display: inline-flex;
-            align-items: center;
+            align-items: start;
         }
 
         .vote-btn {
@@ -95,20 +95,14 @@
             left: 100%;
         }
 
-        /* New Modal Base Styles */
         #questionCommentsModal {
-            /* Default to hidden: opacity-0 and non-interactive */
-            /* Tailwind classes will handle this: opacity-0 pointer-events-none */
-            /* Transition for the modal container (overlay) */
             transition: opacity 0.3s ease-in-out;
         }
 
         #questionCommentsModal .modal-content {
-            /* Transition for the content pop-in effect */
             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
 
-        /* When modal is hidden (initial state or via JS) */
         #questionCommentsModal.opacity-0 .modal-content {
             opacity: 0;
             transform: translateY(-20px) scale(0.95);
@@ -118,6 +112,10 @@
         #questionCommentsModal.opacity-100 .modal-content {
             opacity: 1;
             transform: translateY(0) scale(1);
+        }
+
+        .dropdown-menu {
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
         }
     </style>
 
@@ -149,65 +147,84 @@
         </div>
 
         <div class="question-card rounded-lg p-6 mb-6 flex items-start">
+            {{-- Vote Section (No Changes) --}}
             <div class="interaction-section flex flex-col items-center mr-6">
                 <button id="upVoteQuestion"
                     class="mb-2 vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up">
                     <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
                 </button>
-
                 <span id="voteTotal" class="text-lg font-semibold text-[var(--text-secondary)] my-1">
                     {{ $question['vote'] }}
                 </span>
-
                 <button id="downVoteQuestion"
                     class="mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down">
                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                 </button>
 
-                {{-- <div class="flex flex-col items-center mt-4" id="reply-count">
+                
+                <div class="flex flex-col items-center mt-4" id="reply-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
-                        <i class="fa-solid fa-comments text-md"></i>
+                        {{-- <i class="fa-solid fa-comments text-md"></i> --}}
                     </button>
                     <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
-                        {{ count($question['answer']) }}
+                        {{-- {{ count($question['answer']) }} --}}
                     </small>
-                </div> --}}
-
-                {{-- Save/Unsave Button --}}
-                @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
-                    <button type="button"
-                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                            data-question-id="{{ $question['id'] }}"
-                            title="Unsave Question">
-                        <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
-                    </button>
-                @else
-                    <button type="button"
-                            class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                            data-question-id="{{ $question['id'] }}"
-                            title="Save Question">
-                        <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
-                    </button>
-                @endif
+                </div>
             </div>
 
-            <!-- Question Content -->
+            {{-- Main Question Content --}}
             <div class="flex flex-col flex-grow">
-                <div class="flex items-center mb-3">
-                    <div class="card-badge bg-transparent bg-opacity-20 text-[var(--accent-secondary)]">
-                        <i class="fa-solid fa-circle-question mr-1"></i> Question
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center">
+                        <div class="card-badge bg-transparent bg-opacity-20 text-[var(--accent-secondary)]">
+                            <i class="fa-solid fa-circle-question mr-1"></i> Question
+                        </div>
+                        <span class="text-xs text-[var(--text-muted)] ml-3">
+                            Posted {{ \Carbon\Carbon::parse($question['timestamp'])->diffForHumans() }}
+                        </span>
                     </div>
-                    <!-- Add timestamp -->
-                    <span class="text-xs text-[var(--text-muted)] ml-3">
-                        Posted {{ \Carbon\Carbon::parse($question['timestamp'])->diffForHumans() }}
-                    </span>
+
+                    @if ($isQuestionOwner)
+                        <div class="relative">
+                            <button id="question-actions-toggle"
+                                class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                title="More options">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+
+                            <div id="question-actions-menu"
+                                class="dropdown-menu absolute right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg shadow-xl z-10 hidden"
+                                style="opacity: 0; transform: translateX(10px);">
+                                @php
+                                    $hasAnswer = !empty($question['answer']);
+                                    $currentVoteCount = isset($question['vote']) ? (int) $question['vote'] : 0;
+                                    $hasVote = $currentVoteCount !== 0;
+                                @endphp
+                                @if (!$hasAnswer && !$hasVote)
+                                    <a href="{{ url('/ask') }}/${questionId}"
+                                        class="edit-question-link flex items-center px-4 py-2 text-sm text-[var(--text-primary)]  hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
+                                        <i class="fa-solid fa-edit w-6 mr-2"></i>
+                                        Edit
+                                    </a>
+                                    <button data-question-id="{{ $question['id'] }}"
+                                        class="delete-question-button flex items-center w-full px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--accent-neg)] hover:text-white">
+                                        <i class="fa-solid fa-trash w-6 mr-2"></i>
+                                        Delete
+                                    </button>
+                                @else
+                                    <p class="px-4 py-3 text-sm text-center text-[var(--text-muted)]">
+                                        Actions are disabled once the question has votes or answers.
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="prose max-w-none text-[var(--text-primary)]">
                     <p class="text-md md:text-lg text-[var(--text-primary)]">
                         {!! nl2br(e($question['question'])) !!}
                     </p>
-
                     @if ($question['image'])
                         <div class="mt-4">
                             <img src="{{ asset('storage/' . $question['image']) }}" alt="Question Image"
@@ -224,102 +241,19 @@
                             <span>Asked by {{ $question['user']['username'] }}</span>
                         </div>
                     </a>
+
                     <button id="open-question-comments-modal-btn"
-                        class="flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
-                        <i class="fa-solid fa-comment-dots mr-2"></i>
-                        <span id="question-card-comment-count-text">{{ $question['comment_count'] }} Comments</span>
-                    </button>
-                </div>
-
-                {{-- <div class="comment-box hidden mt-4">
-                    <textarea
-                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none"
-                        rows="2" placeholder="Write your comment here!"></textarea>
-                    <button id="answer-comment"
-                        class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                        Submit Comment
-                    </button>
-                </div> --}}
-            </div>
-
-            {{-- Action Buttons --}}
-            @if ($isQuestionOwner)
-                @php
-                    // Inisialisasi ini tetap penting untuk render awal sisi server
-                    $hasAnswer = !empty($question['answer']);
-                    // Pastikan $question['vote'] adalah numerik sebelum perbandingan
-                    $currentVoteCount = isset($question['vote']) ? (int) $question['vote'] : 0;
-                    $hasVote = $currentVoteCount !== 0;
-                @endphp
-
-                {{-- Beri ID pada container tombol aksi --}}
-                <div id="question-action-buttons-container" class="flex justify-end space-x-3 mt-4">
-                    @if (!$hasAnswer && !$hasVote)
-                        <button data-question-id="{{ $question['id'] }}"
-                            class="action-button edit-question-button inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
-                            <i class="fas fa-edit mr-2"></i>Edit
-                        </button>
-                        <button data-question-id="{{ $question['id'] }}"
-                            class="action-button delete-question-button inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
-                            <i class="fas fa-trash-alt mr-2"></i>Delete
-                        </button>
-                    @endif
-                </div>
-            @endif
-        </div>
-        {{-- </div> --}}
-
-        <div id="questionCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
-            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
-                <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
-                    <h3 class="text-xl font-semibold text-[var(--text-primary)]">
-                        {{ $question['title'] }}
-                        <span id="modal-question-comment-count" class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
-                    </h3>
-                    <button id="close-question-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
-                </div>
-
-                <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3" id="question-comments-list-modal">
-                    @if ($question['comment_count'] > 0)
-                        @foreach ($question['comment'] as $comm)
-                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
-                                <div class="flex-grow">
-                                    <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
-                                    {{-- Ensure you have user data available consistently, e.g., $comm['user']['email'] or $comm['email'] --}}
-                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
-                                        <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
-                                            <img src="{{ $comm['user_image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
-                                                alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
-                                            <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
-                                                {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
-                                    </a>
-                                </div>
-                            </div>
-                            
-                        @endforeach
-                    @else
-                        <div id="no-question-comments-modal" class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
-                            <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
-                            <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="flex-shrink-0 p-6 pt-4 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
-                    <textarea id="question-comment-textarea"
-                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                        rows="3" placeholder="Write your comment here..."></textarea>
-                    <button id="qComment-btn"
-                        class="mt-3 w-full px-4 py-2 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
-                        Submit Comment
+                        class="flex items-center space-x-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-3 py-1.5 border border-[var(--border-color)] rounded-full transition-all duration-200"
+                        title="View or add comments">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span id="question-card-comment-count-text">{{ $question['comment_count'] }}</span>
                     </button>
                 </div>
             </div>
         </div>
-
 
         <!-- Answer Input Section -->
-        <div class="mt-10">
+        <div id="answer-input-section" class="mt-10">
             <h2 class="text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center">
                 <i class="fa-solid fa-pen-to-square mr-2 text-[var(--accent-primary)]"></i>
                 Your Answer
@@ -335,12 +269,26 @@
                     placeholder="Write your detailed answer here..."></textarea>
 
                 <div class="flex justify-end items-center space-x-2  mt-4">
-                    <label tabindex="0"
-                        class="flex items-center px-4 py-3 bg-[var(--accent-tertiary)] text-black rounded-lg transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                        <i class="fa-solid fa-file-upload"></i>
-                        {{-- Upload Images --}}
-                        <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
-                    </label>
+                        <!-- File type description -->
+                        <span class="text-sm text-[var(--text-muted)] mr-2">
+                            File Types: JPG, PNG, GIF, WebP
+                        </span>
+
+                        <!-- Upload button with tooltip -->
+                        <div class="relative group">
+                            <label tabindex="0"
+                                class="flex items-center px-4 py-3 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg transform cursor-pointer">
+                                <i class="fa-solid fa-file-upload"></i>
+                                <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
+                            </label>
+                            
+                            <!-- Tooltip -->
+                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-[var(--text-primary)] text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                                Attach Image (optional)
+                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                            </div>
+                        </div>
+
 
                     <button id="submitAnswer-btn"
                         class="px-6 py-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium rounded-lg 
@@ -460,7 +408,7 @@
                                             rows="2" placeholder="Write your comment here!"></textarea>
                                         <button id="submit-comment-{{ $ans['id'] }}"
                                             data-answer-id="{{ $ans['id'] }}"
-                                            class="mt-4 px-4 py-2 bg-[var(--bg-button)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                                            class="mt-4 px-4 py-2 bg-[var(--accent-tertiary)] text-[var(--text-button)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
                                             Submit Comment
                                         </button>
                                     </div>
@@ -543,72 +491,55 @@
                 </div>
             @endif
         </div>
+
+        <div id="questionCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
+            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
+                <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
+                    <h3 class="text-xl font-semibold text-[var(--text-primary)]">
+                        {{ $question['title'] }}
+                        <span id="modal-question-comment-count" class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+                    </h3>
+                    <button id="close-question-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
+                </div>
+
+                <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3 flex flex-col" id="question-comments-list-modal">
+                    {{-- Konten komentar tetap sama --}}
+                    @if ($question['comment_count'] > 0)
+                        @foreach ($question['comment'] as $comm)
+                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
+                                <div class="flex-grow">
+                                    <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
+                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
+                                        <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
+                                            <img src="{{ $comm['user_image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
+                                                alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
+                                            <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
+                                                {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div id="no-question-comments-modal" class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
+                            <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
+                            <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex-shrink-0 p-6 pt-4 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
+                    <textarea id="question-comment-textarea"
+                        class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                        rows="3" placeholder="Write your comment here..."></textarea>
+                    <button id="qComment-btn"
+                        class="mt-3 w-full px-4 py-2 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-lg transition-all duration-300 font-semibold hover:shadow-glow">
+                        Submit Comment
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-
-     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-// Modal for Question Comments
-    const questionCommentsModal = document.getElementById('questionCommentsModal');
-    const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
-    const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
-    const questionCommentTextarea = document.getElementById('question-comment-textarea');
-
-    function openModal() {
-        if (questionCommentsModal) {
-            questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
-            questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
-            if (questionCommentTextarea) {
-                 questionCommentTextarea.focus();
-            }
-        }
-    }
-
-    function closeModal() {
-        if (questionCommentsModal) {
-            questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
-            questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
-        }
-    }
-
-    if (openQuestionCommentsModalBtn) {
-        openQuestionCommentsModalBtn.addEventListener('click', openModal);
-    }
-
-    if (closeQuestionCommentsModalBtn) {
-        closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
-    }
-
-    if (questionCommentsModal) {
-        // Close modal on backdrop click
-        questionCommentsModal.addEventListener('click', (event) => {
-            if (event.target === questionCommentsModal) {
-                closeModal();
-            }
-        });
-        // Close modal on Escape key
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && questionCommentsModal.classList.contains('opacity-100')) {
-                closeModal();
-            }
-        });
-    }
-
-    // Toggle comment box for ANSWERS
-    const answerCommentButtons = document.querySelectorAll('.answer-comment-btn'); // Ensure this class is on answer comment buttons
-    answerCommentButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const answerId = button.dataset.answerId; // Assuming you have data-answer-id on these buttons
-            const commentBox = document.getElementById(`answer-${answerId}-comment-box`); // Make sure this ID matches your answer comment boxes
-            if (commentBox) {
-                commentBox.classList.toggle('hidden');
-                if (!commentBox.classList.contains('hidden')) {
-                    commentBox.querySelector('textarea').focus();
-                }
-            }
-        });
-    });
-    });
-    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -669,20 +600,28 @@
                                 })
                                 .then(data => {
                                     if (data.success || data.status === 'success') {
-                                        Swal.fire(
-                                            'Deleted!',
-                                            data.message ||
-                                            'Your question has been deleted.',
-                                            'success'
-                                        );
-                                        window.location.href = "{{ url('/') }}"
+                                        Toastify({
+                                            text: data.message ||
+                                                'Your question has been deleted.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
+
+                                        setTimeout(() => {
+                                            window.location.href =
+                                                "{{ url('/') }}"
+                                        }, 2000);
                                     } else {
-                                        Swal.fire(
-                                            'Error!',
-                                            data.message ||
-                                            'Could not delete the question.',
-                                            'error'
-                                        );
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not delete the question.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
@@ -699,11 +638,14 @@
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }
-                                    Swal.fire(
-                                        'Request Failed!',
-                                        errorMessage,
-                                        'error'
-                                    );
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
                         }
                     });
@@ -885,8 +827,14 @@
                                 })
                                 .then(data => {
                                     if (data.success) {
-                                        Swal.fire('Deleted!', data.message ||
-                                            'Your answer has been deleted.', 'success');
+                                        Toastify({
+                                            text: data.message ||
+                                                'Your answer has been deleted.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
                                         if (answerItemElement) {
                                             answerItemElement.style.animation =
                                                 'fadeOutUp 0.5s ease forwards';
@@ -896,13 +844,26 @@
                                             }, 500);
                                         }
                                     } else {
-                                        Swal.fire('Error!', data.message ||
-                                            'Could not delete the answer.', 'error');
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not delete the answer.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
                                     console.error('Error deleting answer:', error);
-                                    Swal.fire('Request Failed!', 'An error occurred.', 'error');
+                                    Toastify({
+                                        text: error ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
                         }
                     });
@@ -962,11 +923,14 @@
                         submitButton.innerHTML = originalButtonText;
                         submitButton.disabled = false;
 
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
+                        Toastify({
                             text: 'Please provide an answer!',
-                        });
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
+
                         return;
                     }
 
@@ -1053,11 +1017,13 @@
                                 ${imageHtml}
                                 
                                 <div class="mt-4 flex justify-between items-center">
+                                    <a href="/viewUser/${@json($username ?? null)}">
                                     <div class="flex items-center text-sm text-[var(--text-muted)]">
                                         <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.answer.username)}&background=random" 
                                              alt="User" class="w-6 h-6 rounded-full mr-2">
-                                        <span>Answered by ${escapeHtml(data.answer.username)} - ${timeAgo}</span>
+                                        <span class="hover:underline">Answered by ${escapeHtml(data.answer.username)} - ${timeAgo}</span>
                                     </div>
+                                    </a>
                                     <button class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                                         <i class="fa-solid fa-comment-dots mr-2"></i>
                                         <span>Add Comment</span>
@@ -1116,31 +1082,35 @@
                                         answerHeader.textContent = `(${currentAnswerCount})`;
                                     }
 
-                                    attachAnswerEventListeners(data.answer.id);
                                     updateAnswerActionButtonsVisibility(data.answer.id);
-
-
                                 }
 
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Answer Submitted!',
+                                Toastify({
                                     text: 'Your answer has been successfully submitted.',
-                                    confirmButtonText: 'Great!',
-                                });
+                                    duration: 3000,
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
 
-                                let replies = document.querySelector('#reply-count small')
-                                let answerCountAtas = document.querySelector('#answerCountAtas span')
-                                let count = parseInt(replies.textContent.trim(), 10) + 1;
-                                replies.textContent = count;
-                                answerCountAtas.textContent = count;
-                                console.log('aman bgt bung 1');
+                                const answerCountTop = document.querySelector('#answerCountAtas span');
+                                const answerCountHeader = document.querySelector('.answer-section h2 span');
+
+                                if (answerCountTop && answerCountHeader) {
+                                    const currentCount = parseInt(answerCountTop.textContent.trim(), 10);
+                                    const newCount = currentCount + 1;
+
+                                    answerCountTop.textContent = newCount;
+                                    answerCountHeader.textContent = `(${newCount})`; // Note the parentheses
+                                }
                             } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
+                                Toastify({
                                     text: data.message || 'Something went wrong',
-                                });
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                             }
                         })
                     // .catch(error => {
@@ -1205,32 +1175,36 @@
                         const commentText = commentTextArea.value.trim();
 
                         if (commentText === '') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
+                            Toastify({
                                 text: 'Please write a comment!',
-                            });
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                         } else {
                             const formData = new FormData();
                             formData.append('comment', commentText);
                             formData.append('commentable_id', answerId);
                             formData.append('commentable_type', 'answer');
 
-                            fetch(`{{ route('comment.submit' ) }}`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                                        },
-                                        body: formData,
-                                    })
+                            fetch(`{{ route('comment.submit') }}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                    },
+                                    body: formData,
+                                })
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Comment Submitted!',
+                                        Toastify({
                                             text: 'Your comment has been successfully posted.',
-                                        });
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
 
                                         const commentBox = commentTextArea.closest('.comment-box');
                                         if (commentBox) {
@@ -1266,6 +1240,7 @@
                                         commentDiv.className =
                                             'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
                                         commentDiv.innerHTML = `
+                                        <a href="/viewUser/${@json($username ?? null)}">
                             <div class="flex items-start">
                                 <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.comment.username)}&background=random" 
                                      alt="${data.comment.username}"
@@ -1284,7 +1259,7 @@
                                     </p>
                                 </div>
                             </div>
-                        `;
+                        </a>`;
 
                                         const commentsList = commentsSection.querySelector(
                                             '.space-y-3');
@@ -1314,19 +1289,24 @@
                                             commentDiv.style.transform = 'translateY(0)';
                                         }, 100);
                                     } else {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: data.message,
-                                        });
+                                        Toastify({
+                                            text: data.message ||
+                                                'An Unexpected Error Occurred.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'An unexpected error occurred.',
-                                    });
+                                    Toastify({
+                                        text: error || 'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                     console.log(error);
                                 });
                         }
@@ -1343,11 +1323,13 @@
                 const commentText = commentTextArea.value.trim();
 
                 if (commentText === '') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
+                    Toastify({
                         text: 'Please write a comment!',
-                    });
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 } else {
                     const formData = new FormData();
                     formData.append('comment', commentText);
@@ -1365,7 +1347,7 @@
                         .then(response => response.json())
                         .then(data => {
                             console.log(data);
-                            
+
                             if (data.success) {
                                 let commentList = document.getElementById('question-comments');
                                 const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
@@ -1374,9 +1356,11 @@
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">${escapeHtml(data.comment.comment)}</p>
+                                    <a href="/viewUser/${@json($username ?? null)}">
                                     <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                        <span>Posted by ${escapeHtml(data.comment.username)} - ${timeAgo}</span>
+                                        <span class="hover:underline">Posted by ${escapeHtml(data.comment.username)} - ${timeAgo}</span>
                                     </div>
+                                    </a>
                                 </div>
                             </div>
                         `;
@@ -1424,25 +1408,33 @@
                                 }
                                 commentTextArea.value = '';
 
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Comment Submitted!',
+                                Toastify({
                                     text: 'Your comment has been successfully posted.',
-                                });
+                                    duration: 3000,
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
+
                             } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: data.message,
-                                });
+                                Toastify({
+                                    text: data.message ||
+                                        'An Unexpected Error Occurred.',
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                             }
                         })
                         .catch(error => { // Handle any errors that occur during the fetch
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'An unexpected error occurred.',
-                            });
+                            Toastify({
+                                text: error || 'An Unexpected Error Occurred.',
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                             console.log(error);
 
                         });
@@ -1464,32 +1456,37 @@
                     const commentText = commentTextArea.value.trim();
 
                     if (commentText === '') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
+                        Toastify({
                             text: 'Please write a comment!',
-                        });
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
                     } else {
                         const formData = new FormData();
                         formData.append('comment', commentText);
                         formData.append('commentable_id', answerId);
                         formData.append('commentable_type', 'answer');
 
-                        fetch(`{{ route('comment.submit' ) }}`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                                    },
-                                    body: formData,
-                                })
+                        fetch(`{{ route('comment.submit') }}`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                                },
+                                body: formData,
+                            })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Comment Submitted!',
+
+                                    Toastify({
                                         text: 'Your comment has been successfully posted.',
-                                    });
+                                        duration: 3000,
+                                        style: {
+                                            background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                        }
+                                    }).showToast();
 
                                     const commentBox = commentTextArea.closest('.comment-box');
                                     if (commentBox) {
@@ -1534,6 +1531,7 @@
                                         'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
 
                                     commentDiv.innerHTML = `
+                                    <a href="/viewUser/${@json($username ?? null)}">
                                 <div class="flex items-start">
                                     <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(data.comment.username)}&background=random" 
                                          alt="${data.comment.username}"
@@ -1541,7 +1539,7 @@
                                     
                                     <div class="flex-grow">
                                         <div class="flex items-center mb-1">
-                                            <span class="text-sm font-medium text-[var(--text-primary)]">
+                                            <span class="text-sm hover:underline font-medium text-[var(--text-primary)]">
                                                 ${data.comment.username}
                                             </span>
                                             <span class="text-xs text-[var(--text-muted)] ml-2">
@@ -1554,6 +1552,7 @@
                                         </p>
                                     </div>
                                 </div>
+                                    </a>
                             `;
 
                                     const commentsList = commentsSection.querySelector(
@@ -1585,19 +1584,24 @@
                                     }, 100);
 
                                 } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: data.message,
-                                    });
+                                    Toastify({
+                                        text: data.message ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 }
                             })
                             .catch(error => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'An unexpected error occurred.',
-                                });
+                                Toastify({
+                                    text: error || 'An Unexpected Error Occurred.',
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
                                 console.log(error);
                             });
                     }
@@ -1667,18 +1671,20 @@
                                             // Update semua tombol toggle untuk answer ini
                                             document.querySelectorAll(
                                                 `.verify-toggle-button[data-answer-id="${answerId}"]`
-                                                ).forEach(btn => {
+                                            ).forEach(btn => {
                                                 btn.dataset.currentVerified =
                                                     actualNewVerifiedStatus;
                                             });
                                         }
                                         updateAnswerActionButtonsVisibility(
-                                        answerId); // Update tombol edit/delete jika perlu
-                                        Swal.fire(
-                                            `${newVerifiedStatus === 1 ? 'Verified!' : 'Un-verified!'}`,
-                                            `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`, // pastikan actionText sesuai
-                                            'success'
-                                        );
+                                            answerId); // Update tombol edit/delete jika perlu
+                                        Toastify({
+                                            text: `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`,
+                                            duration: 3000,
+                                            style: {
+                                                background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                            }
+                                        }).showToast();
 
                                         if (iconElement) {
                                             if (newVerifiedStatus === 1) {
@@ -1697,7 +1703,7 @@
                                         }
                                         const helperTextElement = document.querySelector(
                                             `#answer-verify-block-${answerId} span.text-gray-500`
-                                            );
+                                        );
                                         if (helperTextElement) {
                                             helperTextElement.textContent =
                                                 newVerifiedStatus === 1 ?
@@ -1705,9 +1711,14 @@
                                                 '(Click icon or text to verify)';
                                         }
                                     } else {
-                                        Swal.fire('Error!', data.message ||
-                                            'Could not update verification status.', 'error'
-                                            );
+                                        Toastify({
+                                            text: data.message ||
+                                                'Could not update verification status.',
+                                            duration: 3000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
                                     }
                                 })
                                 .catch(error => {
@@ -1719,7 +1730,14 @@
                                     } else if (typeof error === 'string') {
                                         errorMessage = error;
                                     }
-                                    Swal.fire('Request Failed!', errorMessage, 'error');
+                                    Toastify({
+                                        text: errorMessage ||
+                                            'An Unexpected Error Occurred.',
+                                        duration: 3000,
+                                        style: {
+                                            background: "#e74c3c"
+                                        }
+                                    }).showToast();
                                 });
                         }
                     });
@@ -1776,11 +1794,14 @@
                             // 2. Panggil fungsi untuk mengevaluasi ulang visibilitas tombol
                             updateQuestionActionButtonsVisibility();
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message,
-                            });
+                            Toastify({
+                                text: data.message ||
+                                    'An Unexpected Error Occurred.',
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                         }
                     })
                 // .catch(error => {
@@ -1845,11 +1866,14 @@
                             //     text: 'Your vote has been successfully recorded.',
                             // });
                         } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: data.message,
-                            });
+                            Toastify({
+                                text: data.message ||
+                                    'An Unexpected Error Occurred.',
+                                duration: 3000,
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
                         }
                     })
                 // .catch(error => {
@@ -1875,5 +1899,114 @@
                 });
             });
         });
+
+        const questionActionsToggle = document.getElementById('question-actions-toggle');
+        const questionActionsMenu = document.getElementById('question-actions-menu');
+
+        if (questionActionsToggle && questionActionsMenu) {
+            questionActionsToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isHidden = questionActionsMenu.classList.contains('hidden');
+                if (isHidden) {
+                    questionActionsMenu.classList.remove('hidden');
+                    setTimeout(() => {
+                        questionActionsMenu.style.opacity = '1';
+                        questionActionsMenu.style.transform = 'translateY(0)';
+                    }, 10);
+                } else {
+                    questionActionsMenu.style.opacity = '0';
+                    questionActionsMenu.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        questionActionsMenu.classList.add('hidden');
+                    }, 200);
+                }
+            });
+
+            window.addEventListener('click', (event) => {
+                if (!questionActionsMenu.contains(event.target) && !questionActionsToggle.contains(event.target)) {
+                    if (!questionActionsMenu.classList.contains('hidden')) {
+                        questionActionsMenu.style.opacity = '0';
+                        questionActionsMenu.style.transform = 'translateY(-10px)';
+                         setTimeout(() => {
+                            questionActionsMenu.classList.add('hidden');
+                        }, 200);
+                    }
+                }
+            });
+            
+            const editLink = questionActionsMenu.querySelector('.edit-question-link');
+            if(editLink) {
+                 editLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const questionId = '{{ $question['id'] }}';
+                    window.location.href = `{{ url('/ask') }}/${questionId}`;
+                });
+            }
+        }
+
     </script>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const questionCommentsModal = document.getElementById('questionCommentsModal');
+            const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
+            const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
+            const questionCommentTextarea = document.getElementById('question-comment-textarea');
+
+            function openModal() {
+                if (questionCommentsModal) {
+                    questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
+                    questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
+                    if (questionCommentTextarea) {
+                        questionCommentTextarea.focus();
+                    }
+                }
+            }
+
+            function closeModal() {
+                if (questionCommentsModal) {
+                    questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
+                    questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
+                }
+            }
+
+            if (openQuestionCommentsModalBtn) {
+                openQuestionCommentsModalBtn.addEventListener('click', openModal);
+            }
+
+            if (closeQuestionCommentsModalBtn) {
+                closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
+            }
+
+            if (questionCommentsModal) {
+                questionCommentsModal.addEventListener('click', (event) => {
+                if (event.target === questionCommentsModal) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && questionCommentsModal.classList.contains('opacity-100')) {
+                    closeModal();
+                }
+            });
+            }
+
+            // Toggle comment box for ANSWERS
+            const answerCommentButtons = document.querySelectorAll('.answer-comment-btn'); // Ensure this class is on answer comment buttons
+            answerCommentButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const answerId = button.dataset.answerId; // Assuming you have data-answer-id on these buttons
+                    const commentBox = document.getElementById(`answer-${answerId}-comment-box`); // Make sure this ID matches your answer comment boxes
+                    if (commentBox) {
+                        commentBox.classList.toggle('hidden');
+                        if (!commentBox.classList.contains('hidden')) {
+                            commentBox.querySelector('textarea').focus();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
 @endsection

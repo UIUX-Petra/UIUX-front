@@ -565,9 +565,9 @@ class UserController extends Controller
             'commentable_type' => 'required|string|in:question,answer',
         ]);
 
-        if (session('reputation') < 10) {
-            return response()->json(['success' => false, 'message' => 'Your Reputation is Insufficient']);
-        }
+        // if (session('reputation') < 10) {
+        //     return response()->json(['success' => false, 'message' => 'Your Reputation is Insufficient']);
+        // }
 
         $apiData = [
             'email' => session('email'),
