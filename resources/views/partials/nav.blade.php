@@ -46,6 +46,9 @@
         border-image: linear-gradient(to bottom, #38A3A5, #80ED99);
         border-image-slice: 1;
         border-left-width: 3px;
+
+        pointer-events: none;
+        cursor: default;
     }
 
     .active-nav i {
@@ -726,40 +729,60 @@
             <div id="searchResultsDropdownContainer2"
                 class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
             </div>
-        </div>
-        <a href="{{ route('askPage') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md text-[var(--text-dark)] bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-plus mr-3"></i> Ask a Question
-        </a>
-        <a href="{{ route('home') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-house mr-3"></i> Home
-        </a>
-        {{-- <a href="{{ route('popular') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-fire mr-3"></i> Popular
-            <span class="nav-badge">Hot</span>
-        </a> --}}
 
-        <a href="{{ route('askPage') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md text-[var(--text-dark)] bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-plus mr-3"></i> Ask a Question
-        </a>
-        <a href="{{ route('viewAllTags') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-tags mr-3"></i> Subjects
-        </a>
-        <a href="{{ route('viewAllUsers') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-users mr-3"></i> Informates
-        </a>
+            <div class="space-y-1">
+                <a href="{{ route('home') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('home') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
+                </a>
+                <a href="{{ route('viewAllTags') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-tags mr-3 w-5 text-center"></i> Subjects
+                </a>
+            </div>
 
-        <a href="{{ route('user.leaderboard') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-trophy mr-3"></i> Leaderboard
-        </a>
+            <div class="border-t border-[var(--border-color)] my-3"></div>
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider px-3 mb-2">My Activities</h3>
+
+            <div class="space-y-1">
+                <a href="{{ route('user.questions.list', ['id' => $id]) }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> My Questions
+                </a>
+                <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> My Answers
+                </a>
+                <a href="{{ route('savedQuestions') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
+                </a>
+            </div>
+
+            <div class="border-t border-[var(--border-color)] my-3"></div>
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider px-3 mb-2">Community</h3>
+
+            <div class="space-y-1">
+                <a href="{{ route('viewAllUsers') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-users mr-3 w-5 text-center"></i> Informates
+                </a>
+                <a href="{{ route('user.leaderboard') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-trophy mr-3 w-5 text-center"></i> Leaderboard
+                </a>
+                <a href="{{ route('faq') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('faq') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> FAQ
+                </a>
+            </div>
 
         <div class="border-t border-[var(--border-color)] my-2"></div>
+        
+        <a href="{{ route('askPage') }}"
+            class="nav-link flex items-center justify-center px-3 py-2.5 mb-2 rounded-md text-sm font-semibold text-black bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+            <i class="fa-solid fa-plus mr-2"></i> Ask a Question
+        </a>
 
         <div class="flex items-center justify-between p-2">
             <button id="mobile-theme-toggle" onclick="toggleTheme()" class="theme-toggle p-2"
@@ -797,7 +820,7 @@
             <nav class="flex flex-col space-y-1">
                 <nav class="flex flex-col space-y-1">
                     <a href="{{ route('home') }}"
-                        class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                         <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
                     </a>
                     {{-- <a href="{{ route('popular') }}"
