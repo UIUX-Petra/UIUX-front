@@ -59,9 +59,7 @@
             width: 300%;
             height: 100%;
             left: -250%;
-            /* background: linear-gradient(135deg, #F4AB24 0%, #FFD249 100%);  */
-            /* background: linear-gradient(135deg, #10b981 0%, #1ceaa5 100%);  */
-            background: linear-gradient(135deg, #1C2245 0%, #30366A 100%);
+            background: linear-gradient(135deg, var(--bg-c) 0%, var(--bg-primary) 100%);
             border-radius: 150px;
             z-index: 2;
             transition: 1.2s ease-in-out;

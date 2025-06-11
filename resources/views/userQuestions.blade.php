@@ -49,6 +49,11 @@
         .stats-item:hover {
             transform: scale(1.05);
         }
+        .action-menu-dropdown {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform-origin: top right;
+        }
+</style>
     </style>
     
     @include('partials.nav')
@@ -100,17 +105,24 @@
                                 $hasVote = isset($question['vote']) && $question['vote'] !== 0;
                             @endphp
                             @if (!$hasAnswer && !$hasVote)
-                                <div class="absolute top-3 right-3 z-20 flex space-x-2">
-                                    <button data-question-id="{{ $question['id'] }}"
-                                        class="edit-question-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-yellow-600 bg-[var(--accent-tertiary)] text-[var(--text-dark)]"
-                                        title="Edit Question">
-                                        <i class="fa-solid fa-edit text-sm"></i>
+                                <div class="action-menu-container absolute top-3 right-3 z-20">
+                                    <button class="action-menu-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                                            title="More options">
+                                        <i class="fa-solid fa-ellipsis-v"></i>
                                     </button>
-                                    <button data-question-id="{{ $question['id'] }}"
-                                        class="delete-question-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-rose-900 bg-[var(--accent-neg)] !text-white"
-                                        title="Delete Question">
-                                        <i class="fa-solid fa-trash text-sm"></i>
-                                    </button>
+
+                                    <div class="action-menu-dropdown hidden absolute right-0 mt-2 w-40 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg shadow-xl py-2">
+                                        <button data-question-id="{{ $question['id'] }}"
+                                                class="edit-question-button w-full flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]">
+                                            <i class="fa-solid fa-edit text-sm w-6 mr-2"></i>
+                                            Edit
+                                        </button>
+                                        <button data-question-id="{{ $question['id'] }}"
+                                                class="delete-question-button w-full flex items-center px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--bg-secondary)]">
+                                            <i class="fa-solid fa-trash text-sm w-6 mr-2"></i>
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
                             @endif
                         @endif
@@ -158,7 +170,7 @@
 
                                     @foreach ($tags as $index => $tag)
                                         @if(isset($tag['subject']['name']))
-                                            <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
+                                            <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
                                                class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
                                                 <span class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                                     {{ $tag['subject']['name'] }}
@@ -225,7 +237,7 @@
                     
                     <div class="w-full mb-4">
                         @if (session('email') === $user['email'])
-                            <a href="{{ route('seeProfile') }}"
+                            <a href="{{ route('viewUser', ['email' => session('email')]) }}"
                                 class="w-full inline-flex items-center justify-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-sm transition-colors duration-300 py-2">
                                 <i class="fas fa-arrow-left mr-2"></i>
                                 View My Profile
@@ -396,6 +408,7 @@
             initClickableQuestionCards();
             initTagToggles();
             updateIconColors();
+            initActionMenus();
 
             // Edit button functionality
             document.querySelectorAll('.edit-question-button').forEach(button => {
@@ -562,6 +575,40 @@
                     });
                 });
                 window.pageThemeObserver.observe(document.documentElement, { attributes: true });
+            }
+
+            // ... inside the <script> tag ...
+
+            function initActionMenus() {
+                const menuButtons = document.querySelectorAll('.action-menu-button');
+
+                menuButtons.forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        event.stopPropagation(); // Prevents the card's click event from firing
+
+                        // Find the dropdown associated with this button
+                        const dropdown = button.nextElementSibling;
+
+                        // Close all other open dropdowns first
+                        document.querySelectorAll('.action-menu-dropdown').forEach(d => {
+                            if (d !== dropdown) {
+                                d.classList.add('hidden');
+                            }
+                        });
+
+                        // Toggle the current dropdown
+                        dropdown.classList.toggle('hidden');
+                    });
+                });
+
+                // Add a global click listener to close menus when clicking outside
+                window.addEventListener('click', (event) => {
+                    if (!event.target.closest('.action-menu-container')) {
+                        document.querySelectorAll('.action-menu-dropdown').forEach(dropdown => {
+                            dropdown.classList.add('hidden');
+                        });
+                    }
+                });
             }
         });
     </script>

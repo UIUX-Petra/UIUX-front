@@ -199,11 +199,11 @@ class AnswerController extends Controller
                 return redirect()->route('user.answers.index', ['userId' => $answer['user_id']])
                                  ->with('Error', 'You are not authorized to edit this answer.');
             } else {
-                return redirect()->route('popular')->with('Error', 'Answer not found.');
+                return redirect()->route('home')->with('Error', 'Answer not found.');
             }
         } else {
             Log::error("Failed to fetch answer (ID: {$answerId}) for edit from {$apiUrl}. Status: " . $response->status() . " Body: " . $response->body());
-            return redirect()->route('popular')->with('Error', 'Could not retrieve answer for editing.');
+            return redirect()->route('home')->with('Error', 'Could not retrieve answer for editing.');
         }
     }
 

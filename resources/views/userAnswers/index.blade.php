@@ -268,6 +268,10 @@
                 height: 50px;
             }
         }
+        .action-menu-dropdown {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform-origin: top right;
+        }
     </style>
 @endsection
 
@@ -347,17 +351,27 @@
                             <!-- Action Buttons (for owner only) -->
                             @if (session('email') === ($user['email'] ?? null))
                                 @if (isset($answer['user_id']) && ($answer['votes_count'] ?? 0) == 0)
-                                    <div class="absolute top-3 right-3 z-20 flex space-x-2">
-                                        <a href="{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}"
-                                            class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-yellow-600 bg-[var(--accent-tertiary)] text-[var(--text-dark)]"
-                                            title="Edit Answer">
-                                            <i class="fa-solid fa-edit text-sm"></i>
-                                        </a>
-                                        <button data-answer-id="{{ $answer['id'] }}"
-                                            class="delete-answer-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-rose-900 bg-[var(--accent-neg)] !text-white"
-                                            title="Delete Answer">
-                                            <i class="fa-solid fa-trash text-sm"></i>
+                                    {{-- New Action Menu Container --}}
+                                    <div class="action-menu-container absolute top-3 right-3 z-20">
+                                        {{-- Three-dot button to toggle the menu --}}
+                                        <button class="action-menu-button w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-secondary)] text-[var(--text-primary)]"
+                                                title="More options">
+                                            <i class="fa-solid fa-ellipsis-v"></i>
                                         </button>
+
+                                        {{-- Dropdown menu with the original actions --}}
+                                        <div class="action-menu-dropdown hidden absolute right-0 mt-2 w-40 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg shadow-xl py-2">
+                                            <a href="{{ route('user.answers.edit', ['answerId' => $answer['id']]) }}"
+                                            class="w-full flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]">
+                                                <i class="fa-solid fa-edit text-sm w-6 mr-2"></i>
+                                                Edit
+                                            </a>
+                                            <button data-answer-id="{{ $answer['id'] }}"
+                                                    class="delete-answer-button w-full flex items-center px-4 py-2 text-sm text-red-500 hover:bg-[var(--bg-secondary)]">
+                                                <i class="fa-solid fa-trash text-sm w-6 mr-2"></i>
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 @endif
                             @endif
@@ -426,7 +440,7 @@
                     <p class="text-[var(--text-muted)] mb-4">
                         Start contributing to the community by answering questions. Your knowledge can help others!
                     </p>
-                    <a href="{{ route('popular') }}"
+                    <a href="{{ route('home') }}"
                         class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium rounded-lg hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
                         <i class="fas fa-search mr-2"></i>
                         Browse Questions
@@ -453,7 +467,7 @@
                     
                     <div class="w-full mb-4">
                         @if (session('email') === $user['email'])
-                            <a href="{{ route('seeProfile') }}"
+                            <a href="{{ route('viewUser', ['email' => session('email')]) }}"
                                 class="w-full inline-flex items-center justify-center text-[var(--text-highlight)] hover:text-[var(--accent-primary)] font-medium text-sm transition-colors duration-300 py-2">
                                 <i class="fas fa-arrow-left mr-2"></i>
                                 View My Profile
@@ -500,7 +514,7 @@
                     <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
                         Help fellow Petranesian Informates by sharing your knowledge and insights!
                     </p>
-                    <a href="{{ route('popular') }}"
+                    <a href="{{ route('home') }}"
                         class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
                         <i class="fa-solid fa-search mr-2"></i> Browse Questions
                     </a>
@@ -551,6 +565,8 @@
                 once: true,
                 offset: 100
             });
+
+            initActionMenus(); // <-- ADD THIS LINE HERE
 
             // Search functionality
             const searchInput = document.getElementById('searchAnswers');
@@ -755,7 +771,7 @@
                                 <p class="text-[var(--text-muted)] text-lg mb-8">
                                     Start contributing to the community by answering questions. Your knowledge can help others!
                                 </p>
-                                <a href="{{ route('popular') }}" 
+                                <a href="{{ route('home') }}" 
                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
                                     <i class="fas fa-search mr-2"></i>
                                     Browse Questions
@@ -1155,6 +1171,41 @@
             link.click();
 
             showToast('Answers exported successfully!', 'success');
+        }
+
+        function initActionMenus() {
+            const menuButtons = document.querySelectorAll('.action-menu-button');
+
+            menuButtons.forEach(button => {
+                // Prevent adding multiple listeners
+                if (button.dataset.menuInitialized) return;
+                button.dataset.menuInitialized = 'true';
+
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevents other click events on the card
+
+                    const dropdown = button.nextElementSibling;
+
+                    // Close all other open dropdowns
+                    document.querySelectorAll('.action-menu-dropdown').forEach(d => {
+                        if (d !== dropdown) {
+                            d.classList.add('hidden');
+                        }
+                    });
+
+                    // Toggle the current dropdown
+                    dropdown.classList.toggle('hidden');
+                });
+            });
+
+            // Add a global click listener to close menus when clicking outside
+            window.addEventListener('click', (event) => {
+                if (!event.target.closest('.action-menu-container')) {
+                    document.querySelectorAll('.action-menu-dropdown').forEach(dropdown => {
+                        dropdown.classList.add('hidden');
+                    });
+                }
+            });
         }
     </script>
 @endsection

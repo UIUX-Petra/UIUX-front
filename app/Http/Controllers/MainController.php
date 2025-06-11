@@ -22,31 +22,6 @@ class MainController extends Controller
     $this->questionController = $questionController;
     $this->tagController = $tagController;
   }
-  public function home(Request $request)
-  {
-    $user = $this->userController->getUserByEmail(session('email'));
-    $data['image'] = $user['image'] ?? null;
-    $data['username'] = $user['username'] ?? 'Guest';
-    $data['id'] = $user['id'];
-    $data['title'] = 'Home';
-    $questions = $this->questionController->getAllQuestions($request);
-
-    if ($request->ajax() || $request->wantsJson()) {
-      $questionsHtml = view('partials.questions_only_list', ['questions' => $questions])->render();
-      $paginationHtml = $questions->links()->toHtml();
-
-      return response()->json([
-        'success' => true,
-        'questions_html' => $questionsHtml,
-        'pagination_html' => $paginationHtml,
-      ]);
-    }
-    $data['questions'] = $questions;
-    $data['user'] = $user;
-    $data['histories'] = $user['histories'];
-    // dd($data);
-    return view('home', $data);
-  }
 
   public function askPage(Request $request, $questionId = null) // Added Request for consistency if needed later
   {
@@ -65,7 +40,7 @@ class MainController extends Controller
         $viewData['questionToEdit'] = $questionDetails;
         $viewData['existingTagIds'] = array_column($questionDetails['group_question'], 'tag_id');
       } else if ($questionDetails) {
-        return redirect()->route('popular')
+        return redirect()->route('home')
           ->with('Error', 'You are not authorized to edit this question.');
       } else {
         return redirect()->route('askPage')
@@ -77,27 +52,25 @@ class MainController extends Controller
 
     return view('ask', $viewData);
   }
-  public function seeProfile()
-  {
-    $data['title'] = 'My Profile';
-    $email = session('email');
-    $currUser = $this->userController->getUserByEmail($email);
-    $data['currUser'] = $currUser;
-    $data['username'] = $currUser['username'];
-    $data['id'] = $currUser['id'];
-    $data['image'] = $currUser['image'];
-    $data['histories'] = $currUser['histories'];
-    // dd($data);
-    return view('profile', $data);
-  }
 
+  // coba gabung profile + otherprofile
   public function viewUser(string $email)
   {
     $userViewed = $this->userController->getUserFollowers($email);
-    $currUser = $this->userController->getUserByEmail(session('email'));
-    $data['username'] = $currUser['username'];
-    $data['image'] = $currUser['image'];
-    $data['id'] = $currUser['id'];
+    if (session('email') != $email) {
+      $currUser = $this->userController->getUserByEmail(session('email'));
+      $data['username'] = $currUser['username'];
+      $data['image'] = $currUser['image'];
+      $data['id'] = $currUser['id'];
+      $data['histories'] = $currUser['histories'];
+
+    } else {
+      $data['username'] = $userViewed['user']['username'];
+      $data['image'] = $userViewed['user']['image'];
+      $data['id'] = $userViewed['user']['id'];
+      $data['histories'] = $userViewed['user']['histories'];
+    }
+
     $data['title'] = 'PROFILE | ' . $userViewed['user']['username'];
     $data['userViewed'] = $userViewed['user'];
 
@@ -105,26 +78,26 @@ class MainController extends Controller
     $data['isOwnProfile'] = $email === $emailSession ? true : false;
 
     $data['userRelation'] = 0; // tak ada relasi (asing bjir)
-    foreach ($userViewed['user']['followers'] as $follower) {
-      if ($follower['id'] == $currUser['id']) {
-        $data['userRelation'] = 1; // aku follow dirinya -> btn bertuliskan following
-        break;
-      }
-    }
-
-    if ($data['userRelation'] === 0) { // jika habis di cek, trnyt ak ga folo dia, cek apakah dia folo ak -> btn bertuliskan follow back
-      foreach ($userViewed['user']['following'] as $following) {
-        if ($following['id'] == $currUser['id']) {
-          $data['userRelation'] = 2;
+    if (session('email') != $email) {
+      foreach ($userViewed['user']['followers'] as $follower) {
+        if ($follower['id'] == $currUser['id']) {
+          $data['userRelation'] = 1; // aku follow dirinya -> btn bertuliskan following
           break;
         }
       }
-    }
 
-    $data['histories'] = $currUser['histories'];
-    // dd($data);
-    return view('otherProfiles', $data);
+      if ($data['userRelation'] === 0) { // jika habis di cek, trnyt ak ga folo dia, cek apakah dia folo ak -> btn bertuliskan follow back
+        foreach ($userViewed['user']['following'] as $following) {
+          if ($following['id'] == $currUser['id']) {
+            $data['userRelation'] = 2;
+            break;
+          }
+        }
+      }
+    }
+    return view('profile', $data);
   }
+
 
   public function editProfile()
   {
@@ -221,8 +194,8 @@ class MainController extends Controller
     $data = [
       'title' => ($profileUser['username'] ?? 'User') . ($initialTabType === 'followers' ? ' - Followers' : ' - Following'),
       'id' => $profileUser['id'],
-      'username' => $profileUser['username'],
-      'image' => $profileUser['image'],
+      'username' => $loggedInUser['username'],
+      'image' => $loggedInUser['image'],
       'profileUser' => $profileUser,
       'followersList' => $followersList,
       'followingList' => $followingList,
@@ -237,7 +210,7 @@ class MainController extends Controller
   }
 
 
-  public function popular(Request $request)
+  public function home(Request $request)
   {
     $email = session('email');
     $user = $email ? $this->userController->getUserByEmail($email) : null;
@@ -273,8 +246,7 @@ class MainController extends Controller
       'initialPage' => $request->input('page', 1),
       'histories' => $user['histories'],
     ];
-
-    return view('popular', $data);
+    return view('home', $data);
   }
 
   // hrse terima param id question, nih aku cuman mau coba view
@@ -372,5 +344,19 @@ class MainController extends Controller
   {
     $data = $this->userController->getSavedQuestion();
     return view('savedQuestions', $data);
+  }
+
+  public function faq()
+  {
+      $data['title'] = 'Frequently Asked Questions';
+
+      // Get the logged-in user to pass all the necessary navbar data
+      $currUser = $this->userController->getUserByEmail(session('email'));
+      $data['username'] = $currUser['username'];
+      $data['image'] = $currUser['image'];
+      $data['id'] = $currUser['id'];
+      $data['histories'] = $currUser['histories'];
+
+      return view('faq', $data);
   }
 }

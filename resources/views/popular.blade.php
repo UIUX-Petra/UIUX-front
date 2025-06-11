@@ -642,7 +642,7 @@
             let currentFilterTag = '{{ $initialFilterTag ?? '' }}';
             let currentSearchTerm = '{{ $initialSearchTerm ?? '' }}';
 
-            const ajaxUrl = '{{ route('popular') }}';
+            const ajaxUrl = '{{ route('home') }}';
 
             // event listener buat subject drop down + search
             if (tagFilterContainer) {

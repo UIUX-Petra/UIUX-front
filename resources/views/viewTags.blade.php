@@ -123,7 +123,7 @@
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl items-start justify-start px-6">
         @if (isset($tags) && count($tags) > 0)
             @foreach ($tags as $index => $tag)
-                <a href="{{ route('popular', ['filter_tag' => $tag['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
+                <a href="{{ route('home', ['filter_tag' => $tag['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
                     class="tag-link hover:no-underline focus:no-underline text-xl font-bold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-all duration-300 relative focus:outline-2 focus:outline-[var(--accent-primary)] focus:outline-offset-2 focus:rounded"
                     aria-label="View questions for {{ $tag['name'] }}">
                     <div

@@ -74,7 +74,7 @@ class AuthController extends Controller
                 session()->forget('url');
                 return redirect()->to($url);
             }
-            return redirect()->route('popular');
+            return redirect()->route('home');
 
         } catch (\Laravel\Socialite\Two\InvalidStateException $e) {
             Log::error('Google Socialite InvalidStateException: ' . $e->getMessage());
@@ -109,7 +109,7 @@ class AuthController extends Controller
                     'user_id' => $storedUser['id'],
                     'reputation' => $storedUser['reputation'] ?? 0,
                 ]);
-                return redirect()->route('popular')->with('Success', $responseData['message'] ?? 'Email verified! You are now logged in.');
+                return redirect()->route('home')->with('Success', $responseData['message'] ?? 'Email verified! You are now logged in.');
             } else {
                 $errorMessage = $responseData['message'] ?? 'Verification succeeded but login failed.';
                 return redirect()->route('loginOrRegist')->with('Error', $errorMessage);
@@ -233,7 +233,7 @@ class AuthController extends Controller
             session()->forget('url');
             return redirect()->to($url);
         }
-        return redirect()->route('popular');
+        return redirect()->route('home');
     }
 
     public function showVerificationNotice(Request $request)

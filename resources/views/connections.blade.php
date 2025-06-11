@@ -17,16 +17,53 @@
         }
 
         .light-mode .bg-pattern {
-            background-image: url("data:image/svg+xml,%3Csvv width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Header Profile Card */
+        /* Floating decorative elements */
+        .floating-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .decoration-1 {
+            top: 10%;
+            right: 10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(56, 163, 165, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .decoration-2 {
+            bottom: 20%;
+            left: 5%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(128, 237, 153, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Header Profile Card - Updated to match homepage style */
         .profile-header-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
         .profile-header-card::before {
@@ -38,6 +75,49 @@
             height: 200%;
             background: radial-gradient(circle, rgba(56, 163, 165, 0.1) 0%, transparent 70%);
             pointer-events: none;
+        }
+
+        /* Enhanced welcome header similar to homepage */
+        .welcome-header {
+            background: transparent;
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(56, 163, 165, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .titleGradient {
+            background: linear-gradient(90deg, #38A3A5, #57CC99, #80ED99);
+            background-size: 200%;
+            font-weight: 700;
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .profile-avatar {
@@ -59,55 +139,72 @@
             0% {
                 opacity: 0.5;
             }
-
             100% {
                 opacity: 0.8;
             }
         }
 
-        /* Tab System */
+        /* Tab System - Updated to match homepage tabs */
         .tab-navigation {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 8px;
+            background: transparent;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0;
+            margin-bottom: 2rem;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .tab-navigation::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--bg-pattern);
-            opacity: 0.3;
-            pointer-events: none;
+            display: none;
         }
 
         .tab-button {
             position: relative;
-            padding: 12px 24px;
+            padding: 0.75rem 1rem;
+            margin-bottom: -1px;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 0;
+            border-bottom: 2px solid transparent;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 600;
+            font-weight: 500;
             color: var(--text-secondary);
             background: transparent;
-            border: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
             z-index: 10;
-        }
-
-        .tab-button.active {
-            background: linear-gradient(135deg, #38A3A5, #80ED99);
-            color: #000;
-            box-shadow: 0 4px 12px rgba(56, 163, 165, 0.3);
-            transform: translateY(-1px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .tab-button:not(.active):hover {
-            background: var(--bg-hover);
             color: var(--text-primary);
+            border-bottom-color: var(--border-color);
             transform: translateY(-1px);
+        }
+
+        .tab-button.active {
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom-color: #38A3A5;
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .tab-button .ml-2 {
+            background: rgba(56, 163, 165, 0.1);
+            color: #38A3A5;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .tab-button.active .ml-2 {
+            background: rgba(56, 163, 165, 0.2);
+            color: #38A3A5;
         }
 
         .tab-content {
@@ -124,25 +221,24 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        /* User List Items */
+        /* User List Items - Enhanced cards */
         .connections-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 1.5rem;
         }
 
         .user-list-item {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 20px;
+            padding: 1.5rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -153,27 +249,31 @@
             position: absolute;
             inset: 0;
             background: var(--bg-pattern);
-            opacity: 0.5;
+            opacity: 0.3;
             pointer-events: none;
         }
 
         .user-list-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            border-color: var(--accent-tertiary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(56, 163, 165, 0.15);
+            border-color: rgba(56, 163, 165, 0.3);
             background: var(--bg-card-hover);
         }
 
+        /* Follow buttons - Enhanced styling */
         .follow-btn {
-            padding: 4px 8px;
-            border-radius: 5px;
-            font-size: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
             font-weight: 600;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid transparent;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .follow-btn::before {
@@ -191,54 +291,56 @@
 
         .btn-follow {
             background: linear-gradient(135deg, #38A3A5, #80ED99);
-            color: var(--bg-primary);
+            color: #000;
             font-weight: 700;
         }
 
         .btn-follow:hover {
             transform: translateY(-2px);
-            f box-shadow: 0 8px 20px rgba(56, 163, 165, 0.4);
+            box-shadow: 0 8px 20px rgba(56, 163, 165, 0.4);
+            background: linear-gradient(135deg, #80ED99, #38A3A5);
         }
 
         .btn-unfollow {
-            background: var(--bg-light);
+            background: var(--bg-secondary);
             color: var(--text-primary);
             border-color: var(--border-color);
         }
 
         .btn-unfollow:hover {
-            background: var(--accent-tertiary);
-            color: var(--text-dark);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
         }
 
         .btn-follow-back {
-            background: var(--text-highlight);
-            color: var(--bg-primary);
+            background: linear-gradient(135deg, #57CC99, #80ED99);
+            color: #000;
             font-weight: 600;
         }
 
         .btn-follow-back:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 8px 20px rgba(87, 204, 153, 0.4);
         }
 
         .status-badge {
             font-size: 0.7rem;
-            padding: 4px 8px;
+            padding: 0.25rem 0.5rem;
             border-radius: 12px;
-            margin-left: 8px;
+            margin-left: 0.5rem;
             font-weight: 600;
             background: rgba(40, 167, 69, 0.15);
             color: #28a745;
             border: 1px solid rgba(40, 167, 69, 0.3);
         }
 
-        /* Empty States */
+        /* Empty States - Enhanced */
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 4rem 2rem;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 20px;
@@ -260,15 +362,22 @@
         .empty-state-icon {
             font-size: 4rem;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
             opacity: 0.6;
+            background: rgba(56, 163, 165, 0.1);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Section Headers */
+        /* Section Headers - Enhanced */
         .section-header {
             position: relative;
-            padding-left: 16px;
-            margin-bottom: 24px;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
         }
 
         .section-header::before {
@@ -283,18 +392,19 @@
             border-radius: 2px;
         }
 
-        /* Stats Display */
+        /* Stats Display - Enhanced */
         .connection-stats {
             display: flex;
-            gap: 24px;
-            margin-top: 16px;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
         }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
             background: var(--bg-secondary);
             border-radius: 20px;
             border: 1px solid var(--border-color);
@@ -302,6 +412,7 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            min-width: 120px;
         }
 
         .stat-item::before {
@@ -345,17 +456,34 @@
             }
 
             .profile-header-card {
-                padding: 20px;
+                padding: 1.5rem;
+            }
+
+            .welcome-header {
+                padding: 1.5rem;
             }
 
             .tab-navigation {
-                flex-direction: column;
-                gap: 8px;
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 0;
+            }
+
+            .tab-button {
+                white-space: nowrap;
+                flex-shrink: 0;
             }
 
             .connection-stats {
                 flex-wrap: wrap;
-                gap: 12px;
+                gap: 0.75rem;
+                justify-content: center;
+            }
+
+            .stat-item {
+                min-width: auto;
+                flex: 1;
+                justify-content: center;
             }
         }
 
@@ -364,7 +492,6 @@
             0% {
                 background-position: -1000px 0;
             }
-
             100% {
                 background-position: 1000px 0;
             }
@@ -376,41 +503,39 @@
             animation: shimmer 2s infinite linear;
         }
 
-        .floating-decoration {
-            position: fixed;
-            pointer-events: none;
-            z-index: -1;
+        /* Additional enhancements */
+        .user-avatar-small {
+            border: 2px solid rgba(56, 163, 165, 0.2);
+            transition: all 0.3s ease;
         }
 
-        .decoration-1 {
-            top: 10%;
-            right: 10%;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(56, 163, 165, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+        .user-list-item:hover .user-avatar-small {
+            border-color: rgba(56, 163, 165, 0.5);
+            transform: scale(1.05);
         }
 
-        .decoration-2 {
-            bottom: 20%;
-            left: 5%;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(128, 237, 153, 0.08) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite reverse;
+        .user-info h3 {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
 
-        @keyframes float {
+        .user-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
 
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
+        /* Enhanced profile header for own profile */
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
 
-            50% {
-                transform: translateY(-20px);
+        @media (max-width: 640px) {
+            .profile-actions {
+                justify-content: center;
             }
         }
     </style>
@@ -418,8 +543,12 @@
 
 @section('content')
     @include('partials.nav', ['loggedInUser' => $loggedInUser])
-    <div class="container items-start justify-start  px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
-
+    
+    <!-- Floating decorative elements -->
+    <div class="floating-decoration decoration-1"></div>
+    <div class="floating-decoration decoration-2"></div>
+    
+    <div class="container items-start justify-start px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
         {{-- Header Profil Pengguna --}}
         <div class="profile-header-card rounded-2xl p-6 mb-8 shadow-lg">
             <div class="flex flex-col lg:flex-row items-center lg:items-start gap-6">
@@ -430,7 +559,7 @@
                 </div>
 
                 <div class="flex-1 text-center lg:text-left relative z-10">
-                    <h1 class="text-3xl lg:text-4xl font-bold text-[var(--text-primary)] mb-2">
+                     <h1 class="cal-sans-regular text-4xl lg:text-5xl titleGradient leading-tight py-1">
                         {{ $profileUser['username'] ?? 'User Profile' }}
                     </h1>
                     <p class="text-[var(--text-secondary)] text-lg mb-2">{{ $profileUser['email'] ?? '' }}</p>
@@ -439,8 +568,8 @@
                         <p class="text-[var(--text-muted)] mb-4 max-w-2xl">{{ $profileUser['biodata'] }}</p>
                     @endif
 
-                    {{-- <!-- Connection Stats - Now Clickable -->
-                    <div class="connection-stats justify-center lg:justify-start">
+                    {{-- Connection Stats --}}
+                    {{-- <div class="connection-stats justify-center lg:justify-start">
                         <div class="stat-item stat-clickable" data-stat-target="followers" title="View Followers">
                             <i class="fas fa-users stat-icon"></i>
                             <span class="font-semibold">{{ $followersList->count() }}</span>
@@ -460,7 +589,7 @@
                                 'is_mutual' => false,
                             ];
                         @endphp
-                        <div class="mt-6">
+                        <div class="profile-actions">
                             <button
                                 class="follow-btn action-follow-profile {{ $relation['follow_status'] === 'following'
                                     ? 'btn-unfollow'
@@ -469,21 +598,21 @@
                                         : 'btn-follow') }}"
                                 data-user-email="{{ $profileUser['email'] }}">
                                 @if ($relation['follow_status'] === 'following')
-                                    <i class="fas fa-user-check mr-2"></i>Following
+                                    <i class="fas fa-user-check"></i>Following
                                     @if ($relation['is_mutual'])
                                         <span class="status-badge">Mutual</span>
                                     @endif
                                 @elseif ($relation['follow_status'] === 'follows_you')
-                                    <i class="fas fa-user-plus mr-2"></i>Follow Back
+                                    <i class="fas fa-user-plus"></i>Follow Back
                                 @else
-                                    <i class="fas fa-user-plus mr-2"></i>Follow
+                                    <i class="fas fa-user-plus"></i>Follow
                                 @endif
                             </button>
                         </div>
                     @elseif (!$loggedInUser && !$isOwnProfile)
-                        <div class="mt-6">
+                        <div class="profile-actions">
                             <a href="{{ route('loginOrRegist') }}" class="follow-btn btn-follow">
-                                <i class="fas fa-user-plus mr-2"></i>Follow
+                                <i class="fas fa-user-plus"></i>Follow
                             </a>
                         </div>
                     @endif
@@ -492,18 +621,18 @@
         </div>
 
         {{-- Navigasi Tab --}}
-        <div class="tab-navigation flex mb-8">
+        <div class="tab-navigation flex gap-6 mb-8">
             <button class="tab-button {{ $activeTab === 'followers' ? 'active' : '' }}" data-tab-target="#followersContent"
                 data-tab-name="followers">
-                <i class="fas fa-users mr-2"></i>
+                <i class="fas fa-users"></i>
                 Followers
-                <span class="ml-2 px-2 py-1 bg-black/10 rounded-full text-xs">{{ $followersList->count() }}</span>
+                <span class="ml-2">{{ $followersList->count() }}</span>
             </button>
             <button class="tab-button {{ $activeTab === 'following' ? 'active' : '' }}" data-tab-target="#followingContent"
                 data-tab-name="following">
-                <i class="fas fa-user-friends mr-2"></i>
+                <i class="fas fa-user-friends"></i>
                 Following
-                <span class="ml-2 px-2 py-1 bg-black/10 rounded-full text-xs">{{ $followingList->count() }}</span>
+                <span class="ml-2">{{ $followingList->count() }}</span>
             </button>
         </div>
 

@@ -173,8 +173,10 @@
         }
 
         body {
-            --bg-c: rgba(43, 88, 120, 1);
-            --bg-primary: #1C2245;
+            /* --bg-c: rgba(43, 88, 120, 1);
+            --bg-primary: #1C2245; */
+            --bg-c: #1C3948;
+            --bg-primary: #030712;
             background: var(--bg-primary);
             background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-c) 100%) !important;
             color: var(--text-primary);

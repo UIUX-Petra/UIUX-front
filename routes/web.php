@@ -6,6 +6,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -27,7 +28,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['isLogin'])->group(function () {
-    Route::get('/', [MainController::class, 'popular'])->name('popular');
+    Route::get('/', [MainController::class, 'home'])->name('home');
     Route::get('/ask/{questionId?}', [MainController::class, 'askPage'])->name('askPage');
     Route::post('/questions/{id}/save-edit', [QuestionController::class, 'saveEditedQuestion'])->name('question.saveEdit');
     Route::get('/viewUser/{email}', [MainController::class, 'viewOther'])->name('viewOthers');
@@ -36,11 +37,9 @@ Route::middleware(['isLogin'])->group(function () {
     Route::post('/follow', [UserController::class, 'nembakFollow'])->name('nembakFollow');
     // Route::get('/', [MainController::class, 'home'])->name('home');
 
-    Route::get('/myProfile', [MainController::class, 'seeProfile'])->name('seeProfile');
-    // routes/web.php
-
     Route::get('/user/{id}/questions', [MainController::class, 'userQuestions'])->name('user.questions.list');
     Route::get('/user/{email}/connections', [MainController::class, 'userConnections'])->name('user.connections');
+    Route::get('/faq', [MainController::class, 'faq'])->name('faq');
     // Route untuk aksi follow/unfollow (via POST untuk AJAX)
     Route::post('/user/toggle-follow', [MainController::class, 'toggleFollow'])->name('user.toggleFollow');
     Route::get('/editProfile', [MainController::class, 'editProfile'])->name('editProfile');

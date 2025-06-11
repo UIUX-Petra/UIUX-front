@@ -16,11 +16,11 @@
                 @if ($activeSearchTerm)
                     <br>Search: "<span class="font-semibold">{{ $activeSearchTerm }}</span>".
                 @endif
-                <br>Try adjusting your filters or <a href="{{ route('popular') }}" class="text-[var(--accent-tertiary)] hover:underline filter-clear-link">clear all filters</a>.
+                <br>Try adjusting your filters or <a href="{{ route('home') }}" class="text-[var(--accent-tertiary)] hover:underline filter-clear-link">clear all filters</a>.
             </p>
         @else
             <p class="text-[var(--text-secondary)] mt-2">
-                It seems there are no popular questions at the moment.
+                It seems there are no questions at the moment.
                 Why not be the first to <a href="{{ route('askPage') }}" class="text-[var(--accent-tertiary)] hover:underline">ask a question</a>?
             </p>
         @endif
@@ -75,7 +75,7 @@
             {{-- Question Content --}}
             <div class="flex-1 pt-0 mr-4 z-10">
                 {{-- handle click by question box --}}
-                <h2 class="text-xl font-medium text-[var(--text-highlight)] question-title transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2">
+                <h2 class="text-xl font-medium text-[var(--text-highlight)] question-title transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2 pr-2">
                     {{ $question['title'] ?? 'Untitled Question' }}
                 </h2>
                 <p class="text-[var(--text-secondary)] text-md leading-relaxed mt-2">
@@ -92,7 +92,7 @@
                     @if(!empty($tags) && is_array($tags))
                         @foreach ($tags as $index => $tag)
                             @if(isset($tag['subject']['name']))
-                                <a href="{{ route('popular', ['filter_tag' => $tag['subject']['name'], 'sort_by' => $currentSortBy ?? 'latest', 'page' => 1]) }}" {{-- Ensure $currentSortBy is available or use a default --}}
+                                <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => $currentSortBy ?? 'latest', 'page' => 1]) }}" {{-- Ensure $currentSortBy is available or use a default --}}
                                    class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
                                     <span class="scale-100 transition-all duration-300 hover:font-normal font-light text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                         {{ $tag['subject']['name'] }}
