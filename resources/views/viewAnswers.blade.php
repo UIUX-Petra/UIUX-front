@@ -227,7 +227,7 @@
                     </p>
                     @if ($question['image'])
                         <div class="mt-4">
-                            <img src="{{ asset('storage/' . $question['image']) }}" alt="Question Image"
+                            <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $question['image'] }}" alt="Question Image"
                                 class="rounded-lg shadow-md max-w-lg max-h-96 object-contain">
                         </div>
                     @endif

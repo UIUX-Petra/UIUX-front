@@ -185,52 +185,61 @@ class QuestionController extends Controller
 
     public function addQuestion(Request $request)
     {
-        // Validate the incoming request
-        $validatedData = $request->validate([
-            'title' => 'required|string',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'question' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',
+            'image' => 'nullable|image|max:2048',
+            'selected_tags' => 'required|array|min:1',
+            'selected_tags.*' => 'string|uuid',
+            'recommended_tags' => 'sometimes|array',
+            'recommended_tags.*' => 'string|uuid',
         ]);
 
-        // Get question data
-        $title = $request->input('title');
-        $question = $request->input('question');
-        $image = $request->file('image');
+        $apiUrl = env('API_URL') . '/questions';
+        $apiRequest = Http::withToken(session('token'))->asMultipart();
 
-        $api_url = env('API_URL') . '/questions';
+        if ($request->hasFile('image')) {
+            $imageFile = $request->file('image');
+            $apiRequest->attach(
+                'image',
+                file_get_contents($imageFile->getRealPath()),
+                $imageFile->getClientOriginalName()
+            );
+        }
 
-        $data = [
-            'title' => $title,
-            'question' => $question,
-            'email' => session('email'),
-            'tag_id' => $request->subject_id
+        $payload = [
+            [
+                'name' => 'title',
+                'contents' => $validated['title'],
+            ],
+            [
+                'name' => 'question',
+                'contents' => $validated['question'],
+            ],
         ];
 
-        // If an image is uploaded, process it
-        if ($image) {
-            $timestamp = date('Y-m-d_H-i-s');
-            $extension = $image->getClientOriginalExtension();
-            $customFileName = "q_" . session('email') . "_" . $timestamp . "." . $extension;
+        foreach ($validated['selected_tags'] as $tag) {
+            $payload[] = [
+                'name' => 'selected_tags[]',
+                'contents' => $tag,
+            ];
+        }
 
-            $path = $image->storeAs("uploads/questions/", $customFileName, 'public');
-            $data['image'] = $path;
+        foreach ($request->input('recommended_tags', []) as $tag) {
+            $payload[] = [
+                'name' => 'recommended_tags[]',
+                'contents' => $tag,
+            ];
         }
 
         try {
-            $response = Http::withToken(session('token'))->post($api_url, $data);
-
-            if ($response->successful()) {
-                return response()->json(['success' => true, 'message' => 'Question submitted successfully!']);
-            } else {
-                $errorMessage = $response->json()['message'] ?? 'Failed to submit question.';
-                return response()->json(['success' => false, 'message' => $errorMessage]);
-            }
+            $response = $apiRequest->post($apiUrl, $payload);
+            return $response->json();
         } catch (\Exception $e) {
-            Log::error("Error submitting question: " . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Error during API request']);
+            Log::error("Web Controller API Call Failed: " . $e->getMessage() . ' in ' . $e->getFile() . ' line ' . $e->getLine());
+            return response()->json(['success' => false, 'message' => 'Internal error connecting to the API service.'], 500);
         }
     }
-
     public function saveEditedQuestion(Request $request, $questionId)
     {
         $validator = Validator::make($request->all(), [

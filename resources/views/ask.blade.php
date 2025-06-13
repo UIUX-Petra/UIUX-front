@@ -347,6 +347,7 @@
                 opacity: 0;
                 transform: scale(0.8) translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -405,9 +406,11 @@
     @endphp
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
-        <div class="w-full bg-transparent rounded-lg p-2 px-4 max-w-5xl justify-start mt-6 mb-6 flex items-start space-x-5 backdrop-blur-sm relative overflow-hidden">
+        <div
+            class="w-full bg-transparent rounded-lg p-2 px-4 max-w-5xl justify-start mt-6 mb-6 flex items-start space-x-5 backdrop-blur-sm relative overflow-hidden">
             <div class="flex flex-col z-10">
-                <h1 class="cal-sans-regular text-3xl lg:text-4xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight py-1">
+                <h1
+                    class="cal-sans-regular text-3xl lg:text-4xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight py-1">
                     {{ $pageH1Title }}
                 </h1>
                 <div class="h-1 w-24 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div>
@@ -448,25 +451,32 @@
 
             <!-- Title Section -->
             <div class="form-section p-6 mb-6 relative overflow-hidden">
-                <div class="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.08)] to-[rgba(128,237,153,0.08)]"></div>
+                <div
+                    class="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.08)] to-[rgba(128,237,153,0.08)]">
+                </div>
                 <div class="flex items-center mb-4 relative z-10">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
                         <i class="fa-solid fa-heading text-white text-sm"></i>
                     </div>
                     <h2 class="text-xl font-semibold text-[var(--text-primary)]">Question Title</h2>
                 </div>
                 <p class="text-[var(--text-secondary)] text-sm mb-4">A clear and specific title helps others understand your
                     question quickly</p>
-                <input type="text" id="title" name="title" class="placeholder-[var(--text-muted)] input-field p-3 text-black"
+                <input type="text" id="title" name="title"
+                    class="placeholder-[var(--text-muted)] input-field p-3 text-black"
                     placeholder="What's your question about?"
                     value="{{ old('title', $isEditMode ? $questionToEdit['title'] ?? '' : '') }}" required>
             </div>
 
             <!-- Details Section -->
             <div class="form-section p-6 mb-6 relative overflow-hidden">
-                <div class="absolute -bottom-5 -left-5 w-20 h-20 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.08)] to-[rgba(128,237,153,0.08)]"></div>
+                <div
+                    class="absolute -bottom-5 -left-5 w-20 h-20 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.08)] to-[rgba(128,237,153,0.08)]">
+                </div>
                 <div class="flex items-center mb-4 relative z-10">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
                         <i class="fa-solid fa-align-left text-white text-sm"></i>
                     </div>
                     <h2 class="text-xl font-semibold text-[var(--text-primary)]">Question Details</h2>
@@ -480,11 +490,10 @@
                         <div id="image-preview" class="flex flex-wrap gap-4 mt-4 p-2">
                             @if ($isEditMode && !empty($questionToEdit['image']))
                                 <div class="image-preview-item existing-image max-w-[150px]">
-                                    <img src="{{ asset('storage/' . $questionToEdit['image']) }}"
+                                    <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $questionToEdit['image'] }}"
                                         alt="Current question image">
                                     <button type="button" class="delete-btn delete-existing-image-btn"
                                         data-image-filename="{{ $questionToEdit['image'] }}">Delete</button>
-                                    {{-- <input type="hidden" name="existing_image_filename" value="{{ $questionToEdit['image'] }}"> --}}
                                 </div>
                             @endif
                         </div>
@@ -493,10 +502,10 @@
 
                 <div class="toolbar w-full flex flex-col items-end gap-4 p-3 pb-6 bg-transparent border-none">
                     <button type="button" id="upload-image-btn"
-                        class="image-upload-button w-max text-[var(--text-dark)] bg-[var(--accent-tertiary)] flex items-center gap-2 py-2 px-4 relative group"
-                        >
+                        class="image-upload-button w-max text-[var(--text-dark)] bg-[var(--accent-tertiary)] flex items-center gap-2 py-2 px-4 relative group">
                         <i class="fa-solid fa-image"></i>
-                        <span class="absolute bottom-full mb-2 border border-[var(--border-color)] left-1/2 transform -translate-x-1/2 bg-[var(--bg-secondary)] text-[--text-muted] text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+                        <span
+                            class="absolute bottom-full mb-2 border border-[var(--border-color)] left-1/2 transform -translate-x-1/2 bg-[var(--bg-secondary)] text-[--text-muted] text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
                             Add Image
                         </span>
                     </button>
@@ -505,15 +514,25 @@
 
             <!-- Tags Section -->
             <div class="form-section p-6 mb-6 relative overflow-hidden">
-                <div class="absolute -top-5 -right-5 w-16 h-16 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.05)] to-[rgba(128,237,153,0.05)]"></div>
+                <div
+                    class="absolute -top-5 -right-5 w-16 h-16 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.05)] to-[rgba(128,237,153,0.05)]">
+                </div>
                 <div class="flex items-center mb-4 relative z-10">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center mr-3">
                         <i class="fa-solid fa-tags text-white text-sm"></i>
                     </div>
                     <h2 class="text-xl font-semibold text-[var(--text-primary)]">Subjects</h2>
                 </div>
-                <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant subjects to help others find your question
-                </p>
+                <div class="w-full flex justify-between">
+                    <p class="text-[var(--text-secondary)] text-sm mb-4">Select relevant subjects to help others find your
+                        question
+                    </p>
+                    <button type="button" id="ai-recommend-btn"
+                        class="text-[var(--text-secondary)] text-sm mb-4 border border-[var(--border-color)] px-3 py-1 rounded-md hover:bg-[var(--bg-secondary)] transition-colors">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>AI Recommendation
+                    </button>
+                </div>
                 <!-- Selected Tags Display -->
                 <div class="mb-4">
                     <div id="selected-tags-display"
@@ -521,19 +540,18 @@
                         <div id="selected-tags-container" class="flex flex-wrap gap-2 flex-1">
                             <!-- Selected tags will appear here -->
                         </div>
-                        <!-- Add Tags Button (Plus Icon) inside the input box -->
                         <button type="button" id="open-tags-modal"
                             class="inline-flex items-center justify-center w-8 h-8 bg-[var(--accent-tertiary)] text-[var(--text-dark)] rounded-full hover:opacity-90 transition-opacity shrink-0">
                             <i class="fa-solid fa-plus text-sm"></i>
                         </button>
                     </div>
 
-                    <!-- Count Badge and Clear All outside the input box -->
                     <div class="flex items-center justify-between mt-2 mr-1 ml-0.5">
                         <span id="selected-count-badge"
                             class="text-xs bg-[var(--bg-shadow)] text-[var(--text-tag)] px-2 py-1 rounded-full min-w-[20px] text-center">0</span>
-                        <button type="button" id="clear-all-tags"
-                            h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider mx-2 mb-3 hover:underline underline-offset-2">CLEAR ALL</h3>
+                        <button type="button" id="clear-all-tags" h3
+                            class="text-[var(--text-muted)] text-xs uppercase tracking-wider mx-2 mb-3 hover:underline underline-offset-2">CLEAR
+                            ALL</h3>
                         </button>
                     </div>
                 </div>
@@ -556,13 +574,15 @@
 
 
             <!-- Tags Modal -->
-            <div id="tags-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+            <div id="tags-modal"
+                class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
                 <div class="bg-[var(--bg-card)] rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
                     <!-- Modal Header -->
                     <div class="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
                         <div>
                             <h3 class="text-xl font-semibold text-[var(--text-primary)]">Select Subjects</h3>
-                            <p class="text-sm text-[var(--text-secondary)] mt-1">Choose subjects that best describe your question</p>
+                            <p class="text-sm text-[var(--text-secondary)] mt-1">Choose subjects that best describe your
+                                question</p>
                         </div>
                         <button type="button" id="close-tags-modal"
                             class="p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors">
@@ -627,7 +647,9 @@
 
             <div class="text-center mt-8">
                 <div class="inline-block relative">
-                    <div class="absolute -inset-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-lg blur-sm opacity-30"></div>
+                    <div
+                        class="absolute -inset-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-lg blur-sm opacity-30">
+                    </div>
                     <button type="submit" id="submit-btn"
                         class="submit-button relative inline-flex items-center justify-center gap-2 py-4 px-10 text-lg font-semibold">
                         <i class="fa-solid {{ $isEditMode ? 'fa-save' : 'fa-paper-plane' }}"></i> {{ $submitButtonText }}
@@ -639,27 +661,33 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        const IS_EDIT_MODE = {{ isset($questionToEdit) && $questionToEdit !== null ? 'true' : 'false' }};
         const QUESTION_TO_EDIT = @json($questionToEdit ?? null);
-        const EXISTING_TAG_IDS = @json($existingTagIds ?? []);
-        const ALL_TAGS_FROM_PHP = @json($allTags ?? []);
-        const CSRF_TOKEN = "{{ csrf_token() }}";
-
-        const FORM_ACTION_URL = IS_EDIT_MODE ?
-            "{{ route('question.saveEdit', ['id' => $questionToEdit['id'] ?? 'ERROR_NO_ID_FOR_ROUTE']) }}" :
-            "{{ route('addQuestion') }}";
-
-        let selectedTagIds = [];
-        let imageFile = null;
-
         document.addEventListener('DOMContentLoaded', function() {
+            const AI_SERVICE_URL = "{{ env('AI_SERVICE_URL', 'http://127.0.0.1:5000/ai') }}";
+            const IS_EDIT_MODE = {{ $isEditMode ? 'true' : 'false' }};
+            const FORM_ACTION_URL = "{{ $formActionUrl }}";
+            const CSRF_TOKEN = "{{ csrf_token() }}";
+            const ALL_TAGS_FROM_PHP = @json($allTags ?? []);
+            const EXISTING_TAG_IDS_ON_LOAD = @json($selectedTagIdsOnLoad ?? []);
+
+            let aiRecommendedTagIds = [];
+
             let selectedTagIds = [];
-            let tempSelectedTagIds = []; // For modal state
+            let tempSelectedTagIds = [];
+            let imageFile = null;
             let allTags = ALL_TAGS_FROM_PHP || [];
             let filteredTags = [...allTags];
 
-            // DOM elements
+            const form = document.getElementById('post-form');
+            const titleInput = document.getElementById('title');
+            const questionTextarea = document.getElementById('question');
+            const imagePreviewContainer = document.getElementById("image-preview");
+            const hiddenSelect = document.getElementById('tags-multiselect');
+            const aiRecommendBtn = document.getElementById('ai-recommend-btn');
+            const submitBtn = document.getElementById('submit-btn');
+
             const openModalBtn = document.getElementById('open-tags-modal');
             const closeModalBtn = document.getElementById('close-tags-modal');
             const cancelModalBtn = document.getElementById('cancel-tags-modal');
@@ -674,12 +702,74 @@
             const showingCount = document.getElementById('showing-count');
             const noTagsFound = document.getElementById('no-tags-found');
             const clearAllBtn = document.getElementById('clear-all-tags');
-            const hiddenSelect = document.getElementById('tags-multiselect');
 
-            // Initialize from edit mode if applicable
-            if (IS_EDIT_MODE && EXISTING_TAG_IDS.length > 0) {
-                // We directly use the simple array of IDs from the controller
-                selectedTagIds = [...EXISTING_TAG_IDS];
+            aiRecommendBtn.addEventListener('click', async function() {
+                const originalBtnContent = this.innerHTML;
+                this.innerHTML =
+                    `<i class="fa-solid fa-spinner fa-spin mr-2"></i>Getting Suggestions...`;
+                this.disabled = true;
+                const aiFormData = new FormData();
+                aiFormData.append('title', titleInput.value);
+                aiFormData.append('question', questionTextarea.value);
+                if (imageFile) {
+                    aiFormData.append('image', imageFile);
+                }
+                try {
+                    const response = await axios.post(`${AI_SERVICE_URL}/recommend_tags`,
+                        aiFormData);
+                    if (response.data && response.data.success) {
+                        selectedTagIds = [];
+                        const recommendedTags = response.data.recommended_tags;
+                        aiRecommendedTagIds = recommendedTags.map(tag => tag.id);
+                        recommendedTags.forEach(tag => {
+                            if (!selectedTagIds.includes(tag.id)) {
+                                selectedTagIds.push(tag.id);
+                            }
+                        });
+                        updateMainUI();
+
+                        Toastify({
+                            text: "AI recommendations added!",
+                            duration: 3000,
+                            style: {
+                                background: "#57CC99"
+                            }
+                        }).showToast();
+                    } else {
+                        throw new Error(response.data.message || 'Failed to get recommendations.');
+                    }
+                } catch (error) {
+                    console.error("AI Recommendation Error:", error);
+                    const errorMessage = error.response?.data?.message ||
+                        "Could not connect to the AI service.";
+                    Toastify({
+                        text: errorMessage,
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
+                } finally {
+                    this.innerHTML = originalBtnContent;
+                    this.disabled = false;
+                }
+            });
+
+            function addTagsToUI(tagsToAdd) {
+                tagsToAdd.forEach(tag => {
+                    const option = document.querySelector(`#tags-multiselect option[value="${tag.id}"]`);
+                    if (option && !option.selected) {
+                        option.selected = true;
+                        document.getElementById('tags-multiselect').dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            function init() {
+                if (IS_EDIT_MODE && EXISTING_TAG_IDS_ON_LOAD.length > 0) {
+                    selectedTagIds = [...EXISTING_TAG_IDS_ON_LOAD];
+                }
+                updateMainUI();
             }
 
             function openModal() {
@@ -715,41 +805,27 @@
 
             function renderTagsGrid() {
                 tagsGrid.innerHTML = '';
-
-                if (filteredTags.length === 0) {
-                    noTagsFound.classList.remove('hidden');
-                    showingCount.textContent = '0';
-                    return;
-                }
-
-                noTagsFound.classList.add('hidden');
+                filteredTags.length === 0 ? noTagsFound.classList.remove('hidden') : noTagsFound.classList.add(
+                    'hidden');
                 showingCount.textContent = filteredTags.length;
 
                 filteredTags.forEach(tag => {
+                    console.log(tag);
+                    
                     const isSelected = tempSelectedTagIds.includes(tag.id.toString());
-
                     const tagItem = document.createElement('div');
                     tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
-                    tagItem.innerHTML = `
-                        <div class="tag-checkbox-modal ${isSelected ? 'checked' : ''}"></div>
-                        <div class="tag-info">
-                            <div class="tag-name">${tag.name}</div>
-                            <div class="tag-count">${tag.questions || 0} questions</div>
-                        </div>
-                    `;
-
+                    tagItem.innerHTML =
+                        `<div class="tag-checkbox-modal ${isSelected ? 'checked' : ''}"></div><div class="tag-info"><div class="tag-name">${tag.name}</div><div class="tag-count">${tag.questions || 0} questions</div></div>`;
                     tagItem.addEventListener('click', () => toggleTempTag(tag.id.toString()));
                     tagsGrid.appendChild(tagItem);
                 });
             }
 
             function toggleTempTag(tagId) {
-                if (tempSelectedTagIds.includes(tagId)) {
-                    tempSelectedTagIds = tempSelectedTagIds.filter(id => id !== tagId);
-                } else {
-                    tempSelectedTagIds.push(tagId);
-                }
-
+                const index = tempSelectedTagIds.indexOf(tagId);
+                if (index > -1) tempSelectedTagIds.splice(index, 1);
+                else tempSelectedTagIds.push(tagId);
                 renderTagsGrid();
                 updateModalCounts();
             }
@@ -766,78 +842,48 @@
                     if (tag) {
                         const badge = document.createElement('span');
                         badge.className = 'selected-tag-badge-new';
-                        badge.innerHTML = `
-                            <span>${tag.name}</span>
-                            <button type="button" class="remove-tag" onclick="removeTag('${tagId}')">
-                                ×
-                            </button>
-                        `;
+                        badge.innerHTML =
+                            `<span>${tag.name}</span><button type="button" class="remove-tag" onclick="removeTag('${tagId}')">×</button>`;
                         selectedTagsContainer.appendChild(badge);
                     }
                 });
-
                 selectedCountBadge.textContent = selectedTagIds.length;
-
-                Array.from(hiddenSelect.options).forEach(option => {
-                    option.selected = selectedTagIds.includes(option.value);
-                });
-
-                // openModalBtn.innerHTML = selectedTagIds.length > 0 
-                //     ? '<i class="fa-solid fa-edit"></i><span>Edit Tags</span>'
-                //     : '<i class="fa-solid fa-plus"></i><span>Add Tags</span>';
+                Array.from(hiddenSelect.options).forEach(opt => opt.selected = selectedTagIds.includes(opt.value));
             }
 
             function filterTags(searchTerm) {
                 const term = searchTerm.toLowerCase().trim();
-                if (term === '') {
-                    filteredTags = [...allTags];
-                } else {
-                    filteredTags = allTags.filter(tag =>
-                        tag.name.toLowerCase().includes(term)
-                    );
-                }
+                filteredTags = term === '' ? [...allTags] : allTags.filter(tag => tag.name.toLowerCase().includes(
+                    term));
                 renderTagsGrid();
             }
 
-            // Global function for removing tags (called from badge buttons)
-            window.removeTag = function(tagId) {
-                selectedTagIds = selectedTagIds.filter(id => id !== tagId);
-                updateMainUI();
-            };
-
-            // Event listeners
             openModalBtn.addEventListener('click', openModal);
             closeModalBtn.addEventListener('click', closeModal);
             cancelModalBtn.addEventListener('click', cancelSelection);
             confirmModalBtn.addEventListener('click', confirmSelection);
-
             searchInput.addEventListener('input', (e) => {
                 filterTags(e.target.value);
             });
-
             clearAllBtn.addEventListener('click', () => {
                 selectedTagIds = [];
                 updateMainUI();
             });
-
-            // Close modal when clicking outside
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     cancelSelection();
                 }
             });
-
-            // ESC key to close modal
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
                     cancelSelection();
                 }
             });
+            window.removeTag = function(tagId) {
+                selectedTagIds = selectedTagIds.filter(id => id !== tagId);
+                updateMainUI();
+            };
 
-            // Initialize UI
-            updateMainUI();
-
-            // Image upload functionality (unchanged)
             document.getElementById("upload-image-btn").addEventListener("click", function() {
                 let fileInput = document.createElement("input");
                 fileInput.type = "file";
@@ -889,7 +935,6 @@
                 fileInput.click();
             });
 
-            // Delete existing image functionality (unchanged)
             const deleteExistingImageBtn = document.querySelector('.delete-existing-image-btn');
             if (deleteExistingImageBtn) {
                 deleteExistingImageBtn.addEventListener('click', function() {
@@ -898,7 +943,6 @@
                         existingImageDiv.remove();
                     }
                     if (!document.getElementById('remove_existing_image_input')) {
-                        const form = document.getElementById('post-form');
                         const hiddenInput = document.createElement('input');
                         hiddenInput.type = 'hidden';
                         hiddenInput.name = 'remove_existing_image';
@@ -912,37 +956,14 @@
                 });
             }
 
-            // Form submission (updated to work with multiselect)
-            const form = document.getElementById('post-form');
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
-                const title = document.getElementById("title").value.trim();
-                const questionText = document.getElementById("question").value.trim();
-
-                if (title === '') {
+                const title = titleInput.value.trim();
+                const questionText = questionTextarea.value.trim();
+                if (title === '' || questionText === '' || selectedTagIds.length === 0) {
                     Toastify({
-                        text: "Title must be filled out!",
-                        duration: 3000,
-                        style: {
-                            background: "#e74c3c"
-                        }
-                    }).showToast();
-                    return;
-                }
-                if (questionText === '') {
-                    Toastify({
-                        text: "Question details must be filled out!",
-                        duration: 3000,
-                        style: {
-                            background: "#e74c3c"
-                        }
-                    }).showToast();
-                    return;
-                }
-                if (selectedTagIds.length === 0) {
-                    Toastify({
-                        text: "Please select at least one tag!",
+                        text: "Please fill in title, question, and select at least one tag.",
                         duration: 3000,
                         style: {
                             background: "#e74c3c"
@@ -970,87 +991,60 @@
                         let formData = new FormData();
                         formData.append("title", title);
                         formData.append("question", questionText);
-
-                        selectedTagIds.forEach(tagId => {
-                            formData.append("subject_id[]", tagId);
-                        });
-
                         if (imageFile) {
                             formData.append("image", imageFile);
-                        } else if (IS_EDIT_MODE && document.getElementById(
+                        }
+                        if (IS_EDIT_MODE && document.getElementById(
                                 'remove_existing_image_input')) {
                             formData.append("remove_existing_image", "1");
                         }
-
-                        const headers = {
-                            "X-CSRF-TOKEN": CSRF_TOKEN,
-                            "Accept": "application/json",
-                        };
+                        if (!IS_EDIT_MODE) {
+                            selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
+                            aiRecommendedTagIds.forEach(id => formData.append("recommended_tags[]",
+                                id));
+                        } else {
+                            selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
+                        }
 
                         fetch(FORM_ACTION_URL, {
                                 method: "POST",
-                                headers: headers,
+                                headers: {
+                                    "X-CSRF-TOKEN": CSRF_TOKEN,
+                                    "Accept": "application/json"
+                                },
                                 body: formData
                             })
-                            .then(response => {
-                                if (!response.ok) {
-                                    return response.json().then(errData => {
-                                        throw {
-                                            status: response.status,
-                                            data: errData
-                                        };
-                                    });
-                                }
-                                return response.json();
-                            })
-                            .then(res => {
+                            .then(response => response.json().then(data => ({
+                                ok: response.ok,
+                                data
+                            })))
+                            .then(({
+                                ok,
+                                data
+                            }) => {
                                 Swal.close();
-                                if (res.success || (res.data && res.data.id)) {
+                                if (ok && data.success) {
                                     Toastify({
-                                        text: res.message ||
-                                            `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`,
-                                        duration: 3000,
+                                        text: data.message,
+                                        duration: 2000,
                                         style: {
-                                            background: "linear-gradient(to right, #00b09b, #96c93d)"
-                                        }
-                                    }).showToast()
-
-                                    setTimeout(() => {
-                                        if (res.data && res.data.id) {
-                                            window.location.href =
-                                                "{{ route('user.questions.list', ['id' => 'id']) }}"
-                                                .replace('id', QUESTION_TO_EDIT.user
-                                                    .id);
-                                        } else {
-                                            window.location.href = "{{ route('home') }}";
-                                        }
-                                    }, 3000);
-                                } else {
-                                    Toastify({
-                                        text: res.message ||
-                                            "An unexpected error occurred from the server.",
-                                        duration: 3000,
-                                        style: {
-                                            background: "#e74c3c"
+                                            background: "#57CC99"
                                         }
                                     }).showToast();
-
+                                    setTimeout(() => {
+                                        window.location.href = "{{ route('home') }}";
+                                    }, 2000);
+                                } else {
+                                    throw new Error(data.message ||
+                                        'An unknown server error occurred.');
                                 }
                             })
-                            .catch(err => {
-                                console.error('Fetch Error:', err);
+                            .catch(error => {
+                                console.error('Submission Error:', error);
                                 Swal.close();
-                                let errorMessage =
-                                    'There was an error processing your request.';
-                                if (err.data && err.data.message) {
-                                    errorMessage = err.data.message;
-                                } else if (err.message) {
-                                    errorMessage = err.message;
-                                }
                                 Toastify({
-                                    text: res.message ||
-                                        "Submission Error",
-                                    duration: 3000,
+                                    text: error.message,
+                                    duration: 4000,
                                     style: {
                                         background: "#e74c3c"
                                     }
@@ -1059,6 +1053,7 @@
                     }
                 });
             });
+            init();
         });
     </script>
 @endsection
