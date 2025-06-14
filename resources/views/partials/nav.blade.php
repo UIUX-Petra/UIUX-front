@@ -341,7 +341,7 @@
 
     .history-delete-btn:hover {
         background-color: var(--bg-tertiary);
-        color: #ef4444;
+        color: var(--accent-neg);
         transform: scale(1.7);
     }
 
@@ -436,6 +436,10 @@
         border: 1px solid #eee;
         border-radius: 4px;
         min-height: 50px;
+    }
+    .active-nav .add-question-icon-btn {
+        pointer-events: auto;
+        cursor: pointer;
     }
 </style>
 
@@ -846,7 +850,7 @@
                     </a>
                     
                     <a href="{{ route('askPage') }}"
-                       class="group relative px-2 mr-1 rounded-full z-20 transition-all duration-200 hover:scale-110  hover:bg-[var(--bg-shadow)] {{ request()->routeIs('user.questions.list', ['id' => $id]) ? '' : 'text-[var(--text-primary)]' }} hover:text-[var(--text-highlight)]">
+                    class="group relative px-2 mr-1 rounded-full z-20 transition-all duration-200 hover:scale-110 hover:bg-[var(--bg-shadow)] {{ request()->routeIs('user.questions.list', ['id' => $id]) ? '' : 'text-[var(--text-primary)]' }} hover:text-[var(--text-highlight)] add-question-icon-btn">
                         <i class="fa-solid fa-plus text-xs"></i>
                         <span class="absolute left-full ml-3 top-1/2 -translate-y-1/2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap px-3 py-1.5 text-sm bg-[var(--bg-card)] text-[var(--text-primary)] rounded-md shadow-lg border border-[var(--border-color)]">
                             Ask a Question

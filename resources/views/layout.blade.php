@@ -341,12 +341,22 @@
             --button-text: #000000;
         }
 
-        /* Apply theme variables to elements */
-        body {
-            background: var(--bg-primary);
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-c) 100%);
+            z-index: -1;
+            transition: background var(--transition-speed);
+        }
+
+        body {
             color: var(--text-primary);
-            transition: background var(--transition-speed), color var(--transition-speed);
+            background-color: transparent;
+            transition: color var(--transition-speed);
         }
 
         a,

@@ -396,13 +396,17 @@
     @include('partials.nav')
 
     @php
-        $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
-        $formActionUrl = $isEditMode
-            ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
-            : route('addQuestion');
-        $formMethod = 'POST';
-        $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
-        $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
+    $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
+
+    $formActionUrl = $isEditMode
+        // call api dipindah dari sini ke updateQuestion, buat avoid error 'Unauthenticated'. ndapapa?
+        // ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
+        ? route('updateQuestion', ['id' => $questionToEdit['id']])
+        : route('addQuestion');
+
+    $formMethod = 'POST';
+    $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
+    $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
     @endphp
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
@@ -718,14 +722,10 @@
                     const response = await axios.post(`${AI_SERVICE_URL}/recommend_tags`,
                         aiFormData);
                     if (response.data && response.data.success) {
-                        selectedTagIds = [];
                         const recommendedTags = response.data.recommended_tags;
-                        aiRecommendedTagIds = recommendedTags.map(tag => tag.id);
-                        recommendedTags.forEach(tag => {
-                            if (!selectedTagIds.includes(tag.id)) {
-                                selectedTagIds.push(tag.id);
-                            }
-                        });
+                        const recommendedIds = recommendedTags.map(tag => tag.id);
+                        aiRecommendedTagIds = recommendedIds;
+                        selectedTagIds = recommendedIds;
                         updateMainUI();
 
                         Toastify({
@@ -810,8 +810,6 @@
                 showingCount.textContent = filteredTags.length;
 
                 filteredTags.forEach(tag => {
-                    console.log(tag);
-                    
                     const isSelected = tempSelectedTagIds.includes(tag.id.toString());
                     const tagItem = document.createElement('div');
                     tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
@@ -1000,8 +998,7 @@
                         }
                         if (!IS_EDIT_MODE) {
                             selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
-                            aiRecommendedTagIds.forEach(id => formData.append("recommended_tags[]",
-                                id));
+                            aiRecommendedTagIds.forEach(id => formData.append("recommended_tags[]", id));
                         } else {
                             selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
                         }

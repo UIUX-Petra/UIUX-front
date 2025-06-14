@@ -312,30 +312,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- The Community Card --}}
-            <div class="ask-question-card rounded-lg p-6 shadow-md bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
-                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
-                
-                <div class="flex flex-col items-center text-center relative z-10">
-                    <div class="mb-5 bg-[var(--bg-accent-subtle)] p-3 rounded-full">
-                        <i class="fa-solid fa-user-plus text-3xl text-[var(--accent-tertiary)]"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-[var(--text-primary)] mb-3">
-                        The Community
-                    </h2>
-                    <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
-                        Connect with brilliant minds, share knowledge, and grow together in PCU's Informatics community.
-                    </p>
-                    <div class="w-full space-y-3">
-                        <div class="text-center p-3 bg-[var(--bg-secondary)] rounded-lg">
-                            <div class="font-bold text-lg text-[var(--text-primary)]">{{ count($order_by_reputation ?? []) + count($order_by_newest ?? []) + count($order_by_vote ?? []) }}</div>
-                            <div class="text-sm text-[var(--text-muted)]">Active Members</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

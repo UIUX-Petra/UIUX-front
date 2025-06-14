@@ -52,7 +52,7 @@
 <div class="absolute inset-0 z-[-1]">
   <div id="bg-wrap" class="absolute inset-0">
       <div class="imgPartial3 opacity-100 object-cover">
-          <img src="{{ asset('background\texture_1.jpg') }}" alt="">
+          {{-- <img src="{{ asset('background\texture_1.jpg') }}" alt=""> --}}
       </div>
   </div>
 </div>
