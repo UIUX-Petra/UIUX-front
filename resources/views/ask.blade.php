@@ -396,13 +396,17 @@
     @include('partials.nav')
 
     @php
-        $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
-        $formActionUrl = $isEditMode
-            ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
-            : route('addQuestion');
-        $formMethod = 'POST';
-        $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
-        $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
+    $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
+
+    $formActionUrl = $isEditMode
+        // call api dipindah dari sini ke updateQuestion, buat avoid error 'Unauthenticated'. ndapapa?
+        // ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
+        ? route('updateQuestion', ['id' => $questionToEdit['id']])
+        : route('addQuestion');
+
+    $formMethod = 'POST';
+    $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
+    $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
     @endphp
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
