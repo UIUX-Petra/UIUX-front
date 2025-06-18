@@ -301,6 +301,7 @@ class MainController extends Controller
     $data['order_by_reputation'] = $usersByReputation;
     $data['order_by_vote'] = $usersByVote;
     $data['order_by_newest'] = $usersByNewest;
+    // dd($data);
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['username'] = $currUser['username'];
     $data['id'] = $currUser['id'];

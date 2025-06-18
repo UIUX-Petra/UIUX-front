@@ -182,8 +182,7 @@ class QuestionController extends Controller
         return $questionData;
     }
 
-
-    public function addQuestion(Request $request)
+public function addQuestion(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -215,6 +214,11 @@ class QuestionController extends Controller
             [
                 'name' => 'question',
                 'contents' => $validated['question'],
+            ],
+            // Tambahkan email dari session sebagai payload
+            [
+                'name' => 'email', // Nama field di API yang menerima email
+                'contents' => session('email'),
             ],
         ];
 

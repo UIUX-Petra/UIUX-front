@@ -429,6 +429,7 @@
 <body>
     @include('partials.loader')
     <div class="lg:ml-[20rem] md:ml-64 pt-16 p-4">
+        @include('partials.announcement')
         @yield('content')
         {{-- Insert <script> CDN below --}}
 
