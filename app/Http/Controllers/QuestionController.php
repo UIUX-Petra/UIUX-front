@@ -185,52 +185,61 @@ class QuestionController extends Controller
 
     public function addQuestion(Request $request)
     {
-        // Validate the incoming request
-        $validatedData = $request->validate([
-            'title' => 'required|string',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'question' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',
+            'image' => 'nullable|image|max:2048',
+            'selected_tags' => 'required|array|min:1',
+            'selected_tags.*' => 'string|uuid',
+            'recommended_tags' => 'sometimes|array',
+            'recommended_tags.*' => 'string|uuid',
         ]);
 
-        // Get question data
-        $title = $request->input('title');
-        $question = $request->input('question');
-        $image = $request->file('image');
+        $apiUrl = env('API_URL') . '/questions';
+        $apiRequest = Http::withToken(session('token'))->asMultipart();
 
-        $api_url = env('API_URL') . '/questions';
+        if ($request->hasFile('image')) {
+            $imageFile = $request->file('image');
+            $apiRequest->attach(
+                'image',
+                file_get_contents($imageFile->getRealPath()),
+                $imageFile->getClientOriginalName()
+            );
+        }
 
-        $data = [
-            'title' => $title,
-            'question' => $question,
-            'email' => session('email'),
-            'tag_id' => $request->subject_id
+        $payload = [
+            [
+                'name' => 'title',
+                'contents' => $validated['title'],
+            ],
+            [
+                'name' => 'question',
+                'contents' => $validated['question'],
+            ],
         ];
 
-        // If an image is uploaded, process it
-        if ($image) {
-            $timestamp = date('Y-m-d_H-i-s');
-            $extension = $image->getClientOriginalExtension();
-            $customFileName = "q_" . session('email') . "_" . $timestamp . "." . $extension;
+        foreach ($validated['selected_tags'] as $tag) {
+            $payload[] = [
+                'name' => 'selected_tags[]',
+                'contents' => $tag,
+            ];
+        }
 
-            $path = $image->storeAs("uploads/questions/", $customFileName, 'public');
-            $data['image'] = $path;
+        foreach ($request->input('recommended_tags', []) as $tag) {
+            $payload[] = [
+                'name' => 'recommended_tags[]',
+                'contents' => $tag,
+            ];
         }
 
         try {
-            $response = Http::withToken(session('token'))->post($api_url, $data);
-
-            if ($response->successful()) {
-                return response()->json(['success' => true, 'message' => 'Question submitted successfully!']);
-            } else {
-                $errorMessage = $response->json()['message'] ?? 'Failed to submit question.';
-                return response()->json(['success' => false, 'message' => $errorMessage]);
-            }
+            $response = $apiRequest->post($apiUrl, $payload);
+            return $response->json();
         } catch (\Exception $e) {
-            Log::error("Error submitting question: " . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Error during API request']);
+            Log::error("Web Controller API Call Failed: " . $e->getMessage() . ' in ' . $e->getFile() . ' line ' . $e->getLine());
+            return response()->json(['success' => false, 'message' => 'Internal error connecting to the API service.'], 500);
         }
     }
-
     public function saveEditedQuestion(Request $request, $questionId)
     {
         $validator = Validator::make($request->all(), [
@@ -354,87 +363,89 @@ class QuestionController extends Controller
     {
         // 1. Ambil data pertanyaan dari API
         $api_url = env('API_URL') . '/questions/' . $id . '/view';
-        $response = Http::withToken(session('token'))->post($api_url, ['email' => session('email')]); // Kirim email untuk otorisasi
-        $questionData = $response->json();
+        $response = Http::withToken(session('token'))
+                                ->post($api_url, ['email' => session('email')]);  // Kirim email untuk otorisasi
 
-        if ($response->failed() || !isset($questionData['success']) || !$questionData['success']) {
-            $errorMessage = $questionData['message'] ?? 'Failed to load question for editing.';
-            Log::error("Failed to load question for edit: " . $errorMessage . " for ID: " . $id);
-            return redirect()->back()->with('Error', $errorMessage);
+        if ($response->failed() || !$response->json()['success']) {
+            return redirect()->route('home')->with('Error', 'Could not load question for editing.');
         }
-
-        $question = (object) $questionData['data']; // Ubah array menjadi object agar bisa diakses seperti $question->title
+        $questionData = $response->json()['data'];
 
         // Pastikan hanya pemilik pertanyaan yang bisa mengakses halaman edit
         // Cek `is_owner` yang dikirim dari API
-        if (!($question->is_owner ?? false)) {
-            return redirect()->back()->with('Error', 'You are not authorized to edit this question.');
+        if (!($questionData['is_owner'] ?? false)) {
+            return redirect()->route('home')->with('Error', 'You are not authorized to edit this question.');
         }
 
         // 2. Ambil semua tags (subjects) untuk ditampilkan di form
         $tags_api_url = env('API_URL') . '/subjects'; // Asumsi ada endpoint untuk mengambil semua tags
         $tags_response = Http::withToken(session('token'))->get($tags_api_url);
-        $tagsData = $tags_response->json();
 
-        if ($tags_response->failed() || !isset($tagsData['success']) || !$tagsData['success']) {
-            $errorMessage = $tagsData['message'] ?? 'Failed to load tags.';
-            Log::error("Failed to load tags for edit page: " . $errorMessage);
-            return redirect()->back()->with('Error', $errorMessage);
+        if ($tags_response->failed() || !$tags_response->json()['success']) {
+            return redirect()->route('home')->with('Error', 'Could not load the list of subjects.');
+        }
+        $allTags = $tags_response->json()['data'];
+
+        // 3. prepare array selectedTagIdsOnLoad (ini yang sebelumnya ngga ada)
+        $selectedTagIdsOnLoad = [];
+        if (!empty($questionData['group_question'])) {
+            $selectedTagIdsOnLoad = array_map(function($group) {
+                return $group['subject']['id'];
+            }, $questionData['group_question']);
         }
 
-        $data = $tagsData['data']; // Ini adalah array tags yang akan diteruskan ke view
-
-        return view('editQuestion', compact('question', 'data'));
+        return view('ask', [
+            'questionToEdit' => $questionData,      
+            'allTags' => $allTags,                  
+            'selectedTagIdsOnLoad' => $selectedTagIdsOnLoad 
+        ]);
     }
 
     public function updateQuestion(Request $request, $id)
     {
-        // Validasi input dari form edit
-        $validatedData = $request->validate([
-            'title' => 'required|string',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'question' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5042',
-            'subject_id' => 'required|array',
-            'subject_id.*' => 'integer',
-            'email' => 'required|email',
-            'deleted_image' => 'nullable|boolean',
+            'image' => 'nullable|image|max:2048', // 2048 supaya sama w/ addQuestion
+            'remove_existing_image' => 'nullable|in:1',
+            'selected_tags' => 'required|array|min:1',
+            'selected_tags.*' => 'string|uuid', 
         ]);
 
-        $api_url = env('API_URL') . '/questions/' . $id;
-
-        $data = [
-            'title' => $request->input('title'),
-            'question' => $request->input('question'),
-            'subject_id' => $request->input('subject_id'),
-            'email' => $request->input('email'),
-        ];
-
-        $requestBuilder = Http::withToken(session('token'));
+        $apiRequest = Http::withToken(session('token'))->asMultipart();
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $timestamp = date('Y-m-d_H-i-s');
-            $emailCleaned = str_replace(['@', '.'], '_', session('email'));
-            $customFileName = "q_" . $emailCleaned . "_" . $timestamp . "." . $image->getClientOriginalExtension();
-
-            // Attach new image
-            $requestBuilder->attach('image', file_get_contents($image->getRealPath()), $customFileName);
-        } elseif ($request->input('deleted_image')) {
-            $data['image'] = '';
+            $imageFile = $request->file('image');
+            $apiRequest->attach(
+                'image',
+                file_get_contents($imageFile->getRealPath()),
+                $imageFile->getClientOriginalName()
+            );
         }
 
-        try {
-            $response = $requestBuilder->put($api_url, $data);
+        $payload = [
+            ['name' => 'title', 'contents' => $validated['title']],
+            ['name' => 'question', 'contents' => $validated['question']],
+        ];
 
-            if ($response->successful()) {
-                return response()->json(['success' => true, 'message' => 'Question updated successfully!']);
-            } else {
-                $errorMessage = $response->json()['message'] ?? 'Failed to update question.';
-                return response()->json(['success' => false, 'message' => $errorMessage], $response->status());
-            }
+        if ($request->has('remove_existing_image')) {
+            $payload[] = ['name' => 'remove_existing_image', 'contents' => '1'];
+        }
+
+        foreach ($validated['selected_tags'] as $tagId) {
+            $payload[] = ['name' => 'selected_tags[]', 'contents' => $tagId];
+        }
+
+        // call api di sini instead
+        $apiUrl = env('API_URL') . "/questions/{$id}/updatePartial";
+
+        try {
+            $response = $apiRequest->post($apiUrl, $payload);
+            return $response->json(); 
+
         } catch (\Exception $e) {
-            Log::error("Error updating question {$id}: " . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Error during API request: ' . $e->getMessage()], 500);
+            Log::error("WEB updateQuestion API Call Failed: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error connecting to the API service.'], 500);
         }
     }
     public function deleteQuestion(Request $request, $id)

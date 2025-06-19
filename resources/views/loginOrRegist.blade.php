@@ -62,9 +62,7 @@
             width: 300%;
             height: 100%;
             left: -250%;
-            /* background: linear-gradient(135deg, #F4AB24 0%, #FFD249 100%);  */
-            /* background: linear-gradient(135deg, #10b981 0%, #1ceaa5 100%);  */
-            background: linear-gradient(135deg, #1C2245 0%, #30366A 100%);
+            background: linear-gradient(135deg, var(--bg-c) 0%, var(--bg-primary) 100%);
             border-radius: 150px;
             z-index: 2;
             transition: 1.2s ease-in-out;
@@ -333,6 +331,27 @@
     </style>
 
     <body>
+        <div id="faceLoginModal" style="background-color: rgba(0,0,0,0.5);"
+            class="fixed inset-0 z-50 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+                <h3 class="text-lg font-bold mb-4">Face Login</h3>
+                <p id="faceLoginStatus" class="mb-4">Please position your face in the camera.</p>
+                <div class="relative">
+                    <video id="videoFeed" width="400" height="300" autoplay class="rounded-md bg-gray-200"></video>
+                    <canvas id="canvas" width="400" height="300" class="hidden"></canvas>
+                </div>
+                <div class="mt-4">
+                    <button id="captureAndLoginBtn" onclick="captureAndLogin()"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                        Login
+                    </button>
+                    <button onclick="closeFaceLoginModal()"
+                        class="w-full mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
         <div class="flex justify-center items-center h-screen w-full py-8 px-4">
             <div class="min-h-screen mx-auto cont relative w-full h-full flex justify-center items-center">
                 <div
@@ -340,7 +359,8 @@
                     <!-- Login Form -->
                     <div
                         class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
-                        <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST" novalidate>
+                        <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST"
+                            novalidate>
                             @csrf
                             <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Login
                             </h1>
@@ -373,28 +393,46 @@
                                     WITH</span>
                                 <div class="absolute top-1/2 left-0 w-full h-px bg-gray-200 -z-1"></div>
                             </div>
-
-                            <button type="button" onclick="window.location.href='{{ route('auth') }}'"
-                                class="form-btn w-full bg-gradient-to-r from-[#F4AB24] to-[#FFD249] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
-                                <span
-                                    class="inline-flex items-center justify-center p-1.5 bg-white rounded-full shadow-md align-middle mr-3">
-                                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="-3 0 262 262"
+                            <div class="grid w-full grid-cols-4 gap-4">
+                                <button type="button" onclick="window.location.href='{{ route('auth') }}'"
+                                    class="col-span-3 form-btn w-full bg-gradient-to-r from-[#F4AB24] to-[#FFD249] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
+                                    <span
+                                        class="inline-flex items-center justify-center p-1.5 bg-white rounded-full shadow-md align-middle mr-3">
+                                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="-3 0 262 262"
+                                            preserveAspectRatio="xMidYMid" fill="currentColor">
+                                            <path
+                                                d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                                                fill="#4285F4" />
+                                            <path
+                                                d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                                                fill="#34A853" />
+                                            <path
+                                                d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                                                fill="#FBBC05" />
+                                            <path
+                                                d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                                                fill="#EB4335" />
+                                        </svg>
+                                    </span> Petra Email
+                                </button>
+                                <button type="button" id="faceLoginBtn" onclick="startFaceLogin()"
+                                    class="form-btn w-full bg-gradient-to-r from-[#2499f4] to-[#49c0ff] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30px"
                                         preserveAspectRatio="xMidYMid" fill="currentColor">
                                         <path
-                                            d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
-                                            fill="#4285F4" />
-                                        <path
-                                            d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
-                                            fill="#34A853" />
-                                        <path
-                                            d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
-                                            fill="#FBBC05" />
-                                        <path
-                                            d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
-                                            fill="#EB4335" />
+                                            d="M42,14a2,2,0,0,1-2-2V8H36a2,2,0,0,1,0-4h6a2,2,0,0,1,2,2v6A2,2,0,0,1,42,14Z" />
+                                        <path d="M42,32H36a2,2,0,0,1,0-4h4V24a2,2,0,0,1,4,0v6A2,2,0,0,1,42,32Z" />
+                                        <path d="M6,14a2,2,0,0,1-2-2V6A2,2,0,0,1,6,4h6a2,2,0,0,1,0,4H8v4A2,2,0,0,1,6,14Z" />
+                                        <path d="M12,32H6a2,2,0,0,1-2-2V24a2,2,0,0,1,4,0v4h4a2,2,0,0,1,0,4Z" />
+                                        <g>
+                                            <path
+                                                d="M36,46H12a2,2,0,0,1-2-2V36.1l1-.6a25.9,25.9,0,0,1,26,0l1,.6V44A2,2,0,0,1,36,46ZM14,42H34V38.4a22,22,0,0,0-20,0Z" />
+                                            <path
+                                                d="M24,14a5,5,0,1,1-5,5,5,5,0,0,1,5-5Zm0-4a9,9,0,1,0,9,9,9,9,0,0,0-9-9Z" />
+                                        </g>
                                     </svg>
-                                </span> Petra Email
-                            </button>
+                                </button>
+                            </div>
                         </form>
                     </div>
 
@@ -443,7 +481,8 @@
                                         <div id="passwordStrengthFill"
                                             class="h-full transition-all duration-300 ease-in-out"></div>
                                     </div>
-                                    <p id="passwordStrengthText" class="text-xs font-medium text-gray-500 mb-1 text-right">
+                                    <p id="passwordStrengthText"
+                                        class="text-xs font-medium text-gray-500 mb-1 text-right">
                                     </p>
                                     <ul id="passwordRequirements" class="text-xs text-gray-500 space-y-0.5">
                                         <li data-requirement="length"><i class="fas fa-times text-red-500 mx-1"></i> At
@@ -511,7 +550,84 @@
                 </div>
             </div>
         </div>
+        <script>
+            const faceLoginModal = document.getElementById('faceLoginModal');
+            const videoFeed = document.getElementById('videoFeed');
+            const canvas = document.getElementById('canvas');
+            const faceLoginStatus = document.getElementById('faceLoginStatus');
+            const captureAndLoginBtn = document.getElementById('captureAndLoginBtn');
+            let videoStream = null;
 
+            async function startFaceLogin() {
+                faceLoginModal.classList.remove('hidden');
+                faceLoginStatus.textContent = 'Requesting camera access...';
+
+                try {
+                    videoStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    });
+                    videoFeed.srcObject = videoStream;
+                    faceLoginStatus.textContent = 'Position your face and click Login.';
+                    captureAndLoginBtn.disabled = false;
+                } catch (err) {
+                    console.error("Error accessing camera: ", err);
+                    faceLoginStatus.textContent = 'Error: Could not access camera. Please check permissions.';
+                    captureAndLoginBtn.disabled = true;
+                }
+            }
+
+            async function captureAndLogin() {
+                faceLoginStatus.textContent = 'Processing... Please wait.';
+                captureAndLoginBtn.disabled = true;
+                captureAndLoginBtn.innerHTML =
+                    '<span class="animate-spin h-5 w-5 border-t-2 border-r-2 border-white rounded-full inline-block"></span>';
+
+                const context = canvas.getContext('2d');
+                context.drawImage(videoFeed, 0, 0, 400, 300);
+
+                const imageB64 = canvas.toDataURL('image/jpeg');
+
+                try {
+                    const response = await fetch("{{ env('API_URL') . '/' . 'face-login' }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            image: imageB64
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        faceLoginStatus.textContent = `Success! Welcome, ${data.user.name}. Redirecting...`;
+                        localStorage.setItem('auth_token', data.token);
+                        window.location.href = '/';
+                    } else {
+                        faceLoginStatus.textContent = `Login Failed: ${data.message || 'Face not recognized.'}`;
+                        captureAndLoginBtn.disabled = false;
+                        captureAndLoginBtn.innerHTML = 'Login';
+                    }
+                } catch (error) {
+                    console.error('Error during face login API call:', error);
+                    faceLoginStatus.textContent = 'An error occurred. Please try again.';
+                    captureAndLoginBtn.disabled = false;
+                    captureAndLoginBtn.innerHTML = 'Login';
+                }
+            }
+
+            function closeFaceLoginModal() {
+                if (videoStream) {
+                    videoStream.getTracks().forEach(track => track.stop());
+                }
+                faceLoginModal.classList.add('hidden');
+                faceLoginStatus.textContent = 'Please position your face in the camera.';
+                captureAndLoginBtn.innerHTML = 'Login';
+            }
+        </script>
         <script>
             const container = document.querySelector('.container');
             const registerBtn = document.querySelector('.register-btn');

@@ -2,266 +2,95 @@
 @section('content')
 
 <style>
-        .tab-active {
-            background-color: var(--accent-tertiary);
-            color: var(--text-dark);
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
+    /* User list header */
+    .page-header h1 {
+        background: -webkit-linear-gradient(120deg, #38A3A5, #80ED99);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .page-header .header-underline {
+        height: 3px;
+        width: 80px;
+        background: linear-gradient(120deg, #38A3A5, #80ED99);
+        border-radius: 99px;
+    }
 
-        .tab-inactive {
-            background-color: var(--bg-card);
-            color: var(--text-muted);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 10px 20px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .tab-inactive:hover {
-            border-color: var(--bg-primary);
-            color: var(--accent-tertiary);
-        }
-
-        .user-card {
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-            border-radius: 25px;
-        }
-
-        .user-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            border-color: var(--accent-tertiary);
-        }
-
-        .search-bar {
-            background-color: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .search-bar:focus-within {
-            border-color: var(---bg-primary);
-            box-shadow: 0 0 0 2px rgba(99, 63, 146, 0.15);
-        }
-
-        .search-bar input {
-            background-color: transparent;
-            color: var(--text-primary);
-        }
-
-        .search-bar input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .recommended-user {
-            background-color: var(--bg-card);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(99, 63, 146, 0.3);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-        }
-
-        .recommended-user:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(99, 63, 146, 0.2);
-            border-color: var(--primary);
-        }
-
-        .badge {
-            background-color: var(--bg-shadow);
-            color: var(--text-primary);
-            font-weight: 500;
-            border-radius: 6px;
-            padding: 4px 8px;
-            font-size: 0.7rem;
-        }
-
-        .welcome-container {
-            border-radius: 16px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .crown-badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: #FFC107;
-            color: #5a3e00;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
+    /* Tab Interface (Reusing the modern style from homepage) */
+    .tabs-container {
+        border-bottom: 1px solid var(--border-color);
+    }
+    .tab-item {
+        padding: 0.5rem 0.25rem;
+        margin-bottom: -1px; /* Overlap the container border */
+        border-bottom: 2px solid transparent; /* Placeholder for spacing */
+        color: var(--text-secondary);
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+    }
+    .tab-item:not(.active):hover {
+        color: var(--text-primary);
+        border-bottom-color: var(--border-color);
+    }
+    .tab-item.active {
+        color: var(--text-primary);
+        font-weight: 600;
+        border-bottom-color: var(--accent-tertiary);
+    }
 </style>
 @include('partials.nav')
-    <div class="relative bg-transparent rounded-lg p-6 px-8 max-w-5xl justify-start items-start mt-4 mb-2">
-        <div class="flex flex-col space-y-6">
-            <div class="flex flex-col space-y-4">
-                <div class="flex items-center space-x-3">
-                    {{-- <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#38A3A5] to-[#80ED99] flex items-center justify-center">
-                        <i class="fa-solid fa-users text-white text-xl"></i>
-                    </div> --}}
-                    <div>
-                        <h1 class="cal-sans-regular text-4xl lg:text-5xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
-                            Informates
-                        </h1>
-                        <div class="h-1 w-24 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div>
-                    </div>
-                </div>
-                <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl">
-                    Connect with fellow students from <span class="font-semibold text-[#6bce82]">Informatics</span>, 
-                    <span class="font-semibold text-[#57CC99]">Business Information Systems</span>, and 
-                    <span class="font-semibold text-[#38A3A5]">Data Science & Analytics</span> at 
-                    <span class="font-bold">Petra Christian University</span>.
-                </p>
-            </div>
+    <div class="page-header relative p-6 px-8 max-w-5xl justify-start items-start mt-4 mb-2">
+        <div class="flex flex-col space-y-3">
+            <h1 class="cal-sans-regular text-4xl lg:text-5xl">Informates</h1>
+            <div class="header-underline"></div>
+            <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl pt-2">
+                Connect with fellow students from <span class="font-semibold text-[#6bce82]">Informatics</span>, 
+                <span class="font-semibold text-[#57CC99]">Business Information Systems</span>, and 
+                <span class="font-semibold text-[#38A3A5]">Data Science & Analytics</span> at 
+                <span class="font-bold">Petra Christian University</span>.
+            </p>
         </div>
     </div>
 
-    {{-- <div class="max-w-5xl items-start justify-start px-6">
-        <!-- Recommended Users -->
-        @if(isset($recommended) && count($recommended) > 0)
-            <div class="mb-12 items-start justify-start">
-                <h2 class="titleGradient text-2xl font-semibold mb-6 text-start">Recommended For You</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
-                    @foreach ($recommended as $user)
-                        <div class="recommended-user flex flex-col items-center justify-center rounded-xl py-6 px-4 relative">
-                            <div class="crown-badge">
-                                <i class="fa-solid fa-crown text-sm"></i>
-                            </div>
-                            <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://via.placeholder.com/50' }}"
-                                alt="Profile Picture" class="w-16 h-16 rounded-full object-cover mb-3 border-2 border-[var(--primary)]">
-                            <h3 class="font-semibold text-center">
-                                <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                    class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
-                            </h3>
-                            <p class="text-[0.75rem] mt-1 flex items-center gap-1">
-                                <i class="fa-solid fa-star text-yellow-500"></i>
-                                <span class="text-[var(--text-secondary)]">{{ $user['reputation'] }}</span>
-                            </p>
-                        </div>
-                    @endforeach
-                </div>
+<div class="w-full rounded-lg px-6 max-w-5xl items-start justify-start mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        <div class="tabs-container flex flex-wrap gap-x-6">
+            <button data-tab-target="reputations" class="tab-item active">
+                <i class="fa-solid fa-trophy mr-2"></i>Reputation
+            </button>
+            <button data-tab-target="new-users" class="tab-item">
+                <i class="fa-solid fa-user-plus mr-2"></i>New Users
+            </button>
+            <button data-tab-target="voters" class="tab-item">
+                <i class="fa-solid fa-thumbs-up mr-2"></i>Top Voters
+            </button>
+        </div>
+        {{-- <div class="search-bar ..."> ... </div> --}}
+    </div>
+
+    <div class="user-lists">
+        <div id="reputations" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($order_by_reputation as $user)
+                    @include('partials.user_card', ['user' => $user, 'type' => 'reputation'])
+                @endforeach
             </div>
-        @endif --}}
-
-        <!-- Search and Tabs -->
-        <div class="w-full rounded-lg p-6 px-6 max-w-5xl items-start justify-start mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                <!-- Search Bar -->
-                {{-- <div class="search-bar flex items-center px-4 py-3 shadow-sm w-full md:w-auto md:flex-1 max-w-md">
-                    <i class="fa-solid fa-magnifying-glass text-[var(--text-secondary)] mr-3"></i>
-                    <input id="searchInput" type="text" placeholder="Search users..."
-                        class="w-full outline-none" oninput="searchInput()">
-                </div> --}}
-
-                <!-- Tabs -->
-                <div class="flex flex-wrap gap-3">
-                    <button onclick="showTab('reputations')" id="tab-reputations" class="tab-active">
-                        <i class="fa-solid fa-trophy mr-2"></i>Reputations
-                    </button>
-                    <button onclick="showTab('new-users')" id="tab-new-users" class="tab-inactive">
-                        <i class="fa-solid fa-user-plus mr-2"></i>New Users
-                    </button>
-                    <button onclick="showTab('voters')" id="tab-voters" class="tab-inactive">
-                        <i class="fa-solid fa-thumbs-up mr-2"></i>Votes
-                    </button>
-                </div>
+        </div>
+        <div id="new-users" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($order_by_newest as $user)
+                     @include('partials.user_card', ['user' => $user, 'type' => 'newest'])
+                @endforeach
             </div>
-
-            <!-- User Lists -->
-            <div class="user-lists">
-                <!-- Reputations Tab -->
-                <div id="reputations" class="tab-content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="reputationResult">
-                        @foreach ($order_by_reputation as $user)
-                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=2196F3&color=fff&size=128' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-lg">
-                                        <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                            class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
-                                    </h3>
-                                    <p class="text-sm flex items-center gap-1 mt-1">
-                                        <i class="fa-solid fa-star text-yellow-500"></i>
-                                        <span class="text-[var(--text-secondary)]">{{ $user['reputation'] }}</span>
-                                    </p>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        <span class="badge">php</span>
-                                        <span class="badge">java</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- New Users Tab -->
-                <div id="new-users" class="tab-content hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="newestResult">
-                        @foreach ($order_by_newest as $user)
-                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=2196F3&color=fff&size=128' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-lg">
-                                        <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                            class="hover:underline text-[var(--text-secondary)]">{{ $user['username'] }}</a>
-                                    </h3>
-                                    <p class="text-sm flex items-center gap-1 mt-1">
-                                        <i class="fa-solid fa-calendar-days text-[var(--primary)]"></i>
-                                        <span class="text-[var(--primary)]">Since {{ $user['created_at'] }}</span>
-                                    </p>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        <span class="badge">php</span>
-                                        <span class="badge">java</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Voters Tab -->
-                <div id="voters" class="tab-content hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="voterResult">
-                        @foreach ($order_by_vote as $user)
-                            <div class="user-card border border-[var(--border-color)] bg-[var(--bg-card)] p-4 shadow-sm flex items-center gap-4">
-                                <img src="{{ $user['image'] ? asset('storage/' . $user['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($user['username'] ?? 'User') . '&background=2196F3&color=fff&size=128' }}"
-                                    alt="Profile Picture" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--accent-tertiary)]">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-lg">
-                                        <a href="{{ route('viewUser', ['email' => $user['email']]) }}"
-                                            class="hover:underline text-[var(--text-primary)]">{{ $user['username'] }}</a>
-                                    </h3>
-                                    <p class="text-sm flex items-center gap-1 mt-1">
-                                        <i class="fa-solid fa-thumbs-up text-[var(--primary)]"></i>
-                                        <span class="text-[var(--text-secondary)]">{{ $user['vote_count'] }}</span>
-                                    </p>
-                                    <div class="flex flex-wrap gap-1 mt-2">
-                                        <span class="badge">react</span>
-                                        <span class="badge">vue</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
+        </div>
+        <div id="voters" class="tab-content hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($order_by_vote as $user)
+                    @include('partials.user_card', ['user' => $user, 'type' => 'voter'])
+                @endforeach
             </div>
         </div>
     </div>
+</div>
 
     {{-- @include('utils.trie') --}}
 
@@ -386,40 +215,42 @@
      * Menampilkan tab yang dipilih dan menyembunyikan yang lain.
      * @param {string} tabId - ID dari elemen KONTEN tab yang akan ditampilkan (e.g., 'reputations').
      */
-    function showTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.add('hidden');
-        });
 
-        const selectedTabContent = document.getElementById(tabId);
-        if (selectedTabContent) {
-            selectedTabContent.classList.remove('hidden');
-        }
+document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll('.tab-item');
+    const tabContents = document.querySelectorAll('.tab-content');
 
-        if (tabId === 'reputations') {
-            searchSwitch = 1;
-        } else if (tabId === 'new-users') {
-            searchSwitch = 2;
-        } else if (tabId === 'voters') { 
-            searchSwitch = 3;
-        }
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            tabs.forEach(item => item.classList.remove('active'));
+            // Add active class to the clicked tab
+            tab.classList.add('active');
 
-        document.querySelectorAll('[id^="tab-"]').forEach(tabButtonElement => {
-            if (tabButtonElement.id !== tabId) { 
-                 tabButtonElement.className = 'tab-inactive';
+            const targetId = tab.dataset.tabTarget;
+            
+            // Hide all tab content
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show the target tab content
+            const targetContent = document.getElementById(targetId);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
             }
         });
-        
-        const activeTabButton = document.getElementById('tab-' + tabId); 
-        if (activeTabButton) {
-            activeTabButton.className = 'tab-active';
-        }
-        
-        // searchInput(); 
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        showTab('reputations'); 
     });
+
+    // Set the initial active tab (optional, defaults to first)
+    const initialActiveTab = document.querySelector('.tab-item.active');
+    if (initialActiveTab) {
+        const initialContent = document.getElementById(initialActiveTab.dataset.tabTarget);
+        if (initialContent) {
+            tabContents.forEach(content => content.classList.add('hidden'));
+            initialContent.classList.remove('hidden');
+        }
+    }
+});
 </script>
 @endsection

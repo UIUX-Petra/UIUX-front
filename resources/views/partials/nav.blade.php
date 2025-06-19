@@ -21,50 +21,47 @@
     .logo-text:hover span {
         letter-spacing: 0.02rem;
     }
-
-    /* Navigation items */
     .nav-link {
         position: relative;
-        transition: all 0.3s ease;
+        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
         border-radius: 0.5rem;
-        margin-bottom: 0.25rem;
-        overflow: hidden;
+        border-left: 3px solid transparent;
     }
 
-    .nav-link::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 0;
-        background-color: var(--accent-tertiary);
-        opacity: 0.1;
-        transition: width 0.3s ease;
+    .nav-link:not(.active-nav):hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        transition: all 0.2s ease;
     }
-
-    .nav-link:hover::before {
-        width: 100%;
-    }
-
     .nav-link i {
         transition: transform 0.3s ease;
+
     }
 
-    .nav-link:hover i {
-        transform: translateX(3px);
-    }
 
     .active-nav {
+        font-weight: 600;
+        color: var(--text-highlight) !important;
+        background-color: var(--bg-secondary);
+        border-image: linear-gradient(to bottom, #38A3A5, #80ED99);
+        border-image-slice: 1;
+        border-left-width: 3px;
+
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .active-nav i {
+        color: var(--accent-secondary);
+    }
+
+    
+    /* .active-nav {
         background-color: var(--border-color);
         background-opacity: 0.1;
         color: var(--text-primary) !important;
         font-weight: 500;
-    }
-
-    .active-nav i {
-        color: var(--accent-tertiary);
-    }
+    } */
 
     /* Dropdown styling */
     .user-dropdown {
@@ -344,7 +341,7 @@
 
     .history-delete-btn:hover {
         background-color: var(--bg-tertiary);
-        color: #ef4444;
+        color: var(--accent-neg);
         transform: scale(1.7);
     }
 
@@ -440,6 +437,10 @@
         border-radius: 4px;
         min-height: 50px;
     }
+    .active-nav .add-question-icon-btn {
+        pointer-events: auto;
+        cursor: pointer;
+    }
 </style>
 
 <!-- Navbar -->
@@ -457,7 +458,7 @@
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse xl:-m-6 group">
             <div class="relative overflow-hidden">
                 <img id="theme-logo" src="{{ asset('assets/p2p logo - white.svg') }}" alt="Logo"
-                    class="h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-90">
+                    class="p-1 h-7 lg:h-9 w-auto theme-logo transition-all duration-300 group-hover:scale-90">
             </div>
             <div class="text-md cal-sans-regular logo-text">
                 <span class="font-bold text-white transition-all">peer</span>
@@ -564,6 +565,12 @@
                     Sign Up / Login
                 </a>
             @else
+            
+                {{-- <a href="{{ route('askPage') }}"
+                    class="flex items-center text-[var(--text-dark)] px-3 py-2 rounded-full bg-gradient-to-r from-[#38A3A5] to-[#80ED99]">
+                    <i class="fa-solid fa-plus"></i>
+                </a> --}}
+                
                 <!-- User Avatar with hover effects -->
                 <div class="avatar-container relative">
                     <button type="button"
@@ -584,7 +591,7 @@
                                 class="block text-sm font-medium text-[var(--accent-tertiary)]">{{ $username ?? 'User' }}</span>
                         </div>
                         <div class="py-1" role="none">
-                            <a href="{{ route('seeProfile') }}"
+                            <a href="{{ route('viewUser', ['email' => session('email')]) }}"
                                 class="user-menu-item text-[var(--text-primary)] hover:text-[var(--accent-tertiary)] hover:bg-[var(--bg-card-hover)] block px-4 py-2 text-sm"
                                 role="menuitem">
                                 <i class="fa-solid fa-user mr-2"></i> Profile
@@ -726,35 +733,60 @@
             <div id="searchResultsDropdownContainer2"
                 class="w-full bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-md mt-1 z-50 hidden shadow-lg max-h-80 overflow-y-auto p-2">
             </div>
-        </div>
-        <a href="{{ route('askPage') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-question-circle mr-3"></i> Ask a Question
-        </a>
-        <a href="{{ route('home') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-house mr-3"></i> Home
-        </a>
-        {{-- <a href="{{ route('popular') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('popular') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-fire mr-3"></i> Popular
-            <span class="nav-badge">Hot</span>
-        </a> --}}
-        <a href="{{ route('viewAllTags') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-tags mr-3"></i> Subjects
-        </a>
-        <a href="{{ route('viewAllUsers') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-users mr-3"></i> Informates
-        </a>
 
-        <a href="{{ route('user.leaderboard') }}"
-            class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }}">
-            <i class="fa-solid fa-trophy mr-3"></i> Leaderboard
-        </a>
+            <div class="space-y-1">
+                <a href="{{ route('home') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('home') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
+                </a>
+                <a href="{{ route('viewAllTags') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllTags') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-tags mr-3 w-5 text-center"></i> Subjects
+                </a>
+            </div>
+
+            <div class="border-t border-[var(--border-color)] my-3"></div>
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider px-3 mb-2">My Activities</h3>
+
+            <div class="space-y-1">
+                <a href="{{ route('user.questions.list', ['id' => $id]) }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> My Questions
+                </a>
+                <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> My Answers
+                </a>
+                <a href="{{ route('savedQuestions') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
+                </a>
+            </div>
+
+            <div class="border-t border-[var(--border-color)] my-3"></div>
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider px-3 mb-2">Community</h3>
+
+            <div class="space-y-1">
+                <a href="{{ route('viewAllUsers') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('viewAllUsers') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-users mr-3 w-5 text-center"></i> Informates
+                </a>
+                <a href="{{ route('user.leaderboard') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-trophy mr-3 w-5 text-center"></i> Leaderboard
+                </a>
+                <a href="{{ route('faq') }}"
+                    class="nav-link flex items-center px-3 py-2 rounded-md {{ request()->routeIs('faq') ? 'active-nav' : '' }}">
+                    <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> FAQ
+                </a>
+            </div>
 
         <div class="border-t border-[var(--border-color)] my-2"></div>
+        
+        <a href="{{ route('askPage') }}"
+            class="nav-link flex items-center justify-center px-3 py-2.5 mb-2 rounded-md text-sm font-semibold text-black bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
+            <i class="fa-solid fa-plus mr-2"></i> Ask a Question
+        </a>
 
         <div class="flex items-center justify-between p-2">
             <button id="mobile-theme-toggle" onclick="toggleTheme()" class="theme-toggle p-2"
@@ -764,7 +796,7 @@
 
             @if (session()->has('email'))
                 <div class="flex space-x-3">
-                    <a href="{{ route('seeProfile') }}"
+                    <a href="{{ route('viewUser', ['email' => session('email')]) }}"
                         class="text-[var(--text-primary)] hover:text-[var(--accent-tertiary)]">
                         <i class="fa-solid fa-user"></i>
                     </a>
@@ -787,12 +819,12 @@
     <!-- Sidebar content -->
     <div class="flex flex-col h-full mt-16">
         <!-- Main Navigation Section -->
-        <div class="mb-8 nav-section pb-6">
+        <div class="mb-6 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Main Navigation</h3>
             <nav class="flex flex-col space-y-1">
                 <nav class="flex flex-col space-y-1">
                     <a href="{{ route('home') }}"
-                        class="nav-link {{ request()->routeIs('popular') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                        class="nav-link {{ request()->routeIs('home') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                         <i class="fa-solid fa-house mr-3 w-5 text-center"></i> Home
                     </a>
                     {{-- <a href="{{ route('popular') }}"
@@ -808,27 +840,36 @@
         </div>
 
         <!-- My Activities section-->
-        <div class="mb-8 nav-section pb-6">
+        <div class="mb-6 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">MY ACTIVITES</h3>
             <nav class="flex flex-col space-y-1">
-                <nav class="flex flex-col space-y-1">
-                    <a href="{{ route('user.questions.list', ['id' => $id]) }}"
-                        class="nav-link {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                        <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> Questions
+                <div class="nav-link {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }} flex items-center justify-between rounded-md font-medium">
+                    <a href="{{ route('user.questions.list', ['id' => $id]) }}" class="flex-grow items-center py-2.5 pl-3 text-sm flex {{ request()->routeIs('user.questions.list', ['id' => $id]) ? '' : 'text-[var(--text-primary)]' }}">
+                        <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i>
+                        Questions
                     </a>
-                    <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
-                        class="nav-link {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                        <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Answers
+                    
+                    <a href="{{ route('askPage') }}"
+                    class="group relative px-2 mr-1 rounded-full z-20 transition-all duration-200 hover:scale-110 hover:bg-[var(--bg-shadow)] {{ request()->routeIs('user.questions.list', ['id' => $id]) ? '' : 'text-[var(--text-primary)]' }} hover:text-[var(--text-highlight)] add-question-icon-btn">
+                        <i class="fa-solid fa-plus text-xs"></i>
+                        <span class="absolute left-full ml-3 top-1/2 -translate-y-1/2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 whitespace-nowrap px-3 py-1.5 text-sm bg-[var(--bg-card)] text-[var(--text-primary)] rounded-md shadow-lg border border-[var(--border-color)]">
+                            Ask a Question
+                        </span>
                     </a>
-                    <a href="{{ route('savedQuestions') }}"
-                        class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                        <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
-                    </a>
-                </nav>
+                </div>
+                <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
+                    class="nav-link {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Answers
+                </a>
+                <a href="{{ route('savedQuestions') }}"
+                    class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                    <i class="fa-solid fa-bookmark mr-3 w-5 text-center"></i> Saves
+                </a>
+            </nav>
         </div>
 
         <!-- Community Section -->
-        <div class="mb-8 nav-section pb-6">
+        <div class="mb-6 nav-section pb-6">
             <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Community</h3>
             <nav class="flex flex-col space-y-1">
                 <a href="{{ route('viewAllUsers') }}"
@@ -839,15 +880,11 @@
                     class="nav-link {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-trophy mr-3 w-5 text-center"></i> Leaderboard
                 </a>
+                <a href="{{ route('faq') }}"
+                     class="nav-link {{ request()->routeIs('faq') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
+                    <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> FAQ
+                </a>
             </nav>
-        </div>
-
-        <div class="mb-8 nav-section pb-6">
-            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">Actions</h3>
-            <a href="{{ route('askPage') }}"
-                class="nav-link flex items-center text-[var(--text-dark)] px-3 py-2 rounded-md bg-gradient-to-r from-[#38A3A5] to-[#80ED99] {{ request()->routeIs('askPage') ? 'active-nav' : '' }}">
-                <i class="fa-solid fa-plus mr-3"></i> Ask a Question
-            </a>
         </div>
     </div>
 </div>

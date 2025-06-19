@@ -96,17 +96,25 @@
     <!-- Welcome Section -->
     <div class="w-full rounded-lg p-6 px-8 max-w-5xl items-start justify-start my-6 relative z-10">
         <div class="relative z-10">
-            <h1 class="cal-sans-regular lg:text-4xl text-3xl mb-4 text-[var(--text-primary)] ">
-                Academic Subjects
-            </h1>
-            <p class="text-[var(--text-secondary)] text-md lg:text-lg pl-0.5 font-regular leading-relaxed max-w-4xl">
-                Explore comprehensive subjects from
-                <span class="font-semibold text-[var(--accent-tertiary)]">Informatics</span>,
-                <span class="font-semibold text-[var(--accent-secondary)]">Business Information Systems</span>, and
-                <span class="font-semibold text-[var(--accent-primary)]">Data Science & Analytics</span>
-                programs at Petra Christian University. Connect with fellow students and dive deep into your academic
-                interests.
-            </p>
+                <div class="flex flex-col space-y-6">
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div>
+                                <h1 class="cal-sans-regular text-4xl lg:text-5xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent leading-tight">
+                                    Academic Subjects
+                                </h1>
+                                <div class="h-1 w-44 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mt-2"></div>
+                            </div>
+                        </div>
+                        <p class="text-[var(--text-muted)] text-lg leading-relaxed max-w-3xl">
+                            Explore comprehensive subjects from <span class="font-semibold text-[#3cac9d]">Informatics</span>,
+                            <span class="font-semibold text-[#57CC99]">Business Information Systems</span>, and
+                            <span class="font-semibold text-[#6bce82]">Data Science & Analytics</span>
+                            programs at Petra Christian University. Connect with fellow students and dive deep into your academic
+                            interests.
+                        </p>
+                    </div>
+                </div>
         </div>
     </div>
 
@@ -119,7 +127,7 @@
                     class="tag-link hover:no-underline focus:no-underline text-xl font-bold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-all duration-300 relative focus:outline-2 focus:outline-[var(--accent-primary)] focus:outline-offset-2 focus:rounded"
                     aria-label="View questions for {{ $tag['name'] }}">
                     <div
-                        class="tag-card fade-in shadow-lg rounded-xl p-6 bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-2 hover:scale-105 hover:shadow-xl hover:border-[var(--accent-tertiary)] hover:bg-[var(--bg-card-hover)]">
+                        class="tag-card fade-in shadow-lg rounded-xl p-6 bg-[var(--bg-card)] border border-[var(--border-color)] relative overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-2 hover:scale-105 hover:shadow-xl hover:border-[var(--accent-primary)] hover:bg-[var(--bg-card-hover)]">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex-1">
                                 <div class="mb-1">
@@ -132,7 +140,7 @@
                             </div>
                         </div>
 
-                        <div class="text-sm my-4 text-[var(--text-muted)] leading-relaxed">
+                        <div class="text-sm my-4 text-[var(--text-muted)] leading-relaxed mt-1 pt-5 border-t border-[var(--border-color)]">
                             <p>{{ $tag['description'] ?? 'Explore questions and discussions related to this subject area.' }}
                             </p>
                         </div>
