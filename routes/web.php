@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -63,6 +64,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/getSavedQuestion', [MainController::class, 'savedQuestion'])->name('savedQuestions');
     Route::post('/saveQuestion', [QuestionController::class, 'saveQuestion'])->name('saveQuestion');
     Route::post('/unsaveQuestion', [QuestionController::class, 'unsaveQuestion'])->name('unsaveQuestion');
+    Route::post('/submitReport', [ReportController::class, 'submitReport'])->name('submitReport');
 
 
     Route::get('/questions/{id}/edit', [QuestionController::class, 'showEditQuestionPage'])->name('editQuestionPage');

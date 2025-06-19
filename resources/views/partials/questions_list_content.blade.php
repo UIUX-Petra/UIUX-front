@@ -40,21 +40,49 @@
             @endif
 
             {{-- Save/Unsave Button --}}
-            @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
-                <button type="button"
-                        class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                        data-question-id="{{ $question['id'] }}"
-                        title="Unsave Question">
-                    <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+              <div class="question-menu-container absolute top-2 right-2 z-20">
+                <button type="button" class="question-menu-trigger p-2 w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--bg-card-hover)] transition-colors duration-200">
+                    <i class="fa-solid fa-ellipsis-vertical text-[var(--text-secondary)]"></i>
                 </button>
-            @else
-                <button type="button"
-                        class="save-question-btn absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
-                        data-question-id="{{ $question['id'] }}"
-                        title="Save Question">
-                    <i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
-                </button>
-            @endif
+                
+                <div class="question-menu-dropdown absolute top-full right-0 mt-2 w-48 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-lg shadow-xl hidden">
+                    {{-- Panel Utama --}}
+                    <div class="menu-panel menu-panel-main">
+                        <ul>
+                            <li>
+                                <a href="#" class="menu-item" data-action="save" data-question-id="{{ $question['id'] }}">
+                                    @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
+                                        <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+                                        <span>Unsave</span>
+                                    @else
+                                        <i class="fa-regular fa-bookmark"></i>
+                                        <span>Save</span>
+                                    @endif
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="menu-item" data-action="show-report-panel">
+                                    <i class="fa-regular fa-flag"></i>
+                                    <span>Report</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+            
+                    {{-- Panel Report (hidden by default) --}}
+                    <div class="menu-panel menu-panel-report hidden">
+                        <div class="flex items-center p-2 border-b border-[var(--border-color)]">
+                            <button type="button" data-action="back-to-main" class="menu-back-button p-1 rounded-full hover:bg-[var(--bg-card-hover)]">
+                                <i class="fa-solid fa-arrow-left text-xs"></i>
+                            </button>
+                            <h4 class="text-sm font-semibold mx-auto text-[var(--text-primary)]">Report Content</h4>
+                        </div>
+                        <ul class="report-reason-list max-h-48 overflow-y-auto">
+                            {{-- List alasan laporan akan diisi oleh JavaScript --}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
             {{-- Stats Column --}}
             <div class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">

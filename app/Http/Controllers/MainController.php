@@ -15,12 +15,14 @@ class MainController extends Controller
   public $answerController;
   public $questionController;
   public $tagController;
-  public function __construct(UserController $userController, AnswerController $answerController, QuestionController $questionController, TagController $tagController)
+  public $reportController;
+  public function __construct(UserController $userController, AnswerController $answerController, QuestionController $questionController, TagController $tagController, ReportController $reportController)
   {
     $this->userController = $userController;
     $this->answerController = $answerController;
     $this->questionController = $questionController;
     $this->tagController = $tagController;
+    $this->reportController = $reportController;
   }
 
   public function askPage(Request $request, $questionId = null) // Added Request for consistency if needed later
@@ -217,6 +219,7 @@ class MainController extends Controller
 
     $questionsPaginator = $this->questionController->getAllQuestionsByPopularity($request);
     $tags = $this->tagController->getAllTags();
+    $reportReasons = $this->reportController->getReportReasons();
 
     // Handle AJAX requests
     if ($request->ajax() || $request->wantsJson()) {
@@ -240,12 +243,14 @@ class MainController extends Controller
       'title' => 'Home',
       'questions' => $questionsPaginator,
       'tags' => $tags,
+      'reportReasons' => $reportReasons,
       'initialSortBy' => $request->input('sort_by', 'latest'),
       'initialFilterTag' => $request->input('filter_tag', null),
       'initialSearchTerm' => $request->input('search_term', null),
       'initialPage' => $request->input('page', 1),
       'histories' => $user['histories'],
     ];
+    // dd($data);
     return view('home', $data);
   }
 
