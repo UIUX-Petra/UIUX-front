@@ -607,6 +607,9 @@
                                             text: data.message ||
                                                 'Your question has been deleted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -621,6 +624,9 @@
                                             text: data.message ||
                                                 'Could not delete the question.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -645,6 +651,9 @@
                                         text: errorMessage ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -834,6 +843,9 @@
                                             text: data.message ||
                                                 'Your answer has been deleted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -851,6 +863,9 @@
                                             text: data.message ||
                                                 'Could not delete the answer.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -863,6 +878,9 @@
                                         text: error ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -929,6 +947,9 @@
                         Toastify({
                             text: 'Please provide an answer!',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
@@ -1091,6 +1112,9 @@
                                 Toastify({
                                     text: 'Your answer has been successfully submitted.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "linear-gradient(to right, #00b09b, #96c93d)"
                                     }
@@ -1105,6 +1129,9 @@
                                 Toastify({
                                     text: data.message || 'Something went wrong',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }
@@ -1176,6 +1203,9 @@
                             Toastify({
                                 text: 'Please write a comment!',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -1199,6 +1229,9 @@
                                         Toastify({
                                             text: 'Your comment has been successfully posted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -1291,6 +1324,9 @@
                                             text: data.message ||
                                                 'An Unexpected Error Occurred.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -1301,6 +1337,9 @@
                                     Toastify({
                                         text: error || 'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -1324,6 +1363,9 @@
                     Toastify({
                         text: 'Please write a comment!',
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -1409,6 +1451,9 @@
                                 Toastify({
                                     text: 'Your comment has been successfully posted.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "linear-gradient(to right, #00b09b, #96c93d)"
                                     }
@@ -1419,6 +1464,9 @@
                                     text: data.message ||
                                         'An Unexpected Error Occurred.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }
@@ -1429,6 +1477,9 @@
                             Toastify({
                                 text: error || 'An Unexpected Error Occurred.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -1457,6 +1508,9 @@
                         Toastify({
                             text: 'Please write a comment!',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
@@ -1481,6 +1535,9 @@
                                     Toastify({
                                         text: 'Your comment has been successfully posted.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                                         }
@@ -1586,6 +1643,9 @@
                                         text: data.message ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -1596,6 +1656,9 @@
                                 Toastify({
                                     text: error || 'An Unexpected Error Occurred.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }
@@ -1679,6 +1742,9 @@
                                         Toastify({
                                             text: `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`,
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -1713,6 +1779,9 @@
                                             text: data.message ||
                                                 'Could not update verification status.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -1732,6 +1801,9 @@
                                         text: errorMessage ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -1796,6 +1868,9 @@
                                 text: data.message ||
                                     'An Unexpected Error Occurred.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -1868,6 +1943,9 @@
                                 text: data.message ||
                                     'An Unexpected Error Occurred.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }

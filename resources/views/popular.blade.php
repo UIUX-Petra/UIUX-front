@@ -256,9 +256,9 @@
         }
 
         /* .tag-filter-select:hover {
-                                        border-color: #f59e0b;
-                                        color: #f59e0b;
-                                    } */
+                                                                border-color: #f59e0b;
+                                                                color: #f59e0b;
+                                                            } */
 
         .tag-filter-select:focus {
             border-color: #f59e0b;
@@ -306,6 +306,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -891,7 +894,9 @@
             let loadingToast = Toastify({
                 text: "Unsaving...",
                 duration: -1,
-                /*...*/
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -910,7 +915,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
-                        /*...*/
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -919,10 +926,29 @@
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
                     btn.setAttribute("title", "Save Question");
                 } else {
-                    /* Error Toast */
+                    Toastify({
+                        text: res.message || "Failed to Unsave Question",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 }
             }).catch(err => {
-                /* Error Toast */
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
             });
         }
 
@@ -935,7 +961,9 @@
             let loadingToast = Toastify({
                 text: "Saving...",
                 duration: -1,
-                /*...*/
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -954,7 +982,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
-                        /*...*/
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -965,10 +995,29 @@
                     btn.classList.add('saved-animation');
                     setTimeout(() => btn.classList.remove('saved-animation'), 300);
                 } else {
-                    /* Error Toast */
+                    Toastify({
+                        text: res.message || "Failed to Save Question",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 }
             }).catch(err => {
-                /* Error Toast */
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
             });
         }
     </script>

@@ -950,6 +950,9 @@
                         Toastify({
                             text: data.message || 'An error occurred.',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
@@ -960,6 +963,9 @@
                     Toastify({
                         text: 'A network error occurred. Please try again.',
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }

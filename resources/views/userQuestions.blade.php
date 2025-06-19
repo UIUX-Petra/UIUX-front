@@ -335,6 +335,9 @@
                                         Toastify({
                                             text: 'Your question has been deleted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -367,6 +370,9 @@
                                             text: data.message ||
                                                 'Could not delete the question.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -391,6 +397,9 @@
                                         text: errorMessage ||
                                             'Something went wrong',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }

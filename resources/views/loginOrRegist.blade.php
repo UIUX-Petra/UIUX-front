@@ -6,6 +6,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -1124,6 +1127,9 @@
                             Toastify({
                                 text: errorMessage || 'Registration Error',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -1135,6 +1141,9 @@
                         Toastify({
                             text: 'An unexpected error occurred. Please try again.',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }

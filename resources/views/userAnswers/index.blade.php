@@ -635,11 +635,14 @@
                                             text: data.message ||
                                                 'Your answer has been deleted successfully.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
                                         }).showToast();
-                                        
+
                                         // Swal.fire({
                                         //     title: 'Deleted!',
                                         //     text: data.message ||
@@ -684,6 +687,9 @@
                                         text: errorMessage ||
                                             'An error occurred while deleting the answer.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }

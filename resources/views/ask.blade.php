@@ -354,6 +354,7 @@
                 opacity: 0;
                 transform: scale(0.8) translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1) translateY(0);
@@ -367,6 +368,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -890,6 +894,9 @@
                     Toastify({
                         text: "Title must be filled out!",
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -900,6 +907,9 @@
                     Toastify({
                         text: "Question details must be filled out!",
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -910,6 +920,9 @@
                     Toastify({
                         text: "Please select at least one tag!",
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -976,6 +989,9 @@
                                         text: res.message ||
                                             `Question ${IS_EDIT_MODE ? 'updated' : 'submitted'} successfully!`,
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                                         }
@@ -988,7 +1004,8 @@
                                                 .replace('id', QUESTION_TO_EDIT.user
                                                     .id);
                                         } else {
-                                            window.location.href = "{{ route('home') }}";
+                                            window.location.href =
+                                                "{{ route('home') }}";
                                         }
                                     }, 3000);
                                 } else {
@@ -996,6 +1013,9 @@
                                         text: res.message ||
                                             "An unexpected error occurred from the server.",
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -1017,6 +1037,9 @@
                                     text: res.message ||
                                         "Submission Error",
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }

@@ -358,6 +358,9 @@
                     Toastify({
                         text: 'Please fill in your username!',
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -415,6 +418,9 @@
                             Toastify({
                                 text: 'Your profile has been successfully updated.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "linear-gradient(to right, #00b09b, #96c93d)"
                                 }
@@ -429,6 +435,9 @@
                             Toastify({
                                 text: data.message || 'Something went wrong.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -439,6 +448,9 @@
                         Toastify({
                             text: 'An unexpected error occurred.',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }

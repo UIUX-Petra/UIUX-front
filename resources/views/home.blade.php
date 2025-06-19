@@ -17,13 +17,13 @@
         }
 
         /*
-                .question-title {
-                    color: var(--text-primary);
-                }
+                                    .question-title {
+                                        color: var(--text-primary);
+                                    }
 
-                .question-title:hover {
-                    color: var(--text-primary);
-                } */
+                                    .question-title:hover {
+                                        color: var(--text-primary);
+                                    } */
 
         .interaction-icons i {
             color: var(--text-muted);
@@ -364,6 +364,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -814,6 +817,12 @@
                     Toastify({
                         text: res.message || "Failed to unsave.",
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#e74c3c"
+                        }
                     }).showToast();
                 }
             }).catch(err => {
@@ -878,6 +887,12 @@
                     Toastify({
                         text: res.message || "Failed to save.",
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#e74c3c"
+                        }
                     }).showToast();
                 }
             }).catch(err => {

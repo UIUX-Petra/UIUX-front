@@ -24,6 +24,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -100,10 +103,11 @@
                                     @endphp
 
                                     @foreach ($tags as $index => $tag)
-                                        @if(isset($tag['subject']['name']))
+                                        @if (isset($tag['subject']['name']))
                                             <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
-                                               class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
-                                                <span class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                                class="question-tag-link @if ($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
+                                                <span
+                                                    class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                                     {{ $tag['subject']['name'] }}
                                                 </span>
                                             </a>
@@ -291,7 +295,10 @@
             formData.append("question_id", questionId);
 
             let loadingToast = Toastify({
-                /* ... Toast params ... */
+                close: false,
+                gravity: "top",
+                position: "right",
+                duration: -1,
                 text: "Unsaving...",
                 style: {
                     background: "#444"
@@ -311,11 +318,14 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
-                    
+
                     if (questionCard) {
                         questionCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                         questionCard.style.opacity = '0';
@@ -340,6 +350,9 @@
                     Toastify({
                         text: res.message || "Failed to unsave.",
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -350,6 +363,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }
@@ -364,7 +380,10 @@
             formData.append("question_id", questionId);
 
             let loadingToast = Toastify({
-                /* ... Toast params ... */
+                close: false,
+                gravity: "top",
+                position: "right",
+                duration: -1,
                 text: "Saving...",
                 style: {
                     background: "#444"
@@ -384,6 +403,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -394,6 +416,9 @@
                 } else {
                     Toastify({
                         text: res.message || "Failed to save.",
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         duration: 3000,
                         style: {
                             background: "#e74c3c"
@@ -405,6 +430,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }

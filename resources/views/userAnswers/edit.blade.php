@@ -365,6 +365,9 @@
                         Toastify({
                             text: 'Answer content must be at least 5 characters long.',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
@@ -434,6 +437,9 @@
                                             text: res.message ||
                                                 'Answer updated successfully!',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -460,6 +466,9 @@
                                             text: res.message ||
                                                 'An unknown error occurred.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -481,6 +490,9 @@
                                         text: errorMessage ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
