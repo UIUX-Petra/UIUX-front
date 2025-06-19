@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public function getReportReasons(){
+    public function getReportReasons()
+    {
         $api_url = env('API_URL') . '/report-reasons';
         $response = Http::withToken(session('token'))->get($api_url);
         $reasons = json_decode($response, true);
@@ -16,37 +18,34 @@ class ReportController extends Controller
 
     public function submitReport(Request $request)
     {
-        // 1. Validasi input dari browser
-        $validated = $request->validate([
-            'reportable_id' => 'required|uuid',
-            'reportable_type' => 'required|string|in:question,answer,comment',
-            'report_reason_id' => 'required|uuid',
-        ]);
-
-        // 2. Siapkan URL dan data untuk dikirim ke API Server
-        $apiUrl = env('API_URL') . '/reports'; // Endpoint API yang sesungguhnya
-
-        // 3. Panggil API Server menggunakan Http client
-        $response = Http::withToken(session('token'))->post($apiUrl, [
-            'reportable_id' => $validated['reportable_id'],
-            'reportable_type' => $validated['reportable_type'],
-            'report_reason_id' => $validated['report_reason_id'],
-            // 'additional_notes' => 'Jika Anda ingin menambahkannya nanti'
-        ]);
-
-        // 4. Teruskan response dari API kembali ke browser
-        if ($response->successful()) {
-            return response()->json([
-                'success' => true,
-                'message' => $response->json()['message'] ?? 'Report submitted successfully.',
+        try {
+            $validated = $request->validate([
+                'reportable_id' => 'required|uuid',
+                'reportable_type' => 'required|string|in:question,answer,comment',
+                'report_reason_id' => 'required|uuid',
             ]);
-        } else {
-            // Jika API gagal (misal: sudah pernah lapor), teruskan pesan errornya
-            $errorMessage = $response->json()['message'] ?? 'Failed to submit report.';
+
+            $apiUrl = env('API_URL') . '/reports';
+
+            $response = Http::withToken(session('token'))->post($apiUrl, $validated);
+
+            if ($response->successful()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $response->json()['message'] ?? 'Report submitted successfully.',
+                ]);
+            } else {
+                $errorMessage = $response->json()['message'] ?? 'Failed to submit report due to a server issue.';
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage,
+                ], $response->status());
+            }
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => $errorMessage,
-            ], $response->status()); // Teruskan juga status code errornya
+                'message' => 'An internal server error occurred. Please try again later.'
+            ], 500);
         }
     }
 }

@@ -1,7 +1,4 @@
 @extends('layout')
-@section('head')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-@endsection
 @section('content')
     <style>
         .hover\:shadow-glow:hover {
@@ -196,7 +193,7 @@
 
         .remove-image-btn:hover {
             transform: scale(1.1);
-            background: var(--accent-neg;)
+            background: var(--accent-neg; )
         }
 
         #answer-textArea:focus {
@@ -205,14 +202,261 @@
             ring-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(56, 163, 165, 0.1);
         }
-        
+
         .your-question-indicator {
             box-shadow: 0 0 15px rgba(56, 161, 105, 0.6), 0 0 30px rgba(56, 161, 105, 0.4);
             border-color: var(--accent-primary);
         }
+
+        /* ===================================================================== */
+        /* === Global Action Menu CSS (Untuk Halaman Detail) === */
+        /* ===================================================================== */
+
+        /* (Mobile-First) Default state: Modal Overlay */
+        #global-action-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 200ms ease-out;
+            pointer-events: none;
+        }
+
+        #global-action-menu.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-content-wrapper {
+            width: 100%;
+            max-width: 320px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 200ms ease-out;
+        }
+
+        #global-action-menu.open .menu-content-wrapper {
+            transform: scale(1);
+        }
+
+        /* (Desktop) Override untuk layar lebih besar dari 768px */
+        @media (min-width: 768px) {
+            #global-action-menu {
+                position: absolute;
+                width: auto;
+                height: auto;
+                background-color: transparent;
+                padding: 0;
+                display: block;
+                align-items: unset;
+                justify-content: unset;
+            }
+
+            .menu-content-wrapper {
+                width: 280px;
+                max-width: none;
+                transform-origin: top left;
+            }
+        }
+
+        /* --- Style untuk isi panel --- */
+        .menu-panel:not(.hidden) {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .menu-panel-header {
+            display: grid;
+            grid-template-columns: 40px 1fr 40px;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .menu-back-button {
+            grid-column: 1;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .menu-back-button:hover {
+            background-color: var(--bg-card-hover);
+        }
+
+        .menu-panel-title {
+            grid-column: 2;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .menu-panel-content {
+            padding: 0.25rem 0;
+            margin: 0;
+            list-style: none;
+            overflow-y: auto;
+            max-height: 250px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            color: var(--text-secondary);
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .menu-item i {
+            width: 1rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .report-notes-panel-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+        }
+
+        .report-notes-panel-body .instruction-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            text-align: left;
+            margin-bottom: 0.25rem;
+        }
+
+        .report-notes-input {
+            width: 100%;
+            min-height: 90px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .report-notes-input:focus {
+            outline: none;
+            border-color: var(--accent-tertiary);
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+        }
+
+        .report-submit-button {
+            background-color: var(--accent-primary);
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .report-submit-button:hover {
+            background-color: var(--accent-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* --- Tombol Report Langsung --- */
+        .direct-report-trigger {
+            background-color: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .direct-report-trigger:hover {
+            background-color: var(--bg-card-hover);
+            color: var(--accent-neg);
+        }
     </style>
 
     @include('partials.nav')
+
+    {{-- ▼▼▼ MENU AKSI GLOBAL (UNTUK QUESTION, ANSWER, COMMENT) ▼▼▼ --}}
+    <div id="global-action-menu" class="hidden">
+        <div class="menu-content-wrapper">
+            {{-- Panel 1: Menu Utama (hanya untuk Question) --}}
+            <div class="menu-panel menu-panel-main">
+                <ul class="menu-panel-content">
+                    {{-- Konten diisi oleh JavaScript --}}
+                </ul>
+            </div>
+            {{-- Panel 2: Alasan Laporan --}}
+            <div class="menu-panel menu-panel-report hidden">
+                <div class="menu-panel-header">
+                    <button type="button" data-action="back-to-main" class="menu-back-button">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h4 class="menu-panel-title">Report Content</h4>
+                </div>
+                <ul class="menu-panel-content report-reason-list">
+                    {{-- List alasan akan diisi oleh JavaScript --}}
+                </ul>
+            </div>
+            {{-- Panel 3: Catatan Tambahan --}}
+            <div class="menu-panel menu-panel-notes hidden">
+                <div class="menu-panel-header">
+                    <button type="button" data-action="back-to-report-panel" class="menu-back-button">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h4 class="menu-panel-title">Lainnya</h4>
+                </div>
+                <div class="report-notes-panel-body">
+                    <p class="instruction-text">Jelaskan secara singkat mengapa konten ini tidak pantas.</p>
+                    <textarea class="report-notes-input" placeholder="Tulis alasan Anda di sini..." maxlength="255"></textarea>
+                    <button type="button" data-action="submit-report-with-notes" class="report-submit-button">Kirim
+                        Laporan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- ▲▲▲ AKHIR MENU AKSI GLOBAL ▲▲▲ --}}
     @php
         $isQuestionOwner = $question['user']['email'] === session('email');
     @endphp
@@ -233,7 +477,7 @@
 
                     <div id="answerCountAtas" class="flex items-center" title="Comments">
                         <i class="fa-solid fa-reply-all text-[var(--accent-tertiary)] mr-2"></i>
-                        <span class="text-[var(--text-secondary)]">{{ count($question['answer']) }}</span>
+                        <span class="text-[var(--text-secondary)]">{{ count($question['answers']) }}</span>
                     </div>
                 </div>
             </div>
@@ -254,13 +498,13 @@
                     <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
                 </button>
 
-                
+
                 <div class="flex flex-col items-center mt-4" id="reply-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
                         {{-- <i class="fa-solid fa-comments text-md"></i> --}}
                     </button>
                     <small class="text-[var(--text-secondary)] text-xs mt-1 cursor-pointer">
-                        {{-- {{ count($question['answer']) }} --}}
+                        {{-- {{ count($question['answers']) }} --}}
                     </small>
                 </div>
             </div>
@@ -289,7 +533,7 @@
                                 class="dropdown-menu absolute right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg shadow-xl z-10 hidden"
                                 style="opacity: 0; transform: translateX(10px);">
                                 @php
-                                    $hasAnswer = !empty($question['answer']);
+                                    $hasAnswer = !empty($question['answers']);
                                     $currentVoteCount = isset($question['vote']) ? (int) $question['vote'] : 0;
                                     $hasVote = $currentVoteCount !== 0;
                                 @endphp
@@ -311,6 +555,15 @@
                                 @endif
                             </div>
                         </div>
+                    @else
+                        {{-- Tombol untuk Report/Save (BAGIAN BARU) --}}
+                        <button type="button"
+                            class="action-trigger w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                            data-trigger-type="menu" data-reportable-id="{{ $question['id'] }}"
+                            data-reportable-type="question"
+                            data-is-saved="{{ $question['is_saved_by_request_user'] ? 'true' : 'false' }}">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
                     @endif
                 </div>
 
@@ -320,8 +573,8 @@
                     </p>
                     @if ($question['image'])
                         <div class="mt-4">
-                            <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $question['image'] }}" alt="Question Image"
-                                class="rounded-lg shadow-md max-w-lg max-h-96 object-contain">
+                            <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $question['image'] }}"
+                                alt="Question Image" class="rounded-lg shadow-md max-w-lg max-h-96 object-contain">
                         </div>
                     @endif
                 </div>
@@ -349,7 +602,8 @@
         <div id="answer-input-section" class="mt-10 hidden">
             <div class="answer-input-card rounded-xl p-6 mb-6 backdrop-blur-sm">
                 <div class="flex items-center mb-6 pb-4 border-b border-[var(--border-color)]">
-                    <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mr-4">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mr-4">
                         <i class="fa-solid fa-pen-to-square text-white text-lg"></i>
                     </div>
                     <div>
@@ -387,10 +641,13 @@
                                 <i class="fa-solid fa-file-upload text-lg"></i>
                                 <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
                             </label>
-                            
-                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-[var(--bg-shadow)] text-[var(--text-light)] text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg">
+
+                            <div
+                                class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-[var(--bg-shadow)] text-[var(--text-light)] text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg">
                                 JPG, PNG, JPEG (Max 5MB)
-                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                                <div
+                                    class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900">
+                                </div>
                             </div>
                         </div>
 
@@ -402,9 +659,12 @@
 
                     <button id="submitAnswer-btn"
                         class="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-white rounded-full hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-110 transition-all duration-300 group relative overflow-hidden">
-                        <i class="fa-solid fa-paper-plane text-lg group-hover:scale-110 transition-transform duration-200"></i>
-                        
-                        <div class="absolute inset-0 rounded-full bg-white opacity-0 group-active:opacity-20 transition-opacity duration-150"></div>
+                        <i
+                            class="fa-solid fa-paper-plane text-lg group-hover:scale-110 transition-transform duration-200"></i>
+
+                        <div
+                            class="absolute inset-0 rounded-full bg-white opacity-0 group-active:opacity-20 transition-opacity duration-150">
+                        </div>
                     </button>
                 </div>
             </div>
@@ -415,12 +675,12 @@
             <h2 class="text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center">
                 <i class="fa-solid fa-list-check mr-2 text-[var(--accent-primary)]"></i>
                 Answers <span
-                    class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answer'] ?? []) }})</span>
+                    class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answers'] ?? []) }})</span>
             </h2>
 
-            @if ($question['answer'])
+            @if ($question['answers'])
                 <div id="answerList" class="space-y-6">
-                    @foreach ($question['answer'] as $ans)
+                    @foreach ($question['answers'] as $ans)
                         @php
                             $isAnswerOwner = session('email') === ($ans['email'] ?? null);
                             $answerVoteCount = (int) ($ans['vote'] ?? 0);
@@ -493,11 +753,11 @@
                                     @endif
 
                                     <div class="mt-4 flex justify-between items-center">
-                                        <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
+                                        <a href="{{ route('viewUser', ['email' => $ans['user']['username']]) }}">
                                             <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                                <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                                <img src="{{ $ans['user']['image'] ? asset('storage/' . $ans['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['user']['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                                                     alt="User avatar" class="w-6 h-6 rounded-full mr-2">
-                                                <span class="hover:underline">Answered by {{ $ans['username'] }} -
+                                                <span class="hover:underline">Answered by {{ $ans['user']['username'] }} -
                                                     {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
                                             </div>
                                         </a>
@@ -506,10 +766,19 @@
                                             class="open-answer-comments-modal-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
                                             data-answer-id="{{ $ans['id'] }}"
                                             data-comments="{{ json_encode($ans['comments'] ?? []) }}"
-                                            data-answer-owner-username="{{ $ans['username'] }}">
+                                            data-answer-owner-username="{{ $ans['user']['username'] }}">
                                             <i class="fa-solid fa-comment-dots mr-2"></i>
                                             <span>{{ count($ans['comments'] ?? []) }}</span>
                                         </button>
+
+                                        @if (!$isAnswerOwner)
+                                            <button type="button" class="direct-report-trigger action-trigger"
+                                                title="Report this answer" data-trigger-type="report"
+                                                data-reportable-id="{{ $ans['id'] }}" data-reportable-type="answer">
+                                                <i class="fa-regular fa-flag"></i>
+                                            </button>
+                                        @endif
+
                                     </div>
 
                                     <!-- Comment input box -->
@@ -532,9 +801,8 @@
                                 @if ($isAnswerOwner)
                                     <div class="relative">
                                         <button id="answer-actions-toggle-{{ $ans['id'] }}"
-                                                class="answer-actions-toggle w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                                                title="More options"
-                                                data-answer-id="{{ $ans['id'] }}">
+                                            class="answer-actions-toggle w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                            title="More options" data-answer-id="{{ $ans['id'] }}">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
                                         <div id="answer-actions-menu-{{ $ans['id'] }}"
@@ -542,12 +810,12 @@
                                             style="opacity: 0; transform: translateX(10px);">
                                             @if (!$isVerified && $answerVoteCount == 0)
                                                 <a href="{{ route('user.answers.edit', ['answerId' => $ans['id']]) }}"
-                                                class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
+                                                    class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
                                                     <i class="fa-solid fa-edit w-6 mr-2"></i>
                                                     Edit
                                                 </a>
                                                 <button data-answer-id="{{ $ans['id'] }}"
-                                                        class="delete-answer-button flex items-center w-full px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--accent-neg)] hover:text-white">
+                                                    class="delete-answer-button flex items-center w-full px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--accent-neg)] hover:text-white">
                                                     <i class="fa-solid fa-trash w-6 mr-2"></i>
                                                     Delete
                                                 </button>
@@ -563,26 +831,33 @@
                         </div>
                     @endforeach
                 </div>
-            @else   
-                <div id="no-answers-block" class="bg-[var(--bg-card)] rounded-lg shadow-lg border border-[var(--border-color)] relative overflow-hidden">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
-                    <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
-                    
+            @else
+                <div id="no-answers-block"
+                    class="bg-[var(--bg-card)] rounded-lg shadow-lg border border-[var(--border-color)] relative overflow-hidden">
+                    <div
+                        class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
+                    </div>
+                    <div
+                        class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]">
+                    </div>
+
                     <div class="relative z-10 py-12 px-8 text-center">
-                        <div class="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--bg-accent-subtle)]">
-                            <i class="fa-solid fa-lightbulb text-3xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent"></i>
-                        </div>                        
+                        <div
+                            class="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--bg-accent-subtle)]">
+                            <i
+                                class="fa-solid fa-lightbulb text-3xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent"></i>
+                        </div>
                         <h3 class="text-2xl font-bold text-[var(--text-primary)] mb-3">
                             No Answers Yet
-                        </h3>                        
+                        </h3>
                         <p class="text-[var(--text-secondary)] text-lg leading-relaxed mb-6 max-w-md mx-auto">
                             Be the first to share your knowledge and help the community!
-                        </p>                        
+                        </p>
                         <a href="#answer-textArea" id="write-answer-placeholder-btn"
-                        class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105">
+                            class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105">
                             <i class="fa-solid fa-pen-to-square mr-2"></i>
                             Write an Answer
-                        </a>                
+                        </a>
                         <div class="mt-6 pt-6 border-t border-[var(--border-color)]">
                             <p class="text-sm text-[var(--text-muted)] flex items-center justify-center">
                                 <i class="fa-solid fa-star mr-2 text-[var(--accent-tertiary)]"></i>
@@ -594,14 +869,19 @@
             @endif
         </div>
 
-        <div id="questionCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
-            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
-                <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
+        <div id="questionCommentsModal"
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
+            <div
+                class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
+                <div
+                    class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
                     <h3 class="text-xl font-semibold text-[var(--text-primary)]">
                         {{ $question['title'] }}
-                        <span id="modal-question-comment-count" class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+                        <span id="modal-question-comment-count"
+                            class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
                     </h3>
-                    <button id="close-question-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
+                    <button id="close-question-comments-modal-btn"
+                        class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                 </div>
 
                 <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3 flex flex-col" id="question-comments-list-modal">
@@ -611,14 +891,26 @@
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
-                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
+                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}"
+                                        class="hover:underline">
                                         <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
-                                            <img src="{{ $comm['user_image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
-                                                alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
-                                            <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
+                                            <img src="{{ $comm['user']['image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['user']['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
+                                                alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}"
+                                                class="w-5 h-5 rounded-full mr-2">
+                                            <span>Posted by
+                                                {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
                                                 {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
                                         </div>
                                     </a>
+                                    @if (session('email') !== ($comm['user']['email'] ?? null))
+                                        <button type="button" class="direct-report-trigger action-trigger text-xs"
+                                            title="Report this comment" data-trigger-type="report"
+                                            data-reportable-id="{{ $comm['id'] }}" data-reportable-type="comment">
+                                            <i class="fa-regular fa-flag mr-1"></i> Report
+                                        </button>
+                                    @endif
+
+
                                 </div>
                             </div>
                         @endforeach
@@ -649,17 +941,21 @@
     </button>
 
     @once
-        <div id="answerCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none" style="transition: opacity 0.3s ease-in-out;">
-            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]" style="transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: translateY(-20px) scale(0.95);">
+        <div id="answerCommentsModal"
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none"
+            style="transition: opacity 0.3s ease-in-out;">
+            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]"
+                style="transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: translateY(-20px) scale(0.95);">
                 <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
                     <h3 id="answer-modal-title" class="text-xl font-semibold text-[var(--text-primary)]">
                         Comments on Answer
                     </h3>
-                    <button id="close-answer-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
+                    <button id="close-answer-comments-modal-btn"
+                        class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                 </div>
 
                 <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3 flex flex-col" id="answer-comments-list-modal">
-                    {{-- Comments will be dynamically injected here --}}
+
                 </div>
 
                 <div class="flex-shrink-0 p-6 pt-4 border-t border-[var(--border-color)] bg-[var(--bg-secondary)]">
@@ -674,7 +970,8 @@
             </div>
         </div>
     @endonce
-
+@endsection
+@section('script')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const API_BASE_URL = ("{{ env('API_URL', 'http://localhost:8001/api') }}" + '/').replace(/\/+$/, '/');
@@ -833,10 +1130,10 @@
                 const previewContainer = document.querySelector('.image-preview-container');
                 const imagePreviewsContainer = document.querySelector('.image-previews');
                 const fileInput = document.getElementById("question-img");
-                
+
                 button.closest('.image-preview').remove();
                 fileInput.value = '';
-                
+
                 if (previewContainer.children.length === 0) {
                     imagePreviewsContainer.classList.add('hidden');
                 }
@@ -854,9 +1151,9 @@
             });
 
             const jsIsQuestionOwner = @json($isQuestionOwner);
-            let currentAnswerCount = @json(count($question['answer'] ?? []));
+            let currentAnswerCount = @json(count($question['answers'] ?? []));
 
-            let jsHasAnswer = @json(!empty($question['answer']));
+            let jsHasAnswer = @json(!empty($question['answers']));
             let jsHasVote = @json(isset($question['vote']) && (int) $question['vote'] !== 0);
             const questionIdForActions = @json($question['id']);
 
@@ -899,39 +1196,36 @@
 
             function updateAnswerActionButtonsVisibility(answerId) {
                 const answerItemElement = document.getElementById(`answer-item-${answerId}`);
-                    if (!answerItemElement) {
-                        // The element might have been deleted, so we can safely exit.
-                        return;
-                    }
+                if (!answerItemElement) {
+                    // The element might have been deleted, so we can safely exit.
+                    return;
+                }
 
-                    const isOwner = answerItemElement.dataset.isOwner === 'true';
-                    const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
-                    const isVerified = answerItemElement.dataset.isVerified === 'true';
+                const isOwner = answerItemElement.dataset.isOwner === 'true';
+                const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
+                const isVerified = answerItemElement.dataset.isVerified === 'true';
 
-                    // Find the dropdown menu and the main toggle button container
-                    const menuContainer = document.getElementById(`answer-actions-menu-${answerId}`);
-                    const toggleContainer = document.getElementById(`answer-actions-toggle-${answerId}`)?.parentElement.parentElement;
+                // Find the dropdown menu and the main toggle button container
+                const menuContainer = document.getElementById(`answer-actions-menu-${answerId}`);
+                const toggleContainer = document.getElementById(`answer-actions-toggle-${answerId}`)?.parentElement
+                    .parentElement;
 
-                    if (!menuContainer || !toggleContainer) {
-                        // If the menu or its container doesn't exist, something is wrong, but we can exit.
-                        // console.error(`Action menu or toggle container for answer ${answerId} not found.`);
-                        return;
-                    }
+                if (!menuContainer || !toggleContainer) {
+                    return;
+                }
 
-                    // Always show the three-dot button if the user is the owner
-                    if (isOwner) {
-                        toggleContainer.classList.remove('hidden');
-                    } else {
-                        toggleContainer.classList.add('hidden');
-                        return; // Not the owner, so nothing more to do
-                    }
+                if (isOwner) {
+                    toggleContainer.classList.remove('hidden');
+                } else {
+                    toggleContainer.classList.add('hidden');
+                    return; 
+                }
 
-                    // Now, determine the *content* of the dropdown menu
-                    if (!isVerified && voteCount === 0) {
-                        // Conditions met: show Edit and Delete actions
-                        const editUrl = "{{ route('user.answers.edit', ['answerId' => ':answerId']) }}".replace(':answerId', answerId);
+                if (!isVerified && voteCount === 0) {
+                    const editUrl = "{{ route('user.answers.edit', ['answerId' => ':answerId']) }}".replace(
+                        ':answerId', answerId);
 
-                        menuContainer.innerHTML = `
+                    menuContainer.innerHTML = `
                             <a href="${editUrl}"
                             class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
                                 <i class="fa-solid fa-edit w-6 mr-2"></i>
@@ -943,22 +1237,19 @@
                                 Delete
                             </button>
                         `;
-                        // IMPORTANT: Find the newly created delete button and attach its listener
-                        const newDeleteButton = menuContainer.querySelector('.delete-answer-button');
-                        if (newDeleteButton) {
-                            attachDeleteAnswerButtonListener(newDeleteButton);
-                        }
-                    } else {
-                        // Conditions not met: show the disabled message
-                        menuContainer.innerHTML = `
+                    const newDeleteButton = menuContainer.querySelector('.delete-answer-button');
+                    if (newDeleteButton) {
+                        attachDeleteAnswerButtonListener(newDeleteButton);
+                    }
+                } else {
+                    menuContainer.innerHTML = `
                             <p class="px-4 py-3 text-sm text-center text-[var(--text-muted)]">
                                 Actions are disabled once the answer has been verified or has votes.
                             </p>
                         `;
-                    }
+                }
             }
 
-            // Fungsi untuk memasang listener ke tombol delete jawaban (bisa dipanggil untuk tombol awal & dinamis)
             function attachDeleteAnswerButtonListener(button) {
                 button.addEventListener('click', function() {
                     const answerId = this.dataset.answerId;
@@ -970,14 +1261,8 @@
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#ef4444',
-                        // ... (SweetAlert options lainnya)
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                            // Ganti API_BASE_URL dan API_TOKEN jika menggunakan sistem API terpisah
-                            // Jika tidak, gunakan route Laravel biasa untuk delete
-
-
                             const headers = {
                                 'Accept': 'application/json',
                                 'Authorization': `Bearer ${API_TOKEN}`,
@@ -1006,16 +1291,19 @@
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
                                         }).showToast();
-                                    if (answerItemElement) {
-                                            answerItemElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                        if (answerItemElement) {
+                                            answerItemElement.style.transition =
+                                                'opacity 0.5s ease, transform 0.5s ease';
                                             answerItemElement.style.opacity = '0';
                                             answerItemElement.style.transform = 'scale(0.9)';
-                                            
+
                                             setTimeout(() => {
-                                                const answerList = answerItemElement.parentElement;
+                                                const answerList = answerItemElement
+                                                    .parentElement;
                                                 answerItemElement.remove();
 
-                                                if (answerList && answerList.children.length === 0) {
+                                                if (answerList && answerList.children
+                                                    .length === 0) {
                                                     // const answerSection = document.querySelector('.answer-section');
                                                     // if (answerSection) {
                                                     //     answerList.remove();
@@ -1036,10 +1324,17 @@
                                                 }
 
                                                 currentAnswerCount--;
-                                                const answerCountTop = document.querySelector('#answerCountAtas span');
-                                                const answerHeader = document.querySelector('.answer-section h2 span');
-                                                if (answerCountTop) answerCountTop.textContent = currentAnswerCount;
-                                                if (answerHeader) answerHeader.textContent = `(${currentAnswerCount})`;
+                                                const answerCountTop = document
+                                                    .querySelector(
+                                                        '#answerCountAtas span');
+                                                const answerHeader = document
+                                                    .querySelector(
+                                                        '.answer-section h2 span');
+                                                if (answerCountTop) answerCountTop
+                                                    .textContent = currentAnswerCount;
+                                                if (answerHeader) answerHeader
+                                                    .textContent =
+                                                    `(${currentAnswerCount})`;
 
                                             }, 500);
                                         }
@@ -1160,14 +1455,16 @@
                                 textArea.value = '';
                                 fileInput.value = '';
                                 const imagePreviewsWrapper = document.querySelector(".image-previews");
-                                const imagePreviewContentContainer = document.querySelector('.image-preview-container');
+                                const imagePreviewContentContainer = document.querySelector(
+                                    '.image-preview-container');
                                 if (imagePreviewContentContainer) {
                                     imagePreviewContentContainer.innerHTML = '';
                                 }
-                                if (imagePreviewsWrapper && !imagePreviewsWrapper.classList.contains('hidden')) {
-                                        imagePreviewsWrapper.classList.add('hidden');
+                                if (imagePreviewsWrapper && !imagePreviewsWrapper.classList.contains(
+                                        'hidden')) {
+                                    imagePreviewsWrapper.classList.add('hidden');
                                 }
-                            
+
                                 jsHasAnswer =
                                     true; // Update state karena pertanyaan sekarang memiliki jawaban
                                 updateQuestionActionButtonsVisibility
@@ -1175,7 +1472,7 @@
 
                                 currentAnswerCount++;
 
-                                const timeAgo = formatTimeAgo(new Date(data.answer.timestamp));
+                                const timeAgo = formatTimeAgo(new Date(data.answer.created_at));
 
                                 const imageHtml = data.answer.image ?
                                     `<div class="mt-4">
@@ -1260,7 +1557,7 @@
                     `;
 
                                 let answerList = document.getElementById('answerList');
-                                 const noAnswersBlock = document.getElementById('no-answers-block');
+                                const noAnswersBlock = document.getElementById('no-answers-block');
                                 if (noAnswersBlock) {
                                     answerList = document.createElement('div');
                                     answerList.id = 'answerList';
@@ -1273,45 +1570,56 @@
                                     const newAnswerElement = document.createElement('div');
                                     newAnswerElement.innerHTML = htmlContent.trim();
                                     newAnswerElement.firstElementChild.style.opacity = '0';
-                                    newAnswerElement.firstElementChild.style.transform = 'translateY(20px)';
+                                    newAnswerElement.firstElementChild.style.transform =
+                                        'translateY(20px)';
                                     answerList.appendChild(newAnswerElement.firstElementChild);
 
                                     setTimeout(() => {
-                                        const addedElement = document.getElementById(`answer-item-${data.answer.id}`);
-                                        if(addedElement) {
-                                            addedElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                        const addedElement = document.getElementById(
+                                            `answer-item-${data.answer.id}`);
+                                        if (addedElement) {
+                                            addedElement.style.transition =
+                                                'opacity 0.5s ease, transform 0.5s ease';
                                             addedElement.style.opacity = '1';
                                             addedElement.style.transform = 'translateY(0)';
                                         }
                                     }, 50);
-                                    const newToggleBtn = document.getElementById(`answer-actions-toggle-${data.answer.id}`);
+                                    const newToggleBtn = document.getElementById(
+                                        `answer-actions-toggle-${data.answer.id}`);
                                     if (newToggleBtn) {
                                         newToggleBtn.addEventListener('click', (event) => {
                                             event.stopPropagation();
                                             const answerId = newToggleBtn.dataset.answerId;
-                                            const answerMenu = document.getElementById(`answer-actions-menu-${answerId}`);
+                                            const answerMenu = document.getElementById(
+                                                `answer-actions-menu-${answerId}`);
 
                                             if (answerMenu) {
-                                                document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                                                    if (menu.id !== answerMenu.id) {
-                                                        menu.classList.add('hidden');
-                                                        menu.style.opacity = '0';
-                                                        menu.style.transform = 'translateY(-10px)';
-                                                    }
-                                                });
+                                                document.querySelectorAll('.dropdown-menu')
+                                                    .forEach(menu => {
+                                                        if (menu.id !== answerMenu.id) {
+                                                            menu.classList.add('hidden');
+                                                            menu.style.opacity = '0';
+                                                            menu.style.transform =
+                                                                'translateY(-10px)';
+                                                        }
+                                                    });
 
-                                                const isHidden = answerMenu.classList.contains('hidden');
+                                                const isHidden = answerMenu.classList.contains(
+                                                    'hidden');
                                                 if (isHidden) {
                                                     answerMenu.classList.remove('hidden');
                                                     setTimeout(() => {
                                                         answerMenu.style.opacity = '1';
-                                                        answerMenu.style.transform = 'translateY(0)';
+                                                        answerMenu.style.transform =
+                                                            'translateY(0)';
                                                     }, 10);
                                                 } else {
                                                     answerMenu.style.opacity = '0';
-                                                    answerMenu.style.transform = 'translateY(-10px)';
+                                                    answerMenu.style.transform =
+                                                        'translateY(-10px)';
                                                     setTimeout(() => {
-                                                        answerMenu.classList.add('hidden');
+                                                        answerMenu.classList.add(
+                                                            'hidden');
                                                     }, 200);
                                                 }
                                             }
@@ -1349,14 +1657,17 @@
                                 }).showToast();
 
                                 const answerCountTop = document.querySelector('#answerCountAtas span');
-                                const answerCountHeader = document.querySelector('.answer-section h2 span');
+                                const answerCountHeader = document.querySelector(
+                                    '.answer-section h2 span');
 
                                 if (answerCountTop && answerCountHeader) {
-                                    const currentCount = parseInt(answerCountTop.textContent.trim(), 10);
+                                    const currentCount = parseInt(answerCountTop.textContent.trim(),
+                                        10);
                                     const newCount = currentCount + 1;
 
                                     answerCountTop.textContent = newCount;
-                                    answerCountHeader.textContent = `(${newCount})`; // Note the parentheses
+                                    answerCountHeader.textContent =
+                                        `(${newCount})`; // Note the parentheses
                                 }
                             } else {
                                 Toastify({
@@ -1368,20 +1679,8 @@
                                 }).showToast();
                             }
                         })
-                    // .catch(error => {
-                    //     submitButton.innerHTML = originalButtonText;
-                    //     submitButton.disabled = false;
-                    //     console.error('Error:', error);
-
-                    //     Swal.fire({
-                    //         icon: 'error',
-                    //         title: 'Error',
-                    //         text: 'There was a network error. Please try again.',
-                    //     });
-                    // });
                 });
             }
-            // });
 
             function escapeHtml(text) {
                 if (typeof text !== 'string') return '';
@@ -1490,7 +1789,7 @@
                                             flexGrowDiv.appendChild(commentsSection);
                                         }
 
-                                        const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
+                                        const timeAgo = formatTimeAgo(new Date(data.comment.created_at));
                                         const commentDiv = document.createElement('div');
                                         commentDiv.className =
                                             'answer-comment bg-[var(--bg-card)] p-3 rounded-lg border-l-2 border-[var(--accent-tertiary)]';
@@ -1604,12 +1903,14 @@
                             console.log(data);
 
                             if (data.success) {
-                                const noCommentsModal = document.getElementById('no-question-comments-modal');
+                                const noCommentsModal = document.getElementById(
+                                    'no-question-comments-modal');
                                 if (noCommentsModal) {
                                     noCommentsModal.remove();
                                 }
-                                let commentList = document.getElementById('question-comments-list-modal');
-                                const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
+                                let commentList = document.getElementById(
+                                    'question-comments-list-modal');
+                                const timeAgo = formatTimeAgo(new Date(data.comment.created_at));
 
                                 const htmlContent = `
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
@@ -1783,7 +2084,7 @@
 
                                     // Create the new comment element
                                     const timeAgo = formatTimeAgo(new Date(data.comment
-                                        .timestamp));
+                                        .created_at));
 
                                     const commentDiv = document.createElement('div');
                                     commentDiv.className =
@@ -2063,13 +2364,6 @@
                             }).showToast();
                         }
                     })
-                // .catch(error => {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: 'Unexpected Error',
-                //         text: 'An unexpected error occurred.',
-                //     });
-                // });
             };
 
             upVoteButtonQ.addEventListener('click', () => handleVoteQ(true));
@@ -2119,11 +2413,6 @@
                                 }
                             }
                             updateAnswerActionButtonsVisibility(id);
-                            // Swal.fire({
-                            //     icon: 'success',
-                            //     title: 'Vote Submitted!',
-                            //     text: 'Your vote has been successfully recorded.',
-                            // });
                         } else {
                             Toastify({
                                 text: data.message ||
@@ -2135,13 +2424,6 @@
                             }).showToast();
                         }
                     })
-                // .catch(error => {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: 'Unexpected Error',
-                //         text: 'An unexpected error occurred.',
-                //     });
-                // });
             };
 
             upVoteButtonsA.forEach(button => {
@@ -2186,23 +2468,23 @@
                     if (!questionActionsMenu.classList.contains('hidden')) {
                         questionActionsMenu.style.opacity = '0';
                         questionActionsMenu.style.transform = 'translateY(-10px)';
-                         setTimeout(() => {
+                        setTimeout(() => {
                             questionActionsMenu.classList.add('hidden');
                         }, 200);
                     }
                 }
             });
-            
+
             const editLink = questionActionsMenu.querySelector('.edit-question-link');
-            if(editLink) {
-                 editLink.addEventListener('click', function(e) {
+            if (editLink) {
+                editLink.addEventListener('click', function(e) {
                     e.preventDefault();
                     const questionId = '{{ $question['id'] }}';
                     window.location.href = `{{ url('/ask') }}/${questionId}`;
                 });
             }
         }
-            
+
         document.querySelectorAll('.answer-actions-toggle').forEach(toggleBtn => {
             toggleBtn.addEventListener('click', (event) => {
                 event.stopPropagation();
@@ -2280,7 +2562,6 @@
                 </div>
             </div>`;
         }
-
     </script>
 
     <script>
@@ -2296,7 +2577,7 @@
             const submitAnswerCommentBtn = document.getElementById('submit-answer-comment-btn');
             const answerCommentTextarea = document.getElementById('answer-comment-textarea');
             let currentAnswerId = null;
-                    
+
             const showAnswerBtn = document.getElementById('show-answer-input-btn');
             const answerInputSection = document.getElementById('answer-input-section');
             const answerTextArea = document.getElementById('answer-textArea');
@@ -2319,14 +2600,14 @@
                     }, 100);
                 }
             };
-            
+
             if (writeAnswerPlaceholderBtn) {
                 writeAnswerPlaceholderBtn.addEventListener('click', (event) => {
                     event.preventDefault();
                     showAnswerInput();
                 });
             }
-            
+
             if (showAnswerBtn && answerInputSection && answerTextArea) {
                 showAnswerBtn.addEventListener('click', () => {
                     const isHidden = answerInputSection.classList.contains('hidden');
@@ -2334,15 +2615,15 @@
                     if (isHidden) {
                         answerInputSection.classList.remove('hidden');
                         showAnswerBtn.classList.add('active');
-                        
+
                         showAnswerBtn.querySelector('i').className = 'fa-solid fa-times text-2xl';
-                        
+
                         setTimeout(() => {
                             answerInputSection.scrollIntoView({
                                 behavior: 'smooth',
                                 block: 'center'
                             });
-                            
+
                             setTimeout(() => {
                                 answerTextArea.focus();
                             }, 500);
@@ -2351,7 +2632,7 @@
                     } else {
                         answerInputSection.classList.add('hidden');
                         showAnswerBtn.classList.remove('active');
-                        
+
                         showAnswerBtn.querySelector('i').className = 'fa-solid fa-pen-to-square text-2xl';
                     }
                 });
@@ -2391,16 +2672,16 @@
 
             if (questionCommentsModal) {
                 questionCommentsModal.addEventListener('click', (event) => {
-                if (event.target === questionCommentsModal) {
-                    closeModal();
-                }
-            });
+                    if (event.target === questionCommentsModal) {
+                        closeModal();
+                    }
+                });
 
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape' && questionCommentsModal.classList.contains('opacity-100')) {
-                    closeModal();
-                }
-            });
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && questionCommentsModal.classList.contains('opacity-100')) {
+                        closeModal();
+                    }
+                });
             }
 
             function openAnswerModal() {
@@ -2416,7 +2697,8 @@
             function closeAnswerModal() {
                 if (answerCommentsModal) {
                     answerCommentsModal.querySelector('.modal-content').style.opacity = '0';
-                    answerCommentsModal.querySelector('.modal-content').style.transform = 'translateY(-20px) scale(0.95)';
+                    answerCommentsModal.querySelector('.modal-content').style.transform =
+                        'translateY(-20px) scale(0.95)';
                     setTimeout(() => {
                         answerCommentsModal.classList.add('opacity-0', 'pointer-events-none');
                         answerCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
@@ -2425,18 +2707,20 @@
             }
 
             document.querySelectorAll('.open-answer-comments-modal-btn').forEach(button => {
-                button.addEventListener('click', function () {
+                button.addEventListener('click', function() {
                     currentAnswerId = this.dataset.answerId;
                     const comments = JSON.parse(this.dataset.comments);
                     const answerOwnerUsername = this.dataset.answerOwnerUsername;
 
-                    document.getElementById('answer-modal-title').innerHTML = `Comments on ${answerOwnerUsername}'s Answer <span class="text-sm text-[var(--text-muted)] ml-2">(${comments.length})</span>`;
+                    document.getElementById('answer-modal-title').innerHTML =
+                        `Comments on ${answerOwnerUsername}'s Answer <span class="text-sm text-[var(--text-muted)] ml-2">(${comments.length})</span>`;
                     answerCommentsListModal.innerHTML = ''; // Clear previous comments
 
                     if (comments.length > 0) {
                         comments.forEach(comment => {
                             const commentElement = document.createElement('div');
-                            commentElement.className = 'comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start';
+                            commentElement.className =
+                                'comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start';
                             commentElement.innerHTML = `
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">${comment.comment.replace(/\n/g, '<br>')}</p>
@@ -2444,9 +2728,24 @@
                                         <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
                                             <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(comment.username)}&background=random&color=fff&size=128"
                                                 alt="${comment.username}" class="w-5 h-5 rounded-full mr-2">
-                                            <span>Posted by ${comment.username} - ${new Date(comment.timestamp).toLocaleDateString()}</span>
+                                            <span>Posted by ${comment.username} - ${new Date(comment.created_at).toLocaleDateString()}</span>
                                         </div>
                                     </a>
+
+                                     ${
+                    // Logika untuk hanya menampilkan tombol jika bukan pemilik komentar
+                    '{{ session('email') }}' !== comment.user_email 
+                    ? `<button type="button" 
+                                       class="direct-report-trigger action-trigger text-xs" 
+                                       title="Report this comment"
+                                       data-trigger-type="report"
+                                       data-reportable-id="${comment.id}"
+                                       data-reportable-type="comment">
+                                   <i class="fa-regular fa-flag mr-1"></i> Report
+                               </button>`
+                    : ''
+                }
+
                                 </div>
                             `;
                             answerCommentsListModal.appendChild(commentElement);
@@ -2483,7 +2782,9 @@
                         Toastify({
                             text: 'Please write a comment!',
                             duration: 3000,
-                            style: { background: "#e74c3c" }
+                            style: {
+                                background: "#e74c3c"
+                            }
                         }).showToast();
                         return;
                     }
@@ -2494,40 +2795,46 @@
                     formData.append('commentable_type', 'answer');
 
                     fetch(`{{ route('comment.submit') }}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                        },
-                        body: formData,
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Toastify({
-                                text: 'Your comment has been successfully posted.',
-                                duration: 3000,
-                                style: { background: "linear-gradient(to right, #00b09b, #96c93d)" }
-                            }).showToast();
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                            },
+                            body: formData,
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Toastify({
+                                    text: 'Your comment has been successfully posted.',
+                                    duration: 3000,
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
 
-                            location.reload();
-                            closeAnswerModal();
+                                location.reload();
+                                closeAnswerModal();
 
-                        } else {
+                            } else {
+                                Toastify({
+                                    text: data.message || 'An unexpected error occurred.',
+                                    duration: 3000,
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
                             Toastify({
-                                text: data.message || 'An unexpected error occurred.',
+                                text: 'A network error occurred. Please try again.',
                                 duration: 3000,
-                                style: { background: "#e74c3c" }
+                                style: {
+                                    background: "#e74c3c"
+                                }
                             }).showToast();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Toastify({
-                            text: 'A network error occurred. Please try again.',
-                            duration: 3000,
-                            style: { background: "#e74c3c" }
-                        }).showToast();
-                    });
+                        });
                 });
             }
 
@@ -2536,4 +2843,262 @@
             });
         });
     </script>
+
+
+
+   {{-- GANTI LAGI SELURUH SCRIPT TERAKHIR ANDA DENGAN INI --}}
+<script id="report-reasons-data" type="application/json">{!! json_encode($reportReasons ?? []) !!}</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- Konfigurasi & Pemeriksaan Elemen Penting ---
+        const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfMeta) {
+            console.error('FATAL ERROR: CSRF token meta tag not found. Please ensure it is present in your layout file.');
+            // Menghentikan eksekusi lebih lanjut jika token tidak ada, karena semua aksi akan gagal.
+            return; 
+        }
+        const csrfToken = csrfMeta.getAttribute('content');
+
+        const reportUrl = '{{ route('submitReport') }}';
+        const saveUrl = '{{ route('saveQuestion') }}';
+        const unsaveUrl = '{{ route('unsaveQuestion') }}';
+        const reportReasons = JSON.parse(document.getElementById('report-reasons-data').textContent || '[]');
+
+        // --- Elemen DOM ---
+        const globalMenu = document.getElementById('global-action-menu');
+        if (!globalMenu) return; // Keluar jika menu tidak ada
+
+        // (Sisa kode dari jawaban sebelumnya tetap sama persis)
+        const mainPanel = globalMenu.querySelector('.menu-panel-main');
+        const reportPanel = globalMenu.querySelector('.menu-panel-report');
+        const notesPanel = globalMenu.querySelector('.menu-panel-notes');
+        const notesTextarea = notesPanel.querySelector('.report-notes-input');
+        let activeTrigger = null;
+
+        // --- Fungsi Helper ---
+        const showPanel = (panelToShow) => {
+            [mainPanel, reportPanel, notesPanel].forEach(p => p.classList.add('hidden'));
+            panelToShow.classList.remove('hidden');
+        };
+
+        const closeMenu = () => {
+            if (globalMenu.classList.contains('open')) {
+                globalMenu.classList.remove('open');
+                activeTrigger = null;
+            }
+        };
+
+        const handleApiRequest = (url, body, successMessage) => {
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify(body)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Toastify({
+                        text: data.message || successMessage,
+                        style: { background: "linear-gradient(to right, #00b09b, #96c93d)" }
+                    }).showToast();
+                    return data;
+                } else {
+                    throw new Error(data.message || "An unknown error occurred.");
+                }
+            })
+            .catch(error => {
+                Toastify({ text: error.message, style: { background: "#e74c3c" } }).showToast();
+                console.error("API Error:", error);
+                throw error;
+            });
+        };
+        
+        // --- Fungsi Aksi ---
+        const saveQuestionAction = (questionId, menuItem) => {
+            handleApiRequest(saveUrl, { question_id: questionId }, "Question saved!")
+                .then(() => {
+                    const icon = menuItem.querySelector('i');
+                    const text = menuItem.querySelector('span');
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid', 'text-[var(--accent-secondary)]');
+                    if (text) text.textContent = 'Unsave';
+                    if (activeTrigger) activeTrigger.dataset.isSaved = 'true';
+                    closeMenu();
+                }).catch(() => {});
+        };
+
+        const unsaveQuestionAction = (questionId, menuItem) => {
+            handleApiRequest(unsaveUrl, { question_id: questionId }, "Question unsaved!")
+                .then(() => {
+                    const icon = menuItem.querySelector('i');
+                    const text = menuItem.querySelector('span');
+                    icon.classList.remove('fa-solid', 'text-[var(--accent-secondary)]');
+                    icon.classList.add('fa-regular');
+                    if (text) text.textContent = 'Save';
+                    if (activeTrigger) activeTrigger.dataset.isSaved = 'false';
+                    closeMenu();
+                }).catch(() => {});
+        };
+        
+        const submitReportAction = (reportableId, reportableType, reasonId, additionalNotes = null) => {
+            const body = {
+                reportable_id: reportableId,
+                reportable_type: reportableType,
+                report_reason_id: reasonId,
+            };
+            if (additionalNotes) {
+                body.additional_notes = additionalNotes;
+            }
+            handleApiRequest(reportUrl, body, "Report submitted successfully!").then(closeMenu).catch(() => {});
+        };
+
+        // --- Event Listener Utama untuk membuka menu ---
+        document.body.addEventListener('click', function(e) {
+            const trigger = e.target.closest('.action-trigger');
+
+            if (!trigger && !globalMenu.contains(e.target)) {
+                closeMenu();
+                return;
+            }
+            
+            if (!trigger) return;
+
+            e.stopPropagation();
+
+            if (activeTrigger === trigger) {
+                closeMenu();
+                return;
+            }
+            activeTrigger = trigger;
+
+            const triggerType = trigger.dataset.triggerType;
+            const reportableId = trigger.dataset.reportableId;
+            const reportableType = trigger.dataset.reportableType;
+
+            globalMenu.dataset.reportableId = reportableId;
+            globalMenu.dataset.reportableType = reportableType;
+
+            if (window.innerWidth >= 768) {
+                const rect = trigger.getBoundingClientRect();
+                globalMenu.style.top = `${window.scrollY + rect.bottom}px`;
+                globalMenu.style.left = `${rect.left}px`;
+            } else {
+                globalMenu.style.top = '';
+                globalMenu.style.left = '';
+            }
+
+            if (triggerType === 'menu') {
+                const isSaved = trigger.dataset.isSaved === 'true';
+                const mainMenuList = mainPanel.querySelector('.menu-panel-content');
+                mainMenuList.innerHTML = `
+                    <li>
+                        <a href="#" class="menu-item" data-action="save">
+                            ${isSaved 
+                                ? `<i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i><span>Unsave</span>` 
+                                : `<i class="fa-regular fa-bookmark"></i><span>Save</span>`
+                            }
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="menu-item" data-action="show-report-panel">
+                            <i class="fa-regular fa-flag"></i><span>Report</span>
+                        </a>
+                    </li>
+                `;
+                showPanel(mainPanel);
+            } else if (triggerType === 'report') {
+                const reasonList = reportPanel.querySelector('.report-reason-list');
+                reasonList.innerHTML = '';
+                reportReasons.forEach(reason => {
+                    const isOtherReason = reason.title.toLowerCase().includes('lainnya');
+                    const itemAction = isOtherReason ? 'show-notes-panel' : 'submit-report';
+                    reasonList.insertAdjacentHTML('beforeend',
+                        `<li><a href="#" class="menu-item" data-action="${itemAction}" data-reason-id="${reason.id}">${reason.title}</a></li>`
+                    );
+                });
+                showPanel(reportPanel);
+            }
+
+            globalMenu.classList.add('open');
+        });
+        
+        // --- Event Listener untuk Aksi DI DALAM Menu ---
+        globalMenu.addEventListener('click', e => {
+            const target = e.target.closest('[data-action]');
+            if (!target) {
+                if (e.target === globalMenu) closeMenu();
+                return;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const action = target.dataset.action;
+            const reportableId = globalMenu.dataset.reportableId;
+            const reportableType = globalMenu.dataset.reportableType;
+
+            switch (action) {
+                case 'save':
+                    const saveIconElement = target.querySelector('i');
+                    if (saveIconElement.classList.contains('fa-solid')) {
+                        unsaveQuestionAction(reportableId, target);
+                    } else {
+                        saveQuestionAction(reportableId, target);
+                    }
+                    break;
+                    
+                case 'show-report-panel':
+                    const reasonList = reportPanel.querySelector('.report-reason-list');
+                    reasonList.innerHTML = '';
+                    reportReasons.forEach(reason => {
+                        const isOtherReason = reason.title.toLowerCase().includes('lainnya');
+                        const itemAction = isOtherReason ? 'show-notes-panel' : 'submit-report';
+                        reasonList.insertAdjacentHTML('beforeend',
+                            `<li><a href="#" class="menu-item" data-action="${itemAction}" data-reason-id="${reason.id}">${reason.title}</a></li>`
+                        );
+                    });
+                    showPanel(reportPanel);
+                    break;
+
+                case 'show-notes-panel':
+                    notesPanel.dataset.reasonId = target.dataset.reasonId;
+                    showPanel(notesPanel);
+                    notesTextarea.focus();
+                    break;
+
+                case 'back-to-main':
+                    if (activeTrigger && activeTrigger.dataset.triggerType === 'menu') {
+                        showPanel(mainPanel);
+                    } else {
+                        closeMenu();
+                    }
+                    break;
+
+                case 'back-to-report-panel':
+                    showPanel(reportPanel);
+                    break;
+
+                case 'submit-report':
+                    submitReportAction(reportableId, reportableType, target.dataset.reasonId);
+                    break;
+
+                case 'submit-report-with-notes':
+                    const reasonIdForNotes = notesPanel.dataset.reasonId;
+                    const additionalNotes = notesTextarea.value.trim();
+                    if (!additionalNotes) {
+                        Toastify({ text: "Please provide a reason.", style: { background: "#e74c3c" } }).showToast();
+                        return;
+                    }
+                    submitReportAction(reportableId, reportableType, reasonIdForNotes, additionalNotes);
+                    notesTextarea.value = '';
+                    break;
+            }
+        });
+    });
+</script>
 @endsection

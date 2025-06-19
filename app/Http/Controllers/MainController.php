@@ -258,6 +258,8 @@ class MainController extends Controller
   public function viewAnswers($questionId)
   {
     $data['question'] = $this->questionController->getQuestionDetails($questionId);
+    // dd($data['question']);
+    $reportReasons = $this->reportController->getReportReasons();
     $currUser = $this->userController->getUserByEmail(session('email'));
     $data['username'] = $currUser['username'];
     $data['image'] = $currUser['image'];
@@ -269,6 +271,7 @@ class MainController extends Controller
     // dd($data);
 
     $data['histories'] = $currUser['histories'];
+    $data['reportReasons'] = $reportReasons;
     return view('viewAnswers', $data);
   }
 
