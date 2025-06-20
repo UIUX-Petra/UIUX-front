@@ -383,8 +383,8 @@
                     <div class="flex items-center space-x-4">
                         <div class="relative group">
                             <label tabindex="0"
-                                class="flex items-center px-4 py-2.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-tertiary)] border-2 border-[var(--border-color)] hover:border-[var(--accent-tertiary)] text-[var(--text-primary)] hover:text-[var(--text-dark)] rounded-lg cursor-pointer transition-all duration-300 group">
-                                <i class="fa-solid fa-file-upload text-lg"></i>
+                                class="flex items-center px-4 py-2.5 bg-[var(--accent-tertiary)] hover:bg-[var(--bg-secondary)] border-2 border-[var(--accent-tertiary)] hover:border-[var(--border-color)] text-[var(--text-dark)] hover:text-[var(--text-primary)] rounded-lg cursor-pointer transition-all duration-300 group">
+                                <i class="fa-solid fa-image text-lg"></i>
                                 <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
                             </label>
                             
@@ -1028,23 +1028,23 @@
                                                 answerItemElement.remove();
 
                                                 if (answerList && answerList.children.length === 0) {
-                                                    // const answerSection = document.querySelector('.answer-section');
-                                                    // if (answerSection) {
-                                                    //     answerList.remove();
-                                                    //     answerSection.insertAdjacentHTML('beforeend', getNoAnswersHtml());
+                                                    const answerSection = document.querySelector('.answer-section');
+                                                    if (answerSection) {
+                                                        answerList.remove();
+                                                        answerSection.insertAdjacentHTML('beforeend', getNoAnswersHtml());
 
-                                                    //     const newWriteBtn = document.getElementById('write-answer-placeholder-btn');
-                                                    //     if (newWriteBtn) {
-                                                    //         newWriteBtn.addEventListener('click', (event) => {
-                                                    //             event.preventDefault();
-                                                    //             showAnswerInput();
-                                                    //         });
-                                                    //     }
-                                                    // }
+                                                        const newWriteBtn = document.getElementById('write-answer-placeholder-btn');
+                                                        if (newWriteBtn) {
+                                                            newWriteBtn.addEventListener('click', (event) => {
+                                                                event.preventDefault();
+                                                                showAnswerInput();
+                                                            });
+                                                        }
+                                                    }
                                                     // 
                                                     // to be fixed
 
-                                                    location.reload();
+                                                    // location.reload();
                                                 }
 
                                                 currentAnswerCount--;
@@ -1188,7 +1188,15 @@
                                 if (imagePreviewsWrapper && !imagePreviewsWrapper.classList.contains('hidden')) {
                                         imagePreviewsWrapper.classList.add('hidden');
                                 }
-                            
+
+                                const answerInputSection = document.getElementById('answer-input-section');
+                                const showAnswerBtn = document.getElementById('show-answer-input-btn');
+                                if (answerInputSection && showAnswerBtn) {
+                                    answerInputSection.classList.add('hidden');
+                                    showAnswerBtn.classList.remove('active');
+                                    showAnswerBtn.querySelector('i').className = 'fa-solid fa-pen-to-square text-2xl';
+                                }
+                                                        
                                 jsHasAnswer =
                                     true; // Update state karena pertanyaan sekarang memiliki jawaban
                                 updateQuestionActionButtonsVisibility
@@ -1249,7 +1257,7 @@
                                     </a>
                                     <button class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                                         <i class="fa-solid fa-comment-dots mr-2"></i>
-                                        <span>Add Comment</span>
+                                        <span>{{ count($ans['comments'] ?? []) }}</span>
                                     </button>
                                 </div>
 
@@ -1345,12 +1353,12 @@
                                     updateAnswerActionButtonsVisibility(data.answer.id);
 
                                     // 2. Pasang listener untuk tombol verifikasi BARU
-                                    if (newAnswerElement) {
-                                        const newVerifyToggleButtons = newAnswerElement
-                                            .querySelectorAll('.verify-toggle-button');
-                                        newVerifyToggleButtons.forEach(btn => {
-                                            attachVerifyButtonListener(btn); // PENTING!
-                                        });
+                                    const addedElement = document.getElementById(`answer-item-${data.answer.id}`);
+                                    if (addedElement) {
+                                        const newVerifyToggleButtons = addedElement.querySelectorAll('.verify-toggle-button');
+                                            newVerifyToggleButtons.forEach(btn => {
+                                                attachVerifyButtonListener(btn);
+                                            });
                                     }
                                     const answerHeader = document.querySelector(
                                         '.answer-section h2 span');
@@ -2359,10 +2367,6 @@
             </div>`;
         }
 
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
             const questionCommentsModal = document.getElementById('questionCommentsModal');
             const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
             const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
@@ -2612,6 +2616,7 @@
             document.querySelectorAll('.comment-box.hidden.mt-4.w-full.comment-animation').forEach(el => {
                 el.style.display = 'none';
             });
-        });
+
     </script>
+
 @endsection

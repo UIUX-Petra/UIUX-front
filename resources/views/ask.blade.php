@@ -387,9 +387,6 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -399,17 +396,17 @@
     @include('partials.nav')
 
     @php
-        $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
+    $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
 
-        $formActionUrl = $isEditMode
-            ? // call api dipindah dari sini ke updateQuestion, buat avoid error 'Unauthenticated'. ndapapa?
-            // ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
-            route('updateQuestion', ['id' => $questionToEdit['id']])
-            : route('addQuestion');
+    $formActionUrl = $isEditMode
+        // call api dipindah dari sini ke updateQuestion, buat avoid error 'Unauthenticated'. ndapapa?
+        // ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
+        ? route('updateQuestion', ['id' => $questionToEdit['id']])
+        : route('addQuestion');
 
-        $formMethod = 'POST';
-        $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
-        $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
+    $formMethod = 'POST';
+    $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
+    $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
     @endphp
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
@@ -725,10 +722,14 @@
                     const response = await axios.post(`${AI_SERVICE_URL}/recommend_tags`,
                         aiFormData);
                     if (response.data && response.data.success) {
+                        selectedTagIds = [];
                         const recommendedTags = response.data.recommended_tags;
-                        const recommendedIds = recommendedTags.map(tag => tag.id);
-                        aiRecommendedTagIds = recommendedIds;
-                        selectedTagIds = recommendedIds;
+                        aiRecommendedTagIds = recommendedTags.map(tag => tag.id);
+                        recommendedTags.forEach(tag => {
+                            if (!selectedTagIds.includes(tag.id)) {
+                                selectedTagIds.push(tag.id);
+                            }
+                        });
                         updateMainUI();
 
                         Toastify({
@@ -813,6 +814,8 @@
                 showingCount.textContent = filteredTags.length;
 
                 filteredTags.forEach(tag => {
+                    console.log(tag);
+                    
                     const isSelected = tempSelectedTagIds.includes(tag.id.toString());
                     const tagItem = document.createElement('div');
                     tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
@@ -966,9 +969,6 @@
                     Toastify({
                         text: "Please fill in title, question, and select at least one tag.",
                         duration: 3000,
-                        close: true,
-                        gravity: "top",
-                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -1029,52 +1029,26 @@
                                 Swal.close();
                                 if (ok && data.success) {
                                     Toastify({
-                                        text: data.message ||
-                                            "Your Question is succesfully saved",
-                                        duration: 3000,
-                                        close: true,
-                                        gravity: "top",
-                                        position: "right",
+                                        text: data.message,
+                                        duration: 2000,
                                         style: {
                                             background: "#57CC99"
                                         }
                                     }).showToast();
                                     setTimeout(() => {
-                                        if (data.data && data.data.id) {
-                                            window.location.href =
-                                                "{{ route('user.questions.list', ['id' => 'id']) }}"
-                                                .replace('id', QUESTION_TO_EDIT.user
-                                                    .id);
-                                        } else {
-                                            window.location.href =
-                                                "{{ route('home') }}";
-                                        }
-                                    }, 3000);
+                                        window.location.href = "{{ route('home') }}";
+                                    }, 2000);
                                 } else {
-                                    Toastify({
-                                        text: data.message ||
-                                            "An unexpected error occurred from the server.",
-                                        duration: 3000,
-                                        close: true,
-                                        gravity: "top",
-                                        position: "right",
-                                        style: {
-                                            background: "#e74c3c"
-                                        }
-                                    }).showToast();
-
+                                    throw new Error(data.message ||
+                                        'An unknown server error occurred.');
                                 }
                             })
                             .catch(error => {
                                 console.error('Submission Error:', error);
                                 Swal.close();
                                 Toastify({
-                                    text: error.message ||
-                                        "Submission Error",
-                                    duration: 3000,
-                                    close: true,
-                                    gravity: "top",
-                                    position: "right",
+                                    text: error.message,
+                                    duration: 4000,
                                     style: {
                                         background: "#e74c3c"
                                     }

@@ -18,7 +18,6 @@
         .leaderboard-card:hover {
             border-color: var(--accent-tertiary);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
         }
 
         /* User profile card styling */
@@ -67,26 +66,109 @@
             width: 4px;
             height: 70%;
             background: linear-gradient(to bottom, #38A3A5, #80ED99);
+            padding: 10px 0;
             border-radius: 2px;
         }
 
-        /* Custom select styling */
-        .custom-select {
+        /* Tag filter styling - copied from homepage */
+        .tag-filter-button {
             background-color: var(--bg-card);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
         }
 
-        .custom-select:focus {
+        .tag-filter-button:hover,
+        .tag-filter-button.active {
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(56, 163, 165, 0.1);
-            outline: none;
+            color: var(--text-primary);
         }
 
-        .custom-select option {
-            background-color: var(--bg-card);
+        .tag-filter-button .chevron-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .tag-filter-button.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        #tag-filter-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0px; 
+            width: 280px;
+            z-index: 40;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        #tag-filter-dropdown.open {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Search bar inside the dropdown */
+        .tag-search-input-wrapper {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .tag-search-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+            border-radius: 6px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
             color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .tag-search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(56, 163, 165, 0.2);
+        }
+
+        .tag-search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* List items in the dropdown */
+        .tag-link-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+        }
+
+        .tag-link-item:hover {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border-left-color: var(--accent-primary);
+        }
+
+        .tag-link-item.active {
+            background-color: var(--bg-accent-subtle);
+            color: var(--accent-primary);
+            font-weight: 600;
+            border-left-color: var(--accent-primary);
         }
 
         /* Flip card animation */
@@ -212,25 +294,43 @@
 
         <!-- Best user in each tag section -->
         <div class="max-w-4xl justify-start items-start mb-16">
-            <h2 class="section-heading text-2xl md:text-3xl text-[var(--text-primary)] font-semibold mb-8">
-                Top Contributors by Subjects
-            </h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                <h2 class="section-heading text-2xl md:text-3xl text-[var(--text-primary)] font-semibold">
+                    Top Contributors by Subjects
+                </h2>
+
+                <!-- Tag Filter Button -->
+                <div class="relative pb-4" id="tag-filter-container">
+                    <button type="button" id="tag-filter-button" class="tag-filter-button">
+                        <i class="fa-solid fa-tag text-xs"></i>
+                        <span>Subject: <span id="current-tag-name" class="font-semibold">Choose a Subject!</span></span>
+                        <i class="fa-solid fa-chevron-down chevron-icon text-xs ml-2"></i>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div id="tag-filter-dropdown">
+                        <div class="tag-search-input-wrapper">
+                            <i class="fa-solid fa-magnifying-glass text-sm text-gray-500 absolute left-6 top-1/2 -translate-y-1/2 transform"></i>
+                            <input type="text" id="tag-search-input" placeholder="Search subjects..." class="tag-search-input">
+                        </div>
+
+                        <ul class="max-h-60 overflow-y-auto p-1" id="tag-list">
+                            <li>
+                                <a href="#" class="tag-link-item active" data-tag-id="" data-tag-name="">Choose a Subject</a>
+                            </li>
+                            @foreach ($tags as $tag)
+                                <li>
+                                    <a href="#" class="tag-link-item" data-tag-id="{{ $tag['id'] }}" data-tag-name="{{ $tag['name'] }}">
+                                        {{ $tag['name'] }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
             <div class="flex flex-col space-y-6">
-                <!-- Tag Selection -->
-                <div class="w-full max-w-sm">
-                    <label for="tags" class="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                        Select a subject to see the top contributor
-                    </label>
-                    <select name="tags" id="tags"
-                        class="custom-select w-full px-4 py-3 rounded-lg font-medium text-center">
-                        <option value="" disabled selected>Choose a subject...</option>
-                        @foreach ($tags as $tag)
-                            <option value="{{ $tag['id'] }}">{{ $tag['name'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
                 <!-- User Profile Card -->
                 <div class="user-profile-card w-full max-w-sm h-80 rounded-xl p-8 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-500"
                     id="user-profile-card">
@@ -240,8 +340,8 @@
                             class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] flex items-center justify-center">
                             <i class="fa-solid fa-crown text-2xl text-white"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-2">Select a Tag</h3>
-                        <p class="text-sm text-[var(--text-muted)]">Choose a tag above to see the top contributor</p>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-2">Select a Subject</h3>
+                        <p class="text-sm text-[var(--text-muted)]">Choose a subject above to see the top contributor</p>
                     </div>
 
                     <!-- Loading State -->
@@ -274,7 +374,7 @@
         </div>
 
         <!-- Special person section -->
-        <div class="max-w-4xljustify-start items-start">
+        <div class="max-w-4xl justify-start items-start">
             <h2 class="section-heading text-2xl md:text-3xl font-semibold mb-8 glowing-text">
                 Your Special Person
             </h2>
@@ -343,7 +443,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const selectElement = document.getElementById('tags');
+            // Original tag selection elements
             const userProfileCard = document.getElementById('user-profile-card');
             const defaultState = document.getElementById('default-state');
             const loadingState = document.getElementById('loading-state');
@@ -351,6 +451,15 @@
             const noUserState = document.getElementById('no-user-state');
             const bestUserImage = document.getElementById('best-user-image');
             const bestUserName = document.getElementById('best-user-name');
+
+            const tagFilterContainer = document.getElementById('tag-filter-container');
+            const tagFilterButton = document.getElementById('tag-filter-button');
+            const tagFilterDropdown = document.getElementById('tag-filter-dropdown');
+            const tagSearchInput = document.getElementById('tag-search-input');
+            const tagList = document.getElementById('tag-list');
+            const currentTagNameSpan = document.getElementById('current-tag-name');
+
+            let currentSelectedTagId = '';
 
             function showState(state) {
                 // Hide all states
@@ -383,46 +492,96 @@
                 }
             }
 
-            selectElement.addEventListener('change', function() {
-                const tagId = this.value;
+            // Tag filter functionality
+            if (tagFilterContainer) {
+                // Toggle dropdown
+                tagFilterButton.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const isOpen = tagFilterDropdown.classList.toggle('open');
+                    tagFilterButton.classList.toggle('active', isOpen);
+                    if (isOpen) {
+                        tagSearchInput.focus();
+                    }
+                });
 
-                if (tagId) {
-                    showState('loading');
+                // Search functionality
+                tagSearchInput.addEventListener('input', () => {
+                    const searchTerm = tagSearchInput.value.toLowerCase();
+                    tagList.querySelectorAll('li').forEach(li => {
+                        const tagName = li.textContent.toLowerCase();
+                        li.style.display = tagName.includes(searchTerm) ? 'block' : 'none';
+                    });
+                });
 
-                    fetch(`{{ route('tag.leaderboard', ['id' => 'aaa']) }}`.replace('aaa', tagId))
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
+                tagList.addEventListener('click', (event) => {
+                    const targetLink = event.target.closest('.tag-link-item');
+                    if (targetLink) {
+                        event.preventDefault();
+                        const selectedTagId = targetLink.dataset.tagId;
+                        const selectedTagName = targetLink.dataset.tagName;
+
+                        if (currentSelectedTagId !== selectedTagId) {
+                            currentSelectedTagId = selectedTagId;
+                            
+                            currentTagNameSpan.textContent = selectedTagName || 'All';
+                            tagList.querySelectorAll('.tag-link-item').forEach(link => 
+                                link.classList.remove('active'));
+                            targetLink.classList.add('active');
+
+                            // Fetch leaderboard data
+                            if (selectedTagId) {
+                                fetchLeaderboard(selectedTagId);
+                            } else {
+                                showState('default');
                             }
-                            return response.json();
-                        })
-                        .then(data => {
-                            setTimeout(() => {
-                                if (Array.isArray(data) && data.length > 0) {
-                                    const topUser = data[0];
-                                    if (topUser.profile_picture) {
-                                        bestUserImage.src = topUser.profile_picture;
-                                    } else {
-                                        bestUserImage.src = "{{ asset('assets/empty.jpg') }}";
-                                    }
-                                    bestUserName.textContent = topUser.username ||
-                                        'Top Contributor';
-                                    showState('user');
+                        }
+
+                        tagFilterDropdown.classList.remove('open');
+                        tagFilterButton.classList.remove('active');
+                    }
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!tagFilterContainer.contains(event.target)) {
+                        tagFilterDropdown.classList.remove('open');
+                        tagFilterButton.classList.remove('active');
+                    }
+                });
+            }
+
+            function fetchLeaderboard(tagId) {
+                showState('loading');
+
+                fetch(`{{ route('tag.leaderboard', ['id' => 'TAG_ID']) }}`.replace('TAG_ID', tagId))
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        setTimeout(() => {
+                            if (Array.isArray(data) && data.length > 0) {
+                                const topUser = data[0];
+                                if (topUser.profile_picture) {
+                                    bestUserImage.src = topUser.profile_picture;
                                 } else {
-                                    showState('no-user');
+                                    bestUserImage.src = "{{ asset('assets/empty.jpg') }}";
                                 }
-                            }, 500);
-                        })
-                        .catch(error => {
-                            console.error('Error fetching leaderboard:', error);
-                            setTimeout(() => {
+                                bestUserName.textContent = topUser.username || 'Top Contributor';
+                                showState('user');
+                            } else {
                                 showState('no-user');
-                            }, 500);
-                        });
-                } else {
-                    showState('default');
-                }
-            });
+                            }
+                        }, 500);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching leaderboard:', error);
+                        setTimeout(() => {
+                            showState('no-user');
+                        }, 500);
+                    });
+            }
 
             // Special person card flip functionality
             const specialPersonCard = document.getElementById('special-person-card');

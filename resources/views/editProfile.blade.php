@@ -269,7 +269,7 @@
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row justify-center sm:justify-end gap-4">
-                    <a href="{{ route('seeProfile') }}"
+                    <a href="{{ route('viewUser', ['email' => session('email')]) }}"
                         class="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 font-medium text-center transition-all">
                         Cancel
                     </a>
@@ -428,7 +428,7 @@
 
                             setTimeout((result) => {
                                 if (result.isConfirmed) {
-                                    window.location.href = "{{ route('seeProfile') }}";
+                                    window.location.href = "{{ route('viewUser', ['email' => session('email')]) }}";
                                 }
                             }, 3000);
                         } else {
