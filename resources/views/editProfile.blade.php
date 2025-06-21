@@ -112,7 +112,39 @@
     @include('partials.nav')
     @include('utils.background3')
 
+    @php
+        $breadcrumbs = [
+            ['url' => route('viewUser', ['email' => $user['email']]), 'label' => $user['username'] ?? 'Your Profile', 'icon' => 'fas fa-user'],
+            ['url' => null, 'label' => 'Edit Profile', 'icon' => 'fas fa-pencil-alt', 'current' => true]
+        ];
+    @endphp
+
     <div class="min-h-screen p-4 sm:p-6 lg:p-8 edit-profile-container max-w-[68rem] justify-start items-start">
+        <div class="mb-6 px-2">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                @foreach($breadcrumbs as $index => $breadcrumb)
+                    @if(!$loop->first)
+                        <span class="text-[var(--text-muted)] text-xs">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    @endif
+                    
+                    @if(isset($breadcrumb['current']) && $breadcrumb['current'])
+                        <span class="text-[var(--accent-primary)] font-regular flex items-center">
+                            <i class="{{ $breadcrumb['icon'] }} mr-1.5 text-xs"></i>
+                            {{ $breadcrumb['label'] }}
+                        </span>
+                    @else
+                        <a href="{{ $breadcrumb['url'] }}"
+                        class="text-[var(--text-secondary)] no-underline transition-colors duration-200 ease-in-out hover:text-[var(--text-primary)] flex items-center">
+                            <i class="{{ $breadcrumb['icon'] }} mr-1.5 text-xs"></i>
+                            {{ $breadcrumb['label'] }}
+                        </a>
+                    @endif
+                @endforeach
+            </nav>
+        </div>
+
         <!-- Profile Header Card -->
         <div class="w-full rounded-xl shadow-lg overflow-hidden edit-card mb-6">
             <!-- Profile Header with Cover Photo -->
@@ -144,7 +176,7 @@
 
                 <!-- Page Title -->
                 <div class="text-center sm:text-left sm:ml-40 mt-16 sm:mt-0">
-                    <h1 class="text-[var(--text-primary)] text-3xl font-bold cal-sans-regular mb-1">Edit Profile</h1>
+                    <h1 class="text-[var(--text-primary)] text-3xl font-regular cal-sans-regular mb-1">Edit Profile</h1>
                     <p class="text-[var(--text-secondary)] text-sm">Update your profile information</p>
                 </div>
             </div>
@@ -153,7 +185,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-4 space-y-6">
                 <div class="edit-card p-6">
-                    <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Basic Information</h3>
+                    <h3 class="text-[var(--text-primary)] text-xl font-regular mb-4 cal-sans-regular">Basic Information</h3>
 
                     <div class="space-y-4">
                         <!-- Username -->
@@ -167,37 +199,7 @@
                 </div>
 
                 <div class="edit-card p-6">
-                    <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Skills</h3>
-
-                    <div class="space-y-4">
-                        <!-- Tags -->
-                        <div class="edit-section">
-                            <label for="tags" class="block text-[var(--text-primary)] font-medium mb-2">Tags</label>
-                            <div class="flex flex-wrap gap-2 mb-2">
-                                <span class="profile-tag">
-                                    angular
-                                    <button class="ml-2 text-[var(--text-primary)]"><i
-                                            class="fa-solid fa-times"></i></button>
-                                </span>
-                                <span class="profile-tag">
-                                    html
-                                    <button class="ml-2 text-[var(--text-primary)]"><i
-                                            class="fa-solid fa-times"></i></button>
-                                </span>
-                                <span class="profile-tag">
-                                    javascript
-                                    <button class="ml-2 text-[var(--text-primary)]"><i
-                                            class="fa-solid fa-times"></i></button>
-                                </span>
-                            </div>
-                            <input type="text" id="tags" name="tags" placeholder="Add a tag"
-                                class="form-input w-full px-4 py-2 mt-2 rounded-lg focus:outline-none">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="edit-card p-6">
-                    <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Privacy Settings</h3>
+                    <h3 class="text-[var(--text-primary)] text-xl font-regular mb-4 cal-sans-regular">Privacy Settings</h3>
 
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
@@ -225,7 +227,7 @@
             <div class="lg:col-span-8 space-y-6">
                 <!-- About Me -->
                 <div class="edit-card p-6">
-                    <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">About Me</h3>
+                    <h3 class="text-[var(--text-primary)] text-xl font-regular mb-4 cal-sans-regular">About Me</h3>
 
                     <div class="edit-section">
                         <textarea id="biodata" name="biodata" rows="8" class="form-input w-full px-4 py-3 rounded-lg focus:outline-none"
@@ -237,7 +239,7 @@
 
                 <!-- Social Links -->
                 <div class="edit-card p-6">
-                    <h3 class="text-[var(--text-primary)] text-xl font-bold mb-4 cal-sans-regular">Social Links</h3>
+                    <h3 class="text-[var(--text-primary)] text-xl font-regular mb-4 cal-sans-regular">Social Links</h3>
 
                     <div class="space-y-4">
                         <div class="edit-section">

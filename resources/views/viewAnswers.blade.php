@@ -244,14 +244,14 @@
             <div class="interaction-section flex flex-col items-center mr-6">
                 <button id="upVoteQuestion"
                     class="mb-2 vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up">
-                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                    <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                 </button>
                 <span id="voteTotal" class="text-lg font-semibold text-[var(--text-secondary)] my-1">
                     {{ $question['vote'] }}
                 </span>
                 <button id="downVoteQuestion"
                     class="mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down">
-                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                    <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                 </button>
 
                 
@@ -436,14 +436,14 @@
                                     <button
                                         class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="{{ $ans['id'] }}">
-                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                                     </button>
                                     <span
                                         class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
                                     <button
                                         class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
                                         data-answer-id="{{ $ans['id'] }}">
-                                        <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                        <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                                     </button>
 
                                     <div id="answer-verify-block-{{ $ans['id'] }}"
@@ -1231,12 +1231,12 @@
                             <div class="interaction-section flex flex-col items-center mr-6">
                                 <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="${data.answer.id}">
-                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                                 </button>
                                 <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
                                 <button class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
                                         data-answer-id="${data.answer.id}">
-                                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                    <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                                 </button>
                                 ${verifyBlockForNewAnswer}
                             </div>
