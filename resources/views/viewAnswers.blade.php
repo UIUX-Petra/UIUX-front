@@ -488,17 +488,24 @@
                                     @if ($ans['image'])
                                         <div class="mt-4">
                                             <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
-                                                class="max-w-lg max-h-96 object-contain rounded-lg border">
+                                                class="w-full max-w-lg max-h-96 object-contain rounded-lg border">
                                         </div>
                                     @endif
 
                                     <div class="mt-4 flex justify-between items-center">
-                                        <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
-                                            <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                                <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                                                    alt="User avatar" class="w-6 h-6 rounded-full mr-2">
-                                                <span class="hover:underline">Answered by {{ $ans['username'] }} -
-                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                        <a href="{{ route('viewUser', ['email' => $ans['username']]) }}" class="flex items-center text-sm text-[var(--text-muted)]">
+                                            <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                                alt="User avatar" class="w-6 h-6 rounded-full mr-2 flex-shrink-0">
+                                            
+                                            <div class="flex flex-col sm:flex-row sm:items-center">
+                                                
+                                                <span class="hover:underline">Answered by {{ $ans['username'] }}</span>
+
+                                                <span class="hidden sm:inline-block mx-1">-</span>
+                                                <span class="text-xs text-[var(--text-muted)] sm:text-sm">
+                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}
+                                                </span>
+                                                
                                             </div>
                                         </a>
 
@@ -820,7 +827,7 @@
                         imgPreview.classList.add('image-preview', 'relative', 'group');
                         imgPreview.innerHTML = `
                             <img src="${e.target.result}" alt="Image Preview" class="rounded-lg shadow-lg">
-                            <button type="button" class="remove-image-btn" onclick="removeImagePreview(this)">
+                            <button type="button" class="remove-image-btn">
                                 <i class="fa-solid fa-times"></i>
                             </button>
                             <div class="mt-2 p-2 bg-[var(--bg-secondary)] rounded-lg">
@@ -838,18 +845,28 @@
                 imagePreviewsContainer.classList.remove('hidden');
             });
 
-            function removeImagePreview(button) {
-                const previewContainer = document.querySelector('.image-preview-container');
-                const imagePreviewsContainer = document.querySelector('.image-previews');
-                const fileInput = document.getElementById("question-img");
-                
-                button.closest('.image-preview').remove();
-                fileInput.value = '';
-                
-                if (previewContainer.children.length === 0) {
-                    imagePreviewsContainer.classList.add('hidden');
-                }
+            const imagePreviewContainer = document.querySelector('.image-preview-container');
+
+            if (imagePreviewContainer) {
+                imagePreviewContainer.addEventListener('click', function(event) {
+                    const removeButton = event.target.closest('.remove-image-btn');
+
+                    if (removeButton) {
+                        const previewContainer = document.querySelector('.image-preview-container');
+                        const imagePreviewsContainer = document.querySelector('.image-previews');
+                        const fileInput = document.getElementById("question-img");
+
+                        removeButton.closest('.image-preview').remove();
+                        
+                        fileInput.value = '';
+
+                        if (previewContainer.children.length === 0) {
+                            imagePreviewsContainer.classList.add('hidden');
+                        }
+                    }
+                });
             }
+
             const commentCount = document.getElementById('reply-count');
             const answerTextArea = document.getElementById('answer-textArea');
 
