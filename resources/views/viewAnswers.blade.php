@@ -233,7 +233,7 @@
 
                     <div id="answerCountAtas" class="flex items-center" title="Comments">
                         <i class="fa-solid fa-reply-all text-[var(--accent-tertiary)] mr-2"></i>
-                        <span class="text-[var(--text-secondary)]">{{ count($question['answer']) }}</span>
+                        <span class="text-[var(--text-secondary)]">{{ count($question['answers']) }}</span>
                     </div>
                 </div>
             </div>
@@ -289,7 +289,7 @@
                                 class="dropdown-menu absolute right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg shadow-xl z-10 hidden"
                                 style="opacity: 0; transform: translateX(10px);">
                                 @php
-                                    $hasAnswer = !empty($question['answer']);
+                                    $hasAnswer = !empty($question['answers']);
                                     $currentVoteCount = isset($question['vote']) ? (int) $question['vote'] : 0;
                                     $hasVote = $currentVoteCount !== 0;
                                 @endphp
@@ -415,12 +415,12 @@
             <h2 class="text-xl font-bold text-[var(--text-primary)] mb-4 flex items-center">
                 <i class="fa-solid fa-list-check mr-2 text-[var(--accent-primary)]"></i>
                 Answers <span
-                    class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answer'] ?? []) }})</span>
+                    class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answers'] ?? []) }})</span>
             </h2>
 
-            @if ($question['answer'])
+            @if ($question['answers'])
                 <div id="answerList" class="space-y-6">
-                    @foreach ($question['answer'] as $ans)
+                    @foreach ($question['answers'] as $ans)
                         @php
                             $isAnswerOwner = session('email') === ($ans['email'] ?? null);
                             $answerVoteCount = (int) ($ans['vote'] ?? 0);
@@ -493,11 +493,11 @@
                                     @endif
 
                                     <div class="mt-4 flex justify-between items-center">
-                                        <a href="{{ route('viewUser', ['email' => $ans['username']]) }}">
+                                        <a href="{{ route('viewUser', ['email' => $ans['user']['username']]) }}">
                                             <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                                <img src="{{ $ans['user_image'] ? asset('storage/' . $ans['user_image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                                <img src="{{ $ans['user']['image'] ? asset('storage/' . $ans['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
                                                     alt="User avatar" class="w-6 h-6 rounded-full mr-2">
-                                                <span class="hover:underline">Answered by {{ $ans['username'] }} -
+                                                <span class="hover:underline">Answered by {{ $ans['user']['username'] }} -
                                                     {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
                                             </div>
                                         </a>
@@ -506,7 +506,7 @@
                                             class="open-answer-comments-modal-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
                                             data-answer-id="{{ $ans['id'] }}"
                                             data-comments="{{ json_encode($ans['comments'] ?? []) }}"
-                                            data-answer-owner-username="{{ $ans['username'] }}">
+                                            data-answer-owner-username="{{ $ans['user']['username'] }}">
                                             <i class="fa-solid fa-comment-dots mr-2"></i>
                                             <span>{{ count($ans['comments'] ?? []) }}</span>
                                         </button>
@@ -613,7 +613,7 @@
                                     <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
                                     <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
                                         <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
-                                            <img src="{{ $comm['user_image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
+                                            <img src="{{ $comm['image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
                                                 alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
                                             <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
                                                 {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
@@ -863,9 +863,9 @@
             });
 
             const jsIsQuestionOwner = @json($isQuestionOwner);
-            let currentAnswerCount = @json(count($question['answer'] ?? []));
+            let currentAnswerCount = @json(count($question['answers'] ?? []));
 
-            let jsHasAnswer = @json(!empty($question['answer']));
+            let jsHasAnswer = @json(!empty($question['answers']));
             let jsHasVote = @json(isset($question['vote']) && (int) $question['vote'] !== 0);
             const questionIdForActions = @json($question['id']);
 

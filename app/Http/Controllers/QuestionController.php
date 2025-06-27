@@ -171,11 +171,11 @@ class QuestionController extends Controller
     {
         $data['email'] = session('email');
         $api_url = env('API_URL') . '/questions/' . $id . '/view';
-        $response = Http::post($api_url, $data);
+        $response = Http::withToken(session('token'))->post($api_url, $data);
         $response = json_decode($response, true);
         $questionData = $response['data'];
-
-        $comments = collect($questionData['comment']);
+        // dd($questionData);
+        $comments = collect($questionData['comments']);
         $countcomments = count($comments);
         $questionData['comment_count'] = $countcomments;
         // dd($questionData);
