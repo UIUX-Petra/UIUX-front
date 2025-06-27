@@ -139,6 +139,7 @@ class QuestionController extends Controller
         $data['email'] = session('email');
         $api_url = env('API_URL') . '/questions/' . $id . '/view';
         $response = Http::withToken(session('token'))->post($api_url, $data);
+        $response = Http::withToken(session('token'))->post($api_url, $data);
         $response = json_decode($response, true);
         $questionData = $response['data'];
 

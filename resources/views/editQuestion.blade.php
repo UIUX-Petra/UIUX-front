@@ -5,6 +5,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -608,6 +611,9 @@
                     Toastify({
                         text: 'Title and question content must be filled out!',
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -665,6 +671,9 @@
                                     Toastify({
                                         text: 'Your question has been successfully updated!',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                                         }
@@ -679,6 +688,9 @@
                                         text: res.message ||
                                             'There was an error updating your question.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -690,6 +702,9 @@
                                 Toastify({
                                     text: 'There was an error while updating your question.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }

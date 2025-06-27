@@ -215,6 +215,24 @@
             font-weight: 600;
             border-bottom-color: var(--accent-tertiary);
         }
+
+        .filter-button {
+            /* Untuk <a> tag (Sort by) */
+            background-color: var(--bg-card);
+            color: var(--text-muted);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            /* Sesuai referensi tabs */
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
         .tag-filter-button {
             background-color: var(--bg-card);
             color: var(--text-secondary);
@@ -230,7 +248,8 @@
             cursor: pointer;
         }
 
-        .tag-filter-button:hover, .tag-filter-button.active {
+        .tag-filter-button:hover,
+        .tag-filter-button.active {
             border-color: var(--accent-tertiary);
             color: var(--text-primary);
         }
@@ -245,14 +264,16 @@
 
         #tag-filter-dropdown {
             position: absolute;
-            top: calc(100% + 0.5rem); /* Position below the button with a small gap */
+            top: calc(100% + 0.5rem);
+            /* Position below the button with a small gap */
             right: 0;
             width: 280px;
-            z-index: 40; /* Make sure it's above other content but below the main navbar */
+            z-index: 40;
+            /* Make sure it's above other content but below the main navbar */
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 0.75rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             opacity: 0;
             transform: translateY(-10px);
             pointer-events: none;
@@ -274,13 +295,15 @@
 
         .tag-search-input {
             width: 100%;
-            padding: 0.5rem 0.75rem 0.5rem 2.25rem; /* Space for the icon */
+            padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+            /* Space for the icon */
             border-radius: 6px;
             background-color: var(--bg-input);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
             transition: all 0.2s ease;
         }
+
         .tag-search-input:focus {
             outline: none;
             border-color: var(--accent-tertiary);
@@ -307,6 +330,53 @@
             color: var(--accent-tertiary);
             font-weight: 600;
             border-left-color: var(--accent-tertiary);
+        }
+
+        .filter-button.active {
+            background-color: #f59e0b;
+            /* Warna tema popular, bukan var(--accent-tertiary) dari referensi */
+            color: var(--text-dark, #1a202c);
+            font-weight: 600;
+            /* Sesuai referensi tabs */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Sesuai referensi tabs */
+            border-color: #f59e0b;
+        }
+
+        .tag-filter-select {
+            /* Untuk <select> element */
+            background-color: var(--bg-card);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 10px 16px;
+            /* Mirip tombol, tinggi sama, padding horizontal sedikit beda utk arrow */
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            /* Samakan dengan search input jika perlu */
+            line-height: 1.5;
+            /* Sesuaikan dengan padding vertikal */
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25em 1.25em;
+            padding-right: 2.5rem;
+            min-width: 150px;
+            /* Lebar minimal agar "All Tags" terbaca */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+
+        .tag-filter-select:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+            outline: none;
+            color: #f59e0b;
         }
 
         .skeleton {
@@ -348,6 +418,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -419,13 +492,16 @@
             {{-- Sort & Tag Filters --}}
             <div class="flex flex-col md:flex-row justify-between items-end gap-4 w-full">
                 <div class="tabs-container flex items-center gap-x-6 text-sm">
-                    <a href="#" data-sortby="latest" class="tab-item {{ ($initialSortBy ?? 'latest') == 'latest' ? 'active' : '' }}">
+                    <a href="#" data-sortby="latest"
+                        class="tab-item {{ ($initialSortBy ?? 'latest') == 'latest' ? 'active' : '' }}">
                         <i class="fa-solid fa-bolt mr-1.5"></i> Most Recent
                     </a>
-                    <a href="#" data-sortby="views" class="tab-item {{ ($initialSortBy ?? '') == 'views' ? 'active' : '' }}">
+                    <a href="#" data-sortby="views"
+                        class="tab-item {{ ($initialSortBy ?? '') == 'views' ? 'active' : '' }}">
                         <i class="fa-solid fa-eye mr-1.5"></i> Most Views
                     </a>
-                    <a href="#" data-sortby="votes" class="tab-item {{ ($initialSortBy ?? '') == 'votes' ? 'active' : '' }}">
+                    <a href="#" data-sortby="votes"
+                        class="tab-item {{ ($initialSortBy ?? '') == 'votes' ? 'active' : '' }}">
                         <i class="fa-solid fa-thumbs-up mr-1.5"></i> Most Votes
                     </a>
                 </div>
@@ -434,25 +510,31 @@
 
                     <button type="button" id="tag-filter-button" class="tag-filter-button w-full md:w-auto">
                         <i class="fa-solid fa-tag text-xs"></i>
-                        <span>Subject: <span id="current-tag-name" class="font-semibold">{{ $initialFilterTag ?: 'All' }}</span></span>
+                        <span>Subject: <span id="current-tag-name"
+                                class="font-semibold">{{ $initialFilterTag ?: 'All' }}</span></span>
                         <i class="fa-solid fa-chevron-down chevron-icon text-xs ml-auto"></i>
                     </button>
 
                     <div id="tag-filter-dropdown">
                         <div class="tag-search-input-wrapper">
-                            <i class="fa-solid fa-magnifying-glass text-sm text-gray-500 absolute left-6 top-1/2 -translate-y-1/2 transform"></i>
-                            <input type="text" id="tag-search-input" placeholder="Search subjects..." class="tag-search-input">
+                            <i
+                                class="fa-solid fa-magnifying-glass text-sm text-gray-500 absolute left-6 top-1/2 -translate-y-1/2 transform"></i>
+                            <input type="text" id="tag-search-input" placeholder="Search subjects..."
+                                class="tag-search-input">
                         </div>
 
                         <ul class="max-h-60 overflow-y-auto p-1" id="tag-list">
                             <li>
-                                <a href="#" class="tag-link-item {{ !$initialFilterTag ? 'active' : '' }}" data-tag-name="">All Subjects</a>
+                                <a href="#" class="tag-link-item {{ !$initialFilterTag ? 'active' : '' }}"
+                                    data-tag-name="">All Subjects</a>
                             </li>
 
                             @if (isset($tags) && count($tags) > 0)
                                 @foreach ($tags as $tag)
                                     <li>
-                                        <a href="#" class="tag-link-item {{ ($initialFilterTag ?? '') == $tag['name'] ? 'active' : '' }}" data-tag-name="{{ $tag['name'] }}">
+                                        <a href="#"
+                                            class="tag-link-item {{ ($initialFilterTag ?? '') == $tag['name'] ? 'active' : '' }}"
+                                            data-tag-name="{{ $tag['name'] }}">
                                             {{ $tag['name'] }}
                                         </a>
                                     </li>
@@ -647,7 +729,8 @@
             // event listener buat subject drop down + search
             if (tagFilterContainer) {
                 tagFilterButton.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent the 'document' click listener from firing immediately
+                    event
+                .stopPropagation(); // Prevent the 'document' click listener from firing immediately
                     const isOpen = tagFilterDropdown.classList.toggle('open');
                     tagFilterButton.classList.toggle('active', isOpen);
                     if (isOpen) {
@@ -676,7 +759,8 @@
 
                             // Update the button text and active state in the list
                             currentTagNameSpan.textContent = selectedTag || 'All';
-                            tagList.querySelectorAll('.tag-link-item').forEach(link => link.classList.remove('active'));
+                            tagList.querySelectorAll('.tag-link-item').forEach(link => link.classList
+                                .remove('active'));
                             targetLink.classList.add('active');
                         }
 
@@ -685,7 +769,7 @@
                     }
                 });
             }
-            
+
             document.addEventListener('click', (event) => {
                 if (tagFilterContainer && !tagFilterContainer.contains(event.target)) {
                     tagFilterDropdown.classList.remove('open');
@@ -1009,7 +1093,9 @@
             let loadingToast = Toastify({
                 text: "Unsaving...",
                 duration: -1,
-                /*...*/
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -1028,7 +1114,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
-                        /*...*/
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -1037,10 +1125,29 @@
                         `<i class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>`;
                     btn.setAttribute("title", "Save Question");
                 } else {
-                    /* Error Toast */
+                    Toastify({
+                        text: res.message || "Failed to Unsave Question",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 }
             }).catch(err => {
-                /* Error Toast */
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
             });
         }
 
@@ -1053,7 +1160,9 @@
             let loadingToast = Toastify({
                 text: "Saving...",
                 duration: -1,
-                /*...*/
+                close: false,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#444"
                 }
@@ -1072,7 +1181,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
-                        /*...*/
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -1083,10 +1194,29 @@
                     btn.classList.add('saved-animation');
                     setTimeout(() => btn.classList.remove('saved-animation'), 300);
                 } else {
-                    /* Error Toast */
+                    Toastify({
+                        text: res.message || "Failed to Save Question",
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
                 }
             }).catch(err => {
-                /* Error Toast */
+                loadingToast.hideToast();
+                Toastify({
+                    text: "Something went wrong",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                        background: "#e74c3c"
+                    }
+                }).showToast();
             });
         }
     </script>

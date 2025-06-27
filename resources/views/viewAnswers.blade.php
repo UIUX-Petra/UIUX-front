@@ -194,6 +194,7 @@
         .remove-image-btn:hover {
             transform: scale(1.1);
             background: var(--accent-neg; )
+            background: var(--accent-neg; )
         }
 
         #answer-textArea:focus {
@@ -202,6 +203,7 @@
             ring-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(56, 163, 165, 0.1);
         }
+
 
         .your-question-indicator {
             box-shadow: 0 0 15px rgba(56, 161, 105, 0.6), 0 0 30px rgba(56, 161, 105, 0.4);
@@ -478,6 +480,7 @@
                     <div id="answerCountAtas" class="flex items-center" title="Comments">
                         <i class="fa-solid fa-reply-all text-[var(--accent-tertiary)] mr-2"></i>
                         <span class="text-[var(--text-secondary)]">{{ count($question['answers']) }}</span>
+                        <span class="text-[var(--text-secondary)]">{{ count($question['answers']) }}</span>
                     </div>
                 </div>
             </div>
@@ -488,15 +491,16 @@
             <div class="interaction-section flex flex-col items-center mr-6">
                 <button id="upVoteQuestion"
                     class="mb-2 vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up">
-                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                    <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                 </button>
                 <span id="voteTotal" class="text-lg font-semibold text-[var(--text-secondary)] my-1">
                     {{ $question['vote'] }}
                 </span>
                 <button id="downVoteQuestion"
                     class="mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down">
-                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                    <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                 </button>
+
 
 
                 <div class="flex flex-col items-center mt-4" id="reply-count">
@@ -533,6 +537,7 @@
                                 class="dropdown-menu absolute right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg shadow-xl z-10 hidden"
                                 style="opacity: 0; transform: translateX(10px);">
                                 @php
+                                    $hasAnswer = !empty($question['answers']);
                                     $hasAnswer = !empty($question['answers']);
                                     $currentVoteCount = isset($question['vote']) ? (int) $question['vote'] : 0;
                                     $hasVote = $currentVoteCount !== 0;
@@ -575,6 +580,8 @@
                         <div class="mt-4">
                             <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $question['image'] }}"
                                 alt="Question Image" class="rounded-lg shadow-md max-w-lg max-h-96 object-contain">
+                            <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $question['image'] }}"
+                                alt="Question Image" class="rounded-lg shadow-md max-w-lg max-h-96 object-contain">
                         </div>
                     @endif
                 </div>
@@ -602,6 +609,8 @@
         <div id="answer-input-section" class="mt-10 hidden">
             <div class="answer-input-card rounded-xl p-6 mb-6 backdrop-blur-sm">
                 <div class="flex items-center mb-6 pb-4 border-b border-[var(--border-color)]">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mr-4">
                     <div
                         class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mr-4">
                         <i class="fa-solid fa-pen-to-square text-white text-lg"></i>
@@ -637,10 +646,13 @@
                     <div class="flex items-center space-x-4">
                         <div class="relative group">
                             <label tabindex="0"
-                                class="flex items-center px-4 py-2.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-tertiary)] border-2 border-[var(--border-color)] hover:border-[var(--accent-tertiary)] text-[var(--text-primary)] hover:text-[var(--text-dark)] rounded-lg cursor-pointer transition-all duration-300 group">
-                                <i class="fa-solid fa-file-upload text-lg"></i>
+                                class="flex items-center px-4 py-2.5 bg-[var(--accent-tertiary)] hover:bg-[var(--bg-secondary)] border-2 border-[var(--accent-tertiary)] hover:border-[var(--border-color)] text-[var(--text-dark)] hover:text-[var(--text-primary)] rounded-lg cursor-pointer transition-all duration-300 group">
+                                <i class="fa-solid fa-image text-lg"></i>
                                 <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
                             </label>
+
+                            <div
+                                class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-[var(--bg-shadow)] text-[var(--text-light)] text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg">
 
                             <div
                                 class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-[var(--bg-shadow)] text-[var(--text-light)] text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg">
@@ -665,6 +677,12 @@
                         <div
                             class="absolute inset-0 rounded-full bg-white opacity-0 group-active:opacity-20 transition-opacity duration-150">
                         </div>
+                        <i
+                            class="fa-solid fa-paper-plane text-lg group-hover:scale-110 transition-transform duration-200"></i>
+
+                        <div
+                            class="absolute inset-0 rounded-full bg-white opacity-0 group-active:opacity-20 transition-opacity duration-150">
+                        </div>
                     </button>
                 </div>
             </div>
@@ -676,10 +694,13 @@
                 <i class="fa-solid fa-list-check mr-2 text-[var(--accent-primary)]"></i>
                 Answers <span
                     class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answers'] ?? []) }})</span>
+                    class="text-sm text-[var(--text-muted)] ml-2">({{ count($question['answers'] ?? []) }})</span>
             </h2>
 
             @if ($question['answers'])
+            @if ($question['answers'])
                 <div id="answerList" class="space-y-6">
+                    @foreach ($question['answers'] as $ans)
                     @foreach ($question['answers'] as $ans)
                         @php
                             $isAnswerOwner = session('email') === ($ans['email'] ?? null);
@@ -696,14 +717,14 @@
                                     <button
                                         class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="{{ $ans['id'] }}">
-                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                                     </button>
                                     <span
                                         class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
                                     <button
                                         class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
                                         data-answer-id="{{ $ans['id'] }}">
-                                        <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                        <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                                     </button>
 
                                     <div id="answer-verify-block-{{ $ans['id'] }}"
@@ -748,17 +769,25 @@
                                     @if ($ans['image'])
                                         <div class="mt-4">
                                             <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
-                                                class="max-w-lg max-h-96 object-contain rounded-lg border">
+                                                class="w-full max-w-lg max-h-96 object-contain rounded-lg border">
                                         </div>
                                     @endif
 
                                     <div class="mt-4 flex justify-between items-center">
-                                        <a href="{{ route('viewUser', ['email' => $ans['user']['username']]) }}">
-                                            <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                                <img src="{{ $ans['user']['image'] ? asset('storage/' . $ans['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['user']['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                                                    alt="User avatar" class="w-6 h-6 rounded-full mr-2">
-                                                <span class="hover:underline">Answered by {{ $ans['user']['username'] }} -
-                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                        <a href="{{ route('viewUser', ['email' => $ans['user']['email']]) }}"
+                                            class="flex items-center text-sm text-[var(--text-muted)]">
+                                            {{-- <div class="flex items-center text-sm text-[var(--text-muted)]"> --}}
+                                            <img src="{{ $ans['user']['image'] ? asset('storage/' . $ans['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                                alt="User avatar" class="w-6 h-6 rounded-full mr-2 flex-shrink-0">
+                                            <div class="flex flex-col sm:flex-row sm:items-center">
+
+                                                <span class="hover:underline">Answered by
+                                                    {{ $ans['user']['username'] }}</span>
+
+                                                <span class="hidden sm:inline-block mx-1">-</span>
+                                                <span class="text-xs text-[var(--text-muted)] sm:text-sm">
+                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}
+                                                </span>
                                             </div>
                                         </a>
 
@@ -766,6 +795,7 @@
                                             class="open-answer-comments-modal-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
                                             data-answer-id="{{ $ans['id'] }}"
                                             data-comments="{{ json_encode($ans['comments'] ?? []) }}"
+                                            data-answer-owner-username="{{ $ans['user']['username'] }}">
                                             data-answer-owner-username="{{ $ans['user']['username'] }}">
                                             <i class="fa-solid fa-comment-dots mr-2"></i>
                                             <span>{{ count($ans['comments'] ?? []) }}</span>
@@ -803,6 +833,8 @@
                                         <button id="answer-actions-toggle-{{ $ans['id'] }}"
                                             class="answer-actions-toggle w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
                                             title="More options" data-answer-id="{{ $ans['id'] }}">
+                                            class="answer-actions-toggle w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                            title="More options" data-answer-id="{{ $ans['id'] }}">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
                                         <div id="answer-actions-menu-{{ $ans['id'] }}"
@@ -811,10 +843,12 @@
                                             @if (!$isVerified && $answerVoteCount == 0)
                                                 <a href="{{ route('user.answers.edit', ['answerId' => $ans['id']]) }}"
                                                     class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
+                                                    class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
                                                     <i class="fa-solid fa-edit w-6 mr-2"></i>
                                                     Edit
                                                 </a>
                                                 <button data-answer-id="{{ $ans['id'] }}"
+                                                    class="delete-answer-button flex items-center w-full px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--accent-neg)] hover:text-white">
                                                     class="delete-answer-button flex items-center w-full px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--accent-neg)] hover:text-white">
                                                     <i class="fa-solid fa-trash w-6 mr-2"></i>
                                                     Delete
@@ -831,6 +865,16 @@
                         </div>
                     @endforeach
                 </div>
+            @else
+                <div id="no-answers-block"
+                    class="bg-[var(--bg-card)] rounded-lg shadow-lg border border-[var(--border-color)] relative overflow-hidden">
+                    <div
+                        class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
+                    </div>
+                    <div
+                        class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]">
+                    </div>
+
             @else
                 <div id="no-answers-block"
                     class="bg-[var(--bg-card)] rounded-lg shadow-lg border border-[var(--border-color)] relative overflow-hidden">
@@ -858,6 +902,7 @@
                             <i class="fa-solid fa-pen-to-square mr-2"></i>
                             Write an Answer
                         </a>
+                        </a>
                         <div class="mt-6 pt-6 border-t border-[var(--border-color)]">
                             <p class="text-sm text-[var(--text-muted)] flex items-center justify-center">
                                 <i class="fa-solid fa-star mr-2 text-[var(--accent-tertiary)]"></i>
@@ -875,11 +920,21 @@
                 class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
                 <div
                     class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
+        <div id="questionCommentsModal"
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
+            <div
+                class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
+                <div
+                    class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
                     <h3 class="text-xl font-semibold text-[var(--text-primary)]">
                         {{ $question['title'] }}
                         <span id="modal-question-comment-count"
                             class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+                        <span id="modal-question-comment-count"
+                            class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
                     </h3>
+                    <button id="close-question-comments-modal-btn"
+                        class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                     <button id="close-question-comments-modal-btn"
                         class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                 </div>
@@ -887,10 +942,12 @@
                 <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3 flex flex-col" id="question-comments-list-modal">
                     {{-- Konten komentar tetap sama --}}
                     @if ($question['comment_count'] > 0)
-                        @foreach ($question['comment'] as $comm)
+                        @foreach ($question['comments'] as $comm)
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
+                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}"
+                                        class="hover:underline">
                                     <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}"
                                         class="hover:underline">
                                         <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
@@ -946,10 +1003,17 @@
             style="transition: opacity 0.3s ease-in-out;">
             <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]"
                 style="transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: translateY(-20px) scale(0.95);">
+        <div id="answerCommentsModal"
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none"
+            style="transition: opacity 0.3s ease-in-out;">
+            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]"
+                style="transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: translateY(-20px) scale(0.95);">
                 <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
                     <h3 id="answer-modal-title" class="text-xl font-semibold text-[var(--text-primary)]">
                         Comments on Answer
                     </h3>
+                    <button id="close-answer-comments-modal-btn"
+                        class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                     <button id="close-answer-comments-modal-btn"
                         class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                 </div>
@@ -1035,6 +1099,9 @@
                                             text: data.message ||
                                                 'Your question has been deleted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -1049,6 +1116,9 @@
                                             text: data.message ||
                                                 'Could not delete the question.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -1073,6 +1143,9 @@
                                         text: errorMessage ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -1108,7 +1181,7 @@
                         imgPreview.classList.add('image-preview', 'relative', 'group');
                         imgPreview.innerHTML = `
                             <img src="${e.target.result}" alt="Image Preview" class="rounded-lg shadow-lg">
-                            <button type="button" class="remove-image-btn" onclick="removeImagePreview(this)">
+                            <button type="button" class="remove-image-btn">
                                 <i class="fa-solid fa-times"></i>
                             </button>
                             <div class="mt-2 p-2 bg-[var(--bg-secondary)] rounded-lg">
@@ -1152,7 +1225,9 @@
 
             const jsIsQuestionOwner = @json($isQuestionOwner);
             let currentAnswerCount = @json(count($question['answers'] ?? []));
+            let currentAnswerCount = @json(count($question['answers'] ?? []));
 
+            let jsHasAnswer = @json(!empty($question['answers']));
             let jsHasAnswer = @json(!empty($question['answers']));
             let jsHasVote = @json(isset($question['vote']) && (int) $question['vote'] !== 0);
             const questionIdForActions = @json($question['id']);
@@ -1200,11 +1275,22 @@
                     // The element might have been deleted, so we can safely exit.
                     return;
                 }
+                if (!answerItemElement) {
+                    // The element might have been deleted, so we can safely exit.
+                    return;
+                }
 
                 const isOwner = answerItemElement.dataset.isOwner === 'true';
                 const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
                 const isVerified = answerItemElement.dataset.isVerified === 'true';
+                const isOwner = answerItemElement.dataset.isOwner === 'true';
+                const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
+                const isVerified = answerItemElement.dataset.isVerified === 'true';
 
+                // Find the dropdown menu and the main toggle button container
+                const menuContainer = document.getElementById(`answer-actions-menu-${answerId}`);
+                const toggleContainer = document.getElementById(`answer-actions-toggle-${answerId}`)?.parentElement
+                    .parentElement;
                 // Find the dropdown menu and the main toggle button container
                 const menuContainer = document.getElementById(`answer-actions-menu-${answerId}`);
                 const toggleContainer = document.getElementById(`answer-actions-toggle-${answerId}`)?.parentElement
@@ -1225,6 +1311,7 @@
                     const editUrl = "{{ route('user.answers.edit', ['answerId' => ':answerId']) }}".replace(
                         ':answerId', answerId);
 
+                    menuContainer.innerHTML = `
                     menuContainer.innerHTML = `
                             <a href="${editUrl}"
                             class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
@@ -1247,6 +1334,7 @@
                                 Actions are disabled once the answer has been verified or has votes.
                             </p>
                         `;
+                }
                 }
             }
 
@@ -1287,6 +1375,9 @@
                                             text: data.message ||
                                                 'Your answer has been deleted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -1294,36 +1385,67 @@
                                         if (answerItemElement) {
                                             answerItemElement.style.transition =
                                                 'opacity 0.5s ease, transform 0.5s ease';
+                                        if (answerItemElement) {
+                                            answerItemElement.style.transition =
+                                                'opacity 0.5s ease, transform 0.5s ease';
                                             answerItemElement.style.opacity = '0';
                                             answerItemElement.style.transform = 'scale(0.9)';
 
+
                                             setTimeout(() => {
+                                                const answerList = answerItemElement
+                                                    .parentElement;
                                                 const answerList = answerItemElement
                                                     .parentElement;
                                                 answerItemElement.remove();
 
                                                 if (answerList && answerList.children
+                                                    
                                                     .length === 0) {
-                                                    // const answerSection = document.querySelector('.answer-section');
-                                                    // if (answerSection) {
-                                                    //     answerList.remove();
-                                                    //     answerSection.insertAdjacentHTML('beforeend', getNoAnswersHtml());
+                                                    const answerSection = document
+                                                        .querySelector(
+                                                            '.answer-section');
+                                                    if (answerSection) {
+                                                        answerList.remove();
+                                                        answerSection
+                                                            .insertAdjacentHTML(
+                                                                'beforeend',
+                                                                getNoAnswersHtml());
 
-                                                    //     const newWriteBtn = document.getElementById('write-answer-placeholder-btn');
-                                                    //     if (newWriteBtn) {
-                                                    //         newWriteBtn.addEventListener('click', (event) => {
-                                                    //             event.preventDefault();
-                                                    //             showAnswerInput();
-                                                    //         });
-                                                    //     }
-                                                    // }
+                                                        const newWriteBtn = document
+                                                            .getElementById(
+                                                                'write-answer-placeholder-btn'
+                                                            );
+                                                        if (newWriteBtn) {
+                                                            newWriteBtn
+                                                                .addEventListener(
+                                                                    'click', (
+                                                                        event) => {
+                                                                        event
+                                                                            .preventDefault();
+                                                                        showAnswerInput
+                                                                            ();
+                                                                    });
+                                                        }
+                                                    }
                                                     // 
                                                     // to be fixed
 
-                                                    location.reload();
+                                                    // location.reload();
                                                 }
 
                                                 currentAnswerCount--;
+                                                const answerCountTop = document
+                                                    .querySelector(
+                                                        '#answerCountAtas span');
+                                                const answerHeader = document
+                                                    .querySelector(
+                                                        '.answer-section h2 span');
+                                                if (answerCountTop) answerCountTop
+                                                    .textContent = currentAnswerCount;
+                                                if (answerHeader) answerHeader
+                                                    .textContent =
+                                                    `(${currentAnswerCount})`;
                                                 const answerCountTop = document
                                                     .querySelector(
                                                         '#answerCountAtas span');
@@ -1343,6 +1465,9 @@
                                             text: data.message ||
                                                 'Could not delete the answer.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -1355,6 +1480,9 @@
                                         text: error ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -1421,6 +1549,9 @@
                         Toastify({
                             text: 'Please provide an answer!',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
@@ -1457,9 +1588,14 @@
                                 const imagePreviewsWrapper = document.querySelector(".image-previews");
                                 const imagePreviewContentContainer = document.querySelector(
                                     '.image-preview-container');
+                                const imagePreviewContentContainer = document.querySelector(
+                                    '.image-preview-container');
                                 if (imagePreviewContentContainer) {
                                     imagePreviewContentContainer.innerHTML = '';
                                 }
+                                if (imagePreviewsWrapper && !imagePreviewsWrapper.classList.contains(
+                                        'hidden')) {
+                                    imagePreviewsWrapper.classList.add('hidden');
                                 if (imagePreviewsWrapper && !imagePreviewsWrapper.classList.contains(
                                         'hidden')) {
                                     imagePreviewsWrapper.classList.add('hidden');
@@ -1499,12 +1635,12 @@
                             <div class="interaction-section flex flex-col items-center mr-6">
                                 <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="${data.answer.id}">
-                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                                 </button>
                                 <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
                                 <button class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
                                         data-answer-id="${data.answer.id}">
-                                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                    <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                                 </button>
                                 ${verifyBlockForNewAnswer}
                             </div>
@@ -1525,7 +1661,7 @@
                                     </a>
                                     <button class="comment-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors">
                                         <i class="fa-solid fa-comment-dots mr-2"></i>
-                                        <span>Add Comment</span>
+                                        <span>{{ count($ans['comments'] ?? []) }}</span>
                                     </button>
                                 </div>
 
@@ -1558,6 +1694,7 @@
 
                                 let answerList = document.getElementById('answerList');
                                 const noAnswersBlock = document.getElementById('no-answers-block');
+                                const noAnswersBlock = document.getElementById('no-answers-block');
                                 if (noAnswersBlock) {
                                     answerList = document.createElement('div');
                                     answerList.id = 'answerList';
@@ -1572,9 +1709,16 @@
                                     newAnswerElement.firstElementChild.style.opacity = '0';
                                     newAnswerElement.firstElementChild.style.transform =
                                         'translateY(20px)';
+                                    newAnswerElement.firstElementChild.style.transform =
+                                        'translateY(20px)';
                                     answerList.appendChild(newAnswerElement.firstElementChild);
 
                                     setTimeout(() => {
+                                        const addedElement = document.getElementById(
+                                            `answer-item-${data.answer.id}`);
+                                        if (addedElement) {
+                                            addedElement.style.transition =
+                                                'opacity 0.5s ease, transform 0.5s ease';
                                         const addedElement = document.getElementById(
                                             `answer-item-${data.answer.id}`);
                                         if (addedElement) {
@@ -1586,10 +1730,14 @@
                                     }, 50);
                                     const newToggleBtn = document.getElementById(
                                         `answer-actions-toggle-${data.answer.id}`);
+                                    const newToggleBtn = document.getElementById(
+                                        `answer-actions-toggle-${data.answer.id}`);
                                     if (newToggleBtn) {
                                         newToggleBtn.addEventListener('click', (event) => {
                                             event.stopPropagation();
                                             const answerId = newToggleBtn.dataset.answerId;
+                                            const answerMenu = document.getElementById(
+                                                `answer-actions-menu-${answerId}`);
                                             const answerMenu = document.getElementById(
                                                 `answer-actions-menu-${answerId}`);
 
@@ -1603,7 +1751,18 @@
                                                                 'translateY(-10px)';
                                                         }
                                                     });
+                                                document.querySelectorAll('.dropdown-menu')
+                                                    .forEach(menu => {
+                                                        if (menu.id !== answerMenu.id) {
+                                                            menu.classList.add('hidden');
+                                                            menu.style.opacity = '0';
+                                                            menu.style.transform =
+                                                                'translateY(-10px)';
+                                                        }
+                                                    });
 
+                                                const isHidden = answerMenu.classList.contains(
+                                                    'hidden');
                                                 const isHidden = answerMenu.classList.contains(
                                                     'hidden');
                                                 if (isHidden) {
@@ -1612,12 +1771,18 @@
                                                         answerMenu.style.opacity = '1';
                                                         answerMenu.style.transform =
                                                             'translateY(0)';
+                                                        answerMenu.style.transform =
+                                                            'translateY(0)';
                                                     }, 10);
                                                 } else {
                                                     answerMenu.style.opacity = '0';
                                                     answerMenu.style.transform =
                                                         'translateY(-10px)';
+                                                    answerMenu.style.transform =
+                                                        'translateY(-10px)';
                                                     setTimeout(() => {
+                                                        answerMenu.classList.add(
+                                                            'hidden');
                                                         answerMenu.classList.add(
                                                             'hidden');
                                                     }, 200);
@@ -1632,11 +1797,13 @@
                                     updateAnswerActionButtonsVisibility(data.answer.id);
 
                                     // 2. Pasang listener untuk tombol verifikasi BARU
-                                    if (newAnswerElement) {
-                                        const newVerifyToggleButtons = newAnswerElement
-                                            .querySelectorAll('.verify-toggle-button');
+                                    const addedElement = document.getElementById(
+                                        `answer-item-${data.answer.id}`);
+                                    if (addedElement) {
+                                        const newVerifyToggleButtons = addedElement.querySelectorAll(
+                                            '.verify-toggle-button');
                                         newVerifyToggleButtons.forEach(btn => {
-                                            attachVerifyButtonListener(btn); // PENTING!
+                                            attachVerifyButtonListener(btn);
                                         });
                                     }
                                     const answerHeader = document.querySelector(
@@ -1651,6 +1818,9 @@
                                 Toastify({
                                     text: 'Your answer has been successfully submitted.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "linear-gradient(to right, #00b09b, #96c93d)"
                                     }
@@ -1659,8 +1829,12 @@
                                 const answerCountTop = document.querySelector('#answerCountAtas span');
                                 const answerCountHeader = document.querySelector(
                                     '.answer-section h2 span');
+                                const answerCountHeader = document.querySelector(
+                                    '.answer-section h2 span');
 
                                 if (answerCountTop && answerCountHeader) {
+                                    const currentCount = parseInt(answerCountTop.textContent.trim(),
+                                        10);
                                     const currentCount = parseInt(answerCountTop.textContent.trim(),
                                         10);
                                     const newCount = currentCount + 1;
@@ -1668,11 +1842,16 @@
                                     answerCountTop.textContent = newCount;
                                     answerCountHeader.textContent =
                                         `(${newCount})`; // Note the parentheses
+                                    answerCountHeader.textContent =
+                                        `(${newCount})`; // Note the parentheses
                                 }
                             } else {
                                 Toastify({
                                     text: data.message || 'Something went wrong',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }
@@ -1732,6 +1911,9 @@
                             Toastify({
                                 text: 'Please write a comment!',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -1755,6 +1937,9 @@
                                         Toastify({
                                             text: 'Your comment has been successfully posted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -1847,6 +2032,9 @@
                                             text: data.message ||
                                                 'An Unexpected Error Occurred.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -1857,6 +2045,9 @@
                                     Toastify({
                                         text: error || 'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -1880,6 +2071,9 @@
                     Toastify({
                         text: 'Please write a comment!',
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -1905,6 +2099,8 @@
                             if (data.success) {
                                 const noCommentsModal = document.getElementById(
                                     'no-question-comments-modal');
+                                const noCommentsModal = document.getElementById(
+                                    'no-question-comments-modal');
                                 if (noCommentsModal) {
                                     noCommentsModal.remove();
                                 }
@@ -1912,17 +2108,22 @@
                                     'question-comments-list-modal');
                                 const timeAgo = formatTimeAgo(new Date(data.comment.created_at));
 
+                                const userImage = newComment.image ?
+                                    `/storage/${newComment.image}` :
+                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(newComment.username)}&background=random&color=fff&size=128`;
+
                                 const htmlContent = `
-                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
-                                <div class="flex-grow">
-                                    <p class="text-[var(--text-primary)]">${escapeHtml(data.comment.comment)}</p>
-                                    <a href="/viewUser/${@json($username ?? null)}">
-                                    <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                        <span class="hover:underline">Posted by ${escapeHtml(data.comment.username)} - ${timeAgo}</span>
-                                    </div>
-                                    </a>
-                                </div>
-                            </div>
+                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start" style="opacity: 0; transform: translateY(20px);">
+            <div class="flex-grow">
+                <p class="text-[var(--text-primary)]">${escapeHtml(newComment.comment)}</p>
+                <a href="/viewUser/${newComment.email}" class="hover:underline">
+                    <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
+                        <img src="${userImage}" alt="${newComment.username}" class="w-5 h-5 rounded-full mr-2">
+                        <span>Posted by ${escapeHtml(newComment.username)} - ${timeAgo}</span>
+                    </div>
+                </a>
+            </div>
+        </div>
                         `;
 
                                 if (!commentList) {
@@ -1943,6 +2144,12 @@
                                 if (commentList) {
                                     commentList.insertAdjacentHTML('beforeend', htmlContent);
                                 }
+                                const newCommentElement = commentList.lastElementChild;
+                                setTimeout(() => {
+                                    newCommentElement.style.transition = 'all 0.3s ease';
+                                    newCommentElement.style.opacity = '1';
+                                    newCommentElement.style.transform = 'translateY(0)';
+                                }, 50);
 
                                 // Update comment counts
                                 const commentCount = document.querySelector('#comment-count span');
@@ -1971,6 +2178,9 @@
                                 Toastify({
                                     text: 'Your comment has been successfully posted.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "linear-gradient(to right, #00b09b, #96c93d)"
                                     }
@@ -1981,6 +2191,9 @@
                                     text: data.message ||
                                         'An Unexpected Error Occurred.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }
@@ -1991,6 +2204,9 @@
                             Toastify({
                                 text: error || 'An Unexpected Error Occurred.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -2019,6 +2235,9 @@
                         Toastify({
                             text: 'Please write a comment!',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
@@ -2043,6 +2262,9 @@
                                     Toastify({
                                         text: 'Your comment has been successfully posted.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                                         }
@@ -2148,6 +2370,9 @@
                                         text: data.message ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -2158,6 +2383,9 @@
                                 Toastify({
                                     text: error || 'An Unexpected Error Occurred.',
                                     duration: 3000,
+                                    close: true,
+                                    gravity: "top",
+                                    position: "right",
                                     style: {
                                         background: "#e74c3c"
                                     }
@@ -2241,6 +2469,9 @@
                                         Toastify({
                                             text: `The answer has been ${newVerifiedStatus === 1 ? 'verified' : 'un-verified'}.`,
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -2275,6 +2506,9 @@
                                             text: data.message ||
                                                 'Could not update verification status.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -2294,6 +2528,9 @@
                                         text: errorMessage ||
                                             'An Unexpected Error Occurred.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -2358,6 +2595,9 @@
                                 text: data.message ||
                                     'An Unexpected Error Occurred.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -2418,6 +2658,9 @@
                                 text: data.message ||
                                     'An Unexpected Error Occurred.',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -2469,13 +2712,17 @@
                         questionActionsMenu.style.opacity = '0';
                         questionActionsMenu.style.transform = 'translateY(-10px)';
                         setTimeout(() => {
+                        setTimeout(() => {
                             questionActionsMenu.classList.add('hidden');
                         }, 200);
                     }
                 }
             });
 
+
             const editLink = questionActionsMenu.querySelector('.edit-question-link');
+            if (editLink) {
+                editLink.addEventListener('click', function(e) {
             if (editLink) {
                 editLink.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -2484,6 +2731,7 @@
                 });
             }
         }
+
 
         document.querySelectorAll('.answer-actions-toggle').forEach(toggleBtn => {
             toggleBtn.addEventListener('click', (event) => {
@@ -2583,11 +2831,11 @@
             const answerTextArea = document.getElementById('answer-textArea');
             const writeAnswerPlaceholderBtn = document.getElementById('write-answer-placeholder-btn');
 
-            const showAnswerInput = () => {
-                if (answerInputSection.classList.contains('hidden')) {
-                    answerInputSection.classList.remove('hidden');
-                    showAnswerBtn.classList.add('active');
-                    showAnswerBtn.querySelector('i').className = 'fa-solid fa-times text-2xl';
+        const showAnswerInput = () => {
+            if (answerInputSection.classList.contains('hidden')) {
+                answerInputSection.classList.remove('hidden');
+                showAnswerBtn.classList.add('active');
+                showAnswerBtn.querySelector('i').className = 'fa-solid fa-times text-2xl';
 
                     setTimeout(() => {
                         answerInputSection.scrollIntoView({
@@ -2637,38 +2885,38 @@
                     }
                 });
 
-                answerTextArea.addEventListener('keydown', (e) => {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                        e.preventDefault();
-                        document.getElementById('submitAnswer-btn').click();
-                    }
-                });
-            }
+            answerTextArea.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('submitAnswer-btn').click();
+                }
+            });
+        }
 
-            function openModal() {
-                if (questionCommentsModal) {
-                    questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
-                    questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
-                    if (questionCommentTextarea) {
-                        questionCommentTextarea.focus();
-                    }
+        function openModal() {
+            if (questionCommentsModal) {
+                questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
+                questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
+                if (questionCommentTextarea) {
+                    questionCommentTextarea.focus();
                 }
             }
+        }
 
-            function closeModal() {
-                if (questionCommentsModal) {
-                    questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
-                    questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
-                }
+        function closeModal() {
+            if (questionCommentsModal) {
+                questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
+                questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
             }
+        }
 
-            if (openQuestionCommentsModalBtn) {
-                openQuestionCommentsModalBtn.addEventListener('click', openModal);
-            }
+        if (openQuestionCommentsModalBtn) {
+            openQuestionCommentsModalBtn.addEventListener('click', openModal);
+        }
 
-            if (closeQuestionCommentsModalBtn) {
-                closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
-            }
+        if (closeQuestionCommentsModalBtn) {
+            closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
+        }
 
             if (questionCommentsModal) {
                 questionCommentsModal.addEventListener('click', (event) => {
@@ -2684,15 +2932,15 @@
                 });
             }
 
-            function openAnswerModal() {
-                if (answerCommentsModal) {
-                    answerCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
-                    answerCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
-                    answerCommentsModal.querySelector('.modal-content').style.opacity = '1';
-                    answerCommentsModal.querySelector('.modal-content').style.transform = 'translateY(0) scale(1)';
-                    answerCommentTextarea.focus();
-                }
+        function openAnswerModal() {
+            if (answerCommentsModal) {
+                answerCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
+                answerCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
+                answerCommentsModal.querySelector('.modal-content').style.opacity = '1';
+                answerCommentsModal.querySelector('.modal-content').style.transform = 'translateY(0) scale(1)';
+                answerCommentTextarea.focus();
             }
+        }
 
             function closeAnswerModal() {
                 if (answerCommentsModal) {
@@ -2748,32 +2996,32 @@
 
                                 </div>
                             `;
-                            answerCommentsListModal.appendChild(commentElement);
-                        });
-                    } else {
-                        answerCommentsListModal.innerHTML = `
+                        answerCommentsListModal.appendChild(commentElement);
+                    });
+                } else {
+                    answerCommentsListModal.innerHTML = `
                             <div class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
                                 <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
                                 <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
                             </div>
                         `;
-                    }
+                }
 
-                    openAnswerModal();
-                });
+                openAnswerModal();
             });
+        });
 
-            if (closeAnswerCommentsModalBtn) {
-                closeAnswerCommentsModalBtn.addEventListener('click', closeAnswerModal);
-            }
+        if (closeAnswerCommentsModalBtn) {
+            closeAnswerCommentsModalBtn.addEventListener('click', closeAnswerModal);
+        }
 
-            if (answerCommentsModal) {
-                answerCommentsModal.addEventListener('click', (event) => {
-                    if (event.target === answerCommentsModal) {
-                        closeAnswerModal();
-                    }
-                });
-            }
+        if (answerCommentsModal) {
+            answerCommentsModal.addEventListener('click', (event) => {
+                if (event.target === answerCommentsModal) {
+                    closeAnswerModal();
+                }
+            });
+        }
 
             if (submitAnswerCommentBtn) {
                 submitAnswerCommentBtn.addEventListener('click', () => {
@@ -2789,10 +3037,10 @@
                         return;
                     }
 
-                    const formData = new FormData();
-                    formData.append('comment', commentText);
-                    formData.append('commentable_id', currentAnswerId);
-                    formData.append('commentable_type', 'answer');
+                const formData = new FormData();
+                formData.append('comment', commentText);
+                formData.append('commentable_id', currentAnswerId);
+                formData.append('commentable_type', 'answer');
 
                     fetch(`{{ route('comment.submit') }}`, {
                             method: 'POST',

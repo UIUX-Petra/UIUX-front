@@ -24,6 +24,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -76,9 +79,9 @@
                             </div>
                             <div class="stats-item flex flex-row items-center space-x-2">
                                 <span
-                                    class="text-sm font-medium">{{ $question['comment_count'] ?? ($question['answer_count'] ?? count($question['answer'] ?? [])) }}</span>
+                                    class="text-sm font-medium">{{ ($question['answer_count'] ?? count($question['answer'] ?? [])) }}</span>
                                 {{-- Using more common keys --}}
-                                <i class="text-sm fa-regular fa-comment"></i>
+                                <i class="text-sm fa-solid fa-reply-all"></i>
                             </div>
                         </div>
 
@@ -101,10 +104,11 @@
                                     @endphp
 
                                     @foreach ($tags as $index => $tag)
-                                        @if(isset($tag['subject']['name']))
+                                        @if (isset($tag['subject']['name']))
                                             <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => 'latest', 'page' => 1]) }}"
-                                               class="question-tag-link @if($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
-                                                <span class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
+                                                class="question-tag-link @if ($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
+                                                <span
+                                                    class="hover:border-[var(--accent-secondary)] lowercase font-semibold hover:border-2 text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">
                                                     {{ $tag['subject']['name'] }}
                                                 </span>
                                             </a>
@@ -224,8 +228,8 @@
                         'var(--stats-icon-color-1-light, #10b981)' : 'var(--stats-icon-color-1-dark, #23BF7F)';
                     else if (index % 3 === 1) icon.style.color = isLightMode ?
                         'var(--stats-icon-color-2-light, #f59e0b)' : 'var(--stats-icon-color-2-dark, #ffd249)';
-                    else icon.style.color = isLightMode ? 'var(--stats-icon-color-3-light, #3b82f6)' :
-                        'var(--stats-icon-color-3-dark, #909ed5)';
+                    else icon.style.color = isLightMode ? 'var(--stats-icon-color-3-light, #4DB2BF)' :
+                        'var(--stats-icon-color-3-dark, #3DAAA3)';
                 });
             }
         }
@@ -290,7 +294,10 @@
             formData.append("question_id", questionId);
 
             let loadingToast = Toastify({
-                /* ... Toast params ... */
+                close: false,
+                gravity: "top",
+                position: "right",
+                duration: -1,
                 text: "Unsaving...",
                 style: {
                     background: "#444"
@@ -310,11 +317,14 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
                     }).showToast();
-                    
+
                     if (questionCard) {
                         questionCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                         questionCard.style.opacity = '0';
@@ -339,6 +349,9 @@
                     Toastify({
                         text: res.message || "Failed to unsave.",
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }
@@ -349,6 +362,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }
@@ -363,7 +379,10 @@
             formData.append("question_id", questionId);
 
             let loadingToast = Toastify({
-                /* ... Toast params ... */
+                close: false,
+                gravity: "top",
+                position: "right",
+                duration: -1,
                 text: "Saving...",
                 style: {
                     background: "#444"
@@ -383,6 +402,9 @@
                     Toastify({
                         text: res.message,
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "linear-gradient(to right, #00b09b, #96c93d)"
                         }
@@ -393,6 +415,9 @@
                 } else {
                     Toastify({
                         text: res.message || "Failed to save.",
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         duration: 3000,
                         style: {
                             background: "#e74c3c"
@@ -404,6 +429,9 @@
                 Toastify({
                     text: "Something went wrong",
                     duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
                     style: {
                         background: "#e74c3c"
                     }

@@ -586,7 +586,9 @@ class UserController extends Controller
             $comment = $data->data->comment;
             $formattedComment = [
                 'id' => $comment->id,
-                'username' => $comment->user->username ?? null,
+                'username' => $comment->user->username ?? 'User', // Beri nilai default
+                'email' => $comment->user->email ?? '#',         // Beri nilai default
+                'image' => $comment->user->image ?? null,      // Sertakan path gambar
                 'comment' => $comment->comment,
                 'timestamp' => $comment->created_at,
             ];

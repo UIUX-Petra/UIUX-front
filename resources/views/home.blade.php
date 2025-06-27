@@ -32,6 +32,41 @@
             transform: translateY(-2px);
         }
 
+        .main-content {
+            background-color: var(--bg-secondary);
+        }
+
+        .question-card {
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            transition: box-shadow 0.2s, background-color 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            background-color: var(--bg-card-hover);
+        }
+
+
+        .interaction-icons i {
+            color: var(--text-muted);
+        }
+
+        .interaction-icons span {
+            color: var(--text-secondary);
+        }
+
+        .ask-question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .ask-question-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-5px);
+        }
+
         /* Stats items in question cards */
         .stats-item {
             transition: transform 0.2s;
@@ -616,6 +651,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }

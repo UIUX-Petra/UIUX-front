@@ -6,6 +6,9 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -231,56 +234,85 @@
         }
 
         /* Responsive design */
-        @media screen and (max-width: 650px) {
-            .container {
-                height: calc(100vh - 40px);
+        @media screen and (max-width: 650px) {            .container{
+                height: auto;
+                min-height: calc(100vh - 40px);
+                flex-direction: column;
+                display: flex;
             }
-
-            .container.active .toggle-box::before {
-                top: 70%;
-                left: 0;
-            }
-
+            
             .form-box {
-                bottom: 0;
+                position: relative;
+                bottom: auto;
                 width: 100%;
-                height: 70%;
+                height: auto;
+                min-height: 50%;
+            }
+        
+            .container.active .form-box {
+                right: auto;
+                bottom: auto;
             }
 
-            .container.active .form-box {
-                right: 0;
-                bottom: 30%;
+            .form-box.login {
+                justify-content: center;
+                padding: 2rem 1rem;
+                order: 2;
+            }
+                
+            .form-container {
+                height: auto;
+                min-height: 460px;
             }
 
             .toggle-box::before {
                 left: 0;
                 width: 100%;
-                height: 300%;
-                top: -270%;
-                border-radius: 20vw;
+                height: 100%;
+                top: 0;
+                border-radius: 20px;
+            }
+
+            .container.active .toggle-box::before {
+                top: 0;
+                left: 0;
             }
 
             .toggle-panel {
                 width: 100%;
-                height: 30%;
+                height: auto;
+                min-height: 200px;
+                position: relative;
+            }
+
+            .toggle-panel.toggle-left {
+                top: 0;
+                left: 0;
+                position: relative;
+                order: 1;
             }
 
             .container.active .toggle-panel.toggle-left {
                 left: 0;
-                top: -30%;
-            }
-
-            .toggle-panel.toggle-left {
                 top: 0;
             }
 
             .toggle-panel.toggle-right {
                 right: 0;
-                bottom: -30%;
+                bottom: 0;
+                position: relative;
+                order: 2;
             }
 
             .container.active .toggle-panel.toggle-right {
                 bottom: 0;
+                right: 0;
+            }
+        
+            .toggle-box {
+                position: relative;
+                height: auto;
+                order: 1;
             }
         }
 
@@ -349,19 +381,18 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-center items-center h-screen w-full py-8 px-4">
-            <div class="min-h-screen mx-auto cont relative w-full h-full flex justify-center items-center">
+        <div class="flex justify-center items-center min-h-screen md:h-auto w-full py-8 px-4">
+            <div class="mx-auto relative w-full h-full flex justify-center items-center">
                 <div
-                    class="container form-container relative w-full m-[20px] max-w-[900px] h-[600px] bg-white rounded-[30px] shadow-xl overflow-hidden">
-                    <!-- Login Form -->
+                    class="container form-container relative w-full m-[20px] max-w-[900px] h-[460px] bg-white rounded-[30px] shadow-xl overflow-hidden">                    <!-- Login Form -->
                     <div
-                        class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
+                        class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:!pb-0">
                         <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST"
                             novalidate>
                             @csrf
                             <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Login
                             </h1>
-
+{{-- 
                             <div class="input-box relative w-full mb-5">
                                 <input id="usernameOrEmail" type="text" aria-label="Username or Email"
                                     placeholder="Username or Email" required name="usernameOrEmail"
@@ -389,7 +420,7 @@
                                 <span class="bg-white px-4 text-gray-500 text-sm font-medium relative z-10">OR CONTINUE
                                     WITH</span>
                                 <div class="absolute top-1/2 left-0 w-full h-px bg-gray-200 -z-1"></div>
-                            </div>
+                            </div> --}}
                             <div class="grid w-full grid-cols-4 gap-4">
                                 <button type="button" onclick="window.location.href='{{ route('auth') }}'"
                                     class="col-span-3 form-btn w-full bg-gradient-to-r from-[#F4AB24] to-[#FFD249] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
@@ -434,7 +465,7 @@
                     </div>
 
                     <!-- Registration Form -->
-                    <div
+                    {{-- <div
                         class="form-box registration absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="submitRegisterForm" novalidate>
                             @csrf
@@ -467,10 +498,10 @@
                                     <i
                                         class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 </div>
-                                <small class="error-message"></small>
+                                <small class="error-message"></small> --}}
 
                                 {{-- Tooltip --}}
-                                <div id="passwordStrengthContainer"
+                                {{-- <div id="passwordStrengthContainer"
                                     class="absolute top-full left-0 right-0 mt-1 p-3 bg-white border border-gray-300 rounded-md shadow-lg z-20 hidden">
 
                                     <div id="passwordStrengthBar"
@@ -512,7 +543,7 @@
                                 Create Account
                             </button>
                         </form>
-                    </div>
+                    </div> --}}
 
                     <!-- Toggle Box -->
                     <div class="toggle-box absolute w-full h-full">
@@ -520,21 +551,21 @@
                             class="toggle-panel toggle-left left-0 absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
                             <div class="mb-6 float-animation">
                                 <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
-                                    class="h-20 hidden md:flex">
+                                    class="h-20 flex">
                             </div>
                             <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Hello, Informate!</h1>
-                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">New to <span
+                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Log in to start using <span
                                     class="font-bold cal-sans-regular text-[#fff]">peer <span class="text-[#FFD249]">- to
                                         -
-                                    </span> peer?</span><br>Join and explore our community today!</p>
+                                    </span> peer!</span></p>
                             {{-- <button
                                 class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-xl">Make an account</button> --}}
                         </div>
-                        <div
+                        {{-- <div
                             class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
                             <div class="mb-6 float-animation">
                                 <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
-                                    class="h-20 hidden md:flex">
+                                    class="h-20 flex">
                             </div>
                             <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Already have an account?</h1>
                             <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Already part of our
@@ -542,7 +573,7 @@
                             <button
                                 class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Sign
                                 In</button>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -1240,6 +1271,9 @@
                             Toastify({
                                 text: errorMessage || 'Registration Error',
                                 duration: 3000,
+                                close: true,
+                                gravity: "top",
+                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -1251,6 +1285,9 @@
                         Toastify({
                             text: 'An unexpected error occurred. Please try again.',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }

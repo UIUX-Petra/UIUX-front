@@ -542,13 +542,43 @@
 @endsection
 
 @section('content')
+    @php
+        $breadcrumbs = [
+            ['url' => route('viewUser', ['email' => $profileUser['email']]), 'label' => $profileUser['username'] ?? 'User Profile', 'icon' => 'fas fa-user'],
+            ['url' => null, 'label' => 'Connections', 'icon' => 'fas fa-users', 'current' => true]
+        ];
+    @endphp
     @include('partials.nav', ['loggedInUser' => $loggedInUser])
-    
+
     <!-- Floating decorative elements -->
     <div class="floating-decoration decoration-1"></div>
     <div class="floating-decoration decoration-2"></div>
     
     <div class="container items-start justify-start px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
+        <div class="mb-6 px-2">
+            <nav class="flex items-center gap-2 text-sm">
+                @foreach($breadcrumbs as $index => $breadcrumb)
+                    @if(!$loop->first)
+                        <span class="text-[var(--text-muted)] text-xs">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    @endif
+                    @if(isset($breadcrumb['current']) && $breadcrumb['current'])
+                        <span class="text-[var(--accent-primary)] font-semibold flex items-center">
+                            <i class="{{ $breadcrumb['icon'] }} mr-1.5 text-xs"></i>
+                            {{ $breadcrumb['label'] }}
+                        </span>
+                    @else
+                        <a href="{{ $breadcrumb['url'] }}"
+                        class="text-[var(--text-secondary)] no-underline transition-colors duration-200 ease-in-out hover:text-[var(--text-primary)] flex items-center">
+                            <i class="{{ $breadcrumb['icon'] }} mr-1.5 text-xs"></i>
+                            {{ $breadcrumb['label'] }}
+                        </a>
+                    @endif
+                @endforeach
+            </nav>
+        </div>
+
         {{-- Header Profil Pengguna --}}
         <div class="profile-header-card rounded-2xl p-6 mb-8 shadow-lg">
             <div class="flex flex-col lg:flex-row items-center lg:items-start gap-6">
@@ -1079,6 +1109,9 @@
                         Toastify({
                             text: data.message || 'An error occurred.',
                             duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
@@ -1089,6 +1122,9 @@
                     Toastify({
                         text: 'A network error occurred. Please try again.',
                         duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
                         style: {
                             background: "#e74c3c"
                         }

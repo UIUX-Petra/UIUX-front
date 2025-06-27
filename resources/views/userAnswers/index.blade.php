@@ -440,10 +440,10 @@
                     <p class="text-[var(--text-muted)] mb-4">
                         Start contributing to the community by answering questions. Your knowledge can help others!
                     </p>
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('askPage') }}"
                         class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium rounded-lg hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
                         <i class="fas fa-search mr-2"></i>
-                        Browse Questions
+                        Ask a Question
                     </a>
                 </div>
             @endif
@@ -509,14 +509,14 @@
                         <i class="fa-solid fa-lightbulb text-3xl text-[var(--accent-tertiary)]"></i>
                     </div>
                     <h2 class="text-xl font-bold text-[var(--text-primary)] mb-3">
-                        Keep Contributing!
+                        Have a Question?
                     </h2>
                     <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
                         Help fellow Petranesian Informates by sharing your knowledge and insights!
                     </p>
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('askPage') }}"
                         class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
-                        <i class="fa-solid fa-search mr-2"></i> Browse Questions
+                        <i class="fa-solid fa-plus mr-2"></i> Ask a Question
                     </a>
                     
                     <div class="w-full mt-5 pt-5 border-t border-[var(--border-color)]">
@@ -528,9 +528,9 @@
                                     class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">My Questions</a>
                             </li> --}}
                             <li class="flex items-center text-sm">
-                                <i class="fa-solid fa-plus mr-2 text-[var(--accent-secondary)]"></i>
-                                <a href="{{ route('askPage') }}"
-                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">Ask Question</a>
+                                <i class="fa-solid fa-question-circle mr-2 text-[var(--accent-secondary)]"></i>
+                                <a href="{{ route('user.questions.list', ['id' => $id]) }}"
+                                    class="text-[var(--text-secondary)] hover:text-[var(--text-highlight)] transition-colors">My Questions</a>
                             </li>
                         </ul>
                     </div>
@@ -677,11 +677,14 @@
                                             text: data.message ||
                                                 'Your answer has been deleted successfully.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
                                         }).showToast();
-                                        
+
                                         // Swal.fire({
                                         //     title: 'Deleted!',
                                         //     text: data.message ||
@@ -726,6 +729,9 @@
                                         text: errorMessage ||
                                             'An error occurred while deleting the answer.',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }
@@ -773,7 +779,7 @@
                                 </p>
                                 <a href="{{ route('home') }}" 
                                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] text-white font-medium rounded-xl hover:scale-105 transition-all duration-300 shadow-lg">
-                                    <i class="fas fa-search mr-2"></i>
+                                    <i class="fas fa-plus mr-2"></i>
                                     Browse Questions
                                 </a>
                             </div>

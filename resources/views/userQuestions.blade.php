@@ -288,7 +288,7 @@
                         Have a Question?
                     </h2>
                     <p class="text-[var(--text-muted)] mb-6 text-md leading-relaxed">
-                        Connect with fellow Petranesian Informates and get insights from your peers!
+                        Help fellow Petranesian Informates by sharing your knowledge and insights!
                     </p>
                     <a href="{{ route('askPage') }}"
                         class="w-full ask-question-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-medium py-2.5 text-md px-4 rounded-lg flex items-center justify-center hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105 transition-all duration-200">
@@ -475,6 +475,9 @@
                                         Toastify({
                                             text: 'Your question has been deleted.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
@@ -507,6 +510,9 @@
                                             text: data.message ||
                                                 'Could not delete the question.',
                                             duration: 3000,
+                                            close: true,
+                                            gravity: "top",
+                                            position: "right",
                                             style: {
                                                 background: "#e74c3c"
                                             }
@@ -531,6 +537,9 @@
                                         text: errorMessage ||
                                             'Something went wrong',
                                         duration: 3000,
+                                        close: true,
+                                        gravity: "top",
+                                        position: "right",
                                         style: {
                                             background: "#e74c3c"
                                         }

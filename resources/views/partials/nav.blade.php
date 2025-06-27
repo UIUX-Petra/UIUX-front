@@ -596,7 +596,8 @@
                                 role="menuitem">
                                 <i class="fa-solid fa-user mr-2"></i> Profile
                             </a>
-                            <a href="{{ route('editProfile') }}"
+                            <div class="border-t border-[var(--border-color)] my-1"></div>
+                            {{-- <a href="{{ route('editProfile') }}"
                                 class="user-menu-item text-[var(--text-primary)] hover:text-[var(--accent-tertiary)] hover:bg-[var(--bg-card-hover)] block px-4 py-2 text-sm"
                                 role="menuitem">
                                 <i class="fa-solid fa-gear mr-2"></i> Settings
@@ -620,7 +621,7 @@
                                     <i class="fa-solid fa-comments mr-2"></i> My Answers
                                 </a>
                                 <div class="border-t border-[var(--border-color)] my-1"></div>
-                            @endif
+                            @endif --}}
                             <a href="{{ route('logout') }}"
                                 class="user-menu-item text-[var(--text-primary)] hover:text-red-400 hover:bg-[var(--bg-card-hover)] block px-4 py-2 text-sm"
                                 role="menuitem">
@@ -746,7 +747,7 @@
             </div>
 
             <div class="border-t border-[var(--border-color)] my-3"></div>
-            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider px-3 mb-2">My Activities</h3>
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider px-3 mb-2">Activities</h3>
 
             <div class="space-y-1">
                 <a href="{{ route('user.questions.list', ['id' => $id]) }}"
@@ -841,12 +842,12 @@
 
         <!-- My Activities section-->
         <div class="mb-6 nav-section pb-6">
-            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">MY ACTIVITES</h3>
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">ACTIVITES</h3>
             <nav class="flex flex-col space-y-1">
                 <div class="nav-link {{ request()->routeIs('user.questions.list', ['id' => $id]) ? 'active-nav' : '' }} flex items-center justify-between rounded-md font-medium">
                     <a href="{{ route('user.questions.list', ['id' => $id]) }}" class="flex-grow items-center py-2.5 pl-3 text-sm flex {{ request()->routeIs('user.questions.list', ['id' => $id]) ? '' : 'text-[var(--text-primary)]' }}">
                         <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i>
-                        Questions
+                        My Questions
                     </a>
                     
                     <a href="{{ route('askPage') }}"
@@ -859,7 +860,7 @@
                 </div>
                 <a href="{{ route('user.answers.index', ['userId' => $id]) }}"
                     class="nav-link {{ request()->routeIs('user.answers.index', ['userId' => $id]) ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
-                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> Answers
+                    <i class="fa-solid fa-comments mr-3 w-5 text-center"></i> My Answers
                 </a>
                 <a href="{{ route('savedQuestions') }}"
                     class="nav-link {{ request()->routeIs('savedQuestions') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
@@ -880,12 +881,19 @@
                     class="nav-link {{ request()->routeIs('user.leaderboard') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-trophy mr-3 w-5 text-center"></i> Leaderboard
                 </a>
+            </nav>
+        </div>
+
+        <div class="mb-6 nav-section pb-6">
+            <h3 class="text-[var(--text-muted)] text-xs uppercase tracking-wider ml-3 mb-3">HELP & SUPPORT</h3>
+            <nav class="flex flex-col space-y-1">   
                 <a href="{{ route('faq') }}"
                      class="nav-link {{ request()->routeIs('faq') ? 'active-nav' : '' }} text-[var(--text-primary)] py-2.5 text-sm pl-3 rounded-md flex items-center font-medium">
                     <i class="fa-solid fa-circle-question mr-3 w-5 text-center"></i> FAQ
-                </a>
+                </a>         
+
             </nav>
-        </div>
+        </div>     
     </div>
 </div>
 

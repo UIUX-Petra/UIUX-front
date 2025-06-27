@@ -722,10 +722,14 @@
                     const response = await axios.post(`${AI_SERVICE_URL}/recommend_tags`,
                         aiFormData);
                     if (response.data && response.data.success) {
+                        selectedTagIds = [];
                         const recommendedTags = response.data.recommended_tags;
-                        const recommendedIds = recommendedTags.map(tag => tag.id);
-                        aiRecommendedTagIds = recommendedIds;
-                        selectedTagIds = recommendedIds;
+                        aiRecommendedTagIds = recommendedTags.map(tag => tag.id);
+                        recommendedTags.forEach(tag => {
+                            if (!selectedTagIds.includes(tag.id)) {
+                                selectedTagIds.push(tag.id);
+                            }
+                        });
                         updateMainUI();
 
                         Toastify({
@@ -810,6 +814,8 @@
                 showingCount.textContent = filteredTags.length;
 
                 filteredTags.forEach(tag => {
+                    console.log(tag);
+                    
                     const isSelected = tempSelectedTagIds.includes(tag.id.toString());
                     const tagItem = document.createElement('div');
                     tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
@@ -998,7 +1004,8 @@
                         }
                         if (!IS_EDIT_MODE) {
                             selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
-                            aiRecommendedTagIds.forEach(id => formData.append("recommended_tags[]", id));
+                            aiRecommendedTagIds.forEach(id => formData.append("recommended_tags[]",
+                                id));
                         } else {
                             selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
                         }
