@@ -29,9 +29,9 @@
     </div>
 @else
     @foreach ($questions as $question)
-        <div class="question-card popular-question-card border-solid border-white rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative"
+        <div class="question-card popular-question-card border-solid border-white rounded-lg mb-4 p-5 transition-all duration-200 flex hover:border-[var(--accent-tertiary)] relative overflow-hidden"
             data-url="{{ route('user.viewQuestions', ['questionId' => $question['id']]) }}" style="cursor: pointer;">
-            <div class="absolute inset-0 bg-pattern opacity-5"></div>
+            <div class="absolute inset-0 bg-pattern opacity-5"></div> {{-- Background pattern --}}
 
             @if (isset($question['vote']) && $question['vote'] > 50)
                 <div class="absolute bottom-0 right-0">
@@ -42,16 +42,35 @@
                 </div>
             @endif
 
-            {{-- Kode BARU, hanya tombol pemicu --}}
-            <div class="question-menu-container absolute top-4 right-2 z-20">
-                <button type="button"
-                    class="question-menu-trigger p-2 w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--bg-card-hover)] transition-colors duration-200"
-                    data-question-id="{{ $question['id'] }}"
-                    data-is-saved="{{ isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'] ? 'true' : 'false' }}">
-                    <i class="fa-solid fa-ellipsis-vertical text-[var(--text-secondary)]"></i>
-                </button>
+            {{-- Save/Unsave Button --}}
+            <div class="absolute top-3 right-3 z-20 flex items-center space-x-2">
+
+                @if (isset($question['is_saved_by_request_user']) && $question['is_saved_by_request_user'])
+                    <button type="button"
+                        class="save-question-btn z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                        data-question-id="{{ $question['id'] }}" title="Unsave Question">
+                        <i class="fa-solid fa-bookmark text-[var(--accent-secondary)]"></i>
+                    </button>
+                @else
+                    <button type="button"
+                        class="save-question-btn z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                        data-question-id="{{ $question['id'] }}" title="Save Question">
+                        <i
+                            class="fa-regular fa-bookmark text-[var(--text-muted)] hover:text-[var(--accent-secondary)]"></i>
+                    </button>
+                @endif
+               
+
+                @if (session()->has('email') && !in_array($question['id'], $reportedQuestionIds ?? []))
+                    <button type="button"
+                        class="open-report-modal-btn w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[var(--bg-hover)] bg-[var(--bg-card-hover)]"
+                        title="Report Question">
+                        <i class="fa-solid fa-flag text-[var(--text-muted)] hover:text-[var(--accent-neg)]"></i>
+                    </button>
+                @endif
             </div>
 
+            {{-- Stats Column --}}
             <div
                 class="flex flex-col items-end justify-start mr-4 pt-1 space-y-3 px-3 border-r border-[var(--border-color)] text-[var(--text-primary)]">
                 <div class="stats-item flex flex-row items-center space-x-2">
@@ -68,7 +87,9 @@
                 </div>
             </div>
 
+            {{-- Question Content --}}
             <div class="flex-1 pt-0 mr-4 z-10">
+                {{-- handle click by question box --}}
                 <h2
                     class="text-xl font-medium text-[var(--text-highlight)] question-title transition-colors duration-200 hover:underline decoration-[var(--accent-secondary)] decoration-[1.5px] underline-offset-2 pr-2">
                     {{ $question['title'] ?? 'Untitled Question' }}
@@ -82,13 +103,14 @@
                     @php
                         $tags = $question['group_question'] ?? [];
                         $totalTags = count($tags);
-                        $displayLimit = 3;
+                        $displayLimit = 3; // max 3 tags
                     @endphp
 
                     @if (!empty($tags) && is_array($tags))
                         @foreach ($tags as $index => $tag)
                             @if (isset($tag['subject']['name']))
                                 <a href="{{ route('home', ['filter_tag' => $tag['subject']['name'], 'sort_by' => $currentSortBy ?? 'latest', 'page' => 1]) }}"
+                                    {{-- Ensure $currentSortBy is available or use a default --}}
                                     class="question-tag-link @if ($index >= $displayLimit) hidden extra-tag-{{ $question['id'] }} @endif">
                                     <span
                                         class="scale-100 transition-all duration-300 hover:font-normal font-light text-xs px-2 py-1 rounded-10 bg-[var(--bg-light)] text-[var(--text-tag)]">

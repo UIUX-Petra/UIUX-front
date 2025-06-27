@@ -281,6 +281,7 @@ class MainController extends Controller
 
     $data['histories'] = $currUser['histories'];
     $data['reportReasons'] = $reportReasons;
+    // dd($data['reportReasons']);
     return view('viewAnswers', $data);
   }
 

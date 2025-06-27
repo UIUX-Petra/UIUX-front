@@ -1,15 +1,13 @@
 <div id="announcement-container" class="announcement-wrapper my-4" style="display: none;">
     <div class="swiper announcement-swiper">
         <div class="swiper-wrapper">
-            {{-- Slide akan digenerate di sini --}}
+
         </div>
     </div>
 
-    {{-- Tombol Navigasi --}}
     <div class="swiper-button-prev announcement-nav-btn" style="display: none;"></div>
     <div class="swiper-button-next announcement-nav-btn" style="display: none;"></div>
 
-    {{-- Tombol Close --}}
     <button id="announcement-close-btn" class="announcement-close-btn bg-gradient-to-r from-[#38A3A5] to-[#80ED99]" title="Tutup">
         <i class="fa-solid fa-xmark"></i>
     </button>
@@ -220,10 +218,10 @@
             return;
         }
 
-        // if (sessionStorage.getItem('announcementClosed') === 'true') {
-        //     container.style.display = 'none';
-        //     return;
-        // }
+        if (sessionStorage.getItem('announcementClosed') === 'true') {
+            container.style.display = 'none';
+            return;
+        }
 
         const showAnnouncementDetail = (title, detail) => {
             Swal.fire({
@@ -338,7 +336,7 @@
             container.style.minHeight = '0';
 
             setTimeout(() => container.style.display = 'none', 300);
-            // sessionStorage.setItem('announcementClosed', 'true');
+            sessionStorage.setItem('announcementClosed', 'true');
         });
 
         fetchAnnouncements();
