@@ -118,6 +118,8 @@ class UserController extends Controller
     public function getUserByEmail($email)
     {
         $api_url = env('API_URL') . '/users/get/' . $email;
+        Log::info('api url', ['api_url' => $api_url]);
+
         $response = Http::withToken(session('token'))->get($api_url);
 
         if ($response->failed()) {

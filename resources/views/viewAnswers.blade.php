@@ -335,12 +335,22 @@
                         </div>
                     </a>
 
-                    <button id="open-question-comments-modal-btn"
-                        class="flex items-center space-x-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-3 py-1.5 border border-[var(--border-color)] rounded-full transition-all duration-200"
-                        title="View or add comments">
-                        <i class="fa-solid fa-comment-dots"></i>
-                        <span id="question-card-comment-count-text">{{ $question['comment_count'] }}</span>
-                    </button>
+                    <div class="flex items-center space-x-4">
+                        <button
+                            class="open-report-modal-btn flex items-center space-x-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent-neg)] transition-colors duration-200"
+                            data-reportable-id="{{ $question['id'] }}" data-reportable-type="question"
+                            title="Report this question">
+                            <i class="fa-solid fa-flag"></i>
+                            <span>Report</span>
+                        </button>
+
+                        <button id="open-question-comments-modal-btn"
+                            class="flex items-center space-x-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-3 py-1.5 border border-[var(--border-color)] rounded-full transition-all duration-200"
+                            title="View or add comments">
+                            <i class="fa-solid fa-comment-dots"></i>
+                            <span id="question-card-comment-count-text">{{ $question['comment_count'] }}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -517,14 +527,24 @@
                                             </div>
                                         </a>
 
-                                        <button
-                                            class="open-answer-comments-modal-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
-                                            data-answer-id="{{ $ans['id'] }}"
-                                            data-comments="{{ json_encode($ans['comments'] ?? []) }}"
-                                            data-answer-owner-username="{{ $ans['user']['username'] }}">
-                                            <i class="fa-solid fa-comment-dots mr-2"></i>
-                                            <span>{{ count($ans['comments'] ?? []) }}</span>
-                                        </button>
+                                        <div class="flex items-center space-x-4 text-sm">
+                                            <button
+                                                class="open-report-modal-btn flex items-center space-x-2 text-[var(--text-secondary)] hover:text-[var(--accent-neg)] transition-colors duration-200"
+                                                data-reportable-id="{{ $ans['id'] }}" data-reportable-type="answer"
+                                                title="Report this answer">
+                                                <i class="fa-solid fa-flag"></i>
+                                                <span>Report</span>
+                                            </button>
+
+                                            <button
+                                                class="open-answer-comments-modal-btn flex items-center text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors"
+                                                data-answer-id="{{ $ans['id'] }}"
+                                                data-comments="{{ json_encode($ans['comments'] ?? []) }}"
+                                                data-answer-owner-username="{{ $ans['user']['username'] }}">
+                                                <i class="fa-solid fa-comment-dots mr-2"></i>
+                                                <span>{{ count($ans['comments'] ?? []) }}</span>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <!-- Comment input box -->
@@ -646,6 +666,13 @@
                                             <span>Posted by
                                                 {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
                                                 {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
+
+                                            <button
+                                                class="open-report-modal-btn text-[var(--text-muted)] hover:text-[var(--accent-neg)] ml-3"
+                                                data-reportable-id="{{ $comm['id'] }}" data-reportable-type="comment"
+                                                title="Report Comment">
+                                                <i class="fa-solid fa-flag text-xs"></i>
+                                            </button>
                                         </div>
                                     </a>
                                 </div>
@@ -708,11 +735,260 @@
         </div>
     @endonce
 
+
+    @once
+        <div id="reportModal"
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+            <div id="reportModalContent"
+                class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-lg w-full mx-auto flex flex-col relative max-h-[90vh] transform scale-95 opacity-0 transition-all duration-300">
+                <div class="flex-shrink-0 flex justify-between items-center p-5 border-b border-[var(--border-color)]">
+                    <h3 class="text-xl font-semibold text-[var(--text-primary)] flex items-center">
+                        <i class="fa-solid fa-flag text-[var(--accent-neg)] mr-3"></i>
+                        Report Content
+                    </h3>
+                    <button id="closeReportModalBtn"
+                        class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
+                </div>
+
+                <div class="overflow-y-auto flex-grow p-5">
+                    <form id="reportForm">
+                        <input type="hidden" id="reportable_id" name="reportable_id">
+                        <input type="hidden" id="reportable_type" name="reportable_type">
+
+                        <p class="text-[var(--text-secondary)] mb-4">Please select a reason for reporting this content. Your
+                            report
+                            is anonymous.</p>
+
+                        <div class="space-y-3" id="reportReasonsContainer">
+                            @if (!empty($reportReasons))
+                                @foreach ($reportReasons as $reason)
+                                    <label
+                                        class="flex items-center p-3 bg-[var(--bg-card)] rounded-lg cursor-pointer hover:bg-[var(--bg-card-hover)] border-2 border-transparent has-[:checked]:border-[var(--accent-primary)] transition-all">
+                                        <input type="radio" name="report_reason_id" value="{{ $reason['id'] }}"
+                                            data-reason-text="{{ $reason['title'] }}"
+                                            class="h-4 w-4 text-[var(--accent-primary)] bg-[var(--bg-input)] border-[var(--border-color)] focus:ring-[var(--accent-primary)]">
+                                        <span
+                                            class="ml-3 text-[var(--text-primary)] font-medium">{{ $reason['title'] }}</span>
+                                    </label>
+                                @endforeach
+                            @else
+                                <p class="text-[var(--text-muted)]">Could not load report reasons.</p>
+                            @endif
+                        </div>
+
+                        <div id="additionalNotesContainer" class="hidden mt-4">
+                            <label for="additional_notes"
+                                class="block mb-2 text-sm font-medium text-[var(--text-primary)]">Additional
+                                Notes (Optional)</label>
+                            <textarea id="additional_notes" name="additional_notes" rows="3"
+                                class="w-full bg-[var(--bg-input)] rounded-lg p-3 text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                                placeholder="Provide more details here..."></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="flex-shrink-0 flex justify-end items-center p-5 border-t border-[var(--border-color)] space-x-3">
+                    <button type="button" id="cancelReportBtn"
+                        class="px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] rounded-lg border border-[var(--border-color)] transition-all">
+                        Cancel
+                    </button>
+                    <button type="button" id="submitReportBtn"
+                        class="px-5 py-2.5 text-sm font-medium text-white bg-[var(--accent-neg)] hover:bg-red-700 rounded-lg transition-all flex items-center justify-center">
+                        <span class="btn-text">Submit Report</span>
+                        <i class="fa-solid fa-spinner fa-spin hidden ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endonce
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const API_BASE_URL = ("{{ env('API_URL', 'http://localhost:8001/api') }}" + '/').replace(/\/+$/, '/');
             const API_TOKEN = "{{ session('token') ?? '' }}";
             const CSRF_TOKEN = "{{ csrf_token() }}";
+
+            // report logic
+            const reportModal = document.getElementById('reportModal');
+            const reportModalContent = document.getElementById('reportModalContent');
+            const closeReportModalBtn = document.getElementById('closeReportModalBtn');
+            const cancelReportBtn = document.getElementById('cancelReportBtn');
+            const submitReportBtn = document.getElementById('submitReportBtn');
+            const reportForm = document.getElementById('reportForm');
+            const reportableIdInput = document.getElementById('reportable_id');
+            const reportableTypeInput = document.getElementById('reportable_type');
+            const additionalNotesContainer = document.getElementById('additionalNotesContainer');
+            const additionalNotesTextarea = document.getElementById('additional_notes');
+            const reportReasonsContainer = document.getElementById('reportReasonsContainer');
+
+            // --- Open Modal Handler ---
+            // Using event delegation to catch clicks on buttons that might be added dynamically
+            document.body.addEventListener('click', function(event) {
+                const target = event.target.closest('.open-report-modal-btn');
+                if (target) {
+                    event.preventDefault();
+                    const reportableId = target.dataset.reportableId;
+                    const reportableType = target.dataset.reportableType;
+
+                    if (reportableId && reportableType) {
+                        reportableIdInput.value = reportableId;
+                        reportableTypeInput.value = reportableType;
+                        openReportModal();
+                    } else {
+                        console.error(
+                            'Report button is missing data-reportable-id or data-reportable-type');
+                        Toastify({
+                            text: 'Cannot open report form. Missing content ID.',
+                            duration: 3000,
+                            style: {
+                                background: "#e74c3c"
+                            }
+                        }).showToast();
+                    }
+                }
+            });
+
+
+            // --- Modal Open/Close Functions ---
+            function openReportModal() {
+                if (!reportModal) return;
+                reportForm.reset(); // Clear previous selection
+                additionalNotesContainer.classList.add('hidden'); // Hide notes field
+                reportModal.classList.remove('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    reportModalContent.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            }
+
+            function closeReportModal() {
+                if (!reportModal) return;
+                reportModalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    reportModal.classList.add('opacity-0', 'pointer-events-none');
+                }, 300);
+            }
+
+            // --- Event Listeners for Modal ---
+            if (reportModal) {
+                closeReportModalBtn.addEventListener('click', closeReportModal);
+                cancelReportBtn.addEventListener('click', closeReportModal);
+                reportModal.addEventListener('click', (event) => {
+                    if (event.target === reportModal) {
+                        closeReportModal();
+                    }
+                });
+            }
+
+            if (reportReasonsContainer) {
+                reportReasonsContainer.addEventListener('change', (event) => {
+                    if (event.target.type === 'radio') {
+                        const selectedReasonText = event.target.dataset.reasonText || '';
+                        if (selectedReasonText.toLowerCase() === 'others') {
+                            additionalNotesContainer.classList.remove('hidden');
+
+                            setTimeout(() => {
+                                additionalNotesTextarea.focus();
+                            }, 100);
+
+                        } else {
+                            additionalNotesContainer.classList.add('hidden');
+                            additionalNotesTextarea.value = ''; // Clear value when hidden
+                        }
+                    }
+                });
+            }
+
+            // --- AJAX Submit Report ---
+            if (submitReportBtn) {
+                submitReportBtn.addEventListener('click', () => {
+                    const reportableId = reportableIdInput.value;
+                    const reportableType = reportableTypeInput.value;
+                    const selectedReason = reportForm.querySelector(
+                        'input[name="report_reason_id"]:checked');
+
+                    if (!selectedReason) {
+                        Toastify({
+                            text: 'Please select a reason for the report.',
+                            duration: 3000,
+                            gravity: "top",
+                            position: "right",
+                            style: {
+                                background: "#f39c12"
+                            }
+                        }).showToast();
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('reportable_id', reportableId);
+                    formData.append('reportable_type', reportableType);
+                    formData.append('report_reason_id', selectedReason.value);
+
+                    // Only append additional notes if the container is visible
+                    if (!additionalNotesContainer.classList.contains('hidden')) {
+                        formData.append('additional_notes', additionalNotesTextarea.value);
+                    }
+
+                    // UI loading state
+                    submitReportBtn.disabled = true;
+                    submitReportBtn.querySelector('.btn-text').textContent = 'Submitting...';
+                    submitReportBtn.querySelector('i').classList.remove('hidden');
+
+
+                    fetch(`{{ route('submitReport') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': CSRF_TOKEN, // Pastikan CSRF_TOKEN sudah didefinisikan secara global
+                                'Accept': 'application/json',
+                            },
+                            body: formData,
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Toastify({
+                                    text: data.message || 'Report submitted successfully!',
+                                    duration: 3000,
+                                    gravity: "top",
+                                    position: "right",
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
+                                closeReportModal();
+                            } else {
+                                Toastify({
+                                    text: data.message || 'An error occurred.',
+                                    duration: 4000, // Longer duration for errors
+                                    gravity: "top",
+                                    position: "right",
+                                    style: {
+                                        background: "#e74c3c"
+                                    }
+                                }).showToast();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error submitting report:', error);
+                            Toastify({
+                                text: 'A network error occurred. Please try again.',
+                                duration: 3000,
+                                gravity: "top",
+                                position: "right",
+                                style: {
+                                    background: "#e74c3c"
+                                }
+                            }).showToast();
+                        })
+                        .finally(() => {
+                            // Restore button state
+                            submitReportBtn.disabled = false;
+                            submitReportBtn.querySelector('.btn-text').textContent = 'Submit Report';
+                            submitReportBtn.querySelector('i').classList.add('hidden');
+                        });
+                });
+            }
+
             // edit question
             document.querySelectorAll('.edit-question-button').forEach(button => {
                 button.addEventListener('click', function() {
@@ -2248,13 +2524,6 @@
                             }).showToast();
                         }
                     })
-                // .catch(error => {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: 'Unexpected Error',
-                //         text: 'An unexpected error occurred.',
-                //     });
-                // });
             };
 
             upVoteButtonQ.addEventListener('click', () => handleVoteQ(true));
@@ -2304,11 +2573,6 @@
                                 }
                             }
                             updateAnswerActionButtonsVisibility(id);
-                            // Swal.fire({
-                            //     icon: 'success',
-                            //     title: 'Vote Submitted!',
-                            //     text: 'Your vote has been successfully recorded.',
-                            // });
                         } else {
                             Toastify({
                                 text: data.message ||
@@ -2323,13 +2587,6 @@
                             }).showToast();
                         }
                     })
-                // .catch(error => {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: 'Unexpected Error',
-                //         text: 'An unexpected error occurred.',
-                //     });
-                // });
             };
 
             upVoteButtonsA.forEach(button => {
@@ -2623,18 +2880,34 @@
                         const commentElement = document.createElement('div');
                         commentElement.className =
                             'comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start';
+
+                        // Pastikan Anda memiliki data yang diperlukan (id, comment, user_email, username, timestamp)
+                        // Di sini saya mengasumsikan strukturnya dari kode Anda
+                        const commentId = comment.id; // ASUMSI: pastikan 'id' ada di data comment
+                        const userEmail = comment.user_email || comment.user.email; // Sesuaikan
+                        const username = comment.username || comment.user.username; // Sesuaikan
+                        const timeAgo = formatTimeAgo(new Date(comment
+                            .timestamp)); // Gunakan fungsi formatTimeAgo yang sudah ada
+
                         commentElement.innerHTML = `
-                                <div class="flex-grow">
-                                    <p class="text-[var(--text-primary)]">${comment.comment.replace(/\n/g, '<br>')}</p>
-                                    <a href="/viewUser/${comment.user_email}" class="hover:underline">
-                                        <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
-                                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(comment.username)}&background=random&color=fff&size=128"
-                                                alt="${comment.username}" class="w-5 h-5 rounded-full mr-2">
-                                            <span>Posted by ${comment.username} - ${new Date(comment.timestamp).toLocaleDateString()}</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            `;
+                    <div class="flex-grow">
+                        <p class="text-[var(--text-primary)]">${comment.comment.replace(/\n/g, '<br>')}</p>
+                        <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
+                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128"
+                                alt="${username}" class="w-5 h-5 rounded-full mr-2">
+                            <a href="/viewUser/${userEmail}" class="hover:underline">
+                                <span>Posted by ${username} - ${timeAgo}</span>
+                            </a>
+                            
+                            <button class="open-report-modal-btn text-[var(--text-muted)] hover:text-[var(--accent-neg)] ml-3"
+                                    data-reportable-id="${commentId}" 
+                                    data-reportable-type="comment" 
+                                    title="Report Comment">
+                                <i class="fa-solid fa-flag text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
                         answerCommentsListModal.appendChild(commentElement);
                     });
                 } else {

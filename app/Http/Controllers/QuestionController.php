@@ -12,39 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class QuestionController extends Controller
 {
-    // public function getAllQuestions(Request $request)
-    // {
-    //     $api_url = env('API_URL') . '/questions';
-    //     $response = Http::withToken(session('token'))->get($api_url);
-    //     $response = json_decode($response, true);
-
-    //     // Get the data (questions)
-    //     $data = $response['data'];
-
-    //     // Loop through each question and count comments
-    //     foreach ($data as &$question) {
-    //         $question['comments_count'] = (is_array($question['comment']) && $question['comment'] !== null)
-    //             ? count($question['comment'])
-    //             : 0;
-    //     }
-
-    //     $page = $request->input('page', 1);
-    //     $per_page = 10;
-    //     $offset = ($page - 1) * $per_page;
-    //     $paginated_data = array_slice($data, $offset, $per_page);
-    //     $paginator = new LengthAwarePaginator(
-    //         $paginated_data,
-    //         count($data),
-    //         $per_page,
-    //         $page,
-    //         ['path' => $request->url(), 'query' => $request->query()]
-    //     );
-
-    //     // dd($data);
-    //     // Return the updated data
-    //     return $paginator;
-    // }
-
     public function getAllQuestions(Request $request)
     {
         $api_base_url = env('API_URL');
@@ -172,16 +139,16 @@ class QuestionController extends Controller
         $data['email'] = session('email');
         $api_url = env('API_URL') . '/questions/' . $id . '/view';
         $response = Http::withToken(session('token'))->post($api_url, $data);
+        $response = Http::withToken(session('token'))->post($api_url, $data);
         $response = json_decode($response, true);
         $questionData = $response['data'];
-        // dd($questionData);
+
         $comments = collect($questionData['comments']);
         $countcomments = count($comments);
         $questionData['comment_count'] = $countcomments;
         // dd($questionData);
         return $questionData;
     }
-
 
     public function addQuestion(Request $request)
     {
@@ -215,6 +182,11 @@ class QuestionController extends Controller
             [
                 'name' => 'question',
                 'contents' => $validated['question'],
+            ],
+            // Tambahkan email dari session sebagai payload
+            [
+                'name' => 'email', // Nama field di API yang menerima email
+                'contents' => session('email'),
             ],
         ];
 
@@ -364,7 +336,7 @@ class QuestionController extends Controller
         // 1. Ambil data pertanyaan dari API
         $api_url = env('API_URL') . '/questions/' . $id . '/view';
         $response = Http::withToken(session('token'))
-                                ->post($api_url, ['email' => session('email')]);  // Kirim email untuk otorisasi
+            ->post($api_url, ['email' => session('email')]);  // Kirim email untuk otorisasi
 
         if ($response->failed() || !$response->json()['success']) {
             return redirect()->route('home')->with('Error', 'Could not load question for editing.');
@@ -389,15 +361,15 @@ class QuestionController extends Controller
         // 3. prepare array selectedTagIdsOnLoad (ini yang sebelumnya ngga ada)
         $selectedTagIdsOnLoad = [];
         if (!empty($questionData['group_question'])) {
-            $selectedTagIdsOnLoad = array_map(function($group) {
+            $selectedTagIdsOnLoad = array_map(function ($group) {
                 return $group['subject']['id'];
             }, $questionData['group_question']);
         }
 
         return view('ask', [
-            'questionToEdit' => $questionData,      
-            'allTags' => $allTags,                  
-            'selectedTagIdsOnLoad' => $selectedTagIdsOnLoad 
+            'questionToEdit' => $questionData,
+            'allTags' => $allTags,
+            'selectedTagIdsOnLoad' => $selectedTagIdsOnLoad
         ]);
     }
 
@@ -409,7 +381,7 @@ class QuestionController extends Controller
             'image' => 'nullable|image|max:2048', // 2048 supaya sama w/ addQuestion
             'remove_existing_image' => 'nullable|in:1',
             'selected_tags' => 'required|array|min:1',
-            'selected_tags.*' => 'string|uuid', 
+            'selected_tags.*' => 'string|uuid',
         ]);
 
         $apiRequest = Http::withToken(session('token'))->asMultipart();
@@ -441,8 +413,7 @@ class QuestionController extends Controller
 
         try {
             $response = $apiRequest->post($apiUrl, $payload);
-            return $response->json(); 
-
+            return $response->json();
         } catch (\Exception $e) {
             Log::error("WEB updateQuestion API Call Failed: " . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error connecting to the API service.'], 500);
