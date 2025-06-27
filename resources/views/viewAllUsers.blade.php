@@ -61,7 +61,7 @@
                 <i class="fa-solid fa-user-plus mr-2"></i>New Users
             </button>
             <button data-tab-target="voters" class="tab-item">
-                <i class="fa-solid fa-thumbs-up mr-2"></i>Top Voters
+                <i class="fa-solid fa-thumbs-up mr-2"></i>Top Voted
             </button>
         </div>
         {{-- <div class="search-bar ..."> ... </div> --}}

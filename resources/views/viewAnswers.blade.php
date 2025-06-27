@@ -196,7 +196,7 @@
 
         .remove-image-btn:hover {
             transform: scale(1.1);
-            background: var(--accent-neg;)
+            background: var(--accent-neg; )
         }
 
         #answer-textArea:focus {
@@ -205,7 +205,7 @@
             ring-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(56, 163, 165, 0.1);
         }
-        
+
         .your-question-indicator {
             box-shadow: 0 0 15px rgba(56, 161, 105, 0.6), 0 0 30px rgba(56, 161, 105, 0.4);
             border-color: var(--accent-primary);
@@ -244,17 +244,17 @@
             <div class="interaction-section flex flex-col items-center mr-6">
                 <button id="upVoteQuestion"
                     class="mb-2 vote-btn text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up">
-                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                    <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                 </button>
                 <span id="voteTotal" class="text-lg font-semibold text-[var(--text-secondary)] my-1">
                     {{ $question['vote'] }}
                 </span>
                 <button id="downVoteQuestion"
                     class="mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down">
-                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                    <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                 </button>
 
-                
+
                 <div class="flex flex-col items-center mt-4" id="reply-count">
                     <button class="text-[var(--text-primary)] hover:text-yellow-100 focus:outline-none">
                         {{-- <i class="fa-solid fa-comments text-md"></i> --}}
@@ -320,8 +320,8 @@
                     </p>
                     @if ($question['image'])
                         <div class="mt-4">
-                            <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $question['image'] }}" alt="Question Image"
-                                class="rounded-lg shadow-md max-w-lg max-h-96 object-contain">
+                            <img src="{{ env('IMAGE_PATH', 'http://localhost:8001/storage') . '/' . $question['image'] }}"
+                                alt="Question Image" class="rounded-lg shadow-md max-w-lg max-h-96 object-contain">
                         </div>
                     @endif
                 </div>
@@ -349,7 +349,8 @@
         <div id="answer-input-section" class="mt-10 hidden">
             <div class="answer-input-card rounded-xl p-6 mb-6 backdrop-blur-sm">
                 <div class="flex items-center mb-6 pb-4 border-b border-[var(--border-color)]">
-                    <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mr-4">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] rounded-full mr-4">
                         <i class="fa-solid fa-pen-to-square text-white text-lg"></i>
                     </div>
                     <div>
@@ -387,10 +388,13 @@
                                 <i class="fa-solid fa-image text-lg"></i>
                                 <input type="file" id="question-img" class="hidden image-upload" accept="image/*">
                             </label>
-                            
-                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-[var(--bg-shadow)] text-[var(--text-light)] text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg">
+
+                            <div
+                                class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-[var(--bg-shadow)] text-[var(--text-light)] text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-10 shadow-lg">
                                 JPG, PNG, JPEG (Max 5MB)
-                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                                <div
+                                    class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900">
+                                </div>
                             </div>
                         </div>
 
@@ -402,9 +406,12 @@
 
                     <button id="submitAnswer-btn"
                         class="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-white rounded-full hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-110 transition-all duration-300 group relative overflow-hidden">
-                        <i class="fa-solid fa-paper-plane text-lg group-hover:scale-110 transition-transform duration-200"></i>
-                        
-                        <div class="absolute inset-0 rounded-full bg-white opacity-0 group-active:opacity-20 transition-opacity duration-150"></div>
+                        <i
+                            class="fa-solid fa-paper-plane text-lg group-hover:scale-110 transition-transform duration-200"></i>
+
+                        <div
+                            class="absolute inset-0 rounded-full bg-white opacity-0 group-active:opacity-20 transition-opacity duration-150">
+                        </div>
                     </button>
                 </div>
             </div>
@@ -436,14 +443,14 @@
                                     <button
                                         class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="{{ $ans['id'] }}">
-                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                        <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                                     </button>
                                     <span
                                         class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">{{ $ans['vote'] }}</span>
                                     <button
                                         class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
                                         data-answer-id="{{ $ans['id'] }}">
-                                        <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                        <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                                     </button>
 
                                     <div id="answer-verify-block-{{ $ans['id'] }}"
@@ -488,17 +495,25 @@
                                     @if ($ans['image'])
                                         <div class="mt-4">
                                             <img src="{{ asset('storage/' . $ans['image']) }}" alt="Answer Image"
-                                                class="max-w-lg max-h-96 object-contain rounded-lg border">
+                                                class="w-full max-w-lg max-h-96 object-contain rounded-lg border">
                                         </div>
                                     @endif
 
                                     <div class="mt-4 flex justify-between items-center">
-                                        <a href="{{ route('viewUser', ['email' => $ans['user']['username']]) }}">
-                                            <div class="flex items-center text-sm text-[var(--text-muted)]">
-                                                <img src="{{ $ans['user']['image'] ? asset('storage/' . $ans['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
-                                                    alt="User avatar" class="w-6 h-6 rounded-full mr-2">
-                                                <span class="hover:underline">Answered by {{ $ans['user']['username'] }} -
-                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}</span>
+                                        <a href="{{ route('viewUser', ['email' => $ans['user']['username']]) }}"
+                                            class="flex items-center text-sm text-[var(--text-muted)]">
+                                            {{-- <div class="flex items-center text-sm text-[var(--text-muted)]"> --}}
+                                            <img src="{{ $ans['user']['image'] ? asset('storage/' . $ans['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
+                                                alt="User avatar" class="w-6 h-6 rounded-full mr-2 flex-shrink-0">
+                                            <div class="flex flex-col sm:flex-row sm:items-center">
+
+                                                <span class="hover:underline">Answered by
+                                                    {{ $ans['user']['username'] }}</span>
+
+                                                <span class="hidden sm:inline-block mx-1">-</span>
+                                                <span class="text-xs text-[var(--text-muted)] sm:text-sm">
+                                                    {{ \Carbon\Carbon::parse($ans['timestamp'])->diffForHumans() }}
+                                                </span>
                                             </div>
                                         </a>
 
@@ -532,9 +547,8 @@
                                 @if ($isAnswerOwner)
                                     <div class="relative">
                                         <button id="answer-actions-toggle-{{ $ans['id'] }}"
-                                                class="answer-actions-toggle w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
-                                                title="More options"
-                                                data-answer-id="{{ $ans['id'] }}">
+                                            class="answer-actions-toggle w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                            title="More options" data-answer-id="{{ $ans['id'] }}">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
                                         <div id="answer-actions-menu-{{ $ans['id'] }}"
@@ -542,12 +556,12 @@
                                             style="opacity: 0; transform: translateX(10px);">
                                             @if (!$isVerified && $answerVoteCount == 0)
                                                 <a href="{{ route('user.answers.edit', ['answerId' => $ans['id']]) }}"
-                                                class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
+                                                    class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
                                                     <i class="fa-solid fa-edit w-6 mr-2"></i>
                                                     Edit
                                                 </a>
                                                 <button data-answer-id="{{ $ans['id'] }}"
-                                                        class="delete-answer-button flex items-center w-full px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--accent-neg)] hover:text-white">
+                                                    class="delete-answer-button flex items-center w-full px-4 py-2 text-sm text-[var(--accent-neg)] hover:bg-[var(--accent-neg)] hover:text-white">
                                                     <i class="fa-solid fa-trash w-6 mr-2"></i>
                                                     Delete
                                                 </button>
@@ -563,26 +577,33 @@
                         </div>
                     @endforeach
                 </div>
-            @else   
-                <div id="no-answers-block" class="bg-[var(--bg-card)] rounded-lg shadow-lg border border-[var(--border-color)] relative overflow-hidden">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]"></div>
-                    <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]"></div>
-                    
+            @else
+                <div id="no-answers-block"
+                    class="bg-[var(--bg-card)] rounded-lg shadow-lg border border-[var(--border-color)] relative overflow-hidden">
+                    <div
+                        class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[rgba(56,163,165,0.15)] to-[rgba(128,237,153,0.15)]">
+                    </div>
+                    <div
+                        class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tl from-[rgba(56,163,165,0.1)] to-[rgba(128,237,153,0.1)]">
+                    </div>
+
                     <div class="relative z-10 py-12 px-8 text-center">
-                        <div class="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--bg-accent-subtle)]">
-                            <i class="fa-solid fa-lightbulb text-3xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent"></i>
-                        </div>                        
+                        <div
+                            class="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--bg-accent-subtle)]">
+                            <i
+                                class="fa-solid fa-lightbulb text-3xl bg-gradient-to-br from-[#38A3A5] via-[#57CC99] to-[#80ED99] bg-clip-text text-transparent"></i>
+                        </div>
                         <h3 class="text-2xl font-bold text-[var(--text-primary)] mb-3">
                             No Answers Yet
-                        </h3>                        
+                        </h3>
                         <p class="text-[var(--text-secondary)] text-lg leading-relaxed mb-6 max-w-md mx-auto">
                             Be the first to share your knowledge and help the community!
-                        </p>                        
+                        </p>
                         <a href="#answer-textArea" id="write-answer-placeholder-btn"
-                        class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105">
+                            class="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-[#38A3A5] to-[#80ED99] text-black font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:from-[#80ED99] hover:to-[#38A3A5] transform hover:scale-105">
                             <i class="fa-solid fa-pen-to-square mr-2"></i>
                             Write an Answer
-                        </a>                
+                        </a>
                         <div class="mt-6 pt-6 border-t border-[var(--border-color)]">
                             <p class="text-sm text-[var(--text-muted)] flex items-center justify-center">
                                 <i class="fa-solid fa-star mr-2 text-[var(--accent-tertiary)]"></i>
@@ -594,14 +615,19 @@
             @endif
         </div>
 
-        <div id="questionCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
-            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
-                <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
+        <div id="questionCommentsModal"
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none">
+            <div
+                class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]">
+                <div
+                    class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
                     <h3 class="text-xl font-semibold text-[var(--text-primary)]">
                         {{ $question['title'] }}
-                        <span id="modal-question-comment-count" class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
+                        <span id="modal-question-comment-count"
+                            class="text-sm text-[var(--text-muted)] ml-2">({{ $question['comment_count'] }})</span>
                     </h3>
-                    <button id="close-question-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
+                    <button id="close-question-comments-modal-btn"
+                        class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                 </div>
 
                 <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3 flex flex-col" id="question-comments-list-modal">
@@ -611,11 +637,14 @@
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
-                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}" class="hover:underline">
+                                    <a href="{{ route('viewUser', ['email' => $comm['user']['email'] ?? ($comm['email'] ?? '#')]) }}"
+                                        class="hover:underline">
                                         <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
                                             <img src="{{ $comm['image'] ?? (isset($comm['user']['image']) ? asset('storage/' . $comm['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($comm['user']['username'] ?? ($comm['username'] ?? 'U')) . '&background=random&color=fff&size=128') }}"
-                                                alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}" class="w-5 h-5 rounded-full mr-2">
-                                            <span>Posted by {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
+                                                alt="{{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }}"
+                                                class="w-5 h-5 rounded-full mr-2">
+                                            <span>Posted by
+                                                {{ $comm['user']['username'] ?? ($comm['username'] ?? 'User') }} -
                                                 {{ \Carbon\Carbon::parse($comm['timestamp'])->diffForHumans() }}</span>
                                         </div>
                                     </a>
@@ -649,13 +678,17 @@
     </button>
 
     @once
-        <div id="answerCommentsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none" style="transition: opacity 0.3s ease-in-out;">
-            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]" style="transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: translateY(-20px) scale(0.95);">
+        <div id="answerCommentsModal"
+            class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 opacity-0 pointer-events-none"
+            style="transition: opacity 0.3s ease-in-out;">
+            <div class="modal-content bg-[var(--bg-secondary)] rounded-lg shadow-xl max-w-2xl w-full mx-auto flex flex-col relative max-h-[85vh]"
+                style="transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: translateY(-20px) scale(0.95);">
                 <div class="flex-shrink-0 flex justify-between items-center p-6 pb-3 border-b border-[var(--border-color)]">
                     <h3 id="answer-modal-title" class="text-xl font-semibold text-[var(--text-primary)]">
                         Comments on Answer
                     </h3>
-                    <button id="close-answer-comments-modal-btn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
+                    <button id="close-answer-comments-modal-btn"
+                        class="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-2xl">&times;</button>
                 </div>
 
                 <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3 flex flex-col" id="answer-comments-list-modal">
@@ -820,7 +853,7 @@
                         imgPreview.classList.add('image-preview', 'relative', 'group');
                         imgPreview.innerHTML = `
                             <img src="${e.target.result}" alt="Image Preview" class="rounded-lg shadow-lg">
-                            <button type="button" class="remove-image-btn" onclick="removeImagePreview(this)">
+                            <button type="button" class="remove-image-btn">
                                 <i class="fa-solid fa-times"></i>
                             </button>
                             <div class="mt-2 p-2 bg-[var(--bg-secondary)] rounded-lg">
@@ -838,18 +871,28 @@
                 imagePreviewsContainer.classList.remove('hidden');
             });
 
-            function removeImagePreview(button) {
-                const previewContainer = document.querySelector('.image-preview-container');
-                const imagePreviewsContainer = document.querySelector('.image-previews');
-                const fileInput = document.getElementById("question-img");
-                
-                button.closest('.image-preview').remove();
-                fileInput.value = '';
-                
-                if (previewContainer.children.length === 0) {
-                    imagePreviewsContainer.classList.add('hidden');
-                }
+            const imagePreviewContainer = document.querySelector('.image-preview-container');
+
+            if (imagePreviewContainer) {
+                imagePreviewContainer.addEventListener('click', function(event) {
+                    const removeButton = event.target.closest('.remove-image-btn');
+
+                    if (removeButton) {
+                        const previewContainer = document.querySelector('.image-preview-container');
+                        const imagePreviewsContainer = document.querySelector('.image-previews');
+                        const fileInput = document.getElementById("question-img");
+
+                        removeButton.closest('.image-preview').remove();
+
+                        fileInput.value = '';
+
+                        if (previewContainer.children.length === 0) {
+                            imagePreviewsContainer.classList.add('hidden');
+                        }
+                    }
+                });
             }
+
             const commentCount = document.getElementById('reply-count');
             const answerTextArea = document.getElementById('answer-textArea');
 
@@ -908,39 +951,41 @@
 
             function updateAnswerActionButtonsVisibility(answerId) {
                 const answerItemElement = document.getElementById(`answer-item-${answerId}`);
-                    if (!answerItemElement) {
-                        // The element might have been deleted, so we can safely exit.
-                        return;
-                    }
+                if (!answerItemElement) {
+                    // The element might have been deleted, so we can safely exit.
+                    return;
+                }
 
-                    const isOwner = answerItemElement.dataset.isOwner === 'true';
-                    const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
-                    const isVerified = answerItemElement.dataset.isVerified === 'true';
+                const isOwner = answerItemElement.dataset.isOwner === 'true';
+                const voteCount = parseInt(answerItemElement.dataset.voteCount, 10);
+                const isVerified = answerItemElement.dataset.isVerified === 'true';
 
-                    // Find the dropdown menu and the main toggle button container
-                    const menuContainer = document.getElementById(`answer-actions-menu-${answerId}`);
-                    const toggleContainer = document.getElementById(`answer-actions-toggle-${answerId}`)?.parentElement.parentElement;
+                // Find the dropdown menu and the main toggle button container
+                const menuContainer = document.getElementById(`answer-actions-menu-${answerId}`);
+                const toggleContainer = document.getElementById(`answer-actions-toggle-${answerId}`)?.parentElement
+                    .parentElement;
 
-                    if (!menuContainer || !toggleContainer) {
-                        // If the menu or its container doesn't exist, something is wrong, but we can exit.
-                        // console.error(`Action menu or toggle container for answer ${answerId} not found.`);
-                        return;
-                    }
+                if (!menuContainer || !toggleContainer) {
+                    // If the menu or its container doesn't exist, something is wrong, but we can exit.
+                    // console.error(`Action menu or toggle container for answer ${answerId} not found.`);
+                    return;
+                }
 
-                    // Always show the three-dot button if the user is the owner
-                    if (isOwner) {
-                        toggleContainer.classList.remove('hidden');
-                    } else {
-                        toggleContainer.classList.add('hidden');
-                        return; // Not the owner, so nothing more to do
-                    }
+                // Always show the three-dot button if the user is the owner
+                if (isOwner) {
+                    toggleContainer.classList.remove('hidden');
+                } else {
+                    toggleContainer.classList.add('hidden');
+                    return; // Not the owner, so nothing more to do
+                }
 
-                    // Now, determine the *content* of the dropdown menu
-                    if (!isVerified && voteCount === 0) {
-                        // Conditions met: show Edit and Delete actions
-                        const editUrl = "{{ route('user.answers.edit', ['answerId' => ':answerId']) }}".replace(':answerId', answerId);
+                // Now, determine the *content* of the dropdown menu
+                if (!isVerified && voteCount === 0) {
+                    // Conditions met: show Edit and Delete actions
+                    const editUrl = "{{ route('user.answers.edit', ['answerId' => ':answerId']) }}".replace(
+                        ':answerId', answerId);
 
-                        menuContainer.innerHTML = `
+                    menuContainer.innerHTML = `
                             <a href="${editUrl}"
                             class="flex items-center px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-tertiary)] hover:text-[var(--text-dark)]">
                                 <i class="fa-solid fa-edit w-6 mr-2"></i>
@@ -952,19 +997,19 @@
                                 Delete
                             </button>
                         `;
-                        // IMPORTANT: Find the newly created delete button and attach its listener
-                        const newDeleteButton = menuContainer.querySelector('.delete-answer-button');
-                        if (newDeleteButton) {
-                            attachDeleteAnswerButtonListener(newDeleteButton);
-                        }
-                    } else {
-                        // Conditions not met: show the disabled message
-                        menuContainer.innerHTML = `
+                    // IMPORTANT: Find the newly created delete button and attach its listener
+                    const newDeleteButton = menuContainer.querySelector('.delete-answer-button');
+                    if (newDeleteButton) {
+                        attachDeleteAnswerButtonListener(newDeleteButton);
+                    }
+                } else {
+                    // Conditions not met: show the disabled message
+                    menuContainer.innerHTML = `
                             <p class="px-4 py-3 text-sm text-center text-[var(--text-muted)]">
                                 Actions are disabled once the answer has been verified or has votes.
                             </p>
                         `;
-                    }
+                }
             }
 
             // Fungsi untuk memasang listener ke tombol delete jawaban (bisa dipanggil untuk tombol awal & dinamis)
@@ -1018,27 +1063,43 @@
                                                 background: "linear-gradient(to right, #00b09b, #96c93d)"
                                             }
                                         }).showToast();
-                                    if (answerItemElement) {
-                                            answerItemElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                        if (answerItemElement) {
+                                            answerItemElement.style.transition =
+                                                'opacity 0.5s ease, transform 0.5s ease';
                                             answerItemElement.style.opacity = '0';
                                             answerItemElement.style.transform = 'scale(0.9)';
-                                            
+
                                             setTimeout(() => {
-                                                const answerList = answerItemElement.parentElement;
+                                                const answerList = answerItemElement
+                                                    .parentElement;
                                                 answerItemElement.remove();
 
-                                                if (answerList && answerList.children.length === 0) {
-                                                    const answerSection = document.querySelector('.answer-section');
+                                                if (answerList && answerList.children
+                                                    .length === 0) {
+                                                    const answerSection = document
+                                                        .querySelector(
+                                                            '.answer-section');
                                                     if (answerSection) {
                                                         answerList.remove();
-                                                        answerSection.insertAdjacentHTML('beforeend', getNoAnswersHtml());
+                                                        answerSection
+                                                            .insertAdjacentHTML(
+                                                                'beforeend',
+                                                                getNoAnswersHtml());
 
-                                                        const newWriteBtn = document.getElementById('write-answer-placeholder-btn');
+                                                        const newWriteBtn = document
+                                                            .getElementById(
+                                                                'write-answer-placeholder-btn'
+                                                                );
                                                         if (newWriteBtn) {
-                                                            newWriteBtn.addEventListener('click', (event) => {
-                                                                event.preventDefault();
-                                                                showAnswerInput();
-                                                            });
+                                                            newWriteBtn
+                                                                .addEventListener(
+                                                                    'click', (
+                                                                    event) => {
+                                                                        event
+                                                                            .preventDefault();
+                                                                        showAnswerInput
+                                                                        ();
+                                                                    });
                                                         }
                                                     }
                                                     // 
@@ -1048,10 +1109,17 @@
                                                 }
 
                                                 currentAnswerCount--;
-                                                const answerCountTop = document.querySelector('#answerCountAtas span');
-                                                const answerHeader = document.querySelector('.answer-section h2 span');
-                                                if (answerCountTop) answerCountTop.textContent = currentAnswerCount;
-                                                if (answerHeader) answerHeader.textContent = `(${currentAnswerCount})`;
+                                                const answerCountTop = document
+                                                    .querySelector(
+                                                        '#answerCountAtas span');
+                                                const answerHeader = document
+                                                    .querySelector(
+                                                        '.answer-section h2 span');
+                                                if (answerCountTop) answerCountTop
+                                                    .textContent = currentAnswerCount;
+                                                if (answerHeader) answerHeader
+                                                    .textContent =
+                                                    `(${currentAnswerCount})`;
 
                                             }, 500);
                                         }
@@ -1181,22 +1249,26 @@
                                 textArea.value = '';
                                 fileInput.value = '';
                                 const imagePreviewsWrapper = document.querySelector(".image-previews");
-                                const imagePreviewContentContainer = document.querySelector('.image-preview-container');
+                                const imagePreviewContentContainer = document.querySelector(
+                                    '.image-preview-container');
                                 if (imagePreviewContentContainer) {
                                     imagePreviewContentContainer.innerHTML = '';
                                 }
-                                if (imagePreviewsWrapper && !imagePreviewsWrapper.classList.contains('hidden')) {
-                                        imagePreviewsWrapper.classList.add('hidden');
+                                if (imagePreviewsWrapper && !imagePreviewsWrapper.classList.contains(
+                                        'hidden')) {
+                                    imagePreviewsWrapper.classList.add('hidden');
                                 }
 
-                                const answerInputSection = document.getElementById('answer-input-section');
+                                const answerInputSection = document.getElementById(
+                                    'answer-input-section');
                                 const showAnswerBtn = document.getElementById('show-answer-input-btn');
                                 if (answerInputSection && showAnswerBtn) {
                                     answerInputSection.classList.add('hidden');
                                     showAnswerBtn.classList.remove('active');
-                                    showAnswerBtn.querySelector('i').className = 'fa-solid fa-pen-to-square text-2xl';
+                                    showAnswerBtn.querySelector('i').className =
+                                        'fa-solid fa-pen-to-square text-2xl';
                                 }
-                                                        
+
                                 jsHasAnswer =
                                     true; // Update state karena pertanyaan sekarang memiliki jawaban
                                 updateQuestionActionButtonsVisibility
@@ -1231,12 +1303,12 @@
                             <div class="interaction-section flex flex-col items-center mr-6">
                                 <button class="upVoteAnswer vote-btn mb-2 text-[var(--text-primary)] hover:text-[#633F92] focus:outline-none thumbs-up"
                                         data-answer-id="${data.answer.id}">
-                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-chevron-up"></i>
+                                    <i class="text-2xl text-[#23BF7F] fa-solid fa-thumbs-up"></i>
                                 </button>
                                 <span class="thumbs-up-count text-lg font-semibold text-[var(--text-secondary)] my-1">0</span>
                                 <button class="downVoteAnswer vote-btn mt-2 text-[var(--text-primary)] hover:text-gray-700 focus:outline-none thumbs-down"
                                         data-answer-id="${data.answer.id}">
-                                    <i class="text-2xl text-[#FE0081] fa-solid fa-chevron-down"></i>
+                                    <i class="text-2xl text-[#FE0081] fa-solid fa-thumbs-down"></i>
                                 </button>
                                 ${verifyBlockForNewAnswer}
                             </div>
@@ -1289,7 +1361,7 @@
                     `;
 
                                 let answerList = document.getElementById('answerList');
-                                 const noAnswersBlock = document.getElementById('no-answers-block');
+                                const noAnswersBlock = document.getElementById('no-answers-block');
                                 if (noAnswersBlock) {
                                     answerList = document.createElement('div');
                                     answerList.id = 'answerList';
@@ -1302,45 +1374,56 @@
                                     const newAnswerElement = document.createElement('div');
                                     newAnswerElement.innerHTML = htmlContent.trim();
                                     newAnswerElement.firstElementChild.style.opacity = '0';
-                                    newAnswerElement.firstElementChild.style.transform = 'translateY(20px)';
+                                    newAnswerElement.firstElementChild.style.transform =
+                                        'translateY(20px)';
                                     answerList.appendChild(newAnswerElement.firstElementChild);
 
                                     setTimeout(() => {
-                                        const addedElement = document.getElementById(`answer-item-${data.answer.id}`);
-                                        if(addedElement) {
-                                            addedElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                        const addedElement = document.getElementById(
+                                            `answer-item-${data.answer.id}`);
+                                        if (addedElement) {
+                                            addedElement.style.transition =
+                                                'opacity 0.5s ease, transform 0.5s ease';
                                             addedElement.style.opacity = '1';
                                             addedElement.style.transform = 'translateY(0)';
                                         }
                                     }, 50);
-                                    const newToggleBtn = document.getElementById(`answer-actions-toggle-${data.answer.id}`);
+                                    const newToggleBtn = document.getElementById(
+                                        `answer-actions-toggle-${data.answer.id}`);
                                     if (newToggleBtn) {
                                         newToggleBtn.addEventListener('click', (event) => {
                                             event.stopPropagation();
                                             const answerId = newToggleBtn.dataset.answerId;
-                                            const answerMenu = document.getElementById(`answer-actions-menu-${answerId}`);
+                                            const answerMenu = document.getElementById(
+                                                `answer-actions-menu-${answerId}`);
 
                                             if (answerMenu) {
-                                                document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                                                    if (menu.id !== answerMenu.id) {
-                                                        menu.classList.add('hidden');
-                                                        menu.style.opacity = '0';
-                                                        menu.style.transform = 'translateY(-10px)';
-                                                    }
-                                                });
+                                                document.querySelectorAll('.dropdown-menu')
+                                                    .forEach(menu => {
+                                                        if (menu.id !== answerMenu.id) {
+                                                            menu.classList.add('hidden');
+                                                            menu.style.opacity = '0';
+                                                            menu.style.transform =
+                                                                'translateY(-10px)';
+                                                        }
+                                                    });
 
-                                                const isHidden = answerMenu.classList.contains('hidden');
+                                                const isHidden = answerMenu.classList.contains(
+                                                    'hidden');
                                                 if (isHidden) {
                                                     answerMenu.classList.remove('hidden');
                                                     setTimeout(() => {
                                                         answerMenu.style.opacity = '1';
-                                                        answerMenu.style.transform = 'translateY(0)';
+                                                        answerMenu.style.transform =
+                                                            'translateY(0)';
                                                     }, 10);
                                                 } else {
                                                     answerMenu.style.opacity = '0';
-                                                    answerMenu.style.transform = 'translateY(-10px)';
+                                                    answerMenu.style.transform =
+                                                        'translateY(-10px)';
                                                     setTimeout(() => {
-                                                        answerMenu.classList.add('hidden');
+                                                        answerMenu.classList.add(
+                                                            'hidden');
                                                     }, 200);
                                                 }
                                             }
@@ -1353,12 +1436,14 @@
                                     updateAnswerActionButtonsVisibility(data.answer.id);
 
                                     // 2. Pasang listener untuk tombol verifikasi BARU
-                                    const addedElement = document.getElementById(`answer-item-${data.answer.id}`);
+                                    const addedElement = document.getElementById(
+                                        `answer-item-${data.answer.id}`);
                                     if (addedElement) {
-                                        const newVerifyToggleButtons = addedElement.querySelectorAll('.verify-toggle-button');
-                                            newVerifyToggleButtons.forEach(btn => {
-                                                attachVerifyButtonListener(btn);
-                                            });
+                                        const newVerifyToggleButtons = addedElement.querySelectorAll(
+                                            '.verify-toggle-button');
+                                        newVerifyToggleButtons.forEach(btn => {
+                                            attachVerifyButtonListener(btn);
+                                        });
                                     }
                                     const answerHeader = document.querySelector(
                                         '.answer-section h2 span');
@@ -1381,14 +1466,17 @@
                                 }).showToast();
 
                                 const answerCountTop = document.querySelector('#answerCountAtas span');
-                                const answerCountHeader = document.querySelector('.answer-section h2 span');
+                                const answerCountHeader = document.querySelector(
+                                    '.answer-section h2 span');
 
                                 if (answerCountTop && answerCountHeader) {
-                                    const currentCount = parseInt(answerCountTop.textContent.trim(), 10);
+                                    const currentCount = parseInt(answerCountTop.textContent.trim(),
+                                    10);
                                     const newCount = currentCount + 1;
 
                                     answerCountTop.textContent = newCount;
-                                    answerCountHeader.textContent = `(${newCount})`; // Note the parentheses
+                                    answerCountHeader.textContent =
+                                    `(${newCount})`; // Note the parentheses
                                 }
                             } else {
                                 Toastify({
@@ -1654,11 +1742,13 @@
                             console.log(data);
 
                             if (data.success) {
-                                const noCommentsModal = document.getElementById('no-question-comments-modal');
+                                const noCommentsModal = document.getElementById(
+                                    'no-question-comments-modal');
                                 if (noCommentsModal) {
                                     noCommentsModal.remove();
                                 }
-                                let commentList = document.getElementById('question-comments-list-modal');
+                                let commentList = document.getElementById(
+                                    'question-comments-list-modal');
                                 const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
 
                                 const htmlContent = `
@@ -2272,23 +2362,23 @@
                     if (!questionActionsMenu.classList.contains('hidden')) {
                         questionActionsMenu.style.opacity = '0';
                         questionActionsMenu.style.transform = 'translateY(-10px)';
-                         setTimeout(() => {
+                        setTimeout(() => {
                             questionActionsMenu.classList.add('hidden');
                         }, 200);
                     }
                 }
             });
-            
+
             const editLink = questionActionsMenu.querySelector('.edit-question-link');
-            if(editLink) {
-                 editLink.addEventListener('click', function(e) {
+            if (editLink) {
+                editLink.addEventListener('click', function(e) {
                     e.preventDefault();
                     const questionId = '{{ $question['id'] }}';
                     window.location.href = `{{ url('/ask') }}/${questionId}`;
                 });
             }
         }
-            
+
         document.querySelectorAll('.answer-actions-toggle').forEach(toggleBtn => {
             toggleBtn.addEventListener('click', (event) => {
                 event.stopPropagation();
@@ -2367,27 +2457,56 @@
             </div>`;
         }
 
-            const questionCommentsModal = document.getElementById('questionCommentsModal');
-            const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
-            const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
-            const questionCommentTextarea = document.getElementById('question-comment-textarea');
+        const questionCommentsModal = document.getElementById('questionCommentsModal');
+        const openQuestionCommentsModalBtn = document.getElementById('open-question-comments-modal-btn');
+        const closeQuestionCommentsModalBtn = document.getElementById('close-question-comments-modal-btn');
+        const questionCommentTextarea = document.getElementById('question-comment-textarea');
 
-            const answerCommentsModal = document.getElementById('answerCommentsModal');
-            const closeAnswerCommentsModalBtn = document.getElementById('close-answer-comments-modal-btn');
-            const answerCommentsListModal = document.getElementById('answer-comments-list-modal');
-            const submitAnswerCommentBtn = document.getElementById('submit-answer-comment-btn');
-            const answerCommentTextarea = document.getElementById('answer-comment-textarea');
-            let currentAnswerId = null;
-                    
-            const showAnswerBtn = document.getElementById('show-answer-input-btn');
-            const answerInputSection = document.getElementById('answer-input-section');
-            const answerTextArea = document.getElementById('answer-textArea');
-            const writeAnswerPlaceholderBtn = document.getElementById('write-answer-placeholder-btn');
+        const answerCommentsModal = document.getElementById('answerCommentsModal');
+        const closeAnswerCommentsModalBtn = document.getElementById('close-answer-comments-modal-btn');
+        const answerCommentsListModal = document.getElementById('answer-comments-list-modal');
+        const submitAnswerCommentBtn = document.getElementById('submit-answer-comment-btn');
+        const answerCommentTextarea = document.getElementById('answer-comment-textarea');
+        let currentAnswerId = null;
 
-            const showAnswerInput = () => {
-                if (answerInputSection.classList.contains('hidden')) {
+        const showAnswerBtn = document.getElementById('show-answer-input-btn');
+        const answerInputSection = document.getElementById('answer-input-section');
+        const answerTextArea = document.getElementById('answer-textArea');
+        const writeAnswerPlaceholderBtn = document.getElementById('write-answer-placeholder-btn');
+
+        const showAnswerInput = () => {
+            if (answerInputSection.classList.contains('hidden')) {
+                answerInputSection.classList.remove('hidden');
+                showAnswerBtn.classList.add('active');
+                showAnswerBtn.querySelector('i').className = 'fa-solid fa-times text-2xl';
+
+                setTimeout(() => {
+                    answerInputSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    setTimeout(() => {
+                        answerTextArea.focus();
+                    }, 500);
+                }, 100);
+            }
+        };
+
+        if (writeAnswerPlaceholderBtn) {
+            writeAnswerPlaceholderBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                showAnswerInput();
+            });
+        }
+
+        if (showAnswerBtn && answerInputSection && answerTextArea) {
+            showAnswerBtn.addEventListener('click', () => {
+                const isHidden = answerInputSection.classList.contains('hidden');
+
+                if (isHidden) {
                     answerInputSection.classList.remove('hidden');
                     showAnswerBtn.classList.add('active');
+
                     showAnswerBtn.querySelector('i').className = 'fa-solid fa-times text-2xl';
 
                     setTimeout(() => {
@@ -2395,84 +2514,55 @@
                             behavior: 'smooth',
                             block: 'center'
                         });
+
                         setTimeout(() => {
                             answerTextArea.focus();
                         }, 500);
                     }, 100);
+
+                } else {
+                    answerInputSection.classList.add('hidden');
+                    showAnswerBtn.classList.remove('active');
+
+                    showAnswerBtn.querySelector('i').className = 'fa-solid fa-pen-to-square text-2xl';
                 }
-            };
-            
-            if (writeAnswerPlaceholderBtn) {
-                writeAnswerPlaceholderBtn.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    showAnswerInput();
-                });
-            }
-            
-            if (showAnswerBtn && answerInputSection && answerTextArea) {
-                showAnswerBtn.addEventListener('click', () => {
-                    const isHidden = answerInputSection.classList.contains('hidden');
+            });
 
-                    if (isHidden) {
-                        answerInputSection.classList.remove('hidden');
-                        showAnswerBtn.classList.add('active');
-                        
-                        showAnswerBtn.querySelector('i').className = 'fa-solid fa-times text-2xl';
-                        
-                        setTimeout(() => {
-                            answerInputSection.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
-                            
-                            setTimeout(() => {
-                                answerTextArea.focus();
-                            }, 500);
-                        }, 100);
-
-                    } else {
-                        answerInputSection.classList.add('hidden');
-                        showAnswerBtn.classList.remove('active');
-                        
-                        showAnswerBtn.querySelector('i').className = 'fa-solid fa-pen-to-square text-2xl';
-                    }
-                });
-
-                answerTextArea.addEventListener('keydown', (e) => {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                        e.preventDefault();
-                        document.getElementById('submitAnswer-btn').click();
-                    }
-                });
-            }
-
-            function openModal() {
-                if (questionCommentsModal) {
-                    questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
-                    questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
-                    if (questionCommentTextarea) {
-                        questionCommentTextarea.focus();
-                    }
+            answerTextArea.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('submitAnswer-btn').click();
                 }
-            }
+            });
+        }
 
-            function closeModal() {
-                if (questionCommentsModal) {
-                    questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
-                    questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
-                }
-            }
-
-            if (openQuestionCommentsModalBtn) {
-                openQuestionCommentsModalBtn.addEventListener('click', openModal);
-            }
-
-            if (closeQuestionCommentsModalBtn) {
-                closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
-            }
-
+        function openModal() {
             if (questionCommentsModal) {
-                questionCommentsModal.addEventListener('click', (event) => {
+                questionCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
+                questionCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
+                if (questionCommentTextarea) {
+                    questionCommentTextarea.focus();
+                }
+            }
+        }
+
+        function closeModal() {
+            if (questionCommentsModal) {
+                questionCommentsModal.classList.add('opacity-0', 'pointer-events-none');
+                questionCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        if (openQuestionCommentsModalBtn) {
+            openQuestionCommentsModalBtn.addEventListener('click', openModal);
+        }
+
+        if (closeQuestionCommentsModalBtn) {
+            closeQuestionCommentsModalBtn.addEventListener('click', closeModal);
+        }
+
+        if (questionCommentsModal) {
+            questionCommentsModal.addEventListener('click', (event) => {
                 if (event.target === questionCommentsModal) {
                     closeModal();
                 }
@@ -2483,43 +2573,45 @@
                     closeModal();
                 }
             });
+        }
+
+        function openAnswerModal() {
+            if (answerCommentsModal) {
+                answerCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
+                answerCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
+                answerCommentsModal.querySelector('.modal-content').style.opacity = '1';
+                answerCommentsModal.querySelector('.modal-content').style.transform = 'translateY(0) scale(1)';
+                answerCommentTextarea.focus();
             }
+        }
 
-            function openAnswerModal() {
-                if (answerCommentsModal) {
-                    answerCommentsModal.classList.remove('opacity-0', 'pointer-events-none');
-                    answerCommentsModal.classList.add('opacity-100', 'pointer-events-auto');
-                    answerCommentsModal.querySelector('.modal-content').style.opacity = '1';
-                    answerCommentsModal.querySelector('.modal-content').style.transform = 'translateY(0) scale(1)';
-                    answerCommentTextarea.focus();
-                }
+        function closeAnswerModal() {
+            if (answerCommentsModal) {
+                answerCommentsModal.querySelector('.modal-content').style.opacity = '0';
+                answerCommentsModal.querySelector('.modal-content').style.transform = 'translateY(-20px) scale(0.95)';
+                setTimeout(() => {
+                    answerCommentsModal.classList.add('opacity-0', 'pointer-events-none');
+                    answerCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
+                }, 300);
             }
+        }
 
-            function closeAnswerModal() {
-                if (answerCommentsModal) {
-                    answerCommentsModal.querySelector('.modal-content').style.opacity = '0';
-                    answerCommentsModal.querySelector('.modal-content').style.transform = 'translateY(-20px) scale(0.95)';
-                    setTimeout(() => {
-                        answerCommentsModal.classList.add('opacity-0', 'pointer-events-none');
-                        answerCommentsModal.classList.remove('opacity-100', 'pointer-events-auto');
-                    }, 300);
-                }
-            }
+        document.querySelectorAll('.open-answer-comments-modal-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                currentAnswerId = this.dataset.answerId;
+                const comments = JSON.parse(this.dataset.comments);
+                const answerOwnerUsername = this.dataset.answerOwnerUsername;
 
-            document.querySelectorAll('.open-answer-comments-modal-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    currentAnswerId = this.dataset.answerId;
-                    const comments = JSON.parse(this.dataset.comments);
-                    const answerOwnerUsername = this.dataset.answerOwnerUsername;
+                document.getElementById('answer-modal-title').innerHTML =
+                    `Comments on ${answerOwnerUsername}'s Answer <span class="text-sm text-[var(--text-muted)] ml-2">(${comments.length})</span>`;
+                answerCommentsListModal.innerHTML = ''; // Clear previous comments
 
-                    document.getElementById('answer-modal-title').innerHTML = `Comments on ${answerOwnerUsername}'s Answer <span class="text-sm text-[var(--text-muted)] ml-2">(${comments.length})</span>`;
-                    answerCommentsListModal.innerHTML = ''; // Clear previous comments
-
-                    if (comments.length > 0) {
-                        comments.forEach(comment => {
-                            const commentElement = document.createElement('div');
-                            commentElement.className = 'comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start';
-                            commentElement.innerHTML = `
+                if (comments.length > 0) {
+                    comments.forEach(comment => {
+                        const commentElement = document.createElement('div');
+                        commentElement.className =
+                            'comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start';
+                        commentElement.innerHTML = `
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">${comment.comment.replace(/\n/g, '<br>')}</p>
                                     <a href="/viewUser/${comment.user_email}" class="hover:underline">
@@ -2531,51 +2623,53 @@
                                     </a>
                                 </div>
                             `;
-                            answerCommentsListModal.appendChild(commentElement);
-                        });
-                    } else {
-                        answerCommentsListModal.innerHTML = `
+                        answerCommentsListModal.appendChild(commentElement);
+                    });
+                } else {
+                    answerCommentsListModal.innerHTML = `
                             <div class="bg-[var(--bg-card)] rounded-lg p-6 text-center">
                                 <p class="text-[var(--text-primary)] mb-2">There are no comments yet</p>
                                 <p class="text-[var(--text-muted)] text-sm">Be the first to share your thoughts!</p>
                             </div>
                         `;
-                    }
+                }
 
-                    openAnswerModal();
-                });
+                openAnswerModal();
             });
+        });
 
-            if (closeAnswerCommentsModalBtn) {
-                closeAnswerCommentsModalBtn.addEventListener('click', closeAnswerModal);
-            }
+        if (closeAnswerCommentsModalBtn) {
+            closeAnswerCommentsModalBtn.addEventListener('click', closeAnswerModal);
+        }
 
-            if (answerCommentsModal) {
-                answerCommentsModal.addEventListener('click', (event) => {
-                    if (event.target === answerCommentsModal) {
-                        closeAnswerModal();
-                    }
-                });
-            }
+        if (answerCommentsModal) {
+            answerCommentsModal.addEventListener('click', (event) => {
+                if (event.target === answerCommentsModal) {
+                    closeAnswerModal();
+                }
+            });
+        }
 
-            if (submitAnswerCommentBtn) {
-                submitAnswerCommentBtn.addEventListener('click', () => {
-                    const commentText = answerCommentTextarea.value.trim();
-                    if (commentText === '' || !currentAnswerId) {
-                        Toastify({
-                            text: 'Please write a comment!',
-                            duration: 3000,
-                            style: { background: "#e74c3c" }
-                        }).showToast();
-                        return;
-                    }
+        if (submitAnswerCommentBtn) {
+            submitAnswerCommentBtn.addEventListener('click', () => {
+                const commentText = answerCommentTextarea.value.trim();
+                if (commentText === '' || !currentAnswerId) {
+                    Toastify({
+                        text: 'Please write a comment!',
+                        duration: 3000,
+                        style: {
+                            background: "#e74c3c"
+                        }
+                    }).showToast();
+                    return;
+                }
 
-                    const formData = new FormData();
-                    formData.append('comment', commentText);
-                    formData.append('commentable_id', currentAnswerId);
-                    formData.append('commentable_type', 'answer');
+                const formData = new FormData();
+                formData.append('comment', commentText);
+                formData.append('commentable_id', currentAnswerId);
+                formData.append('commentable_type', 'answer');
 
-                    fetch(`{{ route('comment.submit') }}`, {
+                fetch(`{{ route('comment.submit') }}`, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': "{{ csrf_token() }}",
@@ -2588,7 +2682,9 @@
                             Toastify({
                                 text: 'Your comment has been successfully posted.',
                                 duration: 3000,
-                                style: { background: "linear-gradient(to right, #00b09b, #96c93d)" }
+                                style: {
+                                    background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                }
                             }).showToast();
 
                             location.reload();
@@ -2598,7 +2694,9 @@
                             Toastify({
                                 text: data.message || 'An unexpected error occurred.',
                                 duration: 3000,
-                                style: { background: "#e74c3c" }
+                                style: {
+                                    background: "#e74c3c"
+                                }
                             }).showToast();
                         }
                     })
@@ -2607,16 +2705,17 @@
                         Toastify({
                             text: 'A network error occurred. Please try again.',
                             duration: 3000,
-                            style: { background: "#e74c3c" }
+                            style: {
+                                background: "#e74c3c"
+                            }
                         }).showToast();
                     });
-                });
-            }
-
-            document.querySelectorAll('.comment-box.hidden.mt-4.w-full.comment-animation').forEach(el => {
-                el.style.display = 'none';
             });
+        }
 
+        document.querySelectorAll('.comment-box.hidden.mt-4.w-full.comment-animation').forEach(el => {
+            el.style.display = 'none';
+        });
     </script>
 
 @endsection

@@ -79,9 +79,9 @@
                             </div>
                             <div class="stats-item flex flex-row items-center space-x-2">
                                 <span
-                                    class="text-sm font-medium">{{ $question['comment_count'] ?? ($question['answer_count'] ?? count($question['answer'] ?? [])) }}</span>
+                                    class="text-sm font-medium">{{ ($question['answer_count'] ?? count($question['answer'] ?? [])) }}</span>
                                 {{-- Using more common keys --}}
-                                <i class="text-sm fa-regular fa-comment"></i>
+                                <i class="text-sm fa-solid fa-reply-all"></i>
                             </div>
                         </div>
 
@@ -228,8 +228,8 @@
                         'var(--stats-icon-color-1-light, #10b981)' : 'var(--stats-icon-color-1-dark, #23BF7F)';
                     else if (index % 3 === 1) icon.style.color = isLightMode ?
                         'var(--stats-icon-color-2-light, #f59e0b)' : 'var(--stats-icon-color-2-dark, #ffd249)';
-                    else icon.style.color = isLightMode ? 'var(--stats-icon-color-3-light, #3b82f6)' :
-                        'var(--stats-icon-color-3-dark, #909ed5)';
+                    else icon.style.color = isLightMode ? 'var(--stats-icon-color-3-light, #4DB2BF)' :
+                        'var(--stats-icon-color-3-dark, #3DAAA3)';
                 });
             }
         }

@@ -392,7 +392,7 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-content">
-                                <p>Reputation is a measure of the community's trust in you. It's earned by convincing your fellow "Petranesian Informates" that you know what you're talking about. The more reputation you earn, the more privileges you gain on the platform.</p>
+                                <p>Reputation is a measure of the community's trust in you. It's earned by contributing high-quality content that fellow Petranesians find valuable. The more reputation you earn, the more credible you are as a user on this platform.</p>
                             </div>
                         </div>
                     </div>
@@ -404,36 +404,12 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-content">
-                                <p>You earn reputation when other users find your contributions helpful:</p>
+                                <p>Reputation is awarded based on a vote threshold system. It is not tied to every single vote, but rather to achieving a significant level of community approval for your content.</p>
                                 <ul>
-                                    <li>Your answer is upvoted: <strong>+10 reputation</strong></li>
-                                    <li>Your question is upvoted: <strong>+5 reputation</strong></li>
-                                    <li>Your answer is marked as "Verified": <strong>+15 reputation</strong> (and <strong>+2</strong> for the question owner!)</li>
+                                    <li><strong>Gaining Reputation:</strong> You gain <strong>+1 reputation</strong> when a question or answer you posted receives <strong>10 or more</strong> upvotes. This is a one-time bonus per post for reaching a milestone of community validation.</li>
+                                    <li><strong>Losing Reputation:</strong> You lose <strong>-1 reputation</strong> if your post's vote score, after having reached the 10-vote threshold, drops back down below 10 votes.</li>
                                 </ul>
-                                <p>Conversely, you can lose reputation if your content is downvoted:</p>
-                                <ul>
-                                    <li>Your answer is downvoted: <strong>-2 reputation</strong></li>
-                                    <li>Your question is downvoted: <strong>-1 reputation</strong></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            <span>What privileges do I get with Reputation?</span>
-                            <i class="fa-solid fa-chevron-down faq-icon"></i>
-                        </button>
-                        <div class="faq-answer">
-                            <div class="faq-answer-content">
-                                <p>As you earn reputation, you unlock more powerful privileges on the site:</p>
-                                <ul>
-                                    <li><strong>1 Rep:</strong> Ask questions and suggest edits.</li>
-                                    <li><strong>15 Rep:</strong> Upvote questions and answers.</li>
-                                    <li><strong>50 Rep:</strong> Post comments on any question or answer.</li>
-                                    <li><strong>100 Rep:</strong> Downvote questions and answers (costs 1 reputation per downvote).</li>
-                                    <li><strong>500 Rep:</strong> Access to moderation tools and the ability to help review content.</li>
-                                </ul>
+                                <p>This system is designed to reward consistently helpful content that the community agrees is valuable.</p>
                             </div>
                         </div>
                     </div>
@@ -443,7 +419,7 @@
                 <div class="faq-category">
                     <div class="category-header">
                         <div class="category-icon qa">
-                            <i class="fa-solid fa-message-question"></i>
+                            <i class="fa-solid fa-question"></i>
                         </div>
                         <h2 class="category-title">Asking & Answering</h2>
                     </div>
@@ -528,9 +504,9 @@
                                 <p>Voting is your way of giving back to the community and showing appreciation for helpful content. It's a primary driver of reputation.</p>
                                 <ul>
                                     <li><strong>Upvoting</strong> indicates that a question is well-researched and clear, or that an answer is correct and useful.</li>
-                                    <li><strong>Downvoting</strong> (requires 100 reputation) indicates that a post is unclear, poorly researched, or incorrect. It's a tool to help keep content quality high.</li>
+                                    <li><strong>Downvoting</strong> indicates that a post is unclear, poorly researched, or incorrect. It's a tool to help keep content quality high.</li>
                                 </ul>
-                                <p>Your votes help good content rise to the top and reward the users who create it.</p>
+                                <p>Your votes help fellow Petranesians gain reputation and credibility.</p>
                             </div>
                         </div>
                     </div>
@@ -544,7 +520,7 @@
                     <h3 class="text-lg font-bold text-[var(--text-primary)] mb-4 relative z-10">Quick Navigation</h3>
                     <ul class="quick-links relative z-10">
                         <li><a href="#reputation"><i class="fa-solid fa-star"></i>Reputation & Privileges</a></li>
-                        <li><a href="#qa"><i class="fa-solid fa-message-question"></i>Asking & Answering</a></li>
+                        <li><a href="#qa"><i class="fa-solid fa-question"></i>Asking & Answering</a></li>
                         <li><a href="#voting"><i class="fa-solid fa-thumbs-up"></i>Voting & Verification</a></li>
                     </ul>
                 </div>
