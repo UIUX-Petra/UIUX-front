@@ -23,34 +23,43 @@ class MainController extends Controller
     $this->tagController = $tagController;
   }
 
-  public function askPage(Request $request, $questionId = null) // Added Request for consistency if needed later
+  public function askPage(Request $request, $questionId = null) 
   {
     $viewData = [];
     $currUser = $this->userController->getUserByEmail($request->session()->get('email'));
-    $viewData['image'] = $currUser['image'] ?? null;
-    $viewData['username'] = $currUser['username'] ?? null;
-    $viewData['id'] = $currUser['id'];
+     if (!$currUser) {
+        return redirect()->route('home')->with('Error', 'User session not valid.');
+    }
 
-    $allTags = $this->tagController->getAllTags();
-    $viewData['allTags'] = $allTags;
-    $viewData['questionToEdit'] = null;
+   $viewData = [
+        'title' => 'Ask a Question',
+        'image' => $currUser['image'] ?? null,
+        'username' => $currUser['username'] ?? null,
+        'id' => $currUser['id'],
+        'histories' => $currUser['histories'],
+        'allTags' => $this->tagController->getAllTags(),
+        'questionToEdit' => null, // default nya ask
+        'selectedTagIdsOnLoad' => [],
+    ];
+
     if ($questionId !== null) {
-      $questionDetails = $this->questionController->getQuestionDetails($questionId);
-      if ($questionDetails && isset($currUser['id']) && isset($questionDetails['user_id']) && $currUser['id'] === $questionDetails['user_id']) {
+       $questionDetails = $this->questionController->getQuestionDetails($questionId);
+
+        if (!$questionDetails) {
+            return redirect()->route('home')->with('Error', 'The question you are trying to edit was not found.');
+        }
+
+        if ($currUser['id'] !== $questionDetails['user_id']) {
+            return redirect()->route('home')->with('Error', 'You are not authorized to edit this question.');
+        }
+
+        $viewData['title'] = 'Edit Question';
         $viewData['questionToEdit'] = $questionDetails;
         $viewData['selectedTagIdsOnLoad'] = array_column($questionDetails['group_question'], 'tag_id');
-      } else if ($questionDetails) {
-        return redirect()->route('home')
-          ->with('Error', 'You are not authorized to edit this question.');
-      } else {
-        return redirect()->route('askPage')
-          ->with('Error', 'The question you are trying to edit was not found.');
-      }
     }
-    $viewData['title'] = isset($viewData['questionToEdit']) ? 'Edit Question' : 'Ask a Question';
-    $viewData['histories'] = $currUser['histories'];
 
     return view('ask', $viewData);
+
   }
 
   // coba gabung profile + otherprofile
@@ -85,7 +94,7 @@ class MainController extends Controller
           break;
         }
       }
-
+      // dd($userViewed['user']);
       if ($data['userRelation'] === 0) { // jika habis di cek, trnyt ak ga folo dia, cek apakah dia folo ak -> btn bertuliskan follow back
         foreach ($userViewed['user']['following'] as $following) {
           if ($following['id'] == $currUser['id']) {

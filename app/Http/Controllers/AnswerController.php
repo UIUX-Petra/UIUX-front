@@ -105,8 +105,8 @@ class AnswerController extends Controller
 
         $viewedUserApiUrl = env('API_URL') . '/users/' . $userId;
         $viewedUserResponse = Http::withToken($token)
-                                ->acceptJson()
-                                ->get($viewedUserApiUrl);
+            ->acceptJson()
+            ->get($viewedUserApiUrl);
 
         if (!$viewedUserResponse->successful()) {
             Log::error("Failed to fetch user (ID: {$userId}) for answers page from {$viewedUserApiUrl}. Status: " . $viewedUserResponse->status() . " Body: " . $viewedUserResponse->body());
@@ -119,7 +119,7 @@ class AnswerController extends Controller
         }
 
         $page = $request->input('page', 1);
-        $perPage = 10; 
+        $perPage = 10;
 
         $answersApiUrl = env('API_URL') . '/answers-paginated';
         $answersApiResponse = Http::withToken($token)
@@ -151,6 +151,7 @@ class AnswerController extends Controller
         if (session('email')) {
             $loggedInUserArray = $this->userController->getUserByEmail(session('email'));
         }
+        // dd($answersPaginator);
 
         return view('userAnswers.index', [
             'title' => htmlspecialchars($viewedUser['username'] ?? 'User') . "'s Answers",
@@ -179,28 +180,30 @@ class AnswerController extends Controller
 
         $apiUrl = rtrim(env('API_URL'), '/') . '/answers/' . $answerId;
         $response = Http::withToken($token)
-                        ->acceptJson()
-                        ->get($apiUrl); // API GET /answers/{id}
+            ->acceptJson()
+            ->get($apiUrl); // API GET /answers/{id}
         $user = $this->userController->getUserByEmail(session('email'));
-        
+
 
         if ($response->successful()) {
             $answer = $response->json('data');
-            if ($answer && isset($answer['user_id']) && $answer['user_id'] == $loggedInUserId) {
-                return view('userAnswers.edit', [
-                    'title' => 'Edit Your Answer',
-                    'answer' => $answer,
-                    'image' => $user['image'] ?? null,
-                    'user' => $user,
-                    'histories' => $user['histories'],
-                    'id' => $user['id'],
-                ]);
-            } elseif ($answer) {
-                return redirect()->route('user.answers.index', ['userId' => $answer['user_id']])
-                                 ->with('Error', 'You are not authorized to edit this answer.');
-            } else {
-                return redirect()->route('home')->with('Error', 'Answer not found.');
+            if (!$answer || !isset($answer['user_id'])) {
+                return redirect()->route('home')->with('Error', 'Answer not found or invalid.');
             }
+
+            if ($answer['user_id'] !== $loggedInUserId) {
+                return redirect()->route('user.answers.index', ['userId' => $answer['user_id']])
+                    ->with('Error', 'You are not authorized to edit this answer.');
+            }
+
+            return view('userAnswers.edit', [
+                'title' => 'Edit Your Answer',
+                'answer' => $answer,
+                'image' => $user['image'] ?? null,
+                'user' => $user,
+                'histories' => $user['histories'],
+                'id' => $user['id'],
+            ]);
         } else {
             Log::error("Failed to fetch answer (ID: {$answerId}) for edit from {$apiUrl}. Status: " . $response->status() . " Body: " . $response->body());
             return redirect()->route('home')->with('Error', 'Could not retrieve answer for editing.');
@@ -222,7 +225,7 @@ class AnswerController extends Controller
         $validator = Validator::make($request->all(), [
             'answer_content' => 'required|string|min:5',
             'image' => 'nullable|file|image|mimes:jpeg,png,jpg|max:5048',
-            'remove_existing_image' => 'nullable|in:1,true', 
+            'remove_existing_image' => 'nullable|in:1,true',
         ]);
 
         if ($validator->fails()) {
@@ -254,15 +257,15 @@ class AnswerController extends Controller
             $customFileName = "a_upd_" . $userIdentifier . "_qid" . $questionIdForPath . "_" . $timestamp . "." . $extension;
             // Store image locally
             $imagePath = $imageFile->storeAs("uploads/answers_images/" . $questionIdForPath, $customFileName, 'public');
-            
+
             // Attach file for multipart request
             $pendingRequest->attach('image_file', file_get_contents($imageFile->getRealPath()), $customFileName);
-            $payload['image'] = $imagePath; 
+            $payload['image'] = $imagePath;
         } elseif ($request->input('remove_existing_image') === '1' || $request->input('remove_existing_image') === true) {
             $payload['image'] = null;
             $payload['remove_existing_image_flag'] = true;
         }
-        
+
         $updateResponse = $pendingRequest->post($apiUpdateUrl, $payload);
 
 
@@ -281,8 +284,8 @@ class AnswerController extends Controller
     /**
      * Handle deletion of an answer (called via AJAX by JavaScript).
      */
-    public function deleteAnswer($answerId) 
-    {                                      
+    public function deleteAnswer($answerId)
+    {
         $token = session('token');
         $loggedInUserId = session('user_id');
 

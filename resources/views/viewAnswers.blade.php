@@ -500,7 +500,7 @@
                                     @endif
 
                                     <div class="mt-4 flex justify-between items-center">
-                                        <a href="{{ route('viewUser', ['email' => $ans['user']['username']]) }}"
+                                        <a href="{{ route('viewUser', ['email' => $ans['user']['email']]) }}"
                                             class="flex items-center text-sm text-[var(--text-muted)]">
                                             {{-- <div class="flex items-center text-sm text-[var(--text-muted)]"> --}}
                                             <img src="{{ $ans['user']['image'] ? asset('storage/' . $ans['user']['image']) : 'https://ui-avatars.com/api/?name=' . urlencode($ans['username'] ?? 'User') . '&background=7E57C2&color=fff&size=128' }}"
@@ -633,7 +633,7 @@
                 <div class="overflow-y-auto flex-grow p-6 pt-2 space-y-3 flex flex-col" id="question-comments-list-modal">
                     {{-- Konten komentar tetap sama --}}
                     @if ($question['comment_count'] > 0)
-                        @foreach ($question['comment'] as $comm)
+                        @foreach ($question['comments'] as $comm)
                             <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
                                 <div class="flex-grow">
                                     <p class="text-[var(--text-primary)]">{!! nl2br(e($comm['comment'])) !!}</p>
@@ -1089,16 +1089,16 @@
                                                         const newWriteBtn = document
                                                             .getElementById(
                                                                 'write-answer-placeholder-btn'
-                                                                );
+                                                            );
                                                         if (newWriteBtn) {
                                                             newWriteBtn
                                                                 .addEventListener(
                                                                     'click', (
-                                                                    event) => {
+                                                                        event) => {
                                                                         event
                                                                             .preventDefault();
                                                                         showAnswerInput
-                                                                        ();
+                                                                            ();
                                                                     });
                                                         }
                                                     }
@@ -1471,12 +1471,12 @@
 
                                 if (answerCountTop && answerCountHeader) {
                                     const currentCount = parseInt(answerCountTop.textContent.trim(),
-                                    10);
+                                        10);
                                     const newCount = currentCount + 1;
 
                                     answerCountTop.textContent = newCount;
                                     answerCountHeader.textContent =
-                                    `(${newCount})`; // Note the parentheses
+                                        `(${newCount})`; // Note the parentheses
                                 }
                             } else {
                                 Toastify({
@@ -1749,19 +1749,25 @@
                                 }
                                 let commentList = document.getElementById(
                                     'question-comments-list-modal');
+                                const newComment = data.comment;
                                 const timeAgo = formatTimeAgo(new Date(data.comment.timestamp));
 
+                                const userImage = newComment.image ?
+                                    `/storage/${newComment.image}` :
+                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(newComment.username)}&background=random&color=fff&size=128`;
+
                                 const htmlContent = `
-                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start">
-                                <div class="flex-grow">
-                                    <p class="text-[var(--text-primary)]">${escapeHtml(data.comment.comment)}</p>
-                                    <a href="/viewUser/${@json($username ?? null)}">
-                                    <div class="mt-2 text-xs text-[var(--text-muted)]">
-                                        <span class="hover:underline">Posted by ${escapeHtml(data.comment.username)} - ${timeAgo}</span>
-                                    </div>
-                                    </a>
-                                </div>
-                            </div>
+                            <div class="comment bg-[var(--bg-card)] p-4 rounded-lg flex items-start" style="opacity: 0; transform: translateY(20px);">
+            <div class="flex-grow">
+                <p class="text-[var(--text-primary)]">${escapeHtml(newComment.comment)}</p>
+                <a href="/viewUser/${newComment.email}" class="hover:underline">
+                    <div class="mt-2 text-xs text-[var(--text-muted)] flex items-center">
+                        <img src="${userImage}" alt="${newComment.username}" class="w-5 h-5 rounded-full mr-2">
+                        <span>Posted by ${escapeHtml(newComment.username)} - ${timeAgo}</span>
+                    </div>
+                </a>
+            </div>
+        </div>
                         `;
 
                                 if (!commentList) {
@@ -1782,6 +1788,12 @@
                                 if (commentList) {
                                     commentList.insertAdjacentHTML('beforeend', htmlContent);
                                 }
+                                const newCommentElement = commentList.lastElementChild;
+                                setTimeout(() => {
+                                    newCommentElement.style.transition = 'all 0.3s ease';
+                                    newCommentElement.style.opacity = '1';
+                                    newCommentElement.style.transform = 'translateY(0)';
+                                }, 50);
 
                                 // Update comment counts
                                 const commentCount = document.querySelector('#comment-count span');
