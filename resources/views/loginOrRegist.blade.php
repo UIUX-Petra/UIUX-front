@@ -6,9 +6,6 @@
             Toastify({
                 text: "{{ session('Error') }}" || "An unexpected error occurred from the server.",
                 duration: 3000,
-                close: true,
-                gravity: "top",
-                position: "right",
                 style: {
                     background: "#e74c3c"
                 }
@@ -234,85 +231,56 @@
         }
 
         /* Responsive design */
-        @media screen and (max-width: 650px) {            .container{
-                height: auto;
-                min-height: calc(100vh - 40px);
-                flex-direction: column;
-                display: flex;
-            }
-            
-            .form-box {
-                position: relative;
-                bottom: auto;
-                width: 100%;
-                height: auto;
-                min-height: 50%;
-            }
-        
-            .container.active .form-box {
-                right: auto;
-                bottom: auto;
+        @media screen and (max-width: 650px) {
+            .container {
+                height: calc(100vh - 40px);
             }
 
-            .form-box.login {
-                justify-content: center;
-                padding: 2rem 1rem;
-                order: 2;
+            .container.active .toggle-box::before {
+                top: 70%;
+                left: 0;
             }
-                
-            .form-container {
-                height: auto;
-                min-height: 460px;
+
+            .form-box {
+                bottom: 0;
+                width: 100%;
+                height: 70%;
+            }
+
+            .container.active .form-box {
+                right: 0;
+                bottom: 30%;
             }
 
             .toggle-box::before {
                 left: 0;
                 width: 100%;
-                height: 100%;
-                top: 0;
-                border-radius: 20px;
-            }
-
-            .container.active .toggle-box::before {
-                top: 0;
-                left: 0;
+                height: 300%;
+                top: -270%;
+                border-radius: 20vw;
             }
 
             .toggle-panel {
                 width: 100%;
-                height: auto;
-                min-height: 200px;
-                position: relative;
-            }
-
-            .toggle-panel.toggle-left {
-                top: 0;
-                left: 0;
-                position: relative;
-                order: 1;
+                height: 30%;
             }
 
             .container.active .toggle-panel.toggle-left {
                 left: 0;
+                top: -30%;
+            }
+
+            .toggle-panel.toggle-left {
                 top: 0;
             }
 
             .toggle-panel.toggle-right {
                 right: 0;
-                bottom: 0;
-                position: relative;
-                order: 2;
+                bottom: -30%;
             }
 
             .container.active .toggle-panel.toggle-right {
                 bottom: 0;
-                right: 0;
-            }
-        
-            .toggle-box {
-                position: relative;
-                height: auto;
-                order: 1;
             }
         }
 
@@ -381,22 +349,23 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-center items-center min-h-screen md:h-auto w-full py-8 px-4">
-            <div class="mx-auto relative w-full h-full flex justify-center items-center">
+        <div class="flex justify-center items-center h-screen w-full py-8 px-4">
+            <div class="min-h-screen mx-auto cont relative w-full h-full flex justify-center items-center">
                 <div
-                    class="container form-container relative w-full m-[20px] max-w-[900px] h-[460px] bg-white rounded-[30px] shadow-xl overflow-hidden">                    <!-- Login Form -->
+                    class="container form-container relative w-full m-[20px] max-w-[900px] h-[600px] bg-white rounded-[30px] shadow-xl overflow-hidden">
+                    <!-- Login Form -->
                     <div
-                        class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:!pb-0">
+                        class="form-box login absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="manualLoginForm" action="{{ route('manualLogin') }}" method="POST"
                             novalidate>
                             @csrf
                             <h1 class="form-title text-3xl md:text-4xl mb-8 text-slate-800 font-bold text-center">Login
                             </h1>
-{{-- 
+
                             <div class="input-box relative w-full mb-5">
                                 <input id="usernameOrEmail" type="text" aria-label="Username or Email"
                                     placeholder="Username or Email" required name="usernameOrEmail"
-                                    class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                    class="w-full pr-[50px] pl-5 py-2 sm:py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                 <i
                                     class="fa-solid fa-user absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
@@ -405,25 +374,25 @@
                             <div class="input-box relative w-full mb-7">
                                 <input id="loginPassword" type="password" aria-label="Password" placeholder="Password"
                                     required name="loginPassword"
-                                    class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                    class="w-full pr-[50px] pl-5 py-2 sm:py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                 <i
                                     class="fa-solid fa-eye password-toggle cursor-pointer absolute right-[1rem] top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
                             </div>
 
                             <button type="submit"
-                                class="form-btn w-full bg-gradient-to-r from-[#10b981] to-[#1ceaa5] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
+                                class="form-btn w-full bg-gradient-to-r from-[#10b981] to-[#1ceaa5] text-white font-bold p-2 sm:p-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 mb-4">
                                 Login
                             </button>
 
-                            <div class="relative text-center my-5">
-                                <span class="bg-white px-4 text-gray-500 text-sm font-medium relative z-10">OR CONTINUE
+                            <div class="relative text-center my-3 sm:my-5">
+                                <span class="bg-white px-4 text-gray-500 text-xs sm:text-sm font-medium relative z-10">OR CONTINUE
                                     WITH</span>
                                 <div class="absolute top-1/2 left-0 w-full h-px bg-gray-200 -z-1"></div>
-                            </div> --}}
+                            </div>
                             <div class="grid w-full grid-cols-4 gap-4">
                                 <button type="button" onclick="window.location.href='{{ route('auth') }}'"
-                                    class="col-span-3 form-btn w-full bg-gradient-to-r from-[#F4AB24] to-[#FFD249] text-white font-bold py-4 px-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
+                                    class="col-span-3 form-btn w-full bg-gradient-to-r from-[#F4AB24] to-[#FFD249] text-white font-bold p-2 sm:p-4 rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 flex items-center justify-center">
                                     <span
                                         class="inline-flex items-center justify-center p-1.5 bg-white rounded-full shadow-md align-middle mr-3">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="-3 0 262 262"
@@ -465,7 +434,7 @@
                     </div>
 
                     <!-- Registration Form -->
-                    {{-- <div
+                    <div
                         class="form-box registration absolute right-0 w-[50%] h-full flex flex-col items-center justify-center text-black p-8 md:p-10">
                         <form class="w-full" id="submitRegisterForm" novalidate>
                             @csrf
@@ -475,7 +444,7 @@
                             <div class="input-box relative w-full mb-4">
                                 <input type="text" aria-label="Username" placeholder="Username" required id="username"
                                     name="username"
-                                    class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                    class="w-full pr-[50px] pl-5 sm:py-4 py-2 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                 <i
                                     class="fa-solid fa-user absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
@@ -484,7 +453,7 @@
                             <div class="input-box relative w-full mb-4">
                                 <input type="email" aria-label="Email" placeholder="Email" required id="email"
                                     name="email"
-                                    class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                    class="w-full pr-[50px] pl-5 sm:py-4 py-2 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                 <i
                                     class="fa-solid fa-envelope absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 <small class="error-message"></small>
@@ -494,14 +463,14 @@
                                 <div class="relative">
                                     <input type="password" aria-label="Password" placeholder="Password" required
                                         id="password" name="password" minlength="8"
-                                        class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                        class="w-full pr-[50px] pl-5 sm:py-4 py-2 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                     <i
                                         class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 </div>
-                                <small class="error-message"></small> --}}
+                                <small class="error-message"></small>
 
                                 {{-- Tooltip --}}
-                                {{-- <div id="passwordStrengthContainer"
+                                <div id="passwordStrengthContainer"
                                     class="absolute top-full left-0 right-0 mt-1 p-3 bg-white border border-gray-300 rounded-md shadow-lg z-20 hidden">
 
                                     <div id="passwordStrengthBar"
@@ -531,7 +500,7 @@
                                 <div class="relative">
                                     <input type="password" aria-label="Confirm Password" placeholder="Confirm Password"
                                         id="confirmPassword" name="confirmPassword" minlength="8" required
-                                        class="w-full pr-[50px] pl-5 py-4 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
+                                        class="w-full pr-[50px] pl-5 sm:py-4 py-2 rounded-[12px] border-2 outline-none text-[16px] placeholder-gray-400 focus:bg-white">
                                     <i
                                         class="fa-solid fa-eye password-toggle cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                                 </div>
@@ -543,37 +512,36 @@
                                 Create Account
                             </button>
                         </form>
-                    </div> --}}
+                    </div>
 
                     <!-- Toggle Box -->
                     <div class="toggle-box absolute w-full h-full">
                         <div
-                            class="toggle-panel toggle-left left-0 absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
+                            class="py-6 toggle-panel toggle-left left-0 absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
                             <div class="mb-6 float-animation">
                                 <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
-                                    class="h-20 flex">
+                                    class="h-20 hidden md:flex">
                             </div>
-                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Hello, Informate!</h1>
-                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Log in to start using <span
+                            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-0 sm:mb-2">Hello, Informate!</h1>
+                            <p class="mb-2 sm:mb-8 mt-2 text-[#e4e9fd] text-sm  sm:text-base lg:text-lg opacity-90">New to <span
                                     class="font-bold cal-sans-regular text-[#fff]">peer <span class="text-[#FFD249]">- to
                                         -
-                                    </span> peer!</span></p>
-                            {{-- <button
-                                class="toggle-btn register-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-xl">Make an account</button> --}}
-                        </div>
-                        {{-- <div
-                            class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
-                            <div class="mb-6 float-animation">
-                                <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
-                                    class="h-20 flex">
-                            </div>
-                            <h1 class="text-3xl lg:text-4xl font-extrabold mb-2">Already have an account?</h1>
-                            <p class="mb-8 mt-2 text-[#e4e9fd] text-base lg:text-lg opacity-90">Already part of our
-                                community? Login to continue your learning journey.</p>
+                                    </span> peer?</span><br>Join and explore our community today!</p>
                             <button
-                                class="toggle-btn login-btn w-[180px] h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-lg">Sign
-                                In</button>
-                        </div> --}}
+                                class="toggle-btn register-btn w-[180px] h-[20px] sm:h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-md sm:text-xl">Make an account</button>
+                        </div>
+                        <div
+                            class="toggle-panel toggle-right right-[-50%] absolute w-[50%] h-[100%] flex flex-col justify-center items-center text-center text-white p-8">
+                            <div class="mb-2 float-animation">
+                                <img src="{{ asset('assets/p2p logo - white.svg') }}" alt="Peer-to-Peer Logo"
+                                    class="h-20 hidden md:flex">
+                            </div>
+                            <h1 class="text-xl sm:text-3xl lg:text-4xl font-extrabold mb-0 sm:mb-2">Already have an account?</h1>
+                            <p class="sm:mb-8 mb-2 mt-2 text-[#e4e9fd] text-sm sm:text-base lg:text-lg opacity-90">Login to continue your learning journey.</p>
+                            <button
+                                class="toggle-btn login-btn w-[180px] h-[20px] sm:h-[54px] bg-transparent underline rounded-xl hover:text-[#FFD249] transition duration-300 font-bold text-md sm:text-lg">
+                                Login</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1271,9 +1239,6 @@
                             Toastify({
                                 text: errorMessage || 'Registration Error',
                                 duration: 3000,
-                                close: true,
-                                gravity: "top",
-                                position: "right",
                                 style: {
                                     background: "#e74c3c"
                                 }
@@ -1285,9 +1250,6 @@
                         Toastify({
                             text: 'An unexpected error occurred. Please try again.',
                             duration: 3000,
-                            close: true,
-                            gravity: "top",
-                            position: "right",
                             style: {
                                 background: "#e74c3c"
                             }
