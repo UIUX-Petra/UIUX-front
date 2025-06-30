@@ -396,17 +396,17 @@
     @include('partials.nav')
 
     @php
-    $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
+        $isEditMode = isset($questionToEdit) && $questionToEdit !== null;
 
-    $formActionUrl = $isEditMode
-        // call api dipindah dari sini ke updateQuestion, buat avoid error 'Unauthenticated'. ndapapa?
-        // ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
-        ? route('updateQuestion', ['id' => $questionToEdit['id']])
-        : route('addQuestion');
+        $formActionUrl = $isEditMode
+            ? // call api dipindah dari sini ke updateQuestion, buat avoid error 'Unauthenticated'. ndapapa?
+            // ? url(env('API_URL', '') . "/questions/{$questionToEdit['id']}/updatePartial")
+            route('updateQuestion', ['id' => $questionToEdit['id']])
+            : route('addQuestion');
 
-    $formMethod = 'POST';
-    $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
-    $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
+        $formMethod = 'POST';
+        $pageH1Title = $isEditMode ? 'Edit Your Question' : 'Ask a Question';
+        $submitButtonText = $isEditMode ? 'Update Question' : 'Publish Question';
     @endphp
     <div class="max-w-5xl justify-start items-start px-4 py-8">
         <!-- Page Header Section -->
@@ -815,7 +815,7 @@
 
                 filteredTags.forEach(tag => {
                     console.log(tag);
-                    
+
                     const isSelected = tempSelectedTagIds.includes(tag.id.toString());
                     const tagItem = document.createElement('div');
                     tagItem.className = `tag-item-modal ${isSelected ? 'selected' : ''}`;
@@ -960,6 +960,34 @@
                 });
             }
 
+            async function checkForDuplicates(title, question, tagIds, imageFile = null) {
+                const similarityFormData = new FormData();
+                similarityFormData.append("title", title);
+                similarityFormData.append("question", question);
+                similarityFormData.append("tag_ids", tagIds.join(','));
+                if (imageFile) {
+                    similarityFormData.append("image", imageFile);
+                }
+
+                try {
+                    const response = await fetch(`${AI_SERVICE_URL}/find_similar_by_tags`, {
+                        method: "POST", 
+                        body: similarityFormData
+                    });
+
+                    const result = await response.json();
+                    console.log(result);
+                    
+                    if (result.success && result.duplicates && result.duplicates.length > 0) {
+                        return result.duplicates;
+                    }
+                } catch (error) {
+                    console.error("Similarity check failed:", error);
+                }
+                return [];
+            }
+
+
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
@@ -984,77 +1012,111 @@
                     confirmButtonText: `Yes, ${IS_EDIT_MODE ? 'Update' : 'Submit'}!`,
                     cancelButtonText: 'No, Cancel'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: IS_EDIT_MODE ? "Updating..." : "Submitting...",
-                            text: "Please wait...",
-                            allowOutsideClick: false,
-                            didOpen: () => Swal.showLoading()
-                        });
+                    if (!result.isConfirmed) return;
 
-                        let formData = new FormData();
-                        formData.append("title", title);
-                        formData.append("question", questionText);
-                        if (imageFile) {
-                            formData.append("image", imageFile);
-                        }
-                        if (IS_EDIT_MODE && document.getElementById(
-                                'remove_existing_image_input')) {
-                            formData.append("remove_existing_image", "1");
-                        }
-                        if (!IS_EDIT_MODE) {
-                            selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
-                            aiRecommendedTagIds.forEach(id => formData.append("recommended_tags[]",
-                                id));
-                        } else {
-                            selectedTagIds.forEach(id => formData.append("selected_tags[]", id));
-                        }
 
-                        fetch(FORM_ACTION_URL, {
-                                method: "POST",
-                                headers: {
-                                    "X-CSRF-TOKEN": CSRF_TOKEN,
-                                    "Accept": "application/json"
-                                },
-                                body: formData
-                            })
-                            .then(response => response.json().then(data => ({
-                                ok: response.ok,
-                                data
-                            })))
-                            .then(({
-                                ok,
-                                data
-                            }) => {
-                                Swal.close();
-                                if (ok && data.success) {
-                                    Toastify({
-                                        text: data.message,
-                                        duration: 2000,
-                                        style: {
-                                            background: "#57CC99"
-                                        }
-                                    }).showToast();
-                                    setTimeout(() => {
-                                        window.location.href = "{{ route('home') }}";
-                                    }, 2000);
-                                } else {
-                                    throw new Error(data.message ||
-                                        'An unknown server error occurred.');
+                    checkForDuplicates(title, questionText, selectedTagIds, imageFile)
+                        .then(duplicates => {
+                            // fetch ke /ask
+                            const proceedSubmission = () => {
+                                Swal.fire({
+                                    title: IS_EDIT_MODE ? "Updating..." :
+                                        "Submitting...",
+                                    text: "Please wait...",
+                                    allowOutsideClick: false,
+                                    didOpen: () => Swal.showLoading()
+                                });
+
+                                let formData = new FormData();
+                                formData.append("title", title);
+                                formData.append("question", questionText);
+                                if (imageFile) {
+                                    formData.append("image", imageFile);
                                 }
-                            })
-                            .catch(error => {
-                                console.error('Submission Error:', error);
-                                Swal.close();
-                                Toastify({
-                                    text: error.message,
-                                    duration: 4000,
-                                    style: {
-                                        background: "#e74c3c"
+                                if (IS_EDIT_MODE && document.getElementById(
+                                        'remove_existing_image_input')) {
+                                    formData.append("remove_existing_image", "1");
+                                }
+                                if (!IS_EDIT_MODE) {
+                                    selectedTagIds.forEach(id => formData.append(
+                                        "selected_tags[]", id));
+                                    aiRecommendedTagIds.forEach(id => formData.append(
+                                        "recommended_tags[]", id));
+                                } else {
+                                    selectedTagIds.forEach(id => formData.append(
+                                        "selected_tags[]", id));
+                                }
+
+                                fetch(FORM_ACTION_URL, {
+                                        method: "POST",
+                                        headers: {
+                                            "X-CSRF-TOKEN": CSRF_TOKEN,
+                                            "Accept": "application/json"
+                                        },
+                                        body: formData
+                                    })
+                                    .then(response => response.json().then(data => ({
+                                        ok: response.ok,
+                                        data
+                                    })))
+                                    .then(({
+                                        ok,
+                                        data
+                                    }) => {
+                                        Swal.close();
+                                        if (ok && data.success) {
+                                            Toastify({
+                                                text: data.message,
+                                                duration: 2000,
+                                                style: {
+                                                    background: "#57CC99"
+                                                }
+                                            }).showToast();
+                                            setTimeout(() => {
+                                                window.location.href =
+                                                    "{{ route('home') }}";
+                                            }, 2000);
+                                        } else {
+                                            throw new Error(data.message ||
+                                                'An unknown server error occurred.');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Submission Error:', error);
+                                        Swal.close();
+                                        Toastify({
+                                            text: error.message,
+                                            duration: 4000,
+                                            style: {
+                                                background: "#e74c3c"
+                                            }
+                                        }).showToast();
+                                    });
+                            };
+
+                            // ada similar question
+                            if (duplicates.length > 0) {
+                                const dupList = duplicates.map(d =>
+                                    `• <a href="/viewAnswers/${d.id}" target="_blank" style="color:#3498db;">${d.title}</a> ` +
+                                    `(${(d.duplication_probability * 100).toFixed(1)}% similar)`
+                                ).join('<br><br>');
+                                Swal.fire({
+                                    title: "Similar Questions Detected",
+                                    icon: "warning",
+                                    html: `<strong>We found similar questions:</strong><br><br><pre style="text-align:left">${dupList}</pre><br>Do you still want to proceed?`,
+                                    showCancelButton: true,
+                                    confirmButtonText: "Yes, Submit Anyway",
+                                    cancelButtonText: "Cancel"
+                                }).then(simRes => {
+                                    if (simRes.isConfirmed) {
+                                        proceedSubmission
+                                            (); // user ttp ngotot pengen ask, meski ada similar
                                     }
-                                }).showToast();
-                            });
-                    }
+                                });
+                            } else {
+                                proceedSubmission(); // no similar, lanjut submit buat /ask
+                            }
+                        });
                 });
             });
             init();
